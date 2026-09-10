@@ -13,8 +13,7 @@ It is not a design system, not a general shader library, and not a mirror of any
 
 Status: phase 2.
 - The shared runtime now carries JSON data, events, children, a palette, WebGL2 shaders, and composition.
-- Waves 1 and 2 are in review.
-- Wave 3 adds sections, controls, charts, and shaders.
+- Waves 1 to 3 are built, 46 components in all, and all three are in review.
 
 Open work is listed in `docs/plans/`.
 
@@ -57,6 +56,7 @@ npm install
 npx playwright install chromium   # once, for npm run verify
 npm run check                     # lint (eslint and tsc), tests, build
 npm run verify -- <slug>          # one component in a real browser
+npm run check:site                # the catalog site, end to end in a real browser
 npm run review -- <wave>          # the contact sheet at http://localhost:3200
 ```
 

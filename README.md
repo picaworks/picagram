@@ -1,6 +1,6 @@
 # Pica
 
-ASCII-first components for React and plain HTML. Every component ships in two shapes: one React file that imports only `react`, and one HTML file that needs nothing. Both are generated from a single source and checked against each other in a real browser.
+ASCII-first components for React and plain HTML: text-mode, dither, and pattern effects, plus shaders, charts, controls, and page sections drawn in the same grammar. Every component ships in two shapes: one React file that imports only `react`, and one HTML file that needs nothing. Both are generated from a single source and checked against each other in a real browser.
 
 License: MIT + Commons Clause. See [LICENSE.md](LICENSE.md).
 
@@ -13,7 +13,12 @@ License: MIT + Commons Clause. See [LICENSE.md](LICENSE.md).
 
 ## What it looks like
 
-Glyphs on a monospace grid, with tone measured from the ink each glyph actually puts down in the font in use. See [STYLE.md](STYLE.md) for the rules every component follows.
+The components share one look:
+- **Glyphs** sit on a monospace grid, with tone measured from the ink each glyph actually puts down in the font in use.
+- **Controls and charts** are drawn in hairlines, with square corners.
+- **Shaders** use two tones, dithered like print.
+
+Every component draws with four palette tokens, so a single palette matches it to a brand. See [STYLE.md](STYLE.md) for the rules every component follows.
 
 ## License
 
