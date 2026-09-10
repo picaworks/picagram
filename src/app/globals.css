@@ -437,6 +437,16 @@ input[type="checkbox"]:checked { background: var(--paper); border-color: var(--p
   color: var(--muted);
   pointer-events: none;
 }
+.field.control-textarea {
+  height: auto;
+  min-height: 64px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  resize: vertical;
+}
+.control-json { display: flex; flex-direction: column; gap: 4px; }
+.control-error { font-size: 11px; line-height: 15px; color: var(--amber); }
+.field[aria-invalid="true"] { border-color: var(--amber); }
 .control-color { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; align-items: center; }
 input[type="color"] {
   -webkit-appearance: none;
@@ -496,6 +506,36 @@ input[type="color"]::-moz-color-swatch { border: 0; }
 .credits { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
 .credits li { display: flex; flex-direction: column; gap: 2px; }
 .credits-by { font-size: 12px; color: var(--muted); }
+
+/* Palette */
+.palette { display: flex; flex-direction: column; gap: 8px; }
+.palette-row { display: grid; grid-template-columns: 5ch 26px minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.palette-token { text-transform: uppercase; }
+.palette-row input[type="color"] { width: 26px; height: 20px; padding: 0; border: 1px solid var(--line); cursor: pointer; }
+.palette-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.palette-row input[type="color"]::-webkit-color-swatch { border: 0; }
+.palette-row input[type="color"]::-moz-color-swatch { border: 0; }
+
+/* Events */
+.events-log { display: flex; flex-direction: column; max-height: 240px; overflow-y: auto; }
+.events-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) auto;
+  gap: 10px;
+  align-items: baseline;
+  padding: 5px 0;
+  border-top: 1px solid var(--ink);
+  font-size: 12px;
+}
+.events-row:first-child { border-top: 0; }
+.events-name { color: var(--paper); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.events-detail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+}
+.events-time { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* Under 900px the panes stack, canvas first. The DOM order, and so the tab order, does not change. */
 @media (max-width: 899px) {

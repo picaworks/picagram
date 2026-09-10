@@ -1,11 +1,16 @@
 /** The catalog the site browses: public/catalog.json, written by scripts/build.ts. Never hand-edit that file. */
-import type { Category, Control, Meta } from "../../lib/meta";
+import { CATEGORIES, CATEGORY_TITLES, type Category, type Control, type Meta } from "../../lib/meta";
+import { TOKENS, type Token } from "../../lib/palette";
+import type { Json } from "../../lib/types";
+import type { PaletteProp } from "../../lib/use-pica";
 import generated from "../../public/catalog.json";
 
-export type { Category, Control };
+export type { Category, Control, PaletteProp, Token };
+export { CATEGORIES, CATEGORY_TITLES, TOKENS };
 
-/** A prop value. Props are plain data by contract, so the inspector can set every one of them. */
-export type PropValue = string | number | boolean | null | number[];
+/** A prop value. Props are plain data by contract, so the inspector can set every one of them, including a
+ *  textarea's string, a numbers control's array, or a json control's array or object. */
+export type PropValue = Json;
 export type Props = Record<string, PropValue>;
 
 /** One catalog entry: the component's meta plus what the build adds to it. */
@@ -16,21 +21,63 @@ export interface CatalogItem extends Meta {
   defaults: Props;
   /** Prop name to its JSDoc, shown as the hint under each control. */
   docs: Record<string, string>;
+  /** Prop name to its declared TypeScript type, as written in the core. */
+  types: Record<string, string>;
+  /** Event name to its JSDoc and its detail's declared type. Empty when the component reports none. */
+  events: Record<string, { doc: string; detail: string }>;
   /** The vanilla bundle, minified and gzipped, shared runtime included. */
   gzipBytes: number;
 }
 
-export const items: readonly CatalogItem[] = generated as unknown as CatalogItem[];
+/** A synthetic item scripts/check-site.ts adds to prove every control type works end to end, including
+ *  textarea and json, before any real component uses them. Never present in a normal build: PICA_FIXTURE is
+ *  an environment variable that only that script sets, read here at build time since this module runs on
+ *  the server that renders the one static page. The check script's own local server answers the requests
+ *  this item's slug implies, /v/pica-fixture.html included, so nothing under registry/ or public/ changes. */
+const FIXTURE_SLUG = "pica-fixture";
 
-export const CATEGORIES: readonly Category[] = ["ascii", "text-mode", "dither", "effects", "patterns"];
-
-export const CATEGORY_TITLES: Readonly<Record<Category, string>> = {
-  ascii: "ASCII",
-  "text-mode": "Text mode",
-  dither: "Dither",
-  effects: "Effects",
-  patterns: "Patterns",
+const FIXTURE: CatalogItem = {
+  slug: FIXTURE_SLUG,
+  title: "Pica Fixture",
+  category: "effects",
+  description: "A synthetic item scripts/check-site.ts uses to exercise every control type.",
+  tags: [],
+  wave: 0,
+  animated: false,
+  decorative: true,
+  controls: {
+    count: { type: "number", min: 0, max: 10, step: 1 },
+    name: { type: "string" },
+    note: { type: "textarea", rows: 3 },
+    on: { type: "boolean" },
+    mode: { type: "select", options: ["a", "b"] },
+    tint: { type: "color" },
+    series: { type: "numbers" },
+    data: { type: "json" },
+  },
+  credits: [],
+  original: true,
+  palette: ["fg", "accent"],
+  demo: { props: { count: 5 }, children: '<p class="hint" for="x">Hi</p><br>' },
+  exportName: "PicaFixture",
+  defaults: {
+    count: 1,
+    name: "hi",
+    note: "line one",
+    on: false,
+    mode: "a",
+    tint: "#e8a020",
+    series: [1, 2, 3],
+    data: { a: 1 },
+  },
+  docs: {},
+  types: {},
+  events: { ping: { doc: "Fires when told to, for the site check.", detail: "number" } },
+  gzipBytes: 0,
 };
+
+const generatedItems = generated as unknown as CatalogItem[];
+export const items: readonly CatalogItem[] = process.env.PICA_FIXTURE === "1" ? [...generatedItems, FIXTURE] : generatedItems;
 
 export interface Group {
   category: Category;

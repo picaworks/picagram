@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent, type KeyboardEvent } from "react";
-import type { CatalogItem, Props } from "@/lib/catalog";
+import { TOKENS, type CatalogItem, type PaletteProp, type Props } from "@/lib/catalog";
 import { setFrameGround, type Ground } from "@/lib/ground";
 
 /** Board units are CSS pixels at 100%. A frame is the 1280 by 800 capture, so frames are 16:10. */
@@ -16,6 +16,8 @@ export interface LiveState {
   defaults: Props;
   /** The props that differ from the defaults. */
   overrides: Props;
+  /** Palette tokens the user set for this component. An unset token follows the page. */
+  palette: PaletteProp;
 }
 
 interface FrameProps {
@@ -109,7 +111,7 @@ export function Frame({ item, x, y, selected, dimmed, ground, onSelect, live }: 
 function Live({ item, live }: { item: CatalogItem; live: LiveState }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const sent = useRef(new Set<string>());
-  const { ground, width, defaults, overrides } = live;
+  const { ground, width, defaults, overrides, palette } = live;
 
   const post = useCallback(() => {
     const win = frameRef.current?.contentWindow;
@@ -124,8 +126,12 @@ function Live({ item, live }: { item: CatalogItem; live: LiveState }) {
       sent.current.delete(name);
     }
     for (const name of Object.keys(overrides)) sent.current.add(name);
-    win.postMessage({ type: "pica:props", props }, "*");
-  }, [overrides, defaults]);
+    // The palette always carries all four tokens, an empty string for an unset one, because removing a
+    // custom property the host never had is harmless, and it lets a token that was just cleared take effect.
+    const paletteProps: Record<string, string> = {};
+    for (const token of TOKENS) paletteProps[token] = palette[token] ?? "";
+    win.postMessage({ type: "pica:props", props: { ...props, palette: paletteProps } }, "*");
+  }, [overrides, defaults, palette]);
 
   const paint = useCallback(() => {
     const doc = frameRef.current?.contentDocument;

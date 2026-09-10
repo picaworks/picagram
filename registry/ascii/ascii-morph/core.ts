@@ -1,11 +1,12 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
 import { hostTone } from "../../../lib/color";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { createLoop } from "../../../lib/loop";
 import { FALLBACK_RAMP, measureRamp, pick } from "../../../lib/ramp";
 import { createRng } from "../../../lib/rng";
 import { createSampler } from "../../../lib/sample";
-import { litSphere } from "../../../lib/subject";
+import { litSphere, textSubject } from "../../../lib/subject";
 import type { Mount, MotionProps } from "../../../lib/types";
 
 export interface AsciiMorphProps extends MotionProps {
@@ -39,7 +40,7 @@ export const defaults: AsciiMorphProps = {
   columns: 80,
   glyphs: FALLBACK_RAMP,
   font: '700 "Barlow Condensed", "Helvetica Neue", Arial, sans-serif',
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1.2,
   fps: 24,
   paused: false,
@@ -47,33 +48,14 @@ export const defaults: AsciiMorphProps = {
   seed: 1,
 };
 
-/** Aspect ratio the host takes when it has no height of its own. */
-const DEFAULT_ASPECT = 2;
-/** Side of the built-in sphere subject, in pixels. */
-const SPHERE_SIZE = 256;
-/** Height of the canvas a text subject is drawn into. Width follows the measured text. */
-const TEXT_CANVAS_H = 200;
-/** Contrast applied when a subject is sampled into ink. */
-const INK_CONTRAST = 1.1;
 /** Share of the transition each cell spends fading, centered on its place in the reveal order. */
 const BAND = 0.18;
 
 type Tone = "light-on-dark" | "dark-on-light";
 
-interface Subject {
-  source: CanvasImageSource;
-  w: number;
-  h: number;
-}
-
 function easeInOut(x: number): number {
   const t = Math.min(1, Math.max(0, x));
   return t * t * (3 - 2 * t);
-}
-
-function smoothstep(edge0: number, edge1: number, x: number): number {
-  if (edge0 === edge1) return x < edge0 ? 0 : 1;
-  return easeInOut((x - edge0) / (edge1 - edge0));
 }
 
 /** Where in the hold and transition cycle animation time `t` falls: 0 when the first subject is
@@ -88,53 +70,12 @@ function phaseAt(t: number, hold: number, transition: number): number {
   return 1 - easeInOut((pos - (2 * hold + transition)) / transition);
 }
 
-/** Inserts a pixel size into a CSS font stack, after any leading style, variant, or weight keywords. */
-function sizedFont(stack: string, px: number): string {
-  const keyword = /^(normal|italic|oblique|small-caps|bold|bolder|lighter|[1-9]00)$/;
-  const trimmed = stack.trim();
-  const tokens = trimmed.split(/\s+/);
-  let i = 0;
-  while (i < tokens.length && keyword.test(tokens[i] ?? "")) i++;
-  const prefix = tokens.slice(0, i).join(" ");
-  const rest = trimmed.slice(prefix.length).trim();
-  return prefix ? `${prefix} ${px}px ${rest}` : `${px}px ${rest}`;
-}
-
-/** Draws `text` into a canvas sized to it, in one flat fill color. */
-function rasterizeText(text: string, font: string, fill: string): HTMLCanvasElement {
-  const canvas = document.createElement("canvas");
-  canvas.height = TEXT_CANVAS_H;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return canvas;
-  const fontPx = Math.round(TEXT_CANVAS_H * 0.62);
-  ctx.font = sizedFont(font, fontPx);
-  const pad = fontPx * 0.3;
-  canvas.width = Math.max(1, Math.ceil(ctx.measureText(text).width + pad * 2));
-  ctx.font = sizedFont(font, fontPx);
-  ctx.textBaseline = "middle";
-  ctx.textAlign = "center";
-  ctx.fillStyle = fill;
-  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-  return canvas;
-}
-
-/** The sphere when `text` is empty, otherwise `text` drawn in `font`. The fill is chosen so the
- *  shape samples as full ink after `sampleInk`, on either a light-on-dark or dark-on-light host. */
-function subjectOf(text: string, font: string, tone: Tone): Subject {
-  if (!text) return { source: litSphere(SPHERE_SIZE), w: SPHERE_SIZE, h: SPHERE_SIZE };
-  const canvas = rasterizeText(text, font, tone === "light-on-dark" ? "#fff" : "#000");
-  return { source: canvas, w: canvas.width, h: canvas.height };
-}
-
-/** Ink deltas at or below this count as unchanged. Most cells sit outside both subjects, at zero
- *  in both, so leaving them out of the order keeps the reveal's timing spent on cells that move. */
-const STILL = 0.015;
-
 /** Cell indices ordered by how much ink changes between `a` and `b`, as each cell's place in that
  *  order, scaled to leave room for its own fade band. Cells unchanged in both subjects keep the
  *  earliest place, since holding at either end of the fade looks the same when there is no delta.
  *  Ties among cells that do change are broken by a seeded draw so they do not resolve in a raster
- *  sweep. */
+ *  sweep. Deltas at or below 0.015 count as unchanged, since most cells sit outside both subjects,
+ *  at zero in both, and leaving them out of the order keeps the reveal spent on cells that move. */
 function reorder(a: Float32Array, b: Float32Array, seed: number): Float32Array {
   const n = a.length;
   const rng = createRng(seed);
@@ -144,7 +85,7 @@ function reorder(a: Float32Array, b: Float32Array, seed: number): Float32Array {
   for (let i = 0; i < n; i++) {
     jitter[i] = rng();
     delta[i] = Math.abs((b[i] ?? 0) - (a[i] ?? 0));
-    if ((delta[i] ?? 0) > STILL) moving.push(i);
+    if ((delta[i] ?? 0) > 0.015) moving.push(i);
   }
   moving.sort((x, y) => {
     const dx = delta[x] ?? 0;
@@ -165,28 +106,35 @@ export const mount: Mount<AsciiMorphProps> = (host, initial = {}) => {
   let setAspect = false;
   let started = false;
   const sampler = createSampler();
+  // Reused for both subjects: each is fully sampled into ink before the next is drawn into it.
+  const raster = document.createElement("canvas");
 
   function gridOptions(p: AsciiMorphProps): GridOptions {
     return { fontFamily: p.fontFamily, fontSize: 12, columns: p.columns, lineHeight: p.lineHeight, renderer: "auto", color: "" };
   }
 
-  function sampleInk(subject: Subject, tone: Tone): Float32Array {
+  // The sphere (256px) when `text` is empty (or the rare host with no 2D canvas context), otherwise
+  // `text` rastered at 124px and cropped tight to its ink. `raster` is reused between the two
+  // subjects: sample() copies its own ink out with .slice() before the next subject is drawn into it.
+  function sampleSubject(text: string, font: string, tone: Tone): Float32Array {
+    const source = textSubject(text, font, tone, 124, raster) ?? litSphere(256);
     const { cols, rows, aspect } = grid;
-    return sampler.sample(subject.source, subject.w, subject.h, host, {
-      cols, rows, aspect, n: 1, fit: "contain", tone, contrast: INK_CONTRAST, mirror: false,
+    return sampler.sample(source, source.width, source.height, host, {
+      cols, rows, aspect, n: 1, fit: "contain", tone, contrast: 1.1, mirror: false,
     }).slice();
   }
 
   function rebuild(): void {
     if (!setAspect && host.clientHeight < 2) {
-      host.style.aspectRatio = String(DEFAULT_ASPECT);
+      // 2, the aspect ratio the host takes when it has no height of its own.
+      host.style.aspectRatio = "2";
       setAspect = true;
       grid.update(gridOptions(props));
       return;
     }
     const tone = hostTone(host);
-    inkFrom = sampleInk(subjectOf(props.from, props.font, tone), tone);
-    inkTo = sampleInk(subjectOf(props.to, props.font, tone), tone);
+    inkFrom = sampleSubject(props.from, props.font, tone);
+    inkTo = sampleSubject(props.to, props.font, tone);
     start = reorder(inkFrom, inkTo, props.seed);
   }
 
@@ -197,7 +145,11 @@ export const mount: Mount<AsciiMorphProps> = (host, initial = {}) => {
     const n = Math.min(cols * rows, inkFrom.length, inkTo.length, start.length);
     for (let i = 0; i < n; i++) {
       const s = start[i] ?? 0;
-      const localT = smoothstep(s, s + BAND, p);
+      // Inlined smoothstep(s, s + BAND, p): a per-cell fade band that starts at its place in the
+      // reveal order. BAND is never 0, so the edge0 === edge1 case a general smoothstep guards
+      // against cannot happen here.
+      const e = s + BAND;
+      const localT = e === s ? (p < s ? 0 : 1) : easeInOut((p - s) / (e - s));
       const a = inkFrom[i] ?? 0;
       const b = inkTo[i] ?? 0;
       grid.set(i % cols, (i / cols) | 0, pick(ramp, a + (b - a) * localT));

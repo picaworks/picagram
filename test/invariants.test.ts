@@ -44,13 +44,38 @@ describe("motion", () => {
   });
 });
 
+/** Code with comments removed, so a color or a call named in prose never counts. URLs keep their "//". */
+function code(text: string): string {
+  return text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+}
+
+/** A color literal in any CSS syntax. The same pattern as NO_COLOR in eslint.config.js. */
+const COLOR = /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(\s*[\d.]/;
+
+/** The alias a section must import a child core under: ascii-image becomes asciiImage. */
+const camel = (slug: string): string => slug.replace(/-([a-z0-9])/g, (_, c: string) => c.toUpperCase());
+
 describe("dependencies", () => {
-  it("lib and cores import nothing outside lib", async () => {
+  it("lib imports only lib, and cores import only lib, apart from sections composing other cores", async () => {
     for (const f of await sources()) {
       const name = rel(f);
       if (name === "lib/use-pica.ts" || name.endsWith("/index.tsx")) continue;
+      const allowed = name.startsWith("lib/")
+        ? /^\.\//
+        : name.startsWith("registry/sections/")
+          ? /^(\.\.\/\.\.\/\.\.\/lib\/|\.\.\/\.\.\/(?!sections\/)[a-z-]+\/[a-z0-9-]+\/core$)/
+          : /^\.\.\/\.\.\/\.\.\/lib\//;
       for (const spec of specifiers(await readFile(f, "utf8"))) {
-        expect(spec, `${name} imports ${spec}`).toMatch(/^\.{1,2}\//);
+        expect(spec, `${name} imports ${spec}`).toMatch(allowed);
+      }
+    }
+  });
+
+  it("a section imports another core whole, under its slug in camelCase", async () => {
+    for (const f of await files(join(REGISTRY, "sections"), ["core.ts"])) {
+      for (const line of (await readFile(f, "utf8")).split("\n")) {
+        const target = /from\s+"\.\.\/\.\.\/[a-z-]+\/([a-z0-9-]+)\/core";/.exec(line)?.[1];
+        if (target) expect(line, rel(f)).toMatch(new RegExp(`^import \\* as ${camel(target)} from `));
       }
     }
   });
@@ -66,6 +91,29 @@ describe("dependencies", () => {
   it("every import statement fits on one line, which the single-file build relies on", async () => {
     for (const f of await sources()) {
       expect(await readFile(f, "utf8"), rel(f)).not.toMatch(/^import[^;\n]*\n[^;]*\sfrom\s/m);
+    }
+  });
+});
+
+describe("single owners", () => {
+  const owners: readonly (readonly [string, RegExp, string])[] = [
+    ["dispatches an event", /\.dispatchEvent\s*\(/, "lib/events.ts"],
+    ["opens a WebGL2 context", /getContext\(\s*["']webgl2["']/, "lib/gl.ts"],
+    ["reads a palette custom property", /getPropertyValue\(\s*["'`]--pica-/, "lib/palette.ts"],
+  ];
+
+  it.each(owners)("only its owner %s", async (_what, pattern, owner) => {
+    for (const f of await sources()) {
+      if (rel(f) === owner) continue;
+      expect(code(await readFile(f, "utf8")), rel(f)).not.toMatch(pattern);
+    }
+  });
+});
+
+describe("colors", () => {
+  it("no component hard-codes a color; colors come from lib/palette.ts", async () => {
+    for (const f of await files(REGISTRY, [".ts", ".tsx"])) {
+      expect(code(await readFile(f, "utf8")), rel(f)).not.toMatch(COLOR);
     }
   });
 });

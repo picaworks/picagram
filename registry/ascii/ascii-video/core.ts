@@ -1,8 +1,10 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { createLoop, type Loop } from "../../../lib/loop";
 import { FALLBACK_RAMP, measureRamp, pick } from "../../../lib/ramp";
 import { createSampler } from "../../../lib/sample";
+import { fitHostAspect, showNote } from "../../../lib/source";
 import { litSphere } from "../../../lib/subject";
 import type { Mount, MotionProps } from "../../../lib/types";
 
@@ -43,7 +45,7 @@ export const defaults: AsciiVideoProps = {
   contrast: 1.1,
   fit: "cover",
   tone: "auto",
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1.2,
   fps: 24,
   paused: false,
@@ -69,6 +71,9 @@ export const mount: Mount<AsciiVideoProps> = (host, initial = {}) => {
   let stream: MediaStream | null = null;
   let failed = false;
   let aspectSet = false;
+  let undoAspect = (): void => undefined;
+  let noteText: string | null = null;
+  let removeNote: (() => void) | null = null;
   let request = 0;
   let loop: Loop | null = null;
   const sampler = createSampler();
@@ -86,10 +91,21 @@ export const mount: Mount<AsciiVideoProps> = (host, initial = {}) => {
   }
 
   function setAspect(w: number, h: number): void {
-    if (!aspectSet && host.clientHeight < 2 && w > 0 && h > 0) {
-      host.style.aspectRatio = `${w} / ${h}`;
-      aspectSet = true;
+    if (aspectSet || host.clientHeight >= 2 || w <= 0 || h <= 0) return;
+    undoAspect = fitHostAspect(host, w, h);
+    aspectSet = true;
+  }
+
+  /** Shows or removes the "unavailable" note, only touching the DOM when the text actually changes,
+   *  since paint() calls this every frame. */
+  function setNote(text: string | null): void {
+    if (text === noteText) return;
+    if (removeNote) {
+      removeNote();
+      removeNote = null;
     }
+    if (text) removeNote = showNote(host, text);
+    noteText = text;
   }
 
   // Created lazily, so nothing is requested until src or webcam actually asks for it.
@@ -195,6 +211,7 @@ export const mount: Mount<AsciiVideoProps> = (host, initial = {}) => {
       }
     }
     if (source) {
+      setNote(null);
       const ink = sampler.sample(source, sw, sh, host, {
         cols, rows, aspect, n: 1, fit: props.fit, tone: props.tone, contrast: props.contrast, mirror: m === "webcam" && props.mirror,
       });
@@ -203,8 +220,9 @@ export const mount: Mount<AsciiVideoProps> = (host, initial = {}) => {
         for (let x = 0; x < cols; x++) grid.set(x, y, pick(ramp, ink[y * cols + x] ?? 0));
       }
     } else if (failed) {
-      const note = m === "webcam" ? "camera unavailable" : "video unavailable";
-      grid.write(Math.max(0, Math.floor((cols - note.length) / 2)), Math.floor(rows / 2), note);
+      setNote(m === "webcam" ? "camera unavailable" : "video unavailable");
+    } else {
+      setNote(null);
     }
     grid.flush();
     if (source || failed) host.dataset.picaReady = "true";
@@ -233,9 +251,10 @@ export const mount: Mount<AsciiVideoProps> = (host, initial = {}) => {
       teardown();
       videoEl?.remove();
       videoEl = null;
+      setNote(null);
       grid.destroy();
       unlabelHost(host);
-      if (aspectSet) host.style.removeProperty("aspect-ratio");
+      undoAspect();
       delete host.dataset.picaReady;
     },
   };

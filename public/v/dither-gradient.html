@@ -10,11 +10,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Dither Gradient · Pica</title>
-<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 @media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
-#pica { width: 100%; height: 100%; }</style>
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
 </head>
 <body>
 <div id="pica"></div>
@@ -64,6 +68,151 @@ var PicaDitherGradient = (() => {
     host.removeAttribute("aria-hidden");
   }
 
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
   // lib/color.ts
   var colorProbe;
   function parseColor(color) {
@@ -80,10 +229,6 @@ var PicaDitherGradient = (() => {
     colorProbe.fillRect(0, 0, 1, 1);
     const d = colorProbe.getImageData(0, 0, 1, 1).data;
     return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
-  }
-  function inkColor(host) {
-    const style = getComputedStyle(host);
-    return style.getPropertyValue("--pica-fg").trim() || style.color;
   }
 
   // lib/dither.ts
@@ -108,6 +253,17 @@ var PicaDitherGradient = (() => {
     for (let i = 0; i < out.length; i++) out[i] = ((m[i] ?? 0) + 0.5) / (size * size);
     return out;
   }
+  var bayerCache = /* @__PURE__ */ new Map();
+  function bayerAt(size, x, y) {
+    let m = bayerCache.get(size);
+    if (!m) {
+      m = bayerMatrix(size);
+      bayerCache.set(size, m);
+    }
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return m[my * size + mx] ?? 0.5;
+  }
   var KERNELS = {
     "floyd-steinberg": [[1, 0, 7 / 16], [-1, 1, 3 / 16], [0, 1, 5 / 16], [1, 1, 1 / 16]],
     // Atkinson spreads three quarters of the error, which keeps highlights and shadows cleaner.
@@ -117,8 +273,8 @@ var PicaDitherGradient = (() => {
   // lib/loop.ts
   var MAX_STEP_MS = 100;
   function createLoop(options) {
-    const { el, frame, still } = options;
-    let state = { paused: options.paused, time: options.time, fps: options.fps };
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
     let t = 0;
     let last = 0;
     let raf = 0;
@@ -127,7 +283,7 @@ var PicaDitherGradient = (() => {
     const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
     let reduced = motionQuery?.matches ?? false;
     const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
-    const heldTime = () => state.time !== null ? state.time : reduced ? still : t;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
     function tick(now) {
       raf = 0;
       if (!animating()) return;
@@ -136,7 +292,7 @@ var PicaDitherGradient = (() => {
       if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
         t += Math.min(elapsed, MAX_STEP_MS);
         last = now;
-        frame(t);
+        frame(t, reduced);
       }
       raf = requestAnimationFrame(tick);
     }
@@ -149,7 +305,7 @@ var PicaDitherGradient = (() => {
         cancelAnimationFrame(raf);
         raf = 0;
       }
-      if (!go && drawHeld) frame(heldTime());
+      if (!go && drawHeld) frame(heldTime(), reduced);
     }
     const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
       const entry = entries[entries.length - 1];
@@ -167,17 +323,20 @@ var PicaDitherGradient = (() => {
       sync(true);
     };
     motionQuery?.addEventListener("change", onMotion);
-    frame(heldTime());
+    frame(heldTime(), reduced);
     sync(false);
     return {
       update(next) {
         const timeChanged = next.time !== void 0 && next.time !== state.time;
         state = { ...state, ...next };
         if (state.time !== null) t = state.time;
-        sync(timeChanged || next.paused !== void 0);
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
       },
       redraw() {
-        frame(heldTime());
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
       },
       destroy() {
         if (raf !== 0) cancelAnimationFrame(raf);
@@ -344,7 +503,6 @@ var PicaDitherGradient = (() => {
     seed: 1
   };
   var STILL_TIME = 1200;
-  var BAYER = bayerMatrix(8);
   var LINEAR_RATE = 0.3;
   var RADIAL_RATE_X = 0.22;
   var RADIAL_RATE_Y = 0.17;
@@ -364,33 +522,36 @@ var PicaDitherGradient = (() => {
     let cols = 1;
     let rows = 1;
     let imageData = null;
-    let inkKey = "";
     let inkR = 0;
     let inkG = 0;
     let inkB = 0;
     let inkA = 255;
     let cachedSeed = props.seed;
     let seedState = deriveSeed(props.seed);
-    const canvas = document.createElement("canvas");
-    canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;image-rendering:pixelated";
-    canvas.setAttribute("aria-hidden", "true");
+    const surface = createCanvas(host, {
+      autoSize: false,
+      css: "image-rendering:pixelated",
+      onResize: () => {
+        if (layout()) loop.redraw();
+      }
+    });
+    const canvas = surface.canvas;
     const ctx = canvas.getContext("2d");
-    if (getComputedStyle(host).position === "static") host.style.position = "relative";
-    host.style.overflow = "hidden";
-    host.appendChild(canvas);
-    function refreshInk() {
-      const color = inkColor(host);
-      if (color === inkKey) return;
-      inkKey = color;
-      const [r, g, b, a] = parseColor(color);
+    function syncInk() {
+      const [r, g, b, a] = parseColor(palette.colors.fg);
       inkR = r;
       inkG = g;
       inkB = b;
       inkA = a;
     }
+    const palette = watchPalette(host, () => {
+      syncInk();
+      loop.redraw();
+    });
+    syncInk();
     function layout() {
-      const w = Math.max(1, Math.round(host.clientWidth / props.scale));
-      const h = Math.max(1, Math.round(host.clientHeight / props.scale));
+      const w = Math.max(1, Math.round(surface.cssWidth / props.scale));
+      const h = Math.max(1, Math.round(surface.cssHeight / props.scale));
       if (w === cols && h === rows && imageData) return false;
       cols = w;
       rows = h;
@@ -410,13 +571,12 @@ var PicaDitherGradient = (() => {
         cachedSeed = props.seed;
         seedState = deriveSeed(cachedSeed);
       }
-      refreshInk();
       const buf = data.data;
       const contrast = props.contrast;
       const timeS = t * 1e-3 * props.speed;
       const norm = Math.max(cols, rows);
-      function put(o, v, threshold) {
-        const on = clamp01((v - 0.5) * contrast + 0.5) > threshold;
+      function put(o, v, bayer) {
+        const on = clamp01((v - 0.5) * contrast + 0.5) >= bayer;
         buf[o] = on ? inkR : 0;
         buf[o + 1] = on ? inkG : 0;
         buf[o + 2] = on ? inkB : 0;
@@ -432,11 +592,10 @@ var PicaDitherGradient = (() => {
         let i = 0;
         for (let y = 0; y < rows; y++) {
           const ny = (y + 0.5) / norm - halfH;
-          const rowBayer = (y & 7) * 8;
           for (let x = 0; x < cols; x++) {
             const nx = (x + 0.5) / norm - halfW;
             const v = (nx * dirX + ny * dirY) / (2 * maxR) + 0.5;
-            put(i * 4, v, BAYER[rowBayer + (x & 7)] ?? 0.5);
+            put(i * 4, v, bayerAt(8, x, y));
             i++;
           }
         }
@@ -455,11 +614,10 @@ var PicaDitherGradient = (() => {
         let i = 0;
         for (let y = 0; y < rows; y++) {
           const ny = (y + 0.5) / norm;
-          const rowBayer = (y & 7) * 8;
           for (let x = 0; x < cols; x++) {
             const nx = (x + 0.5) / norm;
             const v = Math.hypot(nx - cx, ny - cy) / maxDist;
-            put(i * 4, v, BAYER[rowBayer + (x & 7)] ?? 0.5);
+            put(i * 4, v, bayerAt(8, x, y));
             i++;
           }
         }
@@ -469,10 +627,9 @@ var PicaDitherGradient = (() => {
         const noise = seedState.noise;
         let i = 0;
         for (let y = 0; y < rows; y++) {
-          const rowBayer = (y & 7) * 8;
           for (let x = 0; x < cols; x++) {
             const v = noise.noise3(x * freq, y * freq, nz) * NOISE_GAIN * 0.5 + 0.5;
-            put(i * 4, v, BAYER[rowBayer + (x & 7)] ?? 0.5);
+            put(i * 4, v, bayerAt(8, x, y));
             i++;
           }
         }
@@ -483,20 +640,18 @@ var PicaDitherGradient = (() => {
     labelHost(host, "");
     layout();
     const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL_TIME, frame: draw });
-    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
-      if (layout()) loop.redraw();
-    }) : null;
-    resizeObserver?.observe(host);
     return {
       update(next) {
         props = { ...props, ...next };
+        palette.refresh();
+        syncInk();
         layout();
         loop.update({ paused: props.paused, time: props.time, fps: props.fps });
       },
       destroy() {
         loop.destroy();
-        resizeObserver?.disconnect();
-        canvas.remove();
+        surface.destroy();
+        palette.destroy();
         unlabelHost(host);
         delete host.dataset.picaReady;
       }
@@ -506,10 +661,23 @@ var PicaDitherGradient = (() => {
 })();
 
 (function () {
-  var instance = PicaDitherGradient.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaDitherGradient.mount(host, take(window.PICA_PROPS || {}));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
-    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
     if (event.data.type === "pica:ground") {
       document.documentElement.setAttribute("data-ground", event.data.ground);
       instance.update({});

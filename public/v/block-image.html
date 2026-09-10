@@ -10,11 +10,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Block Image · Pica</title>
-<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 @media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
-#pica { width: 100%; height: 100%; }</style>
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
 </head>
 <body>
 <div id="pica"></div>
@@ -64,6 +68,12 @@ var PicaBlockImage = (() => {
     host.removeAttribute("aria-hidden");
   }
 
+  // lib/blocks.ts
+  var QUADRANTS = " ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█";
+  function quadrant(tl, tr, bl, br) {
+    return QUADRANTS[(tl ? 1 : 0) | (tr ? 2 : 0) | (bl ? 4 : 0) | (br ? 8 : 0)] ?? " ";
+  }
+
   // lib/dither.ts
   function bayerMatrix(size) {
     let m = [0];
@@ -86,14 +96,108 @@ var PicaBlockImage = (() => {
     for (let i = 0; i < out.length; i++) out[i] = ((m[i] ?? 0) + 0.5) / (size * size);
     return out;
   }
+  var bayerCache = /* @__PURE__ */ new Map();
+  function bayerAt(size, x, y) {
+    let m = bayerCache.get(size);
+    if (!m) {
+      m = bayerMatrix(size);
+      bayerCache.set(size, m);
+    }
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return m[my * size + mx] ?? 0.5;
+  }
+  function threshold(values, width, height, level = 0.5, bayer = 0) {
+    const out = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const i = y * width + x;
+        const cut = bayer === 0 ? level : level + bayerAt(bayer, x, y) - 0.5;
+        out[i] = (values[i] ?? 0) >= cut ? 1 : 0;
+      }
+    }
+    return out;
+  }
   var KERNELS = {
     "floyd-steinberg": [[1, 0, 7 / 16], [-1, 1, 3 / 16], [0, 1, 5 / 16], [1, 1, 1 / 16]],
     // Atkinson spreads three quarters of the error, which keeps highlights and shadows cleaner.
     atkinson: [[1, 0, 1 / 8], [2, 0, 1 / 8], [-1, 1, 1 / 8], [0, 1, 1 / 8], [1, 1, 1 / 8], [0, 2, 1 / 8]]
   };
 
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+
   // lib/glyph-grid.ts
   var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
   function createGrid(host, options, onLayout) {
     let opts = { ...options };
     let cols = 1;
@@ -111,18 +215,15 @@ var PicaBlockImage = (() => {
     let ctx = null;
     let ink = "";
     let alive = true;
-    const probe = document.createElement("canvas").getContext("2d");
-    if (getComputedStyle(host).position === "static") host.style.position = "relative";
-    host.style.overflow = "hidden";
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
     const font = () => `${fontPx}px ${opts.fontFamily}`;
     function layout(force) {
       const w = host.clientWidth;
       const h = host.clientHeight;
-      let advance = 0.6;
-      if (probe) {
-        probe.font = `100px ${opts.fontFamily}`;
-        advance = probe.measureText("M").width / 100 || 0.6;
-      }
+      const advance = advanceOf(opts.fontFamily);
       const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
       const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
       const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
@@ -144,7 +245,7 @@ var PicaBlockImage = (() => {
       view?.remove();
       lines = [];
       ctx = null;
-      const color = opts.color || "var(--pica-fg)";
+      const color = opts.color || cssVar("fg");
       const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
       if (mode === "dom") {
         const pre = document.createElement("pre");
@@ -175,7 +276,11 @@ var PicaBlockImage = (() => {
         view = pre;
       } else {
         const canvas = document.createElement("canvas");
-        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color}`;
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
         const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
         canvas.width = Math.max(1, Math.round(width * dpr));
         canvas.height = Math.max(1, Math.round(height * dpr));
@@ -187,6 +292,7 @@ var PicaBlockImage = (() => {
         }
         view = canvas;
       }
+      view.setAttribute("data-pica", "");
       view.setAttribute("aria-hidden", "true");
       shown = new Array(rows).fill("\0");
       ink = "";
@@ -200,18 +306,29 @@ var PicaBlockImage = (() => {
       }
       for (let y = 0; y < rows; y++) {
         const start = y * cols;
-        const rowTints = tints.slice(start, start + cols);
-        let key = cells.slice(start, start + cols).join("");
-        if (rowTints.some((tint) => tint !== void 0)) key += "\0" + rowTints.join(",");
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
         if (key === shown[y]) continue;
         shown[y] = key;
         const top = y * cellH;
         context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
         let x = 0;
         while (x < cols) {
-          const tint = rowTints[x] ?? ink;
+          const tint = tints[start + x] ?? ink;
           let end = x + 1;
-          while (end < cols && (rowTints[end] ?? ink) === tint) end++;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
           context.fillStyle = tint;
           context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
           x = end;
@@ -252,6 +369,12 @@ var PicaBlockImage = (() => {
       get aspect() {
         return cellW / cellH;
       },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
       get font() {
         return font();
       },
@@ -283,6 +406,7 @@ var PicaBlockImage = (() => {
         document.fonts.removeEventListener("loadingdone", onFonts);
         view?.remove();
         view = null;
+        restoreHost();
       }
     };
   }
@@ -313,8 +437,7 @@ var PicaBlockImage = (() => {
     return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
   }
   function inkColor(host) {
-    const style = getComputedStyle(host);
-    return style.getPropertyValue("--pica-fg").trim() || style.color;
+    return readPalette(host).fg;
   }
   function hostTone(host) {
     const fg = relativeLuminance(inkColor(host));
@@ -330,6 +453,12 @@ var PicaBlockImage = (() => {
   }
 
   // lib/sample.ts
+  function fitRect(sourceW, sourceH, boxW, boxH, fit, alignX = 0.5, alignY = 0.5) {
+    const scale = fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+    const w = sourceW * scale;
+    const h = sourceH * scale;
+    return { x: (boxW - w) * alignX, y: (boxH - h) * alignY, w, h };
+  }
   function createSampler() {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
@@ -346,13 +475,9 @@ var PicaBlockImage = (() => {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, sw, sh);
         if (o.mirror) ctx.setTransform(-1, 0, 0, 1, sw, 0);
-        const boxW = o.cols * o.aspect;
-        const boxH = o.rows;
-        const scale = o.fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
-        const drawW = sourceW * scale;
-        const drawH = sourceH * scale;
+        const box = fitRect(sourceW, sourceH, o.cols * o.aspect, o.rows, o.fit, o.alignX, o.alignY);
         const toX = o.n / o.aspect;
-        ctx.drawImage(source, (boxW - drawW) / 2 * toX, (boxH - drawH) / 2 * ny, drawW * toX, drawH * ny);
+        ctx.drawImage(source, box.x * toX, box.y * ny, box.w * toX, box.h * ny);
         const data = ctx.getImageData(0, 0, sw, sh).data;
         const lightOnDark = (o.tone === "auto" ? hostTone(host) : o.tone) === "light-on-dark";
         for (let p = 0; p < sw * sh; p++) {
@@ -386,6 +511,57 @@ var PicaBlockImage = (() => {
     return canvas;
   }
 
+  // lib/source.ts
+  function loadSource(src, ready, fail) {
+    if (!src) {
+      const sphere = litSphere();
+      ready({ image: sphere, width: sphere.width, height: sphere.height, builtIn: true });
+      return () => void 0;
+    }
+    let live = true;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "async";
+    img.onload = () => {
+      if (live) ready({ image: img, width: img.naturalWidth, height: img.naturalHeight, builtIn: false });
+    };
+    img.onerror = () => {
+      if (live) fail();
+    };
+    img.src = src;
+    return () => {
+      live = false;
+    };
+  }
+  function fitFor(source, fit) {
+    return source.builtIn ? "contain" : fit;
+  }
+  function fitHostAspect(host, width, height) {
+    if (host.clientHeight >= 2 || width <= 0 || height <= 0) return () => void 0;
+    return styleHost(host, { "aspect-ratio": `${width} / ${height}` });
+  }
+  function showNote(host, text) {
+    const note = document.createElement("span");
+    note.setAttribute("data-pica", "");
+    note.setAttribute("aria-hidden", "true");
+    note.textContent = text;
+    note.style.cssText = [
+      "position:absolute",
+      "inset:0",
+      "display:flex",
+      "align-items:center",
+      "justify-content:center",
+      "pointer-events:none",
+      `color:${cssVar("muted")}`
+    ].join(";");
+    const restore = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    host.appendChild(note);
+    return () => {
+      note.remove();
+      restore();
+    };
+  }
+
   // registry/text-mode/block-image/core.ts
   var defaults = {
     src: "",
@@ -394,124 +570,73 @@ var PicaBlockImage = (() => {
     threshold: 0.5,
     dither: true,
     contrast: 1.1,
-    fit: "contain",
+    fit: "cover",
     tone: "auto",
-    fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+    fontFamily: GRID_FONT,
     lineHeight: 1
   };
   var N = 2;
-  var BAYER_SIZE = 4;
-  var BAYER = bayerMatrix(BAYER_SIZE);
-  var BLOCKS = [
-    " ",
-    // 0000
-    "▗",
-    // 0001 bottom right
-    "▖",
-    // 0010 bottom left
-    "▄",
-    // 0011 bottom half
-    "▝",
-    // 0100 top right
-    "▐",
-    // 0101 right half
-    "▞",
-    // 0110 top right and bottom left
-    "▟",
-    // 0111 top right, bottom left and bottom right
-    "▘",
-    // 1000 top left
-    "▚",
-    // 1001 top left and bottom right
-    "▌",
-    // 1010 left half
-    "▙",
-    // 1011 top left, bottom left and bottom right
-    "▀",
-    // 1100 top half
-    "▜",
-    // 1101 top left, top right and bottom right
-    "▛",
-    // 1110 top left, top right and bottom left
-    "█"
-    // 1111 full block
-  ];
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
     let source = null;
-    let sourceW = 0;
-    let sourceH = 0;
     let failed = false;
-    let request = 0;
-    let setAspect = false;
+    let cancel = () => void 0;
+    let undoAspect = () => void 0;
+    let removeNote = null;
     const sampler = createSampler();
     const grid = createGrid(host, gridOptions(props), draw);
     function gridOptions(p) {
       return { fontFamily: p.fontFamily, fontSize: 12, columns: p.columns, lineHeight: p.lineHeight, renderer: "canvas", color: "" };
     }
     function load() {
-      const mine = ++request;
+      cancel();
       failed = false;
-      if (!props.src) {
-        use(litSphere(), 256, 256);
-        return;
-      }
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.decoding = "async";
-      img.onload = () => {
-        if (mine === request) use(img, img.naturalWidth, img.naturalHeight);
-      };
-      img.onerror = () => {
-        if (mine !== request) return;
+      cancel = loadSource(props.src, use, () => {
         source = null;
         failed = true;
         draw();
-      };
-      img.src = props.src;
+      });
     }
-    function use(next, w, h) {
+    function use(next) {
       source = next;
-      sourceW = w;
-      sourceH = h;
-      if (host.clientHeight < 2 && w > 0 && h > 0) {
-        host.style.aspectRatio = `${w} / ${h}`;
-        setAspect = true;
-      }
+      undoAspect();
+      undoAspect = fitHostAspect(host, next.width, next.height);
       draw();
     }
-    function bit(ink, sw, x, y) {
-      const value = ink[y * sw + x] ?? 0;
-      const jitter = props.dither ? (BAYER[y % BAYER_SIZE * BAYER_SIZE + x % BAYER_SIZE] ?? 0.5) - 0.5 : 0;
-      return value + jitter >= props.threshold ? 1 : 0;
+    function setNote(on) {
+      if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+      if (!on && removeNote) {
+        removeNote();
+        removeNote = null;
+      }
     }
     function draw() {
       grid.clear();
-      const { cols, rows, aspect } = grid;
-      if (failed) {
-        const note = "image unavailable";
-        grid.write(Math.max(0, Math.floor((cols - note.length) / 2)), Math.floor(rows / 2), note);
-      } else if (source) {
-        const ink = sampler.sample(source, sourceW, sourceH, host, {
+      setNote(failed);
+      if (source && !failed) {
+        const { cols, rows, aspect } = grid;
+        const ink = sampler.sample(source.image, source.width, source.height, host, {
           cols,
           rows,
           aspect,
           n: N,
-          fit: props.fit,
+          fit: fitFor(source, props.fit),
           tone: props.tone,
           contrast: props.contrast,
           mirror: false
         });
         const sw = cols * N;
+        const sh = rows * N;
+        const bits = threshold(ink, sw, sh, props.threshold, props.dither ? 4 : 0);
         for (let y = 0; y < rows; y++) {
           for (let x = 0; x < cols; x++) {
             const cx = x * N;
             const cy = y * N;
-            const topLeft = bit(ink, sw, cx, cy);
-            const topRight = bit(ink, sw, cx + 1, cy);
-            const bottomLeft = bit(ink, sw, cx, cy + 1);
-            const bottomRight = bit(ink, sw, cx + 1, cy + 1);
-            grid.set(x, y, BLOCKS[topLeft * 8 + topRight * 4 + bottomLeft * 2 + bottomRight] ?? " ");
+            const topLeft = bits[cy * sw + cx] ?? 0;
+            const topRight = bits[cy * sw + cx + 1] ?? 0;
+            const bottomLeft = bits[(cy + 1) * sw + cx] ?? 0;
+            const bottomRight = bits[(cy + 1) * sw + cx + 1] ?? 0;
+            grid.set(x, y, quadrant(topLeft === 1, topRight === 1, bottomLeft === 1, bottomRight === 1));
           }
         }
       }
@@ -533,10 +658,11 @@ var PicaBlockImage = (() => {
         }
       },
       destroy() {
-        request++;
+        cancel();
+        setNote(false);
         grid.destroy();
+        undoAspect();
         unlabelHost(host);
-        if (setAspect) host.style.removeProperty("aspect-ratio");
         delete host.dataset.picaReady;
       }
     };
@@ -545,10 +671,23 @@ var PicaBlockImage = (() => {
 })();
 
 (function () {
-  var instance = PicaBlockImage.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaBlockImage.mount(host, take(window.PICA_PROPS || {}));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
-    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
     if (event.data.type === "pica:ground") {
       document.documentElement.setAttribute("data-ground", event.data.ground);
       instance.update({});

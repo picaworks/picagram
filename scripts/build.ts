@@ -6,9 +6,9 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
-import type { Category, Meta } from "../lib/meta";
+import { CATEGORY_TITLES, type Category, type Meta } from "../lib/meta";
 import { loadAll, ROOT, type Entry } from "./catalog";
-import { BUDGET_BYTES, HOMEPAGE, LICENSE_LABEL, LICENSE_URL, REGISTRY_BASE } from "./config";
+import { BUDGETS, HOMEPAGE, LICENSE_LABEL, LICENSE_URL, REGISTRY_BASE } from "./config";
 import { reactSingleFile, vanillaBundle, vanillaHtml, vanillaParts } from "./single-file";
 
 const run = promisify(execFile);
@@ -18,14 +18,6 @@ export interface Artifact {
   path: string;
   content: string;
 }
-
-const CATEGORY_TITLES: Record<Category, string> = {
-  ascii: "ASCII",
-  "text-mode": "Text mode",
-  dither: "Dither",
-  effects: "Effects",
-  patterns: "Patterns",
-};
 
 /** Every generated file, in a stable order. Throws when a component is over the byte budget. */
 export async function generate(): Promise<Artifact[]> {
@@ -39,15 +31,16 @@ export async function generate(): Promise<Artifact[]> {
     const react = await reactSingleFile(entry);
     const html = vanillaHtml(entry, bundle);
     sizes.set(slug, bundle.gzipBytes);
-    if (bundle.gzipBytes > BUDGET_BYTES) over.push(`${slug} (${bundle.gzipBytes} bytes)`);
+    const budget = BUDGETS[entry.meta.category];
+    if (bundle.gzipBytes > budget) over.push(`${slug} (${bundle.gzipBytes} of ${budget} bytes)`);
     files.push(
       { path: `public/react/${slug}.tsx`, content: react },
       { path: `public/v/${slug}.html`, content: html },
-      { path: `public/v/${slug}.json`, content: `${JSON.stringify(vanillaParts(bundle), null, 2)}\n` },
+      { path: `public/v/${slug}.json`, content: `${JSON.stringify(vanillaParts(entry, bundle), null, 2)}\n` },
       { path: `public/c/${slug}.md`, content: markdown(entry, react, html, bundle.gzipBytes) },
     );
   }
-  if (over.length > 0) throw new Error(`Over the ${BUDGET_BYTES}-byte budget: ${over.join(", ")}`);
+  if (over.length > 0) throw new Error(`Over the byte budget for their category: ${over.join(", ")}`);
   const twins = files.filter((f) => f.path.startsWith("public/c/")).map((f) => f.content);
   files.push(
     { path: "registry.json", content: registryJson(entries) },
@@ -64,6 +57,8 @@ function escapeCell(text: string): string {
 }
 
 function propType(entry: Entry, name: string): string {
+  const declared = entry.types[name];
+  if (declared) return escapeCell(declared);
   const control = entry.meta.controls[name];
   if (control?.type === "select") return control.options.map((o) => `"${o}"`).join(" \\| ");
   const value = entry.defaults[name];
@@ -86,6 +81,17 @@ function markdown(entry: Entry, react: string, html: string, bytes: number): str
   const rows = Object.keys(entry.defaults).map(
     (name) => `| \`${name}\` | ${propType(entry, name)} | \`${escapeCell(JSON.stringify(entry.defaults[name]))}\` | ${escapeCell(entry.docs[name] ?? "")} |`,
   );
+  const events = Object.entries(entry.events).map(
+    ([name, { doc, detail }]) =>
+      `| \`${name}\` | \`on${name.charAt(0).toUpperCase()}${name.slice(1)}\` | \`${escapeCell(detail)}\` | ${escapeCell(doc)} |`,
+  );
+  const tokens = (meta.palette ?? ["fg"]).map((token) => `\`--pica-${token}\``).join(", ");
+  const children =
+    meta.wraps === "content"
+      ? ["## Children", "", "Put content inside the component. It decorates that content and never changes it.", ""]
+      : meta.wraps === "panels"
+        ? ["## Children", "", "Each direct child is one panel, in order.", ""]
+        : [];
   return [
     `# ${meta.title}`,
     "",
@@ -106,6 +112,23 @@ function markdown(entry: Entry, react: string, html: string, bytes: number): str
     "| Prop | Type | Default | Description |",
     "|---|---|---|---|",
     ...rows,
+    "",
+    ...(events.length > 0
+      ? [
+          "## Events",
+          "",
+          "Each event is a CustomEvent on the host named `pica:` plus the event name in lower case. It does not bubble. In React, pass the matching `on` prop.",
+          "",
+          "| Event | React prop | Detail | Description |",
+          "|---|---|---|---|",
+          ...events,
+          "",
+        ]
+      : []),
+    ...children,
+    "## Colors",
+    "",
+    `Draws with ${tokens}. Set ${(meta.palette ?? ["fg"]).length === 1 ? "it" : "them"} on any ancestor, pass \`palette\` to the React component, or put \`palette\` in \`window.PICA_PROPS\` for the HTML file.`,
     "",
     "## React",
     "",
@@ -180,6 +203,8 @@ function catalogJson(entries: readonly Entry[], sizes: ReadonlyMap<string, numbe
     exportName: e.exportName,
     defaults: e.defaults,
     docs: e.docs,
+    types: e.types,
+    events: e.events,
     gzipBytes: sizes.get(e.meta.slug) ?? 0,
   }));
   return `${JSON.stringify(catalog, null, 2)}\n`;

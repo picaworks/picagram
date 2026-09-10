@@ -1,8 +1,10 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
-import { inkColor, parseColor } from "../../../lib/color";
-import { bayerMatrix } from "../../../lib/dither";
+import { createCanvas } from "../../../lib/canvas";
+import { parseColor } from "../../../lib/color";
+import { bayerAt } from "../../../lib/dither";
 import { createLoop } from "../../../lib/loop";
 import { createNoise } from "../../../lib/noise";
+import { watchPalette } from "../../../lib/palette";
 import { createRng } from "../../../lib/rng";
 import type { Mount, MotionProps } from "../../../lib/types";
 
@@ -32,8 +34,6 @@ export const defaults: DitherGradientProps = {
 
 /** Animation time shown under reduced motion, and what captures use, in milliseconds. */
 const STILL_TIME = 1200;
-/** Ordered-dither thresholds, computed once and shared by every instance. */
-const BAYER = bayerMatrix(8);
 /** Radians per second the linear angle turns, at speed 1. */
 const LINEAR_RATE = 0.3;
 /** Radians per second the radial center's x and y drift, at speed 1. Different rates keep the drift from repeating. */
@@ -73,7 +73,6 @@ export const mount: Mount<DitherGradientProps> = (host, initial = {}) => {
   let cols = 1;
   let rows = 1;
   let imageData: ImageData | null = null;
-  let inkKey = "";
   let inkR = 0;
   let inkG = 0;
   let inkB = 0;
@@ -81,29 +80,34 @@ export const mount: Mount<DitherGradientProps> = (host, initial = {}) => {
   let cachedSeed = props.seed;
   let seedState = deriveSeed(props.seed);
 
-  const canvas = document.createElement("canvas");
-  canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;image-rendering:pixelated";
-  canvas.setAttribute("aria-hidden", "true");
+  const surface = createCanvas(host, {
+    autoSize: false,
+    css: "image-rendering:pixelated",
+    onResize: () => {
+      if (layout()) loop.redraw();
+    },
+  });
+  const canvas = surface.canvas;
   const ctx = canvas.getContext("2d");
-  if (getComputedStyle(host).position === "static") host.style.position = "relative";
-  host.style.overflow = "hidden";
-  host.appendChild(canvas);
 
-  function refreshInk(): void {
-    const color = inkColor(host);
-    if (color === inkKey) return;
-    inkKey = color;
-    const [r, g, b, a] = parseColor(color);
+  function syncInk(): void {
+    const [r, g, b, a] = parseColor(palette.colors.fg);
     inkR = r;
     inkG = g;
     inkB = b;
     inkA = a;
   }
 
+  const palette = watchPalette(host, () => {
+    syncInk();
+    loop.redraw();
+  });
+  syncInk();
+
   /** Recomputes the low-resolution canvas size from the host and `scale`. Returns true when it changed. */
   function layout(): boolean {
-    const w = Math.max(1, Math.round(host.clientWidth / props.scale));
-    const h = Math.max(1, Math.round(host.clientHeight / props.scale));
+    const w = Math.max(1, Math.round(surface.cssWidth / props.scale));
+    const h = Math.max(1, Math.round(surface.cssHeight / props.scale));
     if (w === cols && h === rows && imageData) return false;
     cols = w;
     rows = h;
@@ -124,15 +128,14 @@ export const mount: Mount<DitherGradientProps> = (host, initial = {}) => {
       cachedSeed = props.seed;
       seedState = deriveSeed(cachedSeed);
     }
-    refreshInk();
     const buf = data.data;
     const contrast = props.contrast;
     const timeS = t * 0.001 * props.speed;
     const norm = Math.max(cols, rows);
 
-    // Writes one pixel: below the matrix threshold is fully transparent, at or above it is solid ink.
-    function put(o: number, v: number, threshold: number): void {
-      const on = clamp01((v - 0.5) * contrast + 0.5) > threshold;
+    // Writes one pixel: below the Bayer threshold is fully transparent, at or above it is solid ink.
+    function put(o: number, v: number, bayer: number): void {
+      const on = clamp01((v - 0.5) * contrast + 0.5) >= bayer;
       buf[o] = on ? inkR : 0;
       buf[o + 1] = on ? inkG : 0;
       buf[o + 2] = on ? inkB : 0;
@@ -151,11 +154,10 @@ export const mount: Mount<DitherGradientProps> = (host, initial = {}) => {
       let i = 0;
       for (let y = 0; y < rows; y++) {
         const ny = (y + 0.5) / norm - halfH;
-        const rowBayer = (y & 7) * 8;
         for (let x = 0; x < cols; x++) {
           const nx = (x + 0.5) / norm - halfW;
           const v = (nx * dirX + ny * dirY) / (2 * maxR) + 0.5;
-          put(i * 4, v, BAYER[rowBayer + (x & 7)] ?? 0.5);
+          put(i * 4, v, bayerAt(8, x, y));
           i++;
         }
       }
@@ -174,11 +176,10 @@ export const mount: Mount<DitherGradientProps> = (host, initial = {}) => {
       let i = 0;
       for (let y = 0; y < rows; y++) {
         const ny = (y + 0.5) / norm;
-        const rowBayer = (y & 7) * 8;
         for (let x = 0; x < cols; x++) {
           const nx = (x + 0.5) / norm;
           const v = Math.hypot(nx - cx, ny - cy) / maxDist;
-          put(i * 4, v, BAYER[rowBayer + (x & 7)] ?? 0.5);
+          put(i * 4, v, bayerAt(8, x, y));
           i++;
         }
       }
@@ -188,10 +189,9 @@ export const mount: Mount<DitherGradientProps> = (host, initial = {}) => {
       const noise = seedState.noise;
       let i = 0;
       for (let y = 0; y < rows; y++) {
-        const rowBayer = (y & 7) * 8;
         for (let x = 0; x < cols; x++) {
           const v = noise.noise3(x * freq, y * freq, nz) * NOISE_GAIN * 0.5 + 0.5;
-          put(i * 4, v, BAYER[rowBayer + (x & 7)] ?? 0.5);
+          put(i * 4, v, bayerAt(8, x, y));
           i++;
         }
       }
@@ -203,23 +203,19 @@ export const mount: Mount<DitherGradientProps> = (host, initial = {}) => {
   labelHost(host, "");
   layout();
   const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL_TIME, frame: draw });
-  const resizeObserver = typeof ResizeObserver === "function"
-    ? new ResizeObserver(() => {
-        if (layout()) loop.redraw();
-      })
-    : null;
-  resizeObserver?.observe(host);
 
   return {
     update(next) {
       props = { ...props, ...next };
+      palette.refresh();
+      syncInk();
       layout();
       loop.update({ paused: props.paused, time: props.time, fps: props.fps });
     },
     destroy() {
       loop.destroy();
-      resizeObserver?.disconnect();
-      canvas.remove();
+      surface.destroy();
+      palette.destroy();
       unlabelHost(host);
       delete host.dataset.picaReady;
     },

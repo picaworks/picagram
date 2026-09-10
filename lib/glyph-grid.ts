@@ -1,3 +1,6 @@
+import { styleHost } from "./host";
+import { cssVar } from "./palette";
+
 /** A monospace cell grid painted as text rows or onto a canvas. See docs/architecture/contract.md. */
 
 export interface GridOptions {
@@ -24,6 +27,10 @@ export interface Grid {
   readonly rows: number;
   /** Cell width over cell height, for sampling images and fields without stretching them. */
   readonly aspect: number;
+  /** Cell width in CSS pixels, for mapping a pointer or a layout onto cells. */
+  readonly cellWidth: number;
+  /** Cell height in CSS pixels. */
+  readonly cellHeight: number;
   /** The CSS font shorthand glyphs are drawn in. */
   readonly font: string;
   /** Writes one glyph into the back buffer. `color` is honored by the canvas renderer only. */
@@ -36,6 +43,22 @@ export interface Grid {
   flush(): void;
   update(options: Partial<GridOptions>): void;
   destroy(): void;
+}
+
+let measurer: CanvasRenderingContext2D | null | undefined;
+
+/** A glyph's advance as a share of the font size, or 0.6 where nothing can be measured. Measured on every
+ *  call, because a web font can finish loading between calls. */
+function advanceOf(fontFamily: string): number {
+  if (measurer === undefined) measurer = document.createElement("canvas").getContext("2d");
+  if (!measurer) return 0.6;
+  measurer.font = `100px ${fontFamily}`;
+  return measurer.measureText("M").width / 100 || 0.6;
+}
+
+/** The cell a glyph grid draws for this font, in CSS pixels. */
+export function measureCell(fontFamily: string, fontSize: number, lineHeight: number): { w: number; h: number } {
+  return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
 }
 
 /** Creates a grid inside `host`. `onLayout` runs whenever the cell count changes (resize, font load),
@@ -57,22 +80,18 @@ export function createGrid(host: HTMLElement, options: GridOptions, onLayout: ()
   let ctx: CanvasRenderingContext2D | null = null;
   let ink = "";
   let alive = true;
-  const probe = document.createElement("canvas").getContext("2d");
 
-  if (getComputedStyle(host).position === "static") host.style.position = "relative";
-  host.style.overflow = "hidden";
-
+  const restoreHost = styleHost(
+    host,
+    getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" },
+  );
   const font = (): string => `${fontPx}px ${opts.fontFamily}`;
 
   /** Recomputes the cell grid from the host's size. Returns true when the grid was rebuilt. */
   function layout(force: boolean): boolean {
     const w = host.clientWidth;
     const h = host.clientHeight;
-    let advance = 0.6;
-    if (probe) {
-      probe.font = `100px ${opts.fontFamily}`;
-      advance = probe.measureText("M").width / 100 || 0.6;
-    }
+    const advance = advanceOf(opts.fontFamily);
     const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
     const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
     const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
@@ -95,7 +114,7 @@ export function createGrid(host: HTMLElement, options: GridOptions, onLayout: ()
     view?.remove();
     lines = [];
     ctx = null;
-    const color = opts.color || "var(--pica-fg)";
+    const color = opts.color || cssVar("fg");
     const mode = opts.renderer === "auto" ? (cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom") : opts.renderer;
     if (mode === "dom") {
       const pre = document.createElement("pre");
@@ -115,7 +134,14 @@ export function createGrid(host: HTMLElement, options: GridOptions, onLayout: ()
       view = pre;
     } else {
       const canvas = document.createElement("canvas");
-      canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color}`;
+      // Text rows follow a palette change through CSS on their own; a canvas has to be painted again. A 1 ms
+      // color transition turns any change to its ink into a transitionend, which repaints it, for far fewer
+      // bytes than a palette watcher.
+      canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+      canvas.addEventListener("transitionend", (event) => {
+        event.stopPropagation();
+        if (ctx && view === canvas) paintCanvas(ctx, canvas);
+      });
       const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
       canvas.width = Math.max(1, Math.round(width * dpr));
       canvas.height = Math.max(1, Math.round(height * dpr));
@@ -127,6 +153,7 @@ export function createGrid(host: HTMLElement, options: GridOptions, onLayout: ()
       }
       view = canvas;
     }
+    view.setAttribute("data-pica", "");
     view.setAttribute("aria-hidden", "true");
     shown = new Array<string>(rows).fill("\u0000");
     ink = "";
@@ -141,19 +168,30 @@ export function createGrid(host: HTMLElement, options: GridOptions, onLayout: ()
     }
     for (let y = 0; y < rows; y++) {
       const start = y * cols;
-      const rowTints = tints.slice(start, start + cols);
-      let key = cells.slice(start, start + cols).join("");
-      if (rowTints.some((tint) => tint !== undefined)) key += "\u0000" + rowTints.join(",");
+      const text = cells.slice(start, start + cols).join("");
+      let tinted = false;
+      for (let x = 0; x < cols; x++) {
+        if (tints[start + x] !== undefined) {
+          tinted = true;
+          break;
+        }
+      }
+      const key = tinted ? `${text}\u0000${tints.slice(start, start + cols).join(",")}` : text;
       if (key === shown[y]) continue;
       shown[y] = key;
       const top = y * cellH;
       context.clearRect(0, top, width, cellH);
+      if (!tinted) {
+        context.fillStyle = ink;
+        context.fillText(text, 0, top + cellH / 2);
+        continue;
+      }
       // One fillText per run of same-colored cells: monospace advances keep every glyph on its cell.
       let x = 0;
       while (x < cols) {
-        const tint = rowTints[x] ?? ink;
+        const tint = tints[start + x] ?? ink;
         let end = x + 1;
-        while (end < cols && (rowTints[end] ?? ink) === tint) end++;
+        while (end < cols && (tints[start + end] ?? ink) === tint) end++;
         context.fillStyle = tint;
         context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
         x = end;
@@ -202,6 +240,12 @@ export function createGrid(host: HTMLElement, options: GridOptions, onLayout: ()
     get aspect() {
       return cellW / cellH;
     },
+    get cellWidth() {
+      return cellW;
+    },
+    get cellHeight() {
+      return cellH;
+    },
     get font() {
       return font();
     },
@@ -233,6 +277,7 @@ export function createGrid(host: HTMLElement, options: GridOptions, onLayout: ()
       document.fonts.removeEventListener("loadingdone", onFonts);
       view?.remove();
       view = null;
+      restoreHost();
     },
   };
 }

@@ -1,7 +1,8 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
-import { inkColor } from "../../../lib/color";
+import { createCanvas } from "../../../lib/canvas";
+import { watchPalette } from "../../../lib/palette";
 import { createSampler } from "../../../lib/sample";
-import { litSphere } from "../../../lib/subject";
+import { fitFor, fitHostAspect, loadSource, showNote, type Source } from "../../../lib/source";
 import type { Mount } from "../../../lib/types";
 
 export interface HalftoneImageProps {
@@ -40,53 +41,41 @@ const MAX_CIRCLE = 0.56;
 
 export const mount: Mount<HalftoneImageProps> = (host, initial = {}) => {
   let props: HalftoneImageProps = { ...defaults, ...initial };
-  let source: CanvasImageSource | null = null;
-  let sourceW = 0;
-  let sourceH = 0;
+  let source: Source | null = null;
   let failed = false;
-  let request = 0;
-  let setAspect = false;
+  let cancel = (): void => undefined;
+  let undoAspect = (): void => undefined;
+  let removeNote: (() => void) | null = null;
   const sampler = createSampler();
-  const canvas = document.createElement("canvas");
-  canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none";
-  canvas.setAttribute("aria-hidden", "true");
+  const surface = createCanvas(host, { onResize: () => draw() });
+  const canvas = surface.canvas;
   const ctx = canvas.getContext("2d");
-  if (getComputedStyle(host).position === "static") host.style.position = "relative";
-  host.style.overflow = "hidden";
-  host.appendChild(canvas);
+  const palette = watchPalette(host, () => draw());
 
   function load(): void {
-    const mine = ++request;
+    cancel();
     failed = false;
-    if (!props.src) {
-      use(litSphere(), 256, 256);
-      return;
-    }
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.decoding = "async";
-    img.onload = () => {
-      if (mine === request) use(img, img.naturalWidth, img.naturalHeight);
-    };
-    img.onerror = () => {
-      if (mine !== request) return;
+    cancel = loadSource(props.src, use, () => {
       source = null;
       failed = true;
       draw();
-    };
-    img.src = props.src;
+    });
   }
 
-  function use(next: CanvasImageSource, w: number, h: number): void {
+  function use(next: Source): void {
     source = next;
-    sourceW = w;
-    sourceH = h;
     // A host with no height of its own takes the image's proportions.
-    if (host.clientHeight < 2 && w > 0 && h > 0) {
-      host.style.aspectRatio = `${w} / ${h}`;
-      setAspect = true;
-    }
+    undoAspect();
+    undoAspect = fitHostAspect(host, next.width, next.height);
     draw();
+  }
+
+  function setNote(on: boolean): void {
+    if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+    if (!on && removeNote) {
+      removeNote();
+      removeNote = null;
+    }
   }
 
   /** Adds a rectangle centered at (cx, cy) to the current path, `halfU` and `halfV` out along the
@@ -105,18 +94,16 @@ export const mount: Mount<HalftoneImageProps> = (host, initial = {}) => {
   }
 
   function draw(): void {
-    const w = host.clientWidth;
-    const h = host.clientHeight;
-    const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
-    canvas.width = Math.max(1, Math.round(w * dpr));
-    canvas.height = Math.max(1, Math.round(h * dpr));
-    if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const w = surface.cssWidth;
+    const h = surface.cssHeight;
+    if (ctx) ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+    setNote(failed);
     if (ctx && source && !failed) {
       const cell = props.cell > 0 ? props.cell : 1;
       const cols = Math.max(1, Math.round(w / cell));
       const rows = Math.max(1, Math.round(h / cell));
-      const ink = sampler.sample(source, sourceW, sourceH, host, {
-        cols, rows, aspect: 1, n: 1, fit: props.fit, tone: props.tone, contrast: props.contrast, mirror: false,
+      const ink = sampler.sample(source.image, source.width, source.height, host, {
+        cols, rows, aspect: 1, n: 1, fit: fitFor(source, props.fit), tone: props.tone, contrast: props.contrast, mirror: false,
       });
       // The dot grid is a rotated lattice: u and v are its two axes, each `cell` long.
       const angleRad = (props.angle * Math.PI) / 180;
@@ -139,7 +126,7 @@ export const mount: Mount<HalftoneImageProps> = (host, initial = {}) => {
       iMax = Math.ceil(iMax) + 1;
       jMin = Math.floor(jMin) - 1;
       jMax = Math.ceil(jMax) + 1;
-      ctx.fillStyle = inkColor(host);
+      ctx.fillStyle = palette.colors.fg;
       ctx.beginPath();
       for (let i = iMin; i <= iMax; i++) {
         for (let j = jMin; j <= jMax; j++) {
@@ -181,12 +168,11 @@ export const mount: Mount<HalftoneImageProps> = (host, initial = {}) => {
         }
       }
       ctx.fill();
+    } else if (ctx) {
+      ctx.clearRect(0, 0, w, h);
     }
     if (source || failed) host.dataset.picaReady = "true";
   }
-
-  const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => draw()) : null;
-  resizeObserver?.observe(host);
 
   labelHost(host, props.alt);
   load();
@@ -195,16 +181,18 @@ export const mount: Mount<HalftoneImageProps> = (host, initial = {}) => {
     update(next) {
       const before = props;
       props = { ...props, ...next };
+      palette.refresh();
       labelHost(host, props.alt);
       if (props.src !== before.src) load();
       else draw();
     },
     destroy() {
-      request++;
-      resizeObserver?.disconnect();
-      canvas.remove();
+      cancel();
+      setNote(false);
+      surface.destroy();
+      undoAspect();
+      palette.destroy();
       unlabelHost(host);
-      if (setAspect) host.style.removeProperty("aspect-ratio");
       delete host.dataset.picaReady;
     },
   };

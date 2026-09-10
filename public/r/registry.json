@@ -558,6 +558,48 @@
       }
     },
     {
+      "name": "mesh-gradient",
+      "type": "registry:component",
+      "title": "Mesh Gradient",
+      "description": "A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/mesh-gradient.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Domain warping",
+            "author": "Inigo Quilez",
+            "url": "https://iquilezles.org/articles/warp/",
+            "license": "Article"
+          },
+          {
+            "relation": "technique",
+            "title": "Improving Noise",
+            "author": "Ken Perlin",
+            "url": "https://mrl.cs.nyu.edu/~perlin/paper445.pdf",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Ordered dithering",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
       "name": "ascii-frame",
       "type": "registry:component",
       "title": "ASCII Frame",
@@ -724,6 +766,34 @@
             "author": "Surma",
             "url": "https://surma.dev/things/ditherpunk/",
             "license": "Article"
+          }
+        ]
+      }
+    },
+    {
+      "name": "button",
+      "type": "registry:component",
+      "title": "Button",
+      "description": "A button in four looks, solid, outline, ghost, and monospace brackets, with a braille spinner while it loads.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/button.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Button pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+            "license": "W3C document"
           }
         ]
       }

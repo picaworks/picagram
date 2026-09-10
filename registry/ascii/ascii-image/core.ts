@@ -1,8 +1,9 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { FALLBACK_RAMP, matchShape, measureRamp, measureShapes, pick } from "../../../lib/ramp";
 import { createSampler } from "../../../lib/sample";
-import { litSphere } from "../../../lib/subject";
+import { fitFor, fitHostAspect, loadSource, showNote, type Source } from "../../../lib/source";
 import type { Mount } from "../../../lib/types";
 
 export interface AsciiImageProps {
@@ -16,7 +17,7 @@ export interface AsciiImageProps {
   glyphs: string;
   /** Contrast around mid grey. 1 leaves the image as it is. */
   contrast: number;
-  /** "cover" fills the host and crops; "contain" fits the whole image. */
+  /** "cover" fills the host and crops; "contain" fits the whole image. The built-in sphere is always shown whole. */
   fit: "cover" | "contain";
   /** "auto" reads the host's colors. "light-on-dark" maps bright pixels to dense glyphs; "dark-on-light" does the reverse. */
   tone: "auto" | "light-on-dark" | "dark-on-light";
@@ -37,7 +38,7 @@ export const defaults: AsciiImageProps = {
   fit: "cover",
   tone: "auto",
   shape: false,
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1.2,
 };
 
@@ -46,12 +47,11 @@ const SHAPE_N = 3;
 
 export const mount: Mount<AsciiImageProps> = (host, initial = {}) => {
   let props: AsciiImageProps = { ...defaults, ...initial };
-  let source: CanvasImageSource | null = null;
-  let sourceW = 0;
-  let sourceH = 0;
+  let source: Source | null = null;
   let failed = false;
-  let request = 0;
-  let setAspect = false;
+  let cancel = (): void => undefined;
+  let undoAspect = (): void => undefined;
+  let removeNote: (() => void) | null = null;
   const sampler = createSampler();
   const grid = createGrid(host, gridOptions(props), draw);
 
@@ -60,49 +60,39 @@ export const mount: Mount<AsciiImageProps> = (host, initial = {}) => {
   }
 
   function load(): void {
-    const mine = ++request;
+    cancel();
     failed = false;
-    if (!props.src) {
-      use(litSphere(), 256, 256);
-      return;
-    }
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.decoding = "async";
-    img.onload = () => {
-      if (mine === request) use(img, img.naturalWidth, img.naturalHeight);
-    };
-    img.onerror = () => {
-      if (mine !== request) return;
+    cancel = loadSource(props.src, use, () => {
       source = null;
       failed = true;
       draw();
-    };
-    img.src = props.src;
+    });
   }
 
-  function use(next: CanvasImageSource, w: number, h: number): void {
+  function use(next: Source): void {
     source = next;
-    sourceW = w;
-    sourceH = h;
     // A host with no height of its own takes the image's proportions.
-    if (host.clientHeight < 2 && w > 0 && h > 0) {
-      host.style.aspectRatio = `${w} / ${h}`;
-      setAspect = true;
-    }
+    undoAspect();
+    undoAspect = fitHostAspect(host, next.width, next.height);
     draw();
+  }
+
+  function setNote(on: boolean): void {
+    if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+    if (!on && removeNote) {
+      removeNote();
+      removeNote = null;
+    }
   }
 
   function draw(): void {
     grid.clear();
-    const { cols, rows, aspect } = grid;
-    if (failed) {
-      const note = "image unavailable";
-      grid.write(Math.max(0, Math.floor((cols - note.length) / 2)), Math.floor(rows / 2), note);
-    } else if (source) {
+    setNote(failed);
+    if (source && !failed) {
+      const { cols, rows, aspect } = grid;
       const n = props.shape ? SHAPE_N : 1;
-      const ink = sampler.sample(source, sourceW, sourceH, host, {
-        cols, rows, aspect, n, fit: props.fit, tone: props.tone, contrast: props.contrast, mirror: false,
+      const ink = sampler.sample(source.image, source.width, source.height, host, {
+        cols, rows, aspect, n, fit: fitFor(source, props.fit), tone: props.tone, contrast: props.contrast, mirror: false,
       });
       const sw = cols * n;
       const shapes = props.shape ? measureShapes(props.glyphs, props.fontFamily, props.lineHeight, SHAPE_N) : null;
@@ -141,10 +131,11 @@ export const mount: Mount<AsciiImageProps> = (host, initial = {}) => {
       }
     },
     destroy() {
-      request++;
+      cancel();
+      setNote(false);
       grid.destroy();
+      undoAspect();
       unlabelHost(host);
-      if (setAspect) host.style.removeProperty("aspect-ratio");
       delete host.dataset.picaReady;
     },
   };

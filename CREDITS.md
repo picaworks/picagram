@@ -88,6 +88,12 @@ Original to Pica.
 
 Original to Pica.
 
+## Mesh Gradient (`mesh-gradient`)
+
+- Technique from [Domain warping](https://iquilezles.org/articles/warp/) by Inigo Quilez (Article).
+- Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
+- Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
+
 ## ASCII Frame (`ascii-frame`)
 
 Original to Pica.
@@ -116,3 +122,7 @@ Original to Pica.
 
 - Technique from [Braille Patterns, Unicode block U+2800](https://en.wikipedia.org/wiki/Braille_Patterns) by Wikipedia (Reference, no code).
 - Technique from [Ditherpunk](https://surma.dev/things/ditherpunk/) by Surma (Article).
+
+## Button (`button`)
+
+- Technique from [Button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).

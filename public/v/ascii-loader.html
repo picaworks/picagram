@@ -10,14 +10,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>ASCII Loader · Pica</title>
-<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 @media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
-#pica { width: 100%; height: 100%; }</style>
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
 </head>
 <body>
-<div id="pica"></div>
+<div class="pica-stage"><span id="pica"></span></div>
 <script>
 "use strict";
 var PicaAsciiLoader = (() => {
@@ -64,11 +68,30 @@ var PicaAsciiLoader = (() => {
     host.removeAttribute("aria-hidden");
   }
 
+  // lib/blocks.ts
+  var BRAILLE_BASE = 10240;
+  function brailleDot(row, col) {
+    if (row === 3) return col === 0 ? 64 : 128;
+    return 1 << (col === 0 ? row : row + 3);
+  }
+  function braille(bits) {
+    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
+  }
+  var LEFT_EIGHTHS = " ▏▎▍▌▋▊▉█";
+  var SHADES = " ░▒▓█";
+  var clampEighths = (n) => Math.max(0, Math.min(8, Math.round(n)));
+  function leftEighth(n) {
+    return LEFT_EIGHTHS[clampEighths(n)] ?? " ";
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
   // lib/loop.ts
   var MAX_STEP_MS = 100;
   function createLoop(options) {
-    const { el, frame, still } = options;
-    let state = { paused: options.paused, time: options.time, fps: options.fps };
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
     let t = 0;
     let last = 0;
     let raf = 0;
@@ -77,7 +100,7 @@ var PicaAsciiLoader = (() => {
     const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
     let reduced = motionQuery?.matches ?? false;
     const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
-    const heldTime = () => state.time !== null ? state.time : reduced ? still : t;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
     function tick(now) {
       raf = 0;
       if (!animating()) return;
@@ -86,7 +109,7 @@ var PicaAsciiLoader = (() => {
       if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
         t += Math.min(elapsed, MAX_STEP_MS);
         last = now;
-        frame(t);
+        frame(t, reduced);
       }
       raf = requestAnimationFrame(tick);
     }
@@ -99,7 +122,7 @@ var PicaAsciiLoader = (() => {
         cancelAnimationFrame(raf);
         raf = 0;
       }
-      if (!go && drawHeld) frame(heldTime());
+      if (!go && drawHeld) frame(heldTime(), reduced);
     }
     const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
       const entry = entries[entries.length - 1];
@@ -117,17 +140,20 @@ var PicaAsciiLoader = (() => {
       sync(true);
     };
     motionQuery?.addEventListener("change", onMotion);
-    frame(heldTime());
+    frame(heldTime(), reduced);
     sync(false);
     return {
       update(next) {
         const timeChanged = next.time !== void 0 && next.time !== state.time;
         state = { ...state, ...next };
         if (state.time !== null) t = state.time;
-        sync(timeChanged || next.paused !== void 0);
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
       },
       redraw() {
-        frame(heldTime());
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
       },
       destroy() {
         if (raf !== 0) cancelAnimationFrame(raf);
@@ -139,6 +165,17 @@ var PicaAsciiLoader = (() => {
     };
   }
 
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
   // registry/text-mode/ascii-loader/core.ts
   var defaults = {
     variant: "braille",
@@ -146,13 +183,12 @@ var PicaAsciiLoader = (() => {
     width: 24,
     label: "loading",
     speed: 1,
-    fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+    fontFamily: GRID_FONT,
     fps: 12,
     paused: false,
     time: null,
     seed: 1
   };
-  var BRAILLE_BASE = 10240;
   var BRAILLE_PATH = [
     [0, 0],
     [0, 1],
@@ -164,24 +200,19 @@ var PicaAsciiLoader = (() => {
     [1, 0]
   ];
   var BRAILLE_STEP_MS = 150;
-  function brailleBit(row, col) {
-    if (col === 0) return row < 3 ? row : 6;
-    return row < 3 ? row + 3 : 7;
-  }
   function brailleFrame(t, speed) {
     const step = Math.floor(t * speed / BRAILLE_STEP_MS);
     const at = BRAILLE_PATH[(step % BRAILLE_PATH.length + BRAILLE_PATH.length) % BRAILLE_PATH.length];
     const [row, col] = at ?? [0, 0];
-    return String.fromCodePoint(BRAILLE_BASE + (1 << brailleBit(row, col)));
+    return braille(brailleDot(row, col));
   }
-  var SHADES = ["░", "▒", "▓", "█"];
   var SHADE_PATH = [0, 1, 2, 3, 2, 1];
   var SHADE_STEP_MS = 150;
   function blocksFrame(t, speed) {
     const step = Math.floor(t * speed / SHADE_STEP_MS);
     const at = (step % SHADE_PATH.length + SHADE_PATH.length) % SHADE_PATH.length;
     const idx = SHADE_PATH[at] ?? 0;
-    return SHADES[idx] ?? "";
+    return SHADES[idx + 1] ?? "";
   }
   var DOTS_STEP_MS = 400;
   function dotsFrame(t, speed) {
@@ -189,12 +220,10 @@ var PicaAsciiLoader = (() => {
     const at = (step % 3 + 3) % 3;
     return ".".repeat(at + 1);
   }
-  var FULL_BLOCK = "█";
-  var TRACK = "░";
+  var FULL_BLOCK = leftEighth(8);
+  var TRACK = SHADES[1] ?? "░";
   function eighthBlock(n) {
-    if (n <= 0) return TRACK;
-    if (n >= 8) return FULL_BLOCK;
-    return String.fromCodePoint(9608 + (8 - n));
+    return n <= 0 ? TRACK : leftEighth(n);
   }
   function barDeterminate(progress, width) {
     const clamped = Math.min(1, Math.max(0, progress));
@@ -231,8 +260,9 @@ var PicaAsciiLoader = (() => {
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
     const glyphs = document.createElement("span");
+    glyphs.setAttribute("data-pica", "");
     glyphs.setAttribute("aria-hidden", "true");
-    glyphs.style.cssText = "white-space:nowrap;";
+    glyphs.style.cssText = `white-space:nowrap;color:${cssVar("fg")}`;
     host.appendChild(glyphs);
     function applyA11y() {
       labelHost(host, props.label, props.progress === null ? "status" : "progressbar");
@@ -282,10 +312,23 @@ var PicaAsciiLoader = (() => {
 })();
 
 (function () {
-  var instance = PicaAsciiLoader.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaAsciiLoader.mount(host, take(window.PICA_PROPS || {}));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
-    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
     if (event.data.type === "pica:ground") {
       document.documentElement.setAttribute("data-ground", event.data.ground);
       instance.update({});

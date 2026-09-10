@@ -9,6 +9,7 @@ export const meta: Meta = {
   wave: 2,
   animated: true,
   decorative: false,
+  stage: "inline",
   controls: {
     text: { type: "string" },
     interval: { type: "number", min: 1500, max: 8000, step: 100 },

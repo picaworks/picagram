@@ -1,4 +1,5 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { createLoop } from "../../../lib/loop";
 import { createNoise } from "../../../lib/noise";
@@ -36,7 +37,7 @@ export const defaults: AsciiNoiseFieldProps = {
   density: 0.45,
   glyphs: FALLBACK_RAMP,
   fontSize: 12,
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1.2,
   fps: 24,
   paused: false,

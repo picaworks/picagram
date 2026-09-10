@@ -9,6 +9,7 @@ export const meta: Meta = {
   wave: 1,
   animated: true,
   decorative: false,
+  stage: "inline",
   controls: {
     variant: { type: "select", options: ["braille", "bar", "blocks", "dots"] },
     progress: { type: "number", min: 0, max: 1, step: 0.01 },

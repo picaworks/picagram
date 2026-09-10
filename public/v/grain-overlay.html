@@ -10,11 +10,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Grain Overlay · Pica</title>
-<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 @media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
-#pica { width: 100%; height: 100%; }</style>
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
 </head>
 <body>
 <div id="pica"></div>
@@ -46,29 +50,72 @@ var PicaGrainOverlay = (() => {
     mount: () => mount
   });
 
-  // lib/a11y.ts
-  function labelHost(host, label, role = "img") {
-    if (label) {
-      host.setAttribute("role", role);
-      host.setAttribute("aria-label", label);
-      host.removeAttribute("aria-hidden");
-    } else {
-      host.removeAttribute("role");
-      host.removeAttribute("aria-label");
-      host.setAttribute("aria-hidden", "true");
-    }
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
   }
-  function unlabelHost(host) {
-    host.removeAttribute("role");
-    host.removeAttribute("aria-label");
-    host.removeAttribute("aria-hidden");
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
   }
 
   // lib/loop.ts
   var MAX_STEP_MS = 100;
   function createLoop(options) {
-    const { el, frame, still } = options;
-    let state = { paused: options.paused, time: options.time, fps: options.fps };
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
     let t = 0;
     let last = 0;
     let raf = 0;
@@ -77,7 +124,7 @@ var PicaGrainOverlay = (() => {
     const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
     let reduced = motionQuery?.matches ?? false;
     const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
-    const heldTime = () => state.time !== null ? state.time : reduced ? still : t;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
     function tick(now) {
       raf = 0;
       if (!animating()) return;
@@ -86,7 +133,7 @@ var PicaGrainOverlay = (() => {
       if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
         t += Math.min(elapsed, MAX_STEP_MS);
         last = now;
-        frame(t);
+        frame(t, reduced);
       }
       raf = requestAnimationFrame(tick);
     }
@@ -99,7 +146,7 @@ var PicaGrainOverlay = (() => {
         cancelAnimationFrame(raf);
         raf = 0;
       }
-      if (!go && drawHeld) frame(heldTime());
+      if (!go && drawHeld) frame(heldTime(), reduced);
     }
     const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
       const entry = entries[entries.length - 1];
@@ -117,17 +164,20 @@ var PicaGrainOverlay = (() => {
       sync(true);
     };
     motionQuery?.addEventListener("change", onMotion);
-    frame(heldTime());
+    frame(heldTime(), reduced);
     sync(false);
     return {
       update(next) {
         const timeChanged = next.time !== void 0 && next.time !== state.time;
         state = { ...state, ...next };
         if (state.time !== null) t = state.time;
-        sync(timeChanged || next.paused !== void 0);
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
       },
       redraw() {
-        frame(heldTime());
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
       },
       destroy() {
         if (raf !== 0) cancelAnimationFrame(raf);
@@ -150,6 +200,14 @@ var PicaGrainOverlay = (() => {
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
   }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
 
   // registry/effects/grain-overlay/core.ts
   var defaults = {
@@ -168,12 +226,8 @@ var PicaGrainOverlay = (() => {
   var CONTRAST_SLOPE = 3;
   var CONTRAST_INTERCEPT = -1;
   var SHIFT_PX = 6;
-  var instances = 0;
-  function stepSeed(seed, step) {
-    return Math.imul(Math.round(seed), 2654435761) + step >>> 0;
-  }
   function jitterOffset(seed, step) {
-    const rng = createRng(stepSeed(seed, step));
+    const rng = createRng(hashSeed(seed, step));
     return [Math.round((rng() * 2 - 1) * SHIFT_PX), Math.round((rng() * 2 - 1) * SHIFT_PX)];
   }
   function noiseTile(seed, frequency, size) {
@@ -181,53 +235,42 @@ var PicaGrainOverlay = (() => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><filter id="g" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="${frequency}" numOctaves="${OCTAVES}" seed="${Math.round(seed)}" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1"/><feComponentTransfer><feFuncR ${curve}/><feFuncG ${curve}/><feFuncB ${curve}/></feComponentTransfer></filter><rect width="100%" height="100%" filter="url(#g)"/></svg>`;
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
   }
-  function sheet(className, p) {
-    const rules = [
-      "position:absolute",
-      "inset:0",
-      "pointer-events:none",
+  function rules(selector, p) {
+    const declarations = [
       `background-image:url("${noiseTile(p.seed, p.frequency, p.size)}")`,
       "background-repeat:repeat",
       `background-size:${p.size}px ${p.size}px`,
       `mix-blend-mode:${p.blend}`,
       `opacity:${p.opacity}`
     ];
-    return `.${className}{${rules.join(";")}}`;
+    return `${selector} > div[data-pica]{${declarations.join(";")}}`;
   }
   function shouldAnimate(p) {
     return !p.paused && p.jitter;
   }
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
-    const className = `pica-grain-overlay-${++instances}`;
-    const reposition = getComputedStyle(host).position === "static";
-    const style = document.createElement("style");
-    const layer = document.createElement("div");
-    layer.className = className;
-    layer.setAttribute("aria-hidden", "true");
+    const grain = layer(host, "over");
+    const sheet = scope(host);
+    const restoreHost = styleHost(host, { isolation: "isolate" });
     function frame(t) {
       if (props.jitter) {
         const step = Math.floor(t / (1e3 / Math.max(1, props.fps)));
         const [dx, dy] = jitterOffset(props.seed, step);
-        layer.style.backgroundPosition = `${dx}px ${dy}px`;
+        grain.el.style.backgroundPosition = `${dx}px ${dy}px`;
       } else {
-        layer.style.backgroundPosition = "0px 0px";
+        grain.el.style.backgroundPosition = "0px 0px";
       }
       host.dataset.picaReady = "true";
     }
-    labelHost(host, "");
-    if (reposition) host.style.position = "relative";
-    host.style.isolation = "isolate";
-    style.textContent = sheet(className, props);
-    host.appendChild(style);
-    host.appendChild(layer);
+    sheet.setRules(rules(sheet.selector, props));
     const loop = createLoop({ el: host, fps: props.fps, paused: !shouldAnimate(props), time: props.time, still: STILL_TIME, frame });
     return {
       update(next) {
         const before = props;
         props = { ...props, ...next };
         if (props.seed !== before.seed || props.frequency !== before.frequency || props.size !== before.size || props.opacity !== before.opacity || props.blend !== before.blend) {
-          style.textContent = sheet(className, props);
+          sheet.setRules(rules(sheet.selector, props));
         }
         const motion = {};
         if (shouldAnimate(props) !== shouldAnimate(before)) motion.paused = !shouldAnimate(props);
@@ -238,11 +281,9 @@ var PicaGrainOverlay = (() => {
       },
       destroy() {
         loop.destroy();
-        style.remove();
-        layer.remove();
-        unlabelHost(host);
-        if (reposition) host.style.removeProperty("position");
-        host.style.removeProperty("isolation");
+        sheet.destroy();
+        grain.remove();
+        restoreHost();
         delete host.dataset.picaReady;
       }
     };
@@ -251,10 +292,23 @@ var PicaGrainOverlay = (() => {
 })();
 
 (function () {
-  var instance = PicaGrainOverlay.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaGrainOverlay.mount(host, take(window.PICA_PROPS || {}));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
-    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
     if (event.data.type === "pica:ground") {
       document.documentElement.setAttribute("data-ground", event.data.ground);
       instance.update({});

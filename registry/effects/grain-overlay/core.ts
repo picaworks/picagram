@@ -1,6 +1,6 @@
-import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { layer, scope, styleHost } from "../../../lib/host";
 import { createLoop, type LoopState } from "../../../lib/loop";
-import { createRng } from "../../../lib/rng";
+import { createRng, hashSeed } from "../../../lib/rng";
 import type { Mount, MotionProps } from "../../../lib/types";
 
 export interface GrainOverlayProps extends MotionProps {
@@ -46,18 +46,10 @@ const CONTRAST_INTERCEPT = -1;
 /** How far a jitter step shifts the tile from rest, in pixels, along each axis. */
 const SHIFT_PX = 6;
 
-/** Counts instances so every host gets a class name of its own, even with several copies on one page. */
-let instances = 0;
-
-/** Mixes a seed and a step index into one 32-bit value, so the jitter offset at any step is a pure
- *  function of the seed and the animation time, never of how many steps came before it. */
-function stepSeed(seed: number, step: number): number {
-  return (Math.imul(Math.round(seed), 0x9e3779b1) + step) >>> 0;
-}
-
-/** The pixel offset one jitter step draws the tile at: two independent draws of the same generator. */
+/** The pixel offset one jitter step draws the tile at. A pure function of the seed and the step, so any
+ *  animation time draws the same offset whatever came before it. */
 function jitterOffset(seed: number, step: number): [number, number] {
-  const rng = createRng(stepSeed(seed, step));
+  const rng = createRng(hashSeed(seed, step));
   return [Math.round((rng() * 2 - 1) * SHIFT_PX), Math.round((rng() * 2 - 1) * SHIFT_PX)];
 }
 
@@ -79,20 +71,17 @@ function noiseTile(seed: number, frequency: number, size: number): string {
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
-/** The scoped rule for one instance's grain layer: the tile as a repeating background, composited with
- *  `blend` at `opacity`. Jitter moves the tile through `backgroundPosition` directly, not through here. */
-function sheet(className: string, p: GrainOverlayProps): string {
-  const rules = [
-    "position:absolute",
-    "inset:0",
-    "pointer-events:none",
+/** The scoped rule for this host's grain layer: the tile as a repeating background, composited with `blend`
+ *  at `opacity`. Jitter moves the tile through backgroundPosition directly, not through here. */
+function rules(selector: string, p: GrainOverlayProps): string {
+  const declarations = [
     `background-image:url("${noiseTile(p.seed, p.frequency, p.size)}")`,
     "background-repeat:repeat",
     `background-size:${p.size}px ${p.size}px`,
     `mix-blend-mode:${p.blend}`,
     `opacity:${p.opacity}`,
   ];
-  return `.${className}{${rules.join(";")}}`;
+  return `${selector} > div[data-pica]{${declarations.join(";")}}`;
 }
 
 /** Whether the loop should actually tick. Turning jitter off holds the frame exactly like pausing does. */
@@ -102,31 +91,25 @@ function shouldAnimate(p: GrainOverlayProps): boolean {
 
 export const mount: Mount<GrainOverlayProps> = (host, initial = {}) => {
   let props: GrainOverlayProps = { ...defaults, ...initial };
-  const className = `pica-grain-overlay-${++instances}`;
-  const reposition = getComputedStyle(host).position === "static";
-  const style = document.createElement("style");
-  const layer = document.createElement("div");
-  layer.className = className;
-  layer.setAttribute("aria-hidden", "true");
+  // The grain sits over the content in a layer of its own, hidden from assistive technology. The host and
+  // the content inside it stay readable and clickable, exactly as they were.
+  const grain = layer(host, "over");
+  const sheet = scope(host);
+  // Keeps the blend mode composited only against this host's own content, not the rest of the page.
+  const restoreHost = styleHost(host, { isolation: "isolate" });
 
   function frame(t: number): void {
     if (props.jitter) {
       const step = Math.floor(t / (1000 / Math.max(1, props.fps)));
       const [dx, dy] = jitterOffset(props.seed, step);
-      layer.style.backgroundPosition = `${dx}px ${dy}px`;
+      grain.el.style.backgroundPosition = `${dx}px ${dy}px`;
     } else {
-      layer.style.backgroundPosition = "0px 0px";
+      grain.el.style.backgroundPosition = "0px 0px";
     }
     host.dataset.picaReady = "true";
   }
 
-  labelHost(host, "");
-  if (reposition) host.style.position = "relative";
-  // Keeps the blend mode composited only against this host's own content, not the rest of the page.
-  host.style.isolation = "isolate";
-  style.textContent = sheet(className, props);
-  host.appendChild(style);
-  host.appendChild(layer);
+  sheet.setRules(rules(sheet.selector, props));
   const loop = createLoop({ el: host, fps: props.fps, paused: !shouldAnimate(props), time: props.time, still: STILL_TIME, frame });
 
   return {
@@ -140,7 +123,7 @@ export const mount: Mount<GrainOverlayProps> = (host, initial = {}) => {
         props.opacity !== before.opacity ||
         props.blend !== before.blend
       ) {
-        style.textContent = sheet(className, props);
+        sheet.setRules(rules(sheet.selector, props));
       }
       const motion: Partial<LoopState> = {};
       if (shouldAnimate(props) !== shouldAnimate(before)) motion.paused = !shouldAnimate(props);
@@ -151,11 +134,9 @@ export const mount: Mount<GrainOverlayProps> = (host, initial = {}) => {
     },
     destroy() {
       loop.destroy();
-      style.remove();
-      layer.remove();
-      unlabelHost(host);
-      if (reposition) host.style.removeProperty("position");
-      host.style.removeProperty("isolation");
+      sheet.destroy();
+      grain.remove();
+      restoreHost();
       delete host.dataset.picaReady;
     },
   };

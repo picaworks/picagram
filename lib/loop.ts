@@ -9,21 +9,24 @@ export interface LoopState {
   time: number | null;
   /** Frames per second ceiling. */
   fps: number;
+  /** The frame shown under prefers-reduced-motion, in milliseconds of animation time. */
+  still: number;
 }
 
 export interface LoopOptions extends LoopState {
   /** Element whose visibility on screen gates the loop. */
   el: Element;
-  /** Draws the frame for animation time `t`, in milliseconds. */
-  frame: (t: number) => void;
-  /** The frame shown under prefers-reduced-motion, in milliseconds of animation time. */
-  still: number;
+  /** Draws the frame for animation time `t`, in milliseconds. `reduced` is true while the viewer asks for
+   *  reduced motion, so a core can drop pointer effects then too. */
+  frame: (t: number, reduced: boolean) => void;
 }
 
 export interface Loop {
   update(state: Partial<LoopState>): void;
   /** Draws the current frame again, for example after a resize. */
   redraw(): void;
+  /** Whether the viewer asks for reduced motion right now. */
+  readonly reduced: boolean;
   destroy(): void;
 }
 
@@ -31,8 +34,8 @@ export interface Loop {
 const MAX_STEP_MS = 100;
 
 export function createLoop(options: LoopOptions): Loop {
-  const { el, frame, still } = options;
-  let state: LoopState = { paused: options.paused, time: options.time, fps: options.fps };
+  const { el, frame } = options;
+  let state: LoopState = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
   let t = 0;
   let last = 0;
   let raf = 0;
@@ -43,7 +46,7 @@ export function createLoop(options: LoopOptions): Loop {
 
   const animating = (): boolean =>
     !state.paused && state.time === null && !reduced && onScreen && tabVisible;
-  const heldTime = (): number => (state.time !== null ? state.time : reduced ? still : t);
+  const heldTime = (): number => (state.time !== null ? state.time : reduced ? state.still : t);
 
   function tick(now: number): void {
     raf = 0;
@@ -54,7 +57,7 @@ export function createLoop(options: LoopOptions): Loop {
     if (elapsed >= 1000 / Math.max(1, state.fps) - 1) {
       t += Math.min(elapsed, MAX_STEP_MS);
       last = now;
-      frame(t);
+      frame(t, reduced);
     }
     raf = requestAnimationFrame(tick);
   }
@@ -68,7 +71,7 @@ export function createLoop(options: LoopOptions): Loop {
       cancelAnimationFrame(raf);
       raf = 0;
     }
-    if (!go && drawHeld) frame(heldTime());
+    if (!go && drawHeld) frame(heldTime(), reduced);
   }
 
   const observer = typeof IntersectionObserver === "function"
@@ -92,7 +95,7 @@ export function createLoop(options: LoopOptions): Loop {
   };
   motionQuery?.addEventListener("change", onMotion);
 
-  frame(heldTime());
+  frame(heldTime(), reduced);
   sync(false);
 
   return {
@@ -100,10 +103,13 @@ export function createLoop(options: LoopOptions): Loop {
       const timeChanged = next.time !== undefined && next.time !== state.time;
       state = { ...state, ...next };
       if (state.time !== null) t = state.time;
-      sync(timeChanged || next.paused !== undefined);
+      sync(timeChanged || next.paused !== undefined || next.still !== undefined);
     },
     redraw() {
-      frame(heldTime());
+      frame(heldTime(), reduced);
+    },
+    get reduced() {
+      return reduced;
     },
     destroy() {
       if (raf !== 0) cancelAnimationFrame(raf);

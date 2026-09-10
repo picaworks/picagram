@@ -24,6 +24,35 @@ export function bayerMatrix(size: 2 | 4 | 8): Float32Array {
   return out;
 }
 
+const bayerCache = new Map<number, Float32Array>();
+
+/** The ordered-dither threshold at pixel (x, y) of a tiled Bayer matrix, in (0, 1). Each size is built once. */
+export function bayerAt(size: 2 | 4 | 8, x: number, y: number): number {
+  let m = bayerCache.get(size);
+  if (!m) {
+    m = bayerMatrix(size);
+    bayerCache.set(size, m);
+  }
+  const mx = ((x % size) + size) % size;
+  const my = ((y % size) + size) % size;
+  return m[my * size + mx] ?? 0.5;
+}
+
+/** Ink or no ink for each value in 0..1, row-major. `bayer` 0 cuts flat at `level`; 2, 4, or 8 dithers
+ *  around `level` with that Bayer matrix. Ink goes where a value reaches its threshold. Returns 1 where
+ *  ink goes. */
+export function threshold(values: ArrayLike<number>, width: number, height: number, level = 0.5, bayer: 0 | 2 | 4 | 8 = 0): Uint8Array {
+  const out = new Uint8Array(width * height);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = y * width + x;
+      const cut = bayer === 0 ? level : level + bayerAt(bayer, x, y) - 0.5;
+      out[i] = (values[i] ?? 0) >= cut ? 1 : 0;
+    }
+  }
+  return out;
+}
+
 export type Diffusion = "floyd-steinberg" | "atkinson";
 
 const KERNELS: Record<Diffusion, readonly (readonly [number, number, number])[]> = {

@@ -10,7 +10,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { groupByCategory, type CatalogItem, type Props } from "@/lib/catalog";
+import { groupByCategory, type CatalogItem, type PaletteProp, type Props } from "@/lib/catalog";
 import { GROUNDS, type Ground } from "@/lib/ground";
 import { useMetaKey } from "@/lib/platform";
 import { FRAME_H, FRAME_W, FRAME_WIDTHS, Frame, type FrameWidth } from "./Frame";
@@ -107,6 +107,7 @@ interface CanvasProps {
   onFrameWidth: (width: FrameWidth) => void;
   liveDefaults: Props | null;
   liveOverrides: Props;
+  livePalette: PaletteProp;
 }
 
 /** The center pane: a board of frames on a surface that pans and zooms. */
@@ -417,7 +418,13 @@ export function Canvas(p: CanvasProps) {
                 onSelect={p.onSelect}
                 live={
                   selected && p.liveDefaults
-                    ? { ground: p.ground, width: p.frameWidth, defaults: p.liveDefaults, overrides: p.liveOverrides }
+                    ? {
+                        ground: p.ground,
+                        width: p.frameWidth,
+                        defaults: p.liveDefaults,
+                        overrides: p.liveOverrides,
+                        palette: p.livePalette,
+                      }
                     : null
                 }
               />

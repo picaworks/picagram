@@ -1,5 +1,8 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { quadrant, SHADES } from "../../../lib/blocks";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
+import { styleHost } from "../../../lib/host";
 import type { Mount } from "../../../lib/types";
 
 export interface BlockBannerProps {
@@ -22,7 +25,7 @@ export const defaults: BlockBannerProps = {
   spacing: 1,
   shadow: false,
   align: "center",
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1,
 };
 
@@ -30,11 +33,6 @@ export const defaults: BlockBannerProps = {
 const GLYPH_H = 5;
 /** Cell rows needed to carry the font at two pixel rows per cell, with or without the shadow's extra row. */
 const CELL_ROWS = Math.ceil((GLYPH_H + 1) / 2);
-
-const FULL_BLOCK = "█";
-const UPPER_HALF = "▀";
-const LOWER_HALF = "▄";
-const LIGHT_SHADE = "░";
 
 /** An original five row pixel font: "#" is ink, "." is blank. Every character's rows share one width. */
 const FONT: Readonly<Record<string, readonly string[]>> = {
@@ -110,7 +108,7 @@ function gridOptions(p: BlockBannerProps): GridOptions {
 
 export const mount: Mount<BlockBannerProps> = (host, initial = {}) => {
   let props: BlockBannerProps = { ...defaults, ...initial };
-  let autoHeight = false;
+  let restoreHeight = (): void => undefined;
   const grid = createGrid(host, gridOptions(props), draw);
 
   function draw(): void {
@@ -129,11 +127,8 @@ export const mount: Mount<BlockBannerProps> = (host, initial = {}) => {
       for (let cx = 0; cx < cols; cx++) {
         const topFg = fg(top, cx);
         const bottomFg = fg(bottom, cx);
-        let glyph = " ";
-        if (topFg && bottomFg) glyph = FULL_BLOCK;
-        else if (topFg) glyph = UPPER_HALF;
-        else if (bottomFg) glyph = LOWER_HALF;
-        else if (sh(top, cx) || sh(bottom, cx)) glyph = LIGHT_SHADE;
+        let glyph = quadrant(topFg, topFg, bottomFg, bottomFg);
+        if (glyph === " " && (sh(top, cx) || sh(bottom, cx))) glyph = SHADES[1] ?? " ";
         grid.set(colOffset + cx, rowOffset + cy, glyph);
       }
     }
@@ -143,13 +138,9 @@ export const mount: Mount<BlockBannerProps> = (host, initial = {}) => {
 
   labelHost(host, props.text);
   // A host with no height of its own gets exactly the height this banner needs, so it never renders as a
-  // single clipped row: the same reasoning as ascii-image's aspect-ratio fix, sized from the measured cell.
-  if (host.clientHeight < 2 && grid.aspect > 0) {
-    const cellH = host.clientWidth / grid.cols / grid.aspect;
-    if (cellH > 0) {
-      host.style.height = `${Math.ceil(cellH * CELL_ROWS) + 1}px`;
-      autoHeight = true;
-    }
+  // single clipped row: the same reasoning as ascii-image's aspect-ratio fix, sized from the grid's own cell.
+  if (host.clientHeight < 2) {
+    restoreHeight = styleHost(host, { height: `${Math.ceil(grid.cellHeight * CELL_ROWS) + 1}px` });
   }
   draw();
 
@@ -173,7 +164,7 @@ export const mount: Mount<BlockBannerProps> = (host, initial = {}) => {
     destroy() {
       grid.destroy();
       unlabelHost(host);
-      if (autoHeight) host.style.removeProperty("height");
+      restoreHeight();
       delete host.dataset.picaReady;
     },
   };

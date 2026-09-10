@@ -1,4 +1,7 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { braille, brailleDot, lowerEighth } from "../../../lib/blocks";
+import { GRID_FONT } from "../../../lib/font";
+import { cssVar } from "../../../lib/palette";
 import type { Mount } from "../../../lib/types";
 
 export interface AsciiSparklineProps {
@@ -28,18 +31,8 @@ export const defaults: AsciiSparklineProps = {
   min: null,
   max: null,
   label: "trend",
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
 };
-
-/** The eighth-block glyphs, emptiest to fullest. Unicode fixes their height, so nothing here is measured. */
-const BLOCKS = "▁▂▃▄▅▆▇█";
-
-/** The dot weight for one braille cell, at dot row 0 to 3 (top to bottom) and column 0 (left) or 1 (right).
- *  See the Unicode braille pattern block: the bottom row's dots break the clean bit order the top three keep. */
-function brailleDot(row: number, col: number): number {
-  if (row === 3) return col === 0 ? 0x40 : 0x80;
-  return (col === 0 ? 1 : 8) << row;
-}
 
 /** Resamples `source` to `count` points by linear interpolation along its index. */
 function resample(source: readonly number[], count: number): number[] {
@@ -75,7 +68,7 @@ function render(props: AsciiSparklineProps, clean: readonly number[]): string {
         const row = Math.min(3, Math.max(0, Math.round((1 - t) * 3)));
         bits |= brailleDot(row, col);
       }
-      text += String.fromCodePoint(0x2800 + bits);
+      text += braille(bits);
     }
     return text;
   }
@@ -84,7 +77,7 @@ function render(props: AsciiSparklineProps, clean: readonly number[]): string {
   let text = "";
   for (const v of resample(clean, cells)) {
     const level = Math.min(7, Math.max(0, Math.round(scale(v) * 7)));
-    text += BLOCKS.charAt(level);
+    text += lowerEighth(level + 1);
   }
   return text;
 }
@@ -107,10 +100,12 @@ function describe(props: AsciiSparklineProps, clean: readonly number[]): string 
 export const mount: Mount<AsciiSparklineProps> = (host, initial = {}) => {
   let props: AsciiSparklineProps = { ...defaults, ...initial };
   const view = document.createElement("span");
+  view.setAttribute("data-pica", "");
   view.setAttribute("aria-hidden", "true");
   view.style.whiteSpace = "nowrap";
   view.style.userSelect = "none";
   view.style.pointerEvents = "none";
+  view.style.color = cssVar("fg");
   host.appendChild(view);
 
   function draw(): void {

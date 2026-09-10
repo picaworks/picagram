@@ -1,4 +1,6 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { layer, scope } from "../../../lib/host";
+import { cssVar } from "../../../lib/palette";
 import type { Mount } from "../../../lib/types";
 
 export interface HalftoneCssProps {
@@ -22,50 +24,38 @@ export const defaults: HalftoneCssProps = {
   strength: 0.6,
 };
 
-/** Counts instances so each one gets its own class, never repeated while the page is open. */
-let instances = 0;
-
 export const mount: Mount<HalftoneCssProps> = (host, initial = {}) => {
   let props: HalftoneCssProps = { ...defaults, ...initial };
-  const className = `pica-halftone-css-${++instances}`;
-  const reposition = getComputedStyle(host).position === "static";
-  const style = document.createElement("style");
-  const layer = document.createElement("div");
-  layer.className = className;
+  const scoped = scope(host);
+  const dots = layer(host, "over");
 
   labelHost(host, "");
-  if (reposition) host.style.position = "relative";
-  style.textContent = sheet(className, props);
-  host.appendChild(style);
-  host.appendChild(layer);
+  scoped.setRules(sheet(scoped.selector, props));
   host.dataset.picaReady = "true";
 
   return {
     update(next) {
       props = { ...props, ...next };
-      style.textContent = sheet(className, props);
+      scoped.setRules(sheet(scoped.selector, props));
     },
     destroy() {
-      style.remove();
-      layer.remove();
+      scoped.destroy();
+      dots.remove();
       unlabelHost(host);
-      if (reposition) host.style.removeProperty("position");
       delete host.dataset.picaReady;
     },
   };
 };
 
 /** The scoped rule for one instance: a dot grid plus a second layer offset by half a cell, masked by an
- *  optional fade. Both layers live in one element's background-image, so only one div is ever added. */
-function sheet(className: string, p: HalftoneCssProps): string {
+ *  optional fade. Both layers live in the layer div's own background-image, so only one extra node is
+ *  ever added. */
+function sheet(selector: string, p: HalftoneCssProps): string {
   const radius = p.size * p.dot;
   const half = p.size / 2;
-  const dot = `radial-gradient(circle at center, var(--pica-fg, currentColor) ${radius}px, transparent ${radius}px)`;
+  const dot = `radial-gradient(circle at center, ${cssVar("fg")} ${radius}px, transparent ${radius}px)`;
   const mask = maskImage(p.fade, p.angle);
   const rules = [
-    "position:absolute",
-    "inset:0",
-    "pointer-events:none",
     `background-image:${dot},${dot}`,
     `background-size:${p.size}px ${p.size}px,${p.size}px ${p.size}px`,
     `background-position:0 0,${half}px ${half}px`,
@@ -81,12 +71,13 @@ function sheet(className: string, p: HalftoneCssProps): string {
       "mask-size:100% 100%",
     );
   }
-  return `.${className}{${rules.join(";")}}`;
+  return `${selector} > div{${rules.join(";")}}`;
 }
 
-/** The mask-image value for one fade mode, or an empty string when the pattern should stay uniform. */
+/** The mask-image value for one fade mode, or an empty string when the pattern should stay uniform. A mask
+ *  reads only alpha, so currentColor stands in for black with no literal color written here. */
 function maskImage(fade: HalftoneCssProps["fade"], angle: number): string {
-  if (fade === "radial") return "radial-gradient(circle at center, #000 0%, transparent 100%)";
-  if (fade === "linear") return `linear-gradient(${angle}deg, #000 0%, transparent 100%)`;
+  if (fade === "radial") return "radial-gradient(circle at center, currentColor 0%, transparent 100%)";
+  if (fade === "linear") return `linear-gradient(${angle}deg, currentColor 0%, transparent 100%)`;
   return "";
 }

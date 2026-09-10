@@ -8,7 +8,7 @@
 |---|---|---|
 | Layers | `src/components/Layers.tsx` | search (Cmd+K or Ctrl+K focuses it), tag chips, and the component list grouped by non-empty category |
 | Canvas | `src/components/Canvas.tsx`, `src/components/Frame.tsx` | a board with one 1280 by 800 frame per component on a surface that pans (drag, wheel) and zooms (Cmd or Ctrl plus wheel, pinch, and the 50%, 100%, and fit buttons) |
-| Inspector | `src/components/Inspector.tsx`, `Controls.tsx`, `CodeTabs.tsx`, `CopyButton.tsx` | title, description, size, tags, controls generated from `controls` and `defaults`, the React, HTML, Install, and LLM tabs, and credits |
+| Inspector | `src/components/Inspector.tsx`, `Controls.tsx`, `CodeTabs.tsx`, `CopyButton.tsx` | title, description, size, tags, controls generated from `controls` and `defaults`, the palette, the React, HTML, Install, and LLM tabs, the events panel, and credits |
 
 `src/components/Catalog.tsx` holds the state and passes it down. Under 900px the panes stack with the canvas first; the DOM order, and so the tab order, stays layers, canvas, inspector.
 
@@ -18,13 +18,25 @@ Zoomed out, a frame is `public/thumbs/<slug>.jpg`, or `<slug>-light.jpg` while t
 
 ## How the inspector drives the frame
 
-Controls start from the item's `defaults`. Every change posts `{ type: "pica:props", props }` to the iframe, where `props` holds the values that differ from the defaults, and the same message goes out once when the iframe loads. A prop that returns to its default is sent once more with the default value, because the frame keeps the last value it was given. The generated page listens for exactly this message from its parent window.
+Controls start from the item's `defaults`, with `meta.demo.props` layered on top when the component declares a demo, so a freshly selected component starts looking finished rather than plain. A control's type decides its input: `number` (a slider and a number field), `string`, `textarea` (the same, with `rows` lines), `boolean`, `select`, `color`, `numbers` (a comma-separated list), and `json`. The `json` control is a textarea that sends a value only once it parses and its kind, array, object, or a plain value, matches the prop's own default; otherwise the field is marked `aria-invalid` and shows a short error, and the frame keeps its last value.
 
-The copy buttons bake the same values in. The React tab's usage line carries them as attributes, and the HTML tab inserts `<script>window.PICA_PROPS = {...};</script>` before the file's first script, which is where the file reads it at mount.
+Every change posts `{ type: "pica:props", props }` to the iframe, where `props` holds the values that differ from the plain defaults, demo state included, and the same message goes out once when the iframe loads. A prop that returns to that state is sent once more with its value there, because the frame keeps the last value it was given. The generated page listens for exactly this message from its parent window. The changed count and the reset button in the Controls section track only the user's own edits, so an untouched, demo-dressed component reads as nothing changed.
+
+The copy buttons bake the same values in. The React tab's usage line carries them as attributes, followed by the demo's children, when the component has them, converted to JSX (`class` to `className`, `for` to `htmlFor`, void elements self-closed). The HTML tab inserts `<script>window.PICA_PROPS = {...};</script>` before the file's first script, which is where the file reads it at mount.
+
+## Palette
+
+Every component's inspector gets a Palette section, one color input per token in `meta.palette`, which defaults to `["fg"]`. Each token has a reset button that clears it back to following the page. Palette state is sent inside the same `pica:props` message as the props, under a `palette` key that always carries all four tokens (`fg`, `bg`, `accent`, `muted`), an empty string for a token the user has not set. The generated page turns a set token into a `--pica-*` custom property on the host and removes it for an empty one, so clearing a token in the inspector takes effect immediately. A token the user sets also appears in the copy snippets, as `palette={{ fg: "#…" }}` in the React tab and inside the same baked `window.PICA_PROPS` object in the HTML tab.
+
+## Events
+
+A component that declares `events` in its catalog entry reports them as `pica:<name>` DOM events on its host, and the generated page forwards each as `{ type: "pica:event", name, detail }` to its parent window. The Inspector listens for this message and keeps the latest 20, newest first, in an Events section: the event's name, its detail as JSON, and the time it arrived, with a button to clear the log. The section appears as soon as the selected component declares an event, or the moment one actually arrives, whichever comes first, since an undeclared event is still worth seeing. The log starts empty each time the selection changes, since it belongs to whichever frame is live.
 
 ## Files it reads
 
-`public/catalog.json` is imported at build time. Its item type is `CatalogItem` in `src/lib/catalog.ts`: `Meta` from `lib/meta.ts` plus `exportName`, `defaults`, `docs`, and `gzipBytes`. `/react/<slug>.tsx` and `/v/<slug>.html` are fetched when their tabs open and remembered. The install line uses `REGISTRY_BASE` from `scripts/config.ts`, and the footer's license label is checked by `test/license.test.ts`.
+`public/catalog.json` is imported at build time. Its item type is `CatalogItem` in `src/lib/catalog.ts`: `Meta` from `lib/meta.ts` plus `exportName`, `defaults`, `docs`, `types`, `events`, and `gzipBytes`. `/react/<slug>.tsx` and `/v/<slug>.html` are fetched when their tabs open and remembered. The install line uses `REGISTRY_BASE` from `scripts/config.ts`, and the footer's license label is checked by `test/license.test.ts`.
+
+`scripts/check-site.ts` (`npm run check:site`) builds the static site, serves `out/` on a local port, and drives headless Chromium through it: every catalog item listed, a frame that loads, every control type, the palette, an invalid json control, the copy snippets, and the events panel. It exercises the two control types with no component yet, `textarea` and `json`, and the palette and events panels, through one synthetic item that only appears when it sets `PICA_FIXTURE=1`, so a normal build never carries it.
 
 ## Rules the stylesheet keeps
 

@@ -1,7 +1,9 @@
-import { hiddenText, labelHost, unlabelHost } from "../../../lib/a11y";
+import { animatedText } from "../../../lib/a11y";
+import { GRID_FONT } from "../../../lib/font";
 import { createLoop } from "../../../lib/loop";
-import { createRng } from "../../../lib/rng";
+import { cssVar } from "../../../lib/palette";
 import { FALLBACK_RAMP, measureRamp } from "../../../lib/ramp";
+import { createRng, hashSeed } from "../../../lib/rng";
 import type { Mount, MotionProps } from "../../../lib/types";
 
 export interface GlitchTextProps extends MotionProps {
@@ -27,7 +29,7 @@ export const defaults: GlitchTextProps = {
   burst: 280,
   intensity: 0.5,
   glyphs: FALLBACK_RAMP,
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   fps: 30,
   paused: false,
   time: null,
@@ -69,17 +71,10 @@ function burstAt(t: number, interval: number, burst: number): BurstWindow {
   return { active: duration > 0 && local < duration, index };
 }
 
-/** Combines the seed with a burst index into one 32-bit seed for createRng, so every burst gets its own
- *  reproducible pattern and no two bursts glitch the same way. */
-function burstSeed(seed: number, index: number): number {
-  const mixed = Math.imul((seed >>> 0) ^ (index + 0x9e3779b9), 0x85ebca6b);
-  return (mixed ^ (mixed >>> 13)) >>> 0;
-}
-
 /** Builds burst `index`: a pure function of the seed, the index, and the props that shape a burst, so the
- *  same burst always draws the same pixels. */
+ *  same burst always draws the same pixels, and no two bursts glitch the same way. */
 function buildBurst(props: GlitchTextProps, index: number): Burst {
-  const rng = createRng(burstSeed(props.seed, index));
+  const rng = createRng(hashSeed(props.seed, index));
   const ramp = measureRamp(props.glyphs, props.fontFamily);
   const swapChance = MAX_SWAP_CHANCE * props.intensity;
   const text = Array.from(props.text)
@@ -96,18 +91,17 @@ function buildBurst(props: GlitchTextProps, index: number): Burst {
 export const mount: Mount<GlitchTextProps> = (host, initial = {}) => {
   let props: GlitchTextProps = { ...defaults, ...initial };
 
-  const view = document.createElement("span");
-  view.setAttribute("aria-hidden", "true");
+  // The host keeps no role, so a heading around it stays a heading. Assistive technology reads the text
+  // from a hidden copy, and the glitch draws into a layer hidden from it.
+  const text = animatedText(host, props.text);
+  const view = text.layer;
   view.style.position = "relative";
   view.style.display = "inline-block";
   view.style.whiteSpace = "pre";
   view.style.userSelect = "none";
   view.style.pointerEvents = "none";
   view.style.fontFamily = props.fontFamily;
-  host.appendChild(view);
-
-  let hidden = hiddenText(props.text);
-  host.appendChild(hidden);
+  view.style.color = cssVar("fg");
 
   function draw(t: number): void {
     const slot = burstAt(t, props.interval, props.burst);
@@ -134,27 +128,20 @@ export const mount: Mount<GlitchTextProps> = (host, initial = {}) => {
     host.dataset.picaReady = "true";
   }
 
-  labelHost(host, props.text);
   const motion = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: 0, frame: draw });
 
   return {
     update(next) {
       const before = props;
       props = { ...props, ...next };
-      if (props.text !== before.text) {
-        hidden.remove();
-        hidden = hiddenText(props.text);
-        host.appendChild(hidden);
-      }
-      labelHost(host, props.text);
+      if (props.text !== before.text) text.setText(props.text);
       if (props.fontFamily !== before.fontFamily) view.style.fontFamily = props.fontFamily;
       motion.update({ paused: props.paused, time: props.time, fps: props.fps });
+      motion.redraw();
     },
     destroy() {
       motion.destroy();
-      unlabelHost(host);
-      view.remove();
-      hidden.remove();
+      text.remove();
       delete host.dataset.picaReady;
     },
   };

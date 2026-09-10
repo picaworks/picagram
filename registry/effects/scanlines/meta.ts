@@ -9,6 +9,7 @@ export const meta: Meta = {
   wave: 2,
   animated: true,
   decorative: true,
+  wraps: "content",
   controls: {
     spacing: { type: "number", min: 2, max: 8, step: 1, label: "Spacing (px)" },
     thickness: { type: "number", min: 1, max: 3, step: 1, label: "Thickness (px)" },

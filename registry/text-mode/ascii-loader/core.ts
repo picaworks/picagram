@@ -1,5 +1,8 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { braille, brailleDot, leftEighth, SHADES } from "../../../lib/blocks";
+import { GRID_FONT } from "../../../lib/font";
 import { createLoop } from "../../../lib/loop";
+import { cssVar } from "../../../lib/palette";
 import type { Mount, MotionProps } from "../../../lib/types";
 
 export interface AsciiLoaderProps extends MotionProps {
@@ -25,15 +28,13 @@ export const defaults: AsciiLoaderProps = {
   width: 24,
   label: "loading",
   speed: 1,
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   fps: 12,
   paused: false,
   time: null,
   seed: 1,
 };
 
-/** First codepoint of the Unicode braille patterns block. A cell's glyph is this plus a dot bitmask. */
-const BRAILLE_BASE = 0x2800;
 /** Row and column, in the cell's 2 by 4 dot grid, that the lit dot visits, in order: clockwise from the top left. */
 const BRAILLE_PATH: ReadonlyArray<readonly [row: number, col: number]> = [
   [0, 0],
@@ -46,25 +47,19 @@ const BRAILLE_PATH: ReadonlyArray<readonly [row: number, col: number]> = [
   [1, 0],
 ];
 /** Milliseconds the lit dot spends at each position, at speed 1. Chosen so a real three second check
- *  in scripts/verify.ts lands on the position opposite the start, the largest visible change available
+ *  in scripts/verify/motion.ts lands on the position opposite the start, the largest visible change available
  *  to a single dot. */
 const BRAILLE_STEP_MS = 150;
-
-/** The Unicode braille dot number, expressed as a bit index from 0 to 7, for one cell position. */
-function brailleBit(row: number, col: number): number {
-  if (col === 0) return row < 3 ? row : 6;
-  return row < 3 ? row + 3 : 7;
-}
 
 function brailleFrame(t: number, speed: number): string {
   const step = Math.floor((t * speed) / BRAILLE_STEP_MS);
   const at = BRAILLE_PATH[((step % BRAILLE_PATH.length) + BRAILLE_PATH.length) % BRAILLE_PATH.length];
   const [row, col] = at ?? [0, 0];
-  return String.fromCodePoint(BRAILLE_BASE + (1 << brailleBit(row, col)));
+  return braille(brailleDot(row, col));
 }
 
-/** Light, medium, dark, and full shade, breathing in and back out so the loop has no seam. */
-const SHADES = ["░", "▒", "▓", "█"];
+/** Light, medium, dark, and full shade, breathing in and back out so the loop has no seam. Indices into
+ *  SHADES are offset by one to skip its blank at 0. */
 const SHADE_PATH = [0, 1, 2, 3, 2, 1];
 const SHADE_STEP_MS = 150;
 
@@ -72,7 +67,7 @@ function blocksFrame(t: number, speed: number): string {
   const step = Math.floor((t * speed) / SHADE_STEP_MS);
   const at = ((step % SHADE_PATH.length) + SHADE_PATH.length) % SHADE_PATH.length;
   const idx = SHADE_PATH[at] ?? 0;
-  return SHADES[idx] ?? "";
+  return SHADES[idx + 1] ?? "";
 }
 
 const DOTS_STEP_MS = 400;
@@ -83,14 +78,12 @@ function dotsFrame(t: number, speed: number): string {
   return ".".repeat(at + 1);
 }
 
-const FULL_BLOCK = "█";
-const TRACK = "░";
+const FULL_BLOCK = leftEighth(8);
+const TRACK = SHADES[1] ?? "░";
 
 /** A block filling n eighths of a cell from the left, n from 1 to 8, using the Unicode block elements. */
 function eighthBlock(n: number): string {
-  if (n <= 0) return TRACK;
-  if (n >= 8) return FULL_BLOCK;
-  return String.fromCodePoint(0x2588 + (8 - n));
+  return n <= 0 ? TRACK : leftEighth(n);
 }
 
 /** A filled bar reading `progress`, in eighths of a cell. Depends only on data, so it holds still under
@@ -134,8 +127,9 @@ function frameText(p: AsciiLoaderProps, t: number): string {
 export const mount: Mount<AsciiLoaderProps> = (host, initial = {}) => {
   let props: AsciiLoaderProps = { ...defaults, ...initial };
   const glyphs = document.createElement("span");
+  glyphs.setAttribute("data-pica", "");
   glyphs.setAttribute("aria-hidden", "true");
-  glyphs.style.cssText = "white-space:nowrap;";
+  glyphs.style.cssText = `white-space:nowrap;color:${cssVar("fg")}`;
   host.appendChild(glyphs);
 
   function applyA11y(): void {

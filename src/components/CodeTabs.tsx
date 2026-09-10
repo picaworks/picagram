@@ -1,6 +1,6 @@
 "use client";
 import { useState, type KeyboardEvent } from "react";
-import type { CatalogItem, Props } from "@/lib/catalog";
+import type { CatalogItem, PaletteProp, Props } from "@/lib/catalog";
 import { useFileText, type FileState } from "@/lib/files";
 import { installCommand, reactSnippet, withPicaProps } from "@/lib/props";
 import { CopyButton } from "./CopyButton";
@@ -13,14 +13,21 @@ const TABS = [
 ] as const;
 type Tab = (typeof TABS)[number][0];
 
+interface CodeTabsProps {
+  item: CatalogItem;
+  overrides: Props;
+  palette: PaletteProp;
+}
+
 /** React, HTML, Install, and LLM, each with a copy button that bakes in the current values. */
-export function CodeTabs({ item, overrides }: { item: CatalogItem; overrides: Props }) {
+export function CodeTabs({ item, overrides, palette }: CodeTabsProps) {
   const [tab, setTab] = useState<Tab>("react");
   const react = useFileText(tab === "react" ? `/react/${item.slug}.tsx` : null);
   const html = useFileText(tab === "html" ? `/v/${item.slug}.html` : null);
 
-  const snippet = reactSnippet(item.exportName, overrides);
-  const baked = html.text === null ? null : withPicaProps(html.text, overrides);
+  const snippet = reactSnippet(item.exportName, overrides, palette, item.demo?.children);
+  const baked = html.text === null ? null : withPicaProps(html.text, overrides, palette);
+  const paletteSet = Object.values(palette).some(Boolean);
   const install = installCommand(item.slug);
   const twin = `/c/${item.slug}.md`;
   const twinUrl = typeof window === "undefined" ? twin : new URL(twin, window.location.href).href;
@@ -81,9 +88,9 @@ export function CodeTabs({ item, overrides }: { item: CatalogItem; overrides: Pr
             </div>
             <FileBlock state={{ text: baked, error: html.error }} />
             <p className="tabs-note">
-              {Object.keys(overrides).length > 0
+              {Object.keys(overrides).length > 0 || paletteSet
                 ? "The current values are set as window.PICA_PROPS before the first script."
-                : "Opens from disk with no build step. Change a control to bake the values in."}
+                : "Opens from disk with no build step. Change a control or the palette to bake values in."}
             </p>
           </>
         )}

@@ -1,5 +1,8 @@
-import { hiddenText, labelHost, unlabelHost } from "../../../lib/a11y";
+import { animatedText } from "../../../lib/a11y";
+import { GRID_FONT } from "../../../lib/font";
+import { styleHost } from "../../../lib/host";
 import { createLoop } from "../../../lib/loop";
+import { cssVar } from "../../../lib/palette";
 import { createRng } from "../../../lib/rng";
 import type { Mount, MotionProps } from "../../../lib/types";
 
@@ -26,7 +29,7 @@ export const defaults: AsciiTerminalProps = {
   typeSpeed: 14,
   lineDelay: 320,
   loop: 0,
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   fps: 30,
   paused: false,
   time: null,
@@ -99,8 +102,7 @@ function buildTimeline(script: string, prompt: string, typeSpeed: number, lineDe
   return { lines, total: last ? last.doneAt : 0 };
 }
 
-/** Folds a raw animation time into the timeline: clamped when `loop` is 0, wrapped to a resting frame otherwise.
- *  A non-finite time (the reduced-motion still frame) always resolves to the finished transcript. */
+/** Folds a raw animation time into the timeline: clamped when `loop` is 0, wrapped to a resting frame otherwise. */
 function resolveTime(raw: number, total: number, loop: number): number {
   if (!Number.isFinite(raw)) return total;
   const t = Math.max(0, raw);
@@ -117,19 +119,17 @@ export const mount: Mount<AsciiTerminalProps> = (host, initial = {}) => {
   let props: AsciiTerminalProps = { ...defaults, ...initial };
   let timeline = buildTimeline(props.script, props.prompt, props.typeSpeed, props.lineDelay, props.seed);
 
-  host.style.overflow = "hidden";
-
-  const view = document.createElement("pre");
-  view.setAttribute("aria-hidden", "true");
+  const restoreHost = styleHost(host, { overflow: "hidden" });
+  // Assistive technology reads the whole transcript from a hidden copy; the typing draws into a layer
+  // hidden from it.
+  const text = animatedText(host, props.script, "pre");
+  const view = text.layer;
   view.style.cssText = [
     "margin:0", "padding:1em", "white-space:pre-wrap", "overflow-wrap:break-word",
     "font-kerning:none", "font-variant-ligatures:none", "user-select:none", "pointer-events:none",
+    `color:${cssVar("fg")}`,
   ].join(";");
   view.style.fontFamily = props.fontFamily;
-  host.appendChild(view);
-
-  let hidden = hiddenText(props.script);
-  host.appendChild(hidden);
 
   function render(t: number): void {
     const lines = timeline.lines;
@@ -146,7 +146,7 @@ export const mount: Mount<AsciiTerminalProps> = (host, initial = {}) => {
       if (i > 0) view.appendChild(document.createTextNode("\n"));
       if (line.prefix) {
         const prefixEl = document.createElement("span");
-        prefixEl.style.color = "var(--pica-accent)";
+        prefixEl.style.color = cssVar("accent");
         prefixEl.textContent = line.prefix;
         view.appendChild(prefixEl);
       }
@@ -160,7 +160,7 @@ export const mount: Mount<AsciiTerminalProps> = (host, initial = {}) => {
       if (isActive && line.isCommand) {
         const typing = shown < line.text.length;
         const cursorEl = document.createElement("span");
-        cursorEl.style.color = "var(--pica-accent)";
+        cursorEl.style.color = cssVar("accent");
         cursorEl.textContent = !typing || blinkOn(t) ? CURSOR_GLYPH : " ";
         view.appendChild(cursorEl);
       }
@@ -172,8 +172,8 @@ export const mount: Mount<AsciiTerminalProps> = (host, initial = {}) => {
     host.dataset.picaReady = "true";
   }
 
-  labelHost(host, "Terminal transcript", "group");
-  const motion = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: Infinity, frame });
+  // Under reduced motion the loop holds at the end of the transcript, with a solid cursor.
+  const motion = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: timeline.total, frame });
 
   return {
     update(next) {
@@ -186,20 +186,15 @@ export const mount: Mount<AsciiTerminalProps> = (host, initial = {}) => {
         props.lineDelay !== before.lineDelay ||
         props.seed !== before.seed;
       if (timingChanged) timeline = buildTimeline(props.script, props.prompt, props.typeSpeed, props.lineDelay, props.seed);
-      if (props.script !== before.script) {
-        hidden.remove();
-        hidden = hiddenText(props.script);
-        host.appendChild(hidden);
-      }
+      if (props.script !== before.script) text.setText(props.script);
       if (props.fontFamily !== before.fontFamily) view.style.fontFamily = props.fontFamily;
-      motion.update({ paused: props.paused, time: props.time, fps: props.fps });
+      motion.update({ paused: props.paused, time: props.time, fps: props.fps, still: timeline.total });
+      motion.redraw();
     },
     destroy() {
       motion.destroy();
-      unlabelHost(host);
-      view.remove();
-      hidden.remove();
-      host.style.removeProperty("overflow");
+      text.remove();
+      restoreHost();
       delete host.dataset.picaReady;
     },
   };

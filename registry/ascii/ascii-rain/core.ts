@@ -1,8 +1,9 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { createLoop, type LoopState } from "../../../lib/loop";
 import { measureRamp, pick } from "../../../lib/ramp";
-import { createRng } from "../../../lib/rng";
+import { createRng, hashSeed } from "../../../lib/rng";
 import type { Mount, MotionProps } from "../../../lib/types";
 
 export interface AsciiRainProps extends MotionProps {
@@ -33,7 +34,7 @@ export const defaults: AsciiRainProps = {
   change: 0.06,
   glyphs: "0123456789:;+=*#%",
   fontSize: 12,
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1.2,
   fps: 24,
   paused: false,
@@ -43,13 +44,6 @@ export const defaults: AsciiRainProps = {
 
 /** The animation time shown under reduced motion, fixed so every capture agrees. */
 const STILL_MS = 1200;
-
-/** Mixes two integers into one 32-bit seed, so every column and every flicker draws its own reproducible stream. */
-function hash(a: number, b: number): number {
-  let h = (Math.imul(a ^ 0x9e3779b9, 0x85ebca6b) ^ b) >>> 0;
-  h = Math.imul(h ^ (h >>> 15), 0xc2b2ae35) >>> 0;
-  return (h ^ (h >>> 16)) >>> 0;
-}
 
 /** Wraps `a` into [0, span), so a column's fall repeats without a jump once its whole trail is off screen. */
 function wrap(a: number, span: number): number {
@@ -82,13 +76,13 @@ export const mount: Mount<AsciiRainProps> = (host, initial = {}) => {
       const frameMs = 1000 / Math.max(1, props.fps);
       const epoch = Math.floor(t / frameMs);
       for (let x = 0; x < cols; x++) {
-        const base = createRng(hash(props.seed, x));
+        const base = createRng(hashSeed(props.seed, x));
         if (base() >= props.density) continue;
         const speedMult = 0.6 + base() * 0.9;
         const phase = base() * span;
         const headRow = wrap((t / 1000) * props.speed * speedMult + phase, span) - trailRows;
         const headFloor = Math.floor(headRow);
-        const flicker = props.change > 0 ? createRng(hash(hash(props.seed, x), epoch + 1)) : null;
+        const flicker = props.change > 0 ? createRng(hashSeed(props.seed, x, epoch + 1)) : null;
         for (let r = 0; r < rows; r++) {
           const d = headRow - r;
           if (d < 0 || d > trailRows) continue;

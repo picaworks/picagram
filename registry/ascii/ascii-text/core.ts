@@ -1,8 +1,11 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
 import { hostTone } from "../../../lib/color";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { FALLBACK_RAMP, matchShape, measureRamp, measureShapes, pick } from "../../../lib/ramp";
 import { createSampler } from "../../../lib/sample";
+import { fitHostAspect } from "../../../lib/source";
+import { textSubject } from "../../../lib/subject";
 import type { Mount } from "../../../lib/types";
 
 export interface AsciiTextProps {
@@ -37,7 +40,7 @@ export const defaults: AsciiTextProps = {
   tone: "auto",
   align: "center",
   shape: true,
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1.2,
 };
 
@@ -47,89 +50,36 @@ const SHAPE_N = 3;
 /** Text height, in pixels, of the offscreen raster. Large enough to sample cleanly at any column count. */
 const RASTER_SIZE = 240;
 
-/** Style, variant, and weight keywords that may lead a font shorthand which carries no size of its own. */
-const FONT_PREFIX_WORDS = new Set([
-  "normal", "italic", "oblique", "small-caps", "bold", "bolder", "lighter",
-  "ultra-condensed", "extra-condensed", "condensed", "semi-condensed",
-  "semi-expanded", "expanded", "extra-expanded", "ultra-expanded",
-]);
-
-/** Inserts a pixel size into a font shorthand that has none, ahead of its family list. */
-function rasterFont(spec: string, px: number): string {
-  const words = spec.trim().split(/\s+/);
-  let i = 0;
-  while (i < words.length && (FONT_PREFIX_WORDS.has((words[i] ?? "").toLowerCase()) || /^[1-9]00$/.test(words[i] ?? ""))) i++;
-  const prefix = words.slice(0, i).join(" ");
-  const family = words.slice(i).join(" ") || "sans-serif";
-  return prefix ? `${prefix} ${px}px ${family}` : `${px}px ${family}`;
-}
-
 export const mount: Mount<AsciiTextProps> = (host, initial = {}) => {
   let props: AsciiTextProps = { ...defaults, ...initial };
-  let setAspect = false;
-  const sampler = createSampler();
+  // The raster textSubject draws into, kept for its lifetime and reused on every render.
   const raster = document.createElement("canvas");
-  const rasterCtx = raster.getContext("2d");
-  const stage = document.createElement("canvas");
-  const stageCtx = stage.getContext("2d");
+  // Null while there is no text to sample, as when props.text is empty.
+  let subject: HTMLCanvasElement | null = null;
+  let undoAspect = (): void => undefined;
+  const sampler = createSampler();
   const grid = createGrid(host, gridOptions(props), render);
 
   function gridOptions(p: AsciiTextProps): GridOptions {
     return { fontFamily: p.fontFamily, fontSize: 12, columns: p.columns, lineHeight: p.lineHeight, renderer: "auto", color: "" };
   }
 
-  // Draws `text` into `raster` at a fixed pixel size, cropped tight to its ink.
-  function rasterize(): void {
-    if (!rasterCtx) return;
-    if (!props.text) {
-      raster.width = 0;
-      raster.height = 0;
-      return;
-    }
-    rasterCtx.font = rasterFont(props.font, RASTER_SIZE);
-    const measured = rasterCtx.measureText(props.text);
-    // The advance width includes side bearing, which is rarely symmetric, so the tight ink box
-    // (left plus right, ascent plus descent) is what makes a canvas sized to fit the glyphs exactly.
-    const left = measured.actualBoundingBoxLeft || 0;
-    const right = measured.actualBoundingBoxRight || measured.width;
-    const ascent = measured.actualBoundingBoxAscent || RASTER_SIZE * 0.75;
-    const descent = measured.actualBoundingBoxDescent || RASTER_SIZE * 0.25;
-    // Resizing a canvas clears it and resets its context, so the font is set again after.
-    raster.width = Math.max(1, Math.ceil(left + right));
-    raster.height = Math.max(1, Math.ceil(ascent + descent));
-    rasterCtx.font = rasterFont(props.font, RASTER_SIZE);
-    // lib/sample.ts reads ink from luma, not alpha, so the fill must already read as the "foreground"
-    // brightness the resolved tone expects: light text for a light-on-dark host, dark for the reverse.
-    rasterCtx.fillStyle = (props.tone === "auto" ? hostTone(host) : props.tone) === "light-on-dark" ? "#fff" : "#000";
-    rasterCtx.textBaseline = "alphabetic";
-    rasterCtx.fillText(props.text, left, ascent);
-  }
-
   function draw(): void {
     grid.clear();
     const { cols, rows, aspect } = grid;
-    if (raster.width > 0 && raster.height > 0) {
-      let source: CanvasImageSource = raster;
-      let sw = raster.width;
-      let sh = raster.height;
-      // lib/sample.ts always centers a "contain" fit. Left align is done here, by padding the
-      // raster on the right until its aspect matches the box, so centering that reads as flush left.
-      if (props.align === "left" && stageCtx) {
-        const boxAspect = (cols * aspect) / rows;
-        const textAspect = raster.width / raster.height;
-        if (boxAspect > textAspect) {
-          sw = Math.max(1, Math.ceil(raster.height * boxAspect));
-          sh = raster.height;
-          stage.width = sw;
-          stage.height = sh;
-          stageCtx.clearRect(0, 0, sw, sh);
-          stageCtx.drawImage(raster, 0, 0);
-          source = stage;
-        }
-      }
+    if (subject) {
       const n = props.shape ? SHAPE_N : 1;
-      const ink = sampler.sample(source, sw, sh, host, {
-        cols, rows, aspect, n, fit: "contain", tone: props.tone, contrast: props.contrast, mirror: false,
+      const ink = sampler.sample(subject, subject.width, subject.height, host, {
+        cols,
+        rows,
+        aspect,
+        n,
+        fit: "contain",
+        tone: props.tone,
+        contrast: props.contrast,
+        mirror: false,
+        // Centered fit reads as flush left, since the raster is already cropped tight to its ink.
+        alignX: props.align === "left" ? 0 : 0.5,
       });
       const sampleW = cols * n;
       const shapes = props.shape ? measureShapes(props.glyphs, props.fontFamily, props.lineHeight, SHAPE_N) : null;
@@ -155,11 +105,12 @@ export const mount: Mount<AsciiTextProps> = (host, initial = {}) => {
   // Rasters the text, then draws it. Runs on mount, on prop changes, and whenever the grid
   // relayouts (a resize, or a font finishing load, including the display face `font` rasters in).
   function render(): void {
-    rasterize();
-    if (host.clientHeight < 2 && raster.width > 0 && raster.height > 0) {
+    const tone = props.tone === "auto" ? hostTone(host) : props.tone;
+    subject = textSubject(props.text, props.font, tone, RASTER_SIZE, raster);
+    if (subject) {
       // A host with no height of its own takes the text's proportions, as ascii-image does with an image.
-      host.style.aspectRatio = `${raster.width} / ${raster.height}`;
-      setAspect = true;
+      undoAspect();
+      undoAspect = fitHostAspect(host, subject.width, subject.height);
     }
     draw();
   }
@@ -181,7 +132,7 @@ export const mount: Mount<AsciiTextProps> = (host, initial = {}) => {
     destroy() {
       grid.destroy();
       unlabelHost(host);
-      if (setAspect) host.style.removeProperty("aspect-ratio");
+      undoAspect();
       delete host.dataset.picaReady;
     },
   };

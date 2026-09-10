@@ -1,6 +1,9 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
-import { hostTone, inkColor, parseColor } from "../../../lib/color";
-import { litSphere } from "../../../lib/subject";
+import { createCanvas } from "../../../lib/canvas";
+import { hostTone, parseColor } from "../../../lib/color";
+import { watchPalette } from "../../../lib/palette";
+import { fitRect } from "../../../lib/sample";
+import { fitFor, fitHostAspect, loadSource, showNote, type Source } from "../../../lib/source";
 import type { Mount } from "../../../lib/types";
 
 export interface PixelSortProps {
@@ -35,9 +38,6 @@ export const defaults: PixelSortProps = {
 
 /** Longest side, in pixels, the source is downscaled to before sorting, so the one-time sort stays fast. */
 const WORK_MAX = 480;
-
-/** Font the fallback note draws in, matching STYLE.md's grid stack. */
-const NOTE_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
 
 /** Perceptual brightness of one pixel, 0 to 1. */
 function luma(r: number, g: number, b: number): number {
@@ -116,74 +116,62 @@ function inkTint(data: Uint8ClampedArray, lightOnDark: boolean, ink: readonly [n
 
 export const mount: Mount<PixelSortProps> = (host, initial = {}) => {
   let props: PixelSortProps = { ...defaults, ...initial };
-  let source: CanvasImageSource | null = null;
-  let sourceW = 0;
-  let sourceH = 0;
+  let source: Source | null = null;
   let failed = false;
-  let request = 0;
-  let setAspect = false;
+  let cancel = (): void => undefined;
+  let undoAspect = (): void => undefined;
+  let removeNote: (() => void) | null = null;
   // The source, downscaled and sorted once. Redrawn straight from here for a resize, a color, or a tone change.
   let sorted: ImageData | null = null;
 
   const work = document.createElement("canvas");
   const workCtx = work.getContext("2d", { willReadFrequently: true });
-  const canvas = document.createElement("canvas");
-  canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none";
-  canvas.setAttribute("aria-hidden", "true");
+  const surface = createCanvas(host, { onResize: () => draw() });
+  const canvas = surface.canvas;
   const ctx = canvas.getContext("2d");
-  if (getComputedStyle(host).position === "static") host.style.position = "relative";
-  host.style.overflow = "hidden";
-  host.appendChild(canvas);
+  const palette = watchPalette(host, () => draw());
 
   function load(): void {
-    const mine = ++request;
+    cancel();
     failed = false;
-    if (!props.src) {
-      use(litSphere(), 256, 256);
-      return;
-    }
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.decoding = "async";
-    img.onload = () => {
-      if (mine === request) use(img, img.naturalWidth, img.naturalHeight);
-    };
-    img.onerror = () => {
-      if (mine !== request) return;
+    cancel = loadSource(props.src, use, () => {
       source = null;
       sorted = null;
       failed = true;
       draw();
-    };
-    img.src = props.src;
+    });
   }
 
-  function use(next: CanvasImageSource, w: number, h: number): void {
+  function use(next: Source): void {
     source = next;
-    sourceW = w;
-    sourceH = h;
     // A host with no height of its own takes the image's proportions.
-    if (host.clientHeight < 2 && w > 0 && h > 0) {
-      host.style.aspectRatio = `${w} / ${h}`;
-      setAspect = true;
-    }
+    undoAspect();
+    undoAspect = fitHostAspect(host, next.width, next.height);
     process();
+  }
+
+  function setNote(on: boolean): void {
+    if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+    if (!on && removeNote) {
+      removeNote();
+      removeNote = null;
+    }
   }
 
   /** Downscales the source and sorts it once. Only `draw` runs again for a resize or a color or tone change. */
   function process(): void {
-    if (!workCtx || !source || sourceW <= 0 || sourceH <= 0) {
+    if (!workCtx || !source || source.width <= 0 || source.height <= 0) {
       sorted = null;
       draw();
       return;
     }
-    const scale = Math.min(1, WORK_MAX / Math.max(sourceW, sourceH));
-    const w = Math.max(1, Math.round(sourceW * scale));
-    const h = Math.max(1, Math.round(sourceH * scale));
+    const scale = Math.min(1, WORK_MAX / Math.max(source.width, source.height));
+    const w = Math.max(1, Math.round(source.width * scale));
+    const h = Math.max(1, Math.round(source.height * scale));
     work.width = w;
     work.height = h;
     workCtx.clearRect(0, 0, w, h);
-    workCtx.drawImage(source, 0, 0, w, h);
+    workCtx.drawImage(source.image, 0, 0, w, h);
     const image = workCtx.getImageData(0, 0, w, h);
     sortPixels(image.data, w, h, props.direction === "vertical", props.low, props.high);
     sorted = image;
@@ -191,47 +179,29 @@ export const mount: Mount<PixelSortProps> = (host, initial = {}) => {
   }
 
   function draw(): void {
-    const w = Math.max(1, host.clientWidth);
-    const h = Math.max(1, host.clientHeight);
-    const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
-    const pw = Math.max(1, Math.round(w * dpr));
-    const ph = Math.max(1, Math.round(h * dpr));
-    if (canvas.width !== pw) canvas.width = pw;
-    if (canvas.height !== ph) canvas.height = ph;
+    const w = Math.max(1, surface.cssWidth);
+    const h = Math.max(1, surface.cssHeight);
+    setNote(failed);
     if (!ctx) {
       if (source || failed) host.dataset.picaReady = "true";
       return;
     }
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
-    if (failed) {
-      const [r, g, b, a] = parseColor(inkColor(host));
-      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
-      ctx.font = `14px ${NOTE_FONT}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("image unavailable", w / 2, h / 2);
-    } else if (sorted && workCtx) {
+    if (!failed && sorted && workCtx && source) {
       if (props.color) {
         workCtx.putImageData(sorted, 0, 0);
       } else {
         const painted = new ImageData(new Uint8ClampedArray(sorted.data), sorted.width, sorted.height);
         const resolved = props.tone === "auto" ? hostTone(host) : props.tone;
-        inkTint(painted.data, resolved === "light-on-dark", parseColor(inkColor(host)));
+        inkTint(painted.data, resolved === "light-on-dark", parseColor(palette.colors.fg));
         workCtx.putImageData(painted, 0, 0);
       }
-      const scale = props.fit === "cover"
-        ? Math.max(w / sorted.width, h / sorted.height)
-        : Math.min(w / sorted.width, h / sorted.height);
-      const dw = sorted.width * scale;
-      const dh = sorted.height * scale;
-      ctx.drawImage(work, (w - dw) / 2, (h - dh) / 2, dw, dh);
+      const rect = fitRect(sorted.width, sorted.height, w, h, fitFor(source, props.fit));
+      ctx.drawImage(work, rect.x, rect.y, rect.w, rect.h);
     }
     if (source || failed) host.dataset.picaReady = "true";
   }
-
-  const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => draw()) : null;
-  resizeObserver?.observe(host);
 
   labelHost(host, props.alt);
   load();
@@ -240,6 +210,7 @@ export const mount: Mount<PixelSortProps> = (host, initial = {}) => {
     update(next) {
       const before = props;
       props = { ...props, ...next };
+      palette.refresh();
       labelHost(host, props.alt);
       if (props.src !== before.src) {
         load();
@@ -250,11 +221,12 @@ export const mount: Mount<PixelSortProps> = (host, initial = {}) => {
       }
     },
     destroy() {
-      request++;
-      resizeObserver?.disconnect();
-      canvas.remove();
+      cancel();
+      setNote(false);
+      surface.destroy();
+      undoAspect();
+      palette.destroy();
       unlabelHost(host);
-      if (setAspect) host.style.removeProperty("aspect-ratio");
       delete host.dataset.picaReady;
     },
   };

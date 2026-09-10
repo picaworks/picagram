@@ -1,4 +1,5 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { createLoop } from "../../../lib/loop";
 import { createNoise } from "../../../lib/noise";
@@ -37,7 +38,7 @@ export const defaults: AsciiPointerRippleProps = {
   base: 0.12,
   glyphs: FALLBACK_RAMP,
   fontSize: 12,
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1.2,
   fps: 30,
   paused: false,
@@ -75,14 +76,9 @@ export const mount: Mount<AsciiPointerRippleProps> = (host, initial = {}) => {
   let ink = new Float32Array(0);
   let clock = 0;
   let lastSpawnMs = -Infinity;
-  const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
 
   function gridOptions(p: AsciiPointerRippleProps): GridOptions {
     return { fontFamily: p.fontFamily, fontSize: p.fontSize, columns: 0, lineHeight: p.lineHeight, renderer: "auto", color: "" };
-  }
-
-  function reduced(): boolean {
-    return motionQuery?.matches ?? false;
   }
 
   /** Three rings placed by `seed` alone, so a fixed `time` always draws the same capture. */
@@ -95,7 +91,7 @@ export const mount: Mount<AsciiPointerRippleProps> = (host, initial = {}) => {
     });
   }
 
-  function draw(t: number): void {
+  function draw(t: number, reduced: boolean): void {
     clock = t;
     const { cols, rows, aspect } = grid;
     const total = cols * rows;
@@ -113,7 +109,7 @@ export const mount: Mount<AsciiPointerRippleProps> = (host, initial = {}) => {
     }
     let active: Ripple[];
     if (props.time !== null) active = syntheticRipples(props, cols, rows, t);
-    else if (reduced()) active = [];
+    else if (reduced) active = [];
     else active = ripples;
     for (const r of active) {
       const age = (t - r.spawnMs) / 1000;
@@ -150,17 +146,17 @@ export const mount: Mount<AsciiPointerRippleProps> = (host, initial = {}) => {
   }
 
   function onLayout(): void {
-    draw(clock);
+    loop.redraw();
   }
 
   function spawn(clientX: number, clientY: number): void {
-    if (props.paused || props.time !== null || reduced()) return;
+    if (props.paused || props.time !== null || loop.reduced) return;
     if (clock - lastSpawnMs < SPAWN_INTERVAL_MS) return;
     const rect = host.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return;
     lastSpawnMs = clock;
-    const x = ((clientX - rect.left) / rect.width) * grid.cols;
-    const y = ((clientY - rect.top) / rect.height) * grid.rows;
+    const x = Math.floor((clientX - rect.left) / grid.cellWidth);
+    const y = Math.floor((clientY - rect.top) / grid.cellHeight);
     if (ripples.length >= MAX_RIPPLES) ripples.shift();
     ripples.push({ x, y, spawnMs: clock });
   }

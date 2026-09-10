@@ -10,11 +10,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>ASCII Rain · Pica</title>
-<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 @media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
-#pica { width: 100%; height: 100%; }</style>
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
 </head>
 <body>
 <div id="pica"></div>
@@ -64,8 +68,49 @@ var PicaAsciiRain = (() => {
     host.removeAttribute("aria-hidden");
   }
 
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
   // lib/glyph-grid.ts
   var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
   function createGrid(host, options, onLayout) {
     let opts = { ...options };
     let cols = 1;
@@ -83,18 +128,15 @@ var PicaAsciiRain = (() => {
     let ctx = null;
     let ink = "";
     let alive = true;
-    const probe = document.createElement("canvas").getContext("2d");
-    if (getComputedStyle(host).position === "static") host.style.position = "relative";
-    host.style.overflow = "hidden";
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
     const font = () => `${fontPx}px ${opts.fontFamily}`;
     function layout(force) {
       const w = host.clientWidth;
       const h = host.clientHeight;
-      let advance = 0.6;
-      if (probe) {
-        probe.font = `100px ${opts.fontFamily}`;
-        advance = probe.measureText("M").width / 100 || 0.6;
-      }
+      const advance = advanceOf(opts.fontFamily);
       const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
       const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
       const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
@@ -116,7 +158,7 @@ var PicaAsciiRain = (() => {
       view?.remove();
       lines = [];
       ctx = null;
-      const color = opts.color || "var(--pica-fg)";
+      const color = opts.color || cssVar("fg");
       const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
       if (mode === "dom") {
         const pre = document.createElement("pre");
@@ -147,7 +189,11 @@ var PicaAsciiRain = (() => {
         view = pre;
       } else {
         const canvas = document.createElement("canvas");
-        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color}`;
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
         const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
         canvas.width = Math.max(1, Math.round(width * dpr));
         canvas.height = Math.max(1, Math.round(height * dpr));
@@ -159,6 +205,7 @@ var PicaAsciiRain = (() => {
         }
         view = canvas;
       }
+      view.setAttribute("data-pica", "");
       view.setAttribute("aria-hidden", "true");
       shown = new Array(rows).fill("\0");
       ink = "";
@@ -172,18 +219,29 @@ var PicaAsciiRain = (() => {
       }
       for (let y = 0; y < rows; y++) {
         const start = y * cols;
-        const rowTints = tints.slice(start, start + cols);
-        let key = cells.slice(start, start + cols).join("");
-        if (rowTints.some((tint) => tint !== void 0)) key += "\0" + rowTints.join(",");
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
         if (key === shown[y]) continue;
         shown[y] = key;
         const top = y * cellH;
         context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
         let x = 0;
         while (x < cols) {
-          const tint = rowTints[x] ?? ink;
+          const tint = tints[start + x] ?? ink;
           let end = x + 1;
-          while (end < cols && (rowTints[end] ?? ink) === tint) end++;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
           context.fillStyle = tint;
           context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
           x = end;
@@ -224,6 +282,12 @@ var PicaAsciiRain = (() => {
       get aspect() {
         return cellW / cellH;
       },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
       get font() {
         return font();
       },
@@ -255,6 +319,7 @@ var PicaAsciiRain = (() => {
         document.fonts.removeEventListener("loadingdone", onFonts);
         view?.remove();
         view = null;
+        restoreHost();
       }
     };
   }
@@ -262,8 +327,8 @@ var PicaAsciiRain = (() => {
   // lib/loop.ts
   var MAX_STEP_MS = 100;
   function createLoop(options) {
-    const { el, frame, still } = options;
-    let state = { paused: options.paused, time: options.time, fps: options.fps };
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
     let t = 0;
     let last = 0;
     let raf = 0;
@@ -272,7 +337,7 @@ var PicaAsciiRain = (() => {
     const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
     let reduced = motionQuery?.matches ?? false;
     const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
-    const heldTime = () => state.time !== null ? state.time : reduced ? still : t;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
     function tick(now) {
       raf = 0;
       if (!animating()) return;
@@ -281,7 +346,7 @@ var PicaAsciiRain = (() => {
       if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
         t += Math.min(elapsed, MAX_STEP_MS);
         last = now;
-        frame(t);
+        frame(t, reduced);
       }
       raf = requestAnimationFrame(tick);
     }
@@ -294,7 +359,7 @@ var PicaAsciiRain = (() => {
         cancelAnimationFrame(raf);
         raf = 0;
       }
-      if (!go && drawHeld) frame(heldTime());
+      if (!go && drawHeld) frame(heldTime(), reduced);
     }
     const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
       const entry = entries[entries.length - 1];
@@ -312,17 +377,20 @@ var PicaAsciiRain = (() => {
       sync(true);
     };
     motionQuery?.addEventListener("change", onMotion);
-    frame(heldTime());
+    frame(heldTime(), reduced);
     sync(false);
     return {
       update(next) {
         const timeChanged = next.time !== void 0 && next.time !== state.time;
         state = { ...state, ...next };
         if (state.time !== null) t = state.time;
-        sync(timeChanged || next.paused !== void 0);
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
       },
       redraw() {
-        frame(heldTime());
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
       },
       destroy() {
         if (raf !== 0) cancelAnimationFrame(raf);
@@ -424,6 +492,14 @@ var PicaAsciiRain = (() => {
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
   }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
 
   // registry/ascii/ascii-rain/core.ts
   var defaults = {
@@ -433,7 +509,7 @@ var PicaAsciiRain = (() => {
     change: 0.06,
     glyphs: "0123456789:;+=*#%",
     fontSize: 12,
-    fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+    fontFamily: GRID_FONT,
     lineHeight: 1.2,
     fps: 24,
     paused: false,
@@ -441,11 +517,6 @@ var PicaAsciiRain = (() => {
     seed: 1
   };
   var STILL_MS = 1200;
-  function hash(a, b) {
-    let h = (Math.imul(a ^ 2654435769, 2246822507) ^ b) >>> 0;
-    h = Math.imul(h ^ h >>> 15, 3266489909) >>> 0;
-    return (h ^ h >>> 16) >>> 0;
-  }
   function wrap(a, span) {
     return (a % span + span) % span;
   }
@@ -469,13 +540,13 @@ var PicaAsciiRain = (() => {
         const frameMs = 1e3 / Math.max(1, props.fps);
         const epoch = Math.floor(t / frameMs);
         for (let x = 0; x < cols; x++) {
-          const base = createRng(hash(props.seed, x));
+          const base = createRng(hashSeed(props.seed, x));
           if (base() >= props.density) continue;
           const speedMult = 0.6 + base() * 0.9;
           const phase = base() * span;
           const headRow = wrap(t / 1e3 * props.speed * speedMult + phase, span) - trailRows;
           const headFloor = Math.floor(headRow);
-          const flicker = props.change > 0 ? createRng(hash(hash(props.seed, x), epoch + 1)) : null;
+          const flicker = props.change > 0 ? createRng(hashSeed(props.seed, x, epoch + 1)) : null;
           for (let r = 0; r < rows; r++) {
             const d = headRow - r;
             if (d < 0 || d > trailRows) continue;
@@ -522,10 +593,23 @@ var PicaAsciiRain = (() => {
 })();
 
 (function () {
-  var instance = PicaAsciiRain.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaAsciiRain.mount(host, take(window.PICA_PROPS || {}));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
-    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
     if (event.data.type === "pica:ground") {
       document.documentElement.setAttribute("data-ground", event.data.ground);
       instance.update({});

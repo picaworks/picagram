@@ -8,8 +8,13 @@ export interface PicaInstance<P> {
   destroy(): void;
 }
 
-/** Mounts a core into a host element. Props are plain data: strings, numbers, booleans, null. */
+/** Mounts a core into a host element. Props are JSON values, so they pass through window.PICA_PROPS,
+ *  postMessage, and the catalog's inspector unchanged. */
 export type Mount<P> = (host: HTMLElement, props?: Partial<P>) => PicaInstance<P>;
+
+/** Any value JSON can carry. A prop may hold one. A core never writes into it, because React passes the
+ *  parent's own objects; compare with sameJson from lib/json.ts. */
+export type Json = null | boolean | number | string | readonly Json[] | { readonly [key: string]: Json };
 
 /** Props every animated core accepts, so captures and reduced motion behave the same everywhere. */
 export interface MotionProps {

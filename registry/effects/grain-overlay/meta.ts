@@ -9,6 +9,9 @@ export const meta: Meta = {
   wave: 2,
   animated: true,
   decorative: true,
+  wraps: "content",
+  // Grain is grayscale turbulence blended over the content, so no palette color changes it.
+  palette: [],
   controls: {
     frequency: { type: "number", min: 0.4, max: 1.2, step: 0.05 },
     opacity: { type: "number", min: 0.04, max: 0.4, step: 0.02 },

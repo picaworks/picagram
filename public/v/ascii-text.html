@@ -10,11 +10,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>ASCII Text · Pica</title>
-<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 @media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
-#pica { width: 100%; height: 100%; }</style>
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
 </head>
 <body>
 <div id="pica"></div>
@@ -64,6 +68,48 @@ var PicaAsciiText = (() => {
     host.removeAttribute("aria-hidden");
   }
 
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+
   // lib/color.ts
   var colorProbe;
   function parseColor(color) {
@@ -90,8 +136,7 @@ var PicaAsciiText = (() => {
     return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
   }
   function inkColor(host) {
-    const style = getComputedStyle(host);
-    return style.getPropertyValue("--pica-fg").trim() || style.color;
+    return readPalette(host).fg;
   }
   function hostTone(host) {
     const fg = relativeLuminance(inkColor(host));
@@ -106,8 +151,38 @@ var PicaAsciiText = (() => {
     return fg > bg ? "light-on-dark" : "dark-on-light";
   }
 
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
   // lib/glyph-grid.ts
   var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
   function createGrid(host, options, onLayout) {
     let opts = { ...options };
     let cols = 1;
@@ -125,18 +200,15 @@ var PicaAsciiText = (() => {
     let ctx = null;
     let ink = "";
     let alive = true;
-    const probe = document.createElement("canvas").getContext("2d");
-    if (getComputedStyle(host).position === "static") host.style.position = "relative";
-    host.style.overflow = "hidden";
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
     const font = () => `${fontPx}px ${opts.fontFamily}`;
     function layout(force) {
       const w = host.clientWidth;
       const h = host.clientHeight;
-      let advance = 0.6;
-      if (probe) {
-        probe.font = `100px ${opts.fontFamily}`;
-        advance = probe.measureText("M").width / 100 || 0.6;
-      }
+      const advance = advanceOf(opts.fontFamily);
       const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
       const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
       const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
@@ -158,7 +230,7 @@ var PicaAsciiText = (() => {
       view?.remove();
       lines = [];
       ctx = null;
-      const color = opts.color || "var(--pica-fg)";
+      const color = opts.color || cssVar("fg");
       const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
       if (mode === "dom") {
         const pre = document.createElement("pre");
@@ -189,7 +261,11 @@ var PicaAsciiText = (() => {
         view = pre;
       } else {
         const canvas = document.createElement("canvas");
-        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color}`;
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
         const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
         canvas.width = Math.max(1, Math.round(width * dpr));
         canvas.height = Math.max(1, Math.round(height * dpr));
@@ -201,6 +277,7 @@ var PicaAsciiText = (() => {
         }
         view = canvas;
       }
+      view.setAttribute("data-pica", "");
       view.setAttribute("aria-hidden", "true");
       shown = new Array(rows).fill("\0");
       ink = "";
@@ -214,18 +291,29 @@ var PicaAsciiText = (() => {
       }
       for (let y = 0; y < rows; y++) {
         const start = y * cols;
-        const rowTints = tints.slice(start, start + cols);
-        let key = cells.slice(start, start + cols).join("");
-        if (rowTints.some((tint) => tint !== void 0)) key += "\0" + rowTints.join(",");
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
         if (key === shown[y]) continue;
         shown[y] = key;
         const top = y * cellH;
         context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
         let x = 0;
         while (x < cols) {
-          const tint = rowTints[x] ?? ink;
+          const tint = tints[start + x] ?? ink;
           let end = x + 1;
-          while (end < cols && (rowTints[end] ?? ink) === tint) end++;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
           context.fillStyle = tint;
           context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
           x = end;
@@ -266,6 +354,12 @@ var PicaAsciiText = (() => {
       get aspect() {
         return cellW / cellH;
       },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
       get font() {
         return font();
       },
@@ -297,6 +391,7 @@ var PicaAsciiText = (() => {
         document.fonts.removeEventListener("loadingdone", onFonts);
         view?.remove();
         view = null;
+        restoreHost();
       }
     };
   }
@@ -412,6 +507,12 @@ var PicaAsciiText = (() => {
   }
 
   // lib/sample.ts
+  function fitRect(sourceW, sourceH, boxW, boxH, fit, alignX = 0.5, alignY = 0.5) {
+    const scale = fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+    const w = sourceW * scale;
+    const h = sourceH * scale;
+    return { x: (boxW - w) * alignX, y: (boxH - h) * alignY, w, h };
+  }
   function createSampler() {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
@@ -428,13 +529,9 @@ var PicaAsciiText = (() => {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, sw, sh);
         if (o.mirror) ctx.setTransform(-1, 0, 0, 1, sw, 0);
-        const boxW = o.cols * o.aspect;
-        const boxH = o.rows;
-        const scale = o.fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
-        const drawW = sourceW * scale;
-        const drawH = sourceH * scale;
+        const box = fitRect(sourceW, sourceH, o.cols * o.aspect, o.rows, o.fit, o.alignX, o.alignY);
         const toX = o.n / o.aspect;
-        ctx.drawImage(source, (boxW - drawW) / 2 * toX, (boxH - drawH) / 2 * ny, drawW * toX, drawH * ny);
+        ctx.drawImage(source, box.x * toX, box.y * ny, box.w * toX, box.h * ny);
         const data = ctx.getImageData(0, 0, sw, sh).data;
         const lightOnDark = (o.tone === "auto" ? hostTone(host) : o.tone) === "light-on-dark";
         for (let p = 0; p < sw * sh; p++) {
@@ -449,22 +546,8 @@ var PicaAsciiText = (() => {
     };
   }
 
-  // registry/ascii/ascii-text/core.ts
-  var defaults = {
-    text: "PICA",
-    font: '700 "Barlow Condensed", "Helvetica Neue", Arial, sans-serif',
-    columns: 80,
-    glyphs: FALLBACK_RAMP,
-    contrast: 1.2,
-    tone: "auto",
-    align: "center",
-    shape: true,
-    fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
-    lineHeight: 1.2
-  };
-  var SHAPE_N = 3;
-  var RASTER_SIZE = 240;
-  var FONT_PREFIX_WORDS = /* @__PURE__ */ new Set([
+  // lib/subject.ts
+  var SHORTHAND_KEYWORDS = /* @__PURE__ */ new Set([
     "normal",
     "italic",
     "oblique",
@@ -481,68 +564,81 @@ var PicaAsciiText = (() => {
     "extra-expanded",
     "ultra-expanded"
   ]);
-  function rasterFont(spec, px) {
-    const words = spec.trim().split(/\s+/);
+  var SIZE_TOKEN = /^(?:[\d.]+(?:px|pt|pc|em|rem|ex|ch|%|vw|vh|vmin|vmax|cm|mm|in|q)|xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large|smaller|larger)(?:\/\S+)?$/i;
+  function sizedFont(font, px) {
+    const tokens = font.trim().split(/\s+/);
+    const lead = [];
     let i = 0;
-    while (i < words.length && (FONT_PREFIX_WORDS.has((words[i] ?? "").toLowerCase()) || /^[1-9]00$/.test(words[i] ?? ""))) i++;
-    const prefix = words.slice(0, i).join(" ");
-    const family = words.slice(i).join(" ") || "sans-serif";
-    return prefix ? `${prefix} ${px}px ${family}` : `${px}px ${family}`;
+    for (; i < tokens.length; i++) {
+      const token = tokens[i] ?? "";
+      if (SIZE_TOKEN.test(token)) {
+        i++;
+        break;
+      }
+      if (SHORTHAND_KEYWORDS.has(token.toLowerCase()) || /^\d+(?:\.\d+)?$/.test(token)) {
+        lead.push(token);
+        continue;
+      }
+      break;
+    }
+    return [...lead, `${px}px`, tokens.slice(i).join(" ") || "sans-serif"].join(" ");
   }
+  function textSubject(text, font, tone, px = 240, canvas = document.createElement("canvas")) {
+    const ctx = canvas.getContext("2d");
+    if (!ctx || !text) return null;
+    const spec = sizedFont(font, px);
+    ctx.font = spec;
+    const measured = ctx.measureText(text);
+    const left = measured.actualBoundingBoxLeft || 0;
+    const right = measured.actualBoundingBoxRight || measured.width;
+    const ascent = measured.actualBoundingBoxAscent || px * 0.75;
+    const descent = measured.actualBoundingBoxDescent || px * 0.25;
+    canvas.width = Math.max(1, Math.ceil(left + right));
+    canvas.height = Math.max(1, Math.ceil(ascent + descent));
+    ctx.font = spec;
+    ctx.fillStyle = tone === "light-on-dark" ? "#fff" : "#000";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(text, left, ascent);
+    return canvas;
+  }
+
+  // lib/source.ts
+  function fitHostAspect(host, width, height) {
+    if (host.clientHeight >= 2 || width <= 0 || height <= 0) return () => void 0;
+    return styleHost(host, { "aspect-ratio": `${width} / ${height}` });
+  }
+
+  // registry/ascii/ascii-text/core.ts
+  var defaults = {
+    text: "PICA",
+    font: '700 "Barlow Condensed", "Helvetica Neue", Arial, sans-serif',
+    columns: 80,
+    glyphs: FALLBACK_RAMP,
+    contrast: 1.2,
+    tone: "auto",
+    align: "center",
+    shape: true,
+    fontFamily: GRID_FONT,
+    lineHeight: 1.2
+  };
+  var SHAPE_N = 3;
+  var RASTER_SIZE = 240;
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
-    let setAspect = false;
-    const sampler = createSampler();
     const raster = document.createElement("canvas");
-    const rasterCtx = raster.getContext("2d");
-    const stage = document.createElement("canvas");
-    const stageCtx = stage.getContext("2d");
+    let subject = null;
+    let undoAspect = () => void 0;
+    const sampler = createSampler();
     const grid = createGrid(host, gridOptions(props), render);
     function gridOptions(p) {
       return { fontFamily: p.fontFamily, fontSize: 12, columns: p.columns, lineHeight: p.lineHeight, renderer: "auto", color: "" };
     }
-    function rasterize() {
-      if (!rasterCtx) return;
-      if (!props.text) {
-        raster.width = 0;
-        raster.height = 0;
-        return;
-      }
-      rasterCtx.font = rasterFont(props.font, RASTER_SIZE);
-      const measured = rasterCtx.measureText(props.text);
-      const left = measured.actualBoundingBoxLeft || 0;
-      const right = measured.actualBoundingBoxRight || measured.width;
-      const ascent = measured.actualBoundingBoxAscent || RASTER_SIZE * 0.75;
-      const descent = measured.actualBoundingBoxDescent || RASTER_SIZE * 0.25;
-      raster.width = Math.max(1, Math.ceil(left + right));
-      raster.height = Math.max(1, Math.ceil(ascent + descent));
-      rasterCtx.font = rasterFont(props.font, RASTER_SIZE);
-      rasterCtx.fillStyle = (props.tone === "auto" ? hostTone(host) : props.tone) === "light-on-dark" ? "#fff" : "#000";
-      rasterCtx.textBaseline = "alphabetic";
-      rasterCtx.fillText(props.text, left, ascent);
-    }
     function draw() {
       grid.clear();
       const { cols, rows, aspect } = grid;
-      if (raster.width > 0 && raster.height > 0) {
-        let source = raster;
-        let sw = raster.width;
-        let sh = raster.height;
-        if (props.align === "left" && stageCtx) {
-          const boxAspect = cols * aspect / rows;
-          const textAspect = raster.width / raster.height;
-          if (boxAspect > textAspect) {
-            sw = Math.max(1, Math.ceil(raster.height * boxAspect));
-            sh = raster.height;
-            stage.width = sw;
-            stage.height = sh;
-            stageCtx.clearRect(0, 0, sw, sh);
-            stageCtx.drawImage(raster, 0, 0);
-            source = stage;
-          }
-        }
+      if (subject) {
         const n = props.shape ? SHAPE_N : 1;
-        const ink = sampler.sample(source, sw, sh, host, {
+        const ink = sampler.sample(subject, subject.width, subject.height, host, {
           cols,
           rows,
           aspect,
@@ -550,7 +646,9 @@ var PicaAsciiText = (() => {
           fit: "contain",
           tone: props.tone,
           contrast: props.contrast,
-          mirror: false
+          mirror: false,
+          // Centered fit reads as flush left, since the raster is already cropped tight to its ink.
+          alignX: props.align === "left" ? 0 : 0.5
         });
         const sampleW = cols * n;
         const shapes = props.shape ? measureShapes(props.glyphs, props.fontFamily, props.lineHeight, SHAPE_N) : null;
@@ -573,10 +671,11 @@ var PicaAsciiText = (() => {
       host.dataset.picaReady = "true";
     }
     function render() {
-      rasterize();
-      if (host.clientHeight < 2 && raster.width > 0 && raster.height > 0) {
-        host.style.aspectRatio = `${raster.width} / ${raster.height}`;
-        setAspect = true;
+      const tone = props.tone === "auto" ? hostTone(host) : props.tone;
+      subject = textSubject(props.text, props.font, tone, RASTER_SIZE, raster);
+      if (subject) {
+        undoAspect();
+        undoAspect = fitHostAspect(host, subject.width, subject.height);
       }
       draw();
     }
@@ -596,7 +695,7 @@ var PicaAsciiText = (() => {
       destroy() {
         grid.destroy();
         unlabelHost(host);
-        if (setAspect) host.style.removeProperty("aspect-ratio");
+        undoAspect();
         delete host.dataset.picaReady;
       }
     };
@@ -605,10 +704,23 @@ var PicaAsciiText = (() => {
 })();
 
 (function () {
-  var instance = PicaAsciiText.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaAsciiText.mount(host, take(window.PICA_PROPS || {}));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
-    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
     if (event.data.type === "pica:ground") {
       document.documentElement.setAttribute("data-ground", event.data.ground);
       instance.update({});

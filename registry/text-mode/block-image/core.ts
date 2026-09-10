@@ -1,8 +1,10 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
-import { bayerMatrix } from "../../../lib/dither";
+import { quadrant } from "../../../lib/blocks";
+import { threshold } from "../../../lib/dither";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { createSampler } from "../../../lib/sample";
-import { litSphere } from "../../../lib/subject";
+import { fitFor, fitHostAspect, loadSource, showNote, type Source } from "../../../lib/source";
 import type { Mount } from "../../../lib/types";
 
 export interface BlockImageProps {
@@ -35,47 +37,22 @@ export const defaults: BlockImageProps = {
   threshold: 0.5,
   dither: true,
   contrast: 1.1,
-  fit: "contain",
+  fit: "cover",
   tone: "auto",
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1,
 };
 
 /** Sample points per cell side: each cell reads a 2 by 2 patch of the image, one sample per quadrant. */
 const N = 2;
 
-/** Bayer matrix side. Wider than a cell, so neighboring cells dither differently instead of repeating one pattern. */
-const BAYER_SIZE = 4;
-const BAYER = bayerMatrix(BAYER_SIZE);
-
-/** The sixteen quadrant block glyphs, indexed by 8 * topLeft + 4 * topRight + 2 * bottomLeft + bottomRight. */
-const BLOCKS = [
-  " ", // 0000
-  "▗", // 0001 bottom right
-  "▖", // 0010 bottom left
-  "▄", // 0011 bottom half
-  "▝", // 0100 top right
-  "▐", // 0101 right half
-  "▞", // 0110 top right and bottom left
-  "▟", // 0111 top right, bottom left and bottom right
-  "▘", // 1000 top left
-  "▚", // 1001 top left and bottom right
-  "▌", // 1010 left half
-  "▙", // 1011 top left, bottom left and bottom right
-  "▀", // 1100 top half
-  "▜", // 1101 top left, top right and bottom right
-  "▛", // 1110 top left, top right and bottom left
-  "█", // 1111 full block
-];
-
 export const mount: Mount<BlockImageProps> = (host, initial = {}) => {
   let props: BlockImageProps = { ...defaults, ...initial };
-  let source: CanvasImageSource | null = null;
-  let sourceW = 0;
-  let sourceH = 0;
+  let source: Source | null = null;
   let failed = false;
-  let request = 0;
-  let setAspect = false;
+  let cancel = (): void => undefined;
+  let undoAspect = (): void => undefined;
+  let removeNote: (() => void) | null = null;
   const sampler = createSampler();
   const grid = createGrid(host, gridOptions(props), draw);
 
@@ -84,66 +61,52 @@ export const mount: Mount<BlockImageProps> = (host, initial = {}) => {
   }
 
   function load(): void {
-    const mine = ++request;
+    cancel();
     failed = false;
-    if (!props.src) {
-      use(litSphere(), 256, 256);
-      return;
-    }
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.decoding = "async";
-    img.onload = () => {
-      if (mine === request) use(img, img.naturalWidth, img.naturalHeight);
-    };
-    img.onerror = () => {
-      if (mine !== request) return;
+    cancel = loadSource(props.src, use, () => {
       source = null;
       failed = true;
       draw();
-    };
-    img.src = props.src;
+    });
   }
 
-  function use(next: CanvasImageSource, w: number, h: number): void {
+  function use(next: Source): void {
     source = next;
-    sourceW = w;
-    sourceH = h;
     // A host with no height of its own takes the image's proportions.
-    if (host.clientHeight < 2 && w > 0 && h > 0) {
-      host.style.aspectRatio = `${w} / ${h}`;
-      setAspect = true;
-    }
+    undoAspect();
+    undoAspect = fitHostAspect(host, next.width, next.height);
     draw();
   }
 
-  /** Whether the sample at (x, y) clears the threshold, after any dithering. */
-  function bit(ink: Float32Array, sw: number, x: number, y: number): number {
-    const value = ink[y * sw + x] ?? 0;
-    const jitter = props.dither ? (BAYER[(y % BAYER_SIZE) * BAYER_SIZE + (x % BAYER_SIZE)] ?? 0.5) - 0.5 : 0;
-    return value + jitter >= props.threshold ? 1 : 0;
+  function setNote(on: boolean): void {
+    if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+    if (!on && removeNote) {
+      removeNote();
+      removeNote = null;
+    }
   }
 
   function draw(): void {
     grid.clear();
-    const { cols, rows, aspect } = grid;
-    if (failed) {
-      const note = "image unavailable";
-      grid.write(Math.max(0, Math.floor((cols - note.length) / 2)), Math.floor(rows / 2), note);
-    } else if (source) {
-      const ink = sampler.sample(source, sourceW, sourceH, host, {
-        cols, rows, aspect, n: N, fit: props.fit, tone: props.tone, contrast: props.contrast, mirror: false,
+    setNote(failed);
+    if (source && !failed) {
+      const { cols, rows, aspect } = grid;
+      const ink = sampler.sample(source.image, source.width, source.height, host, {
+        cols, rows, aspect, n: N, fit: fitFor(source, props.fit), tone: props.tone, contrast: props.contrast, mirror: false,
       });
       const sw = cols * N;
+      const sh = rows * N;
+      // Ink goes where the value is at least threshold + bayer - 0.5, so dither jitters the cut evenly around it.
+      const bits = threshold(ink, sw, sh, props.threshold, props.dither ? 4 : 0);
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           const cx = x * N;
           const cy = y * N;
-          const topLeft = bit(ink, sw, cx, cy);
-          const topRight = bit(ink, sw, cx + 1, cy);
-          const bottomLeft = bit(ink, sw, cx, cy + 1);
-          const bottomRight = bit(ink, sw, cx + 1, cy + 1);
-          grid.set(x, y, BLOCKS[topLeft * 8 + topRight * 4 + bottomLeft * 2 + bottomRight] ?? " ");
+          const topLeft = bits[cy * sw + cx] ?? 0;
+          const topRight = bits[cy * sw + cx + 1] ?? 0;
+          const bottomLeft = bits[(cy + 1) * sw + cx] ?? 0;
+          const bottomRight = bits[(cy + 1) * sw + cx + 1] ?? 0;
+          grid.set(x, y, quadrant(topLeft === 1, topRight === 1, bottomLeft === 1, bottomRight === 1));
         }
       }
     }
@@ -167,10 +130,11 @@ export const mount: Mount<BlockImageProps> = (host, initial = {}) => {
       }
     },
     destroy() {
-      request++;
+      cancel();
+      setNote(false);
       grid.destroy();
+      undoAspect();
       unlabelHost(host);
-      if (setAspect) host.style.removeProperty("aspect-ratio");
       delete host.dataset.picaReady;
     },
   };

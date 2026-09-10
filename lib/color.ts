@@ -1,4 +1,5 @@
 /** Reading colors from the page, so components inherit instead of impose. See STYLE.md, principle 4. */
+import { readPalette } from "./palette";
 
 let colorProbe: CanvasRenderingContext2D | null | undefined;
 
@@ -29,10 +30,10 @@ export function relativeLuminance(color: string): number {
   return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
 }
 
-/** The color glyphs are drawn in: --pica-fg when set, otherwise the host's inherited color. */
+/** The color glyphs are drawn in: --pica-fg when set, otherwise the host's inherited color. It reads once;
+ *  a core that needs the color every frame keeps a watchPalette handle from lib/palette.ts instead. */
 export function inkColor(host: HTMLElement): string {
-  const style = getComputedStyle(host);
-  return style.getPropertyValue("--pica-fg").trim() || style.color;
+  return readPalette(host).fg;
 }
 
 /** Whether the host shows light glyphs on a dark ground or the reverse, read from computed colors. */

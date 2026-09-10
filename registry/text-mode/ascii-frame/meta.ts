@@ -9,6 +9,7 @@ export const meta: Meta = {
   wave: 1,
   animated: false,
   decorative: false,
+  wraps: "content",
   controls: {
     variant: { type: "select", options: ["light", "heavy", "double", "dashed", "ascii"] },
     title: { type: "string" },

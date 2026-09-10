@@ -108,13 +108,29 @@
       "columns": "Columns across the host. Rows follow from the host's height, or from the image when the host has none.",
       "glyphs": "Glyphs to draw with, in any order: they are sorted by the ink each one puts down in the font.",
       "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
-      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image. The built-in sphere is always shown whole.",
       "tone": "\"auto\" reads the host's colors. \"light-on-dark\" maps bright pixels to dense glyphs; \"dark-on-light\" does the reverse.",
       "shape": "Match each cell's shape as well as its brightness: sharper edges, more work.",
       "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
       "lineHeight": "Line height as a multiple of the glyph size."
     },
-    "gzipBytes": 4258
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "columns": "number",
+      "glyphs": "string",
+      "contrast": "number",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "shape": "boolean",
+      "fontFamily": "string",
+      "lineHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 5014
   },
   {
     "slug": "ascii-morph",
@@ -226,7 +242,23 @@
       "lineHeight": "Line height as a multiple of the glyph size.",
       "fps": "Frames per second ceiling."
     },
-    "gzipBytes": 5234
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "from": "string",
+      "to": "string",
+      "hold": "number",
+      "transition": "number",
+      "columns": "number",
+      "glyphs": "string",
+      "font": "string",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5985
   },
   {
     "slug": "ascii-noise-field",
@@ -344,7 +376,23 @@
       "lineHeight": "Line height as a multiple of the glyph size.",
       "fps": "Frames per second ceiling for the animation."
     },
-    "gzipBytes": 4312
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "scale": "number",
+      "speed": "number",
+      "octaves": "number",
+      "contrast": "number",
+      "density": "number",
+      "glyphs": "string",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4727
   },
   {
     "slug": "ascii-pointer-ripple",
@@ -462,7 +510,23 @@
       "lineHeight": "Line height as a multiple of the glyph size.",
       "fps": "Frames per second ceiling."
     },
-    "gzipBytes": 4759
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "growth": "number",
+      "width": "number",
+      "lifetime": "number",
+      "strength": "number",
+      "base": "number",
+      "glyphs": "string",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5177
   },
   {
     "slug": "ascii-rain",
@@ -572,7 +636,22 @@
       "lineHeight": "Line height as a multiple of the glyph size.",
       "fps": "Frames per second ceiling."
     },
-    "gzipBytes": 3843
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "density": "number",
+      "speed": "number",
+      "trail": "number",
+      "change": "number",
+      "glyphs": "string",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4261
   },
   {
     "slug": "ascii-reveal",
@@ -588,6 +667,7 @@
     "wave": 1,
     "animated": true,
     "decorative": false,
+    "stage": "inline",
     "controls": {
       "text": {
         "type": "string",
@@ -650,7 +730,7 @@
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "text": "Text to reveal. Also the host's accessible label.",
+      "text": "Text to reveal. Assistive technology reads it whole, never the scramble.",
       "duration": "Milliseconds from the first frame to the last character locking onto its own glyph.",
       "stagger": "Share of the duration spent spreading out when characters lock, from 0 (all lock together) to 1 (locks spread across nearly the whole duration).",
       "glyphs": "Glyphs a character cycles through before it settles on its own character.",
@@ -658,7 +738,20 @@
       "fontFamily": "CSS font family stack. Kept monospace so the revealed width never jitters.",
       "fps": "Frames per second the scramble cycles through glyphs at."
     },
-    "gzipBytes": 1960
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "text": "string",
+      "duration": "number",
+      "stagger": "number",
+      "glyphs": "string",
+      "loop": "number",
+      "fontFamily": "string",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 2079
   },
   {
     "slug": "ascii-solid",
@@ -756,7 +849,21 @@
       "lineHeight": "Line height as a multiple of the glyph size.",
       "fps": "Frames per second ceiling."
     },
-    "gzipBytes": 4160
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "shape": "\"torus\" | \"sphere\" | \"cube\"",
+      "speed": "number",
+      "size": "number",
+      "glyphs": "string",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4583
   },
   {
     "slug": "ascii-text",
@@ -860,7 +967,23 @@
       "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
       "lineHeight": "Line height as a multiple of the glyph size."
     },
-    "gzipBytes": 4443
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "text": "string",
+      "font": "string",
+      "columns": "number",
+      "glyphs": "string",
+      "contrast": "number",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "align": "\"center\" | \"left\"",
+      "shape": "boolean",
+      "fontFamily": "string",
+      "lineHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 5073
   },
   {
     "slug": "ascii-topo",
@@ -955,7 +1078,21 @@
       "lineHeight": "Line height as a multiple of the glyph size.",
       "fps": "Frames per second ceiling for the drift."
     },
-    "gzipBytes": 3993
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "scale": "number",
+      "levels": "number",
+      "speed": "number",
+      "ascii": "boolean",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4416
   },
   {
     "slug": "ascii-video",
@@ -1084,7 +1221,25 @@
       "lineHeight": "Line height as a multiple of the glyph size.",
       "fps": "Frames drawn per second, at most 30."
     },
-    "gzipBytes": 5003
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "webcam": "boolean",
+      "mirror": "boolean",
+      "alt": "string",
+      "columns": "number",
+      "glyphs": "string",
+      "contrast": "number",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5747
   },
   {
     "slug": "ascii-waves",
@@ -1195,7 +1350,23 @@
       "lineHeight": "Line height as a multiple of the glyph size.",
       "fps": "Frames per second ceiling for the animation."
     },
-    "gzipBytes": 3791
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "sources": "number",
+      "frequency": "number",
+      "speed": "number",
+      "contrast": "number",
+      "drift": "number",
+      "glyphs": "string",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4211
   },
   {
     "slug": "dither-gradient",
@@ -1293,7 +1464,18 @@
       "contrast": "Contrast around mid grey, applied before the Bayer threshold. 1 leaves the gradient as it is.",
       "fps": "Frames per second ceiling."
     },
-    "gzipBytes": 3210
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "shape": "\"linear\" | \"radial\" | \"noise\"",
+      "scale": "number",
+      "speed": "number",
+      "contrast": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4173
   },
   {
     "slug": "dither-image",
@@ -1394,7 +1576,20 @@
       "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
       "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones."
     },
-    "gzipBytes": 2585
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "algorithm": "\"bayer2\" | \"bayer4\" | \"bayer8\" | \"floyd-steinberg\" | \"atkinson\"",
+      "scale": "number",
+      "contrast": "number",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
+    },
+    "events": {},
+    "gzipBytes": 3882
   },
   {
     "slug": "halftone-image",
@@ -1494,7 +1689,21 @@
       "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
       "tone": "\"auto\" reads the host's colors. \"light-on-dark\" screens the bright pixels; \"dark-on-light\" screens the dark ones."
     },
-    "gzipBytes": 2643
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "cell": "number",
+      "angle": "number",
+      "shape": "\"circle\" | \"square\" | \"line\"",
+      "contrast": "number",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
+    },
+    "events": {},
+    "gzipBytes": 3837
   },
   {
     "slug": "duotone-image",
@@ -1574,7 +1783,20 @@
       "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
       "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones."
     },
-    "gzipBytes": 2234
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "levels": "number",
+      "accent": "boolean",
+      "contrast": "number",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
+    },
+    "events": {},
+    "gzipBytes": 3371
   },
   {
     "slug": "glitch-text",
@@ -1590,6 +1812,7 @@
     "wave": 2,
     "animated": true,
     "decorative": false,
+    "stage": "inline",
     "controls": {
       "text": {
         "type": "string"
@@ -1643,7 +1866,20 @@
       "fontFamily": "CSS font-family stack. Must be monospace, so the sliced strips line up. Size and color are inherited from the host.",
       "fps": "Frames per second ceiling for the glitch animation."
     },
-    "gzipBytes": 2588
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "text": "string",
+      "interval": "number",
+      "burst": "number",
+      "intensity": "number",
+      "glyphs": "string",
+      "fontFamily": "string",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 2726
   },
   {
     "slug": "grain-overlay",
@@ -1659,6 +1895,8 @@
     "wave": 2,
     "animated": true,
     "decorative": true,
+    "wraps": "content",
+    "palette": [],
     "controls": {
       "frequency": {
         "type": "number",
@@ -1737,7 +1975,19 @@
       "jitter": "Shifts the tile a few pixels several times a second, so the grain lives instead of sitting fixed.",
       "fps": "Frames per second the jitter steps at."
     },
-    "gzipBytes": 2146
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "frequency": "number",
+      "opacity": "number",
+      "size": "number",
+      "blend": "\"overlay\" | \"soft-light\" | \"normal\"",
+      "jitter": "boolean",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 2435
   },
   {
     "slug": "halftone-css",
@@ -1814,7 +2064,18 @@
       "angle": "Direction of the linear fade, in degrees. Used only when fade is \"linear\".",
       "strength": "How strongly the dots show, from faint to fully inked."
     },
-    "gzipBytes": 1004
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "size": "number",
+      "dot": "number",
+      "fade": "\"radial\" | \"linear\" | \"none\"",
+      "angle": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1427
   },
   {
     "slug": "pixel-sort",
@@ -1911,7 +2172,21 @@
       "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
       "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones. Has no effect when color is true."
     },
-    "gzipBytes": 2589
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "direction": "\"horizontal\" | \"vertical\"",
+      "low": "number",
+      "high": "number",
+      "color": "boolean",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
+    },
+    "events": {},
+    "gzipBytes": 3559
   },
   {
     "slug": "scanlines",
@@ -1927,6 +2202,7 @@
     "wave": 2,
     "animated": true,
     "decorative": true,
+    "wraps": "content",
     "controls": {
       "spacing": {
         "type": "number",
@@ -1993,7 +2269,157 @@
       "rollSpeed": "Seconds for the roll band to cross the full height once before it repeats.",
       "fps": "Frames drawn per second while the roll band moves."
     },
-    "gzipBytes": 1696
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "spacing": "number",
+      "thickness": "number",
+      "opacity": "number",
+      "roll": "boolean",
+      "rollSpeed": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 2063
+  },
+  {
+    "slug": "mesh-gradient",
+    "title": "Mesh Gradient",
+    "category": "shaders",
+    "description": "A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.",
+    "tags": [
+      "gradient",
+      "shader",
+      "webgl",
+      "background",
+      "dither"
+    ],
+    "wave": 3,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "scale": {
+        "type": "number",
+        "min": 0.4,
+        "max": 4,
+        "step": 0.1
+      },
+      "warp": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Pixel (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 60,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Domain warping",
+        "author": "Inigo Quilez",
+        "url": "https://iquilezles.org/articles/warp/",
+        "license": "Article"
+      },
+      {
+        "relation": "technique",
+        "title": "Improving Noise",
+        "author": "Ken Perlin",
+        "url": "https://mrl.cs.nyu.edu/~perlin/paper445.pdf",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Ordered dithering",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "original": false,
+    "exportName": "MeshGradient",
+    "defaults": {
+      "speed": 0.25,
+      "scale": 1.1,
+      "warp": 0.6,
+      "intensity": 0.9,
+      "levels": 6,
+      "pixel": 2,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "speed": "How fast the fields drift. 0 holds them still.",
+      "scale": "Size of the color fields: lower values are broad and soft, higher values are busier.",
+      "warp": "How far the fields fold into each other, from 0 (plain noise) to 1 (deep folds).",
+      "intensity": "How strongly the accent shows over the ground, from 0 to 1.",
+      "levels": "Tone steps the gradient is dithered between: 2 is one-bit, 16 reads as nearly smooth.",
+      "pixel": "Size of one dither cell, in CSS pixels.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "speed": "number",
+      "scale": "number",
+      "warp": "number",
+      "intensity": "number",
+      "levels": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4760
   },
   {
     "slug": "ascii-frame",
@@ -2009,6 +2435,7 @@
     "wave": 1,
     "animated": false,
     "decorative": false,
+    "wraps": "content",
     "controls": {
       "variant": {
         "type": "select",
@@ -2076,12 +2503,26 @@
       "title": "Text set into the top rule. Empty draws a plain border with no title.",
       "titleAlign": "Where the title sits along the top rule.",
       "padding": "Cells of inward spacing between the border and the host's content, in addition to the one cell the border always reserves.",
-      "accent": "Draws the title in --pica-accent instead of the border's own ink.",
+      "accent": "Draws the title in the palette's accent instead of the border's own ink.",
       "fontSize": "Glyph size in CSS pixels.",
       "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
       "lineHeight": "Line height as a multiple of the glyph size."
     },
-    "gzipBytes": 2811
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "variant": "\"light\" | \"heavy\" | \"double\" | \"dashed\" | \"ascii\"",
+      "title": "string",
+      "titleAlign": "\"left\" | \"center\" | \"right\"",
+      "padding": "number",
+      "accent": "boolean",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 3469
   },
   {
     "slug": "ascii-loader",
@@ -2097,6 +2538,7 @@
     "wave": 1,
     "animated": true,
     "decorative": false,
+    "stage": "inline",
     "controls": {
       "variant": {
         "type": "select",
@@ -2162,7 +2604,20 @@
       "fontFamily": "CSS font-family stack for the glyphs. Must be monospace; size and color are inherited from the host.",
       "fps": "Frames drawn per second, at speed 1."
     },
-    "gzipBytes": 1952
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "variant": "\"braille\" | \"bar\" | \"blocks\" | \"dots\"",
+      "progress": "number | null",
+      "width": "number",
+      "label": "string",
+      "speed": "number",
+      "fontFamily": "string",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 2169
   },
   {
     "slug": "ascii-sparkline",
@@ -2178,6 +2633,7 @@
     "wave": 1,
     "animated": false,
     "decorative": false,
+    "stage": "inline",
     "controls": {
       "values": {
         "type": "numbers",
@@ -2256,7 +2712,20 @@
       "label": "Name for the series, read by assistive technology before its size, range, and latest value.",
       "fontFamily": "CSS font-family stack. Must be monospace."
     },
-    "gzipBytes": 1350
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "values": "number[]",
+      "mode": "\"blocks\" | \"braille\"",
+      "width": "number",
+      "min": "number | null",
+      "max": "number | null",
+      "label": "string",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 1514
   },
   {
     "slug": "ascii-terminal",
@@ -2272,7 +2741,17 @@
     "wave": 2,
     "animated": true,
     "decorative": false,
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "capture": 4000,
     "controls": {
+      "script": {
+        "type": "textarea",
+        "rows": 5,
+        "label": "Script"
+      },
       "prompt": {
         "type": "string"
       },
@@ -2324,7 +2803,20 @@
       "fontFamily": "CSS font-family stack for the transcript. Must be monospace. Size and color are inherited from the host.",
       "fps": "Frames per second ceiling for the typing animation."
     },
-    "gzipBytes": 2368
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "script": "string",
+      "prompt": "string",
+      "typeSpeed": "number",
+      "lineDelay": "number",
+      "loop": "number",
+      "fontFamily": "string",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 2631
   },
   {
     "slug": "block-banner",
@@ -2391,7 +2883,19 @@
       "fontFamily": "CSS font-family stack for the block glyphs. Must be monospace.",
       "lineHeight": "Line height as a multiple of the glyph size. 1 makes the blocks touch."
     },
-    "gzipBytes": 3017
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "text": "string",
+      "spacing": "number",
+      "shadow": "boolean",
+      "align": "\"left\" | \"center\"",
+      "fontFamily": "string",
+      "lineHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 3481
   },
   {
     "slug": "block-image",
@@ -2477,7 +2981,7 @@
       "threshold": 0.5,
       "dither": true,
       "contrast": 1.1,
-      "fit": "contain",
+      "fit": "cover",
       "tone": "auto",
       "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
       "lineHeight": 1
@@ -2497,7 +3001,23 @@
       "fontFamily": "CSS font-family stack for the blocks. Must be monospace.",
       "lineHeight": "Line height as a multiple of the glyph size. 1 keeps blocks flush from row to row."
     },
-    "gzipBytes": 3783
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "columns": "number",
+      "threshold": "number",
+      "dither": "boolean",
+      "contrast": "number",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "fontFamily": "string",
+      "lineHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 4677
   },
   {
     "slug": "braille-image",
@@ -2610,6 +3130,151 @@
       "fontFamily": "CSS font-family stack for the glyphs. Needs a font covering Braille Patterns, U+2800 to U+28FF.",
       "lineHeight": "Line height as a multiple of the glyph size."
     },
-    "gzipBytes": 3769
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "columns": "number",
+      "threshold": "number",
+      "dither": "boolean",
+      "contrast": "number",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "fontFamily": "string",
+      "lineHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 4635
+  },
+  {
+    "slug": "button",
+    "title": "Button",
+    "category": "ui",
+    "description": "A button in four looks, solid, outline, ghost, and monospace brackets, with a braille spinner while it loads.",
+    "tags": [
+      "button",
+      "action",
+      "form",
+      "ui"
+    ],
+    "wave": 3,
+    "animated": false,
+    "decorative": false,
+    "host": "button",
+    "stage": "inline",
+    "wraps": "content",
+    "palette": [
+      "accent"
+    ],
+    "demo": {
+      "children": "Deploy"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": ""
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "press"
+        },
+        {
+          "step": "click",
+          "selector": ""
+        },
+        {
+          "step": "expectEvent",
+          "name": "press"
+        }
+      ]
+    ],
+    "controls": {
+      "variant": {
+        "type": "select",
+        "options": [
+          "solid",
+          "outline",
+          "ghost",
+          "brackets"
+        ]
+      },
+      "size": {
+        "type": "select",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      "type": {
+        "type": "select",
+        "options": [
+          "button",
+          "submit",
+          "reset"
+        ]
+      },
+      "disabled": {
+        "type": "boolean"
+      },
+      "loading": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Button pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Button",
+    "defaults": {
+      "variant": "solid",
+      "size": "md",
+      "type": "button",
+      "disabled": false,
+      "loading": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "variant": "The look: \"solid\" fills with the accent, \"outline\" draws a hairline, \"ghost\" shows only on hover, and \"brackets\" sets the label in monospace between square brackets.",
+      "size": "Size relative to the surrounding text.",
+      "type": "What the button does inside a form.",
+      "disabled": "Blocks input and dims the button. It also leaves the tab order, as a disabled button does.",
+      "loading": "Shows a braille spinner before the label and ignores presses until it is turned off. It stays focusable."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "variant": "\"solid\" | \"outline\" | \"ghost\" | \"brackets\"",
+      "size": "\"sm\" | \"md\" | \"lg\"",
+      "type": "\"button\" | \"submit\" | \"reset\"",
+      "disabled": "boolean",
+      "loading": "boolean"
+    },
+    "events": {
+      "press": {
+        "doc": "The button was activated by a click, Enter, or Space while enabled and not loading.",
+        "detail": "null"
+      }
+    },
+    "gzipBytes": 2452
   }
 ]

@@ -1,0 +1,235 @@
+{
+  "wave": 3,
+  "path": "Idea-level briefs across shaders, data, motion, sections, and controls. No reference component's code or page is read. Controls follow the WAI-ARIA Authoring Practices; shaders and charts follow the technique sources in their credits.",
+  "components": [
+    {
+      "slug": "shader-flow",
+      "category": "shaders",
+      "title": "Shader Flow",
+      "kind": "shader",
+      "animated": true,
+      "decorative": true,
+      "brief": "Hairline bands that flow through the ground like a slow current, drawn on the GPU with lib/gl.ts. Domain-warped noise from lib/glsl.ts NOISE gives a field; draw its contour bands (fract of the field times `bands`) as thin lines of width `thickness`, in the accent, with fg where bands crowd together. Dither the tone with pica_bayer8 and render one pixel per `pixel` CSS pixels, pixelated, as registry/shaders/mesh-gradient does. Fade toward the edges so it sits behind type. Slow: a visible cycle takes 20 seconds or more at the default speed. When `pointer` is on, the flow bends gently around the cursor through u_pointer, set from the core's own pointermove listener on the host, and not at all under reduced motion. The still frame is t = 1200. The fallback is a CSS repeating-linear-gradient of accent hairlines at low opacity, built with cssVar. meta.palette lists fg, accent, and bg.",
+      "props": "speed (0 to 1, default 0.2), scale (0.5 to 4, default 1.5), bands (4 to 40, default 14), thickness (0.02 to 0.3, default 0.08), warp (0 to 1, default 0.7), pointer (default true), levels (2 to 16, default 4), pixel (1 to 6, default 2), fps (30), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "Domain warping", "author": "Inigo Quilez", "url": "https://iquilezles.org/articles/warp/", "license": "Article" },
+        { "relation": "technique", "title": "Improving Noise", "author": "Ken Perlin", "url": "https://mrl.cs.nyu.edu/~perlin/paper445.pdf", "license": "Paper" }
+      ]
+    },
+    {
+      "slug": "aurora",
+      "category": "shaders",
+      "title": "Aurora",
+      "kind": "shader",
+      "animated": true,
+      "decorative": true,
+      "brief": "Slow curtains of light hanging from the top of the host, like an aurora, in the accent and fg over the ground, drawn on the GPU with lib/gl.ts. Build `curtains` vertical bands whose horizontal position wanders with low-frequency noise and whose brightness ripples along their height; they are brightest near the top third and fade out by `height` of the way down. No glow, bloom, or blur: tone steps are dithered with pica_bayer8 so it reads as printed, at one pixel per `pixel` CSS pixels, pixelated. Two tones only: accent for the curtains, fg for their brightest folds. Slow drift, no seam. The still frame is t = 1200. The fallback is a CSS linear-gradient from the accent at low alpha to transparent, built with cssVar. meta.palette lists fg, accent, and bg.",
+      "props": "speed (0 to 1, default 0.15), curtains (2 to 8, default 4), height (0.2 to 1, default 0.7), sway (0 to 1, default 0.5), intensity (0 to 1, default 0.8), levels (2 to 16, default 6), pixel (1 to 6, default 2), fps (30), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "Improving Noise", "author": "Ken Perlin", "url": "https://mrl.cs.nyu.edu/~perlin/paper445.pdf", "license": "Paper" },
+        { "relation": "technique", "title": "Ordered dithering", "author": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Ordered_dithering", "license": "Algorithm, no code" }
+      ]
+    },
+    {
+      "slug": "globe",
+      "category": "immersive",
+      "title": "Globe",
+      "kind": "canvas, or shader if a canvas cannot keep up",
+      "animated": true,
+      "decorative": false,
+      "brief": "A dotted globe turning slowly on a tilted axis. Place `dots` points evenly on a sphere with a Fibonacci lattice, rotate them, and draw only the front hemisphere with lib/canvas.ts and a 2D context: each dot dims and shrinks toward the limb by the cosine of its angle to the viewer, so the sphere reads round with no shading. Markers come from JSON, [{ lat, lon, label }], drawn in the accent as a slightly larger dot with a thin ring, and hidden when they turn to the back. No land masses and no fetched data. The host is role img, named by the `label` prop followed by the marker labels (\"A dotted globe: San Francisco, London, Tokyo, Sydney.\"); an empty label hides it. Under reduced motion it holds one rotation that shows most markers. Read the palette through a watchPalette handle. The capture at t = 1200 should show at least two markers. meta.palette lists fg and accent.",
+      "props": "markers (json, default San Francisco 37.77 by -122.42, London 51.51 by -0.13, Tokyo 35.68 by 139.69, Sydney -33.87 by 151.21), label (default \"A dotted globe\"), dots (500 to 8000, default 2400), speed (0 to 1, default 0.25), tilt (0 to 45 degrees, default 20), dotSize (0.5 to 3, default 1.2), fps (30), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "Evenly distributing points on a sphere", "author": "Martin Roberts", "url": "https://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/", "license": "Article" }
+      ]
+    },
+    {
+      "slug": "bar-chart",
+      "category": "data",
+      "title": "Bar Chart",
+      "kind": "chart",
+      "animated": false,
+      "decorative": false,
+      "brief": "Vertical bars from JSON, [{ label, value }], in two looks. `look: \"svg\"` draws SVG with lib/chart.ts: bandScale for the bars, linearScale and niceTicks for the value axis, formatNumber for tick labels, hairline axes and gridlines in muted, mono tabular labels, and bars in fg with the `highlight` bar (an index; -1 highlights the largest) in the accent. `look: \"glyph\"` draws the same chart in a glyph grid, each bar in full blocks topped with lowerEighth from lib/blocks.ts, labels in cells. Values above bars when `values` is on. The host is role figure named by `label`; the drawing is aria-hidden, and dataTable from lib/chart.ts carries the numbers. Redraw on resize. Every color comes from cssVar or a palette handle. Empty data draws the axes and a muted \"no data\" note. meta.palette lists fg, accent, and muted.",
+      "props": "data (json, default seven days, Mon through Sun, values 12, 18, 9, 22, 30, 16, 11), label (default \"Deploys per day\"), highlight (-1 to 30, default -1), look (\"svg\" or \"glyph\", default \"svg\"), values (default false), ticks (2 to 10, default 5), fontFamily (GRID_FONT).",
+      "credits": [
+        { "relation": "technique", "title": "Nice Numbers for Graph Labels", "author": "Paul Heckbert, Graphics Gems", "url": "https://dl.acm.org/doi/10.5555/90767.90846", "license": "Algorithm, no code" }
+      ]
+    },
+    {
+      "slug": "line-chart",
+      "category": "data",
+      "title": "Line Chart",
+      "kind": "chart",
+      "animated": false,
+      "decorative": false,
+      "brief": "One or more series over a shared x axis, from JSON { labels: string[], series: [{ name, values: number[] }] }, in two looks. `look: \"svg\"` draws with lib/chart.ts linePath: the first series in the accent, the rest in fg and muted, hairline axes in muted, niceTicks on y, and each series labeled directly at its line's end instead of a legend. `area` fills under the first series with the accent at low opacity (areaPath). `dots` marks each point. `look: \"glyph\"` draws the lines with braille dots in a glyph grid, 2 by 4 per cell, through brailleDot and braille from lib/blocks.ts, with labels in cells. The host is role figure named by `label`; the drawing is aria-hidden, and dataTable carries every series. Redraw on resize. Empty data draws the axes and a muted note. meta.palette lists fg, accent, and muted.",
+      "props": "data (json, default twelve months, Jan through Dec, with two series, \"Requests\" rising from 12 to 40 with a dip in summer and \"Errors\" between 1 and 6), label (default \"Requests and errors per month\"), area (default true), dots (default false), look (\"svg\" or \"glyph\", default \"svg\"), ticks (2 to 10, default 5), fontFamily (GRID_FONT).",
+      "credits": [
+        { "relation": "technique", "title": "Nice Numbers for Graph Labels", "author": "Paul Heckbert, Graphics Gems", "url": "https://dl.acm.org/doi/10.5555/90767.90846", "license": "Algorithm, no code" }
+      ]
+    },
+    {
+      "slug": "donut-chart",
+      "category": "data",
+      "title": "Donut Chart",
+      "kind": "chart",
+      "animated": false,
+      "decorative": false,
+      "brief": "Parts of a whole as a ring, from JSON [{ label, value }], in two looks. `look: \"svg\"` draws segments with arcPath from lib/chart.ts: the `highlight` segment (-1 highlights the largest) in the accent and the rest in fg at a few stepped opacities, separated by `gap` degrees, with the ring's width set by `thickness`. `center` shows the total, the highlighted share as a percentage in large mono tabular figures, or nothing. Label each segment directly outside the ring where there is room, and fall back to a short list beside the ring when there is not. `look: \"glyph\"` fills the ring's cells in a glyph grid with SHADES from lib/blocks.ts, one shade per segment and full blocks for the highlight. The host is role figure named by `label`; the drawing is aria-hidden, and dataTable carries label, value, and share. Empty data draws a muted ring. meta.palette lists fg and accent.",
+      "props": "data (json, default ASCII 42, Dither 23, Shaders 18, Charts 11, Controls 6), label (default \"Components by family\"), highlight (-1 to 30, default -1), thickness (0.1 to 0.6, default 0.28), gap (0 to 4, default 1.5), center (\"total\", \"highlight\", or \"none\", default \"highlight\"), look (\"svg\" or \"glyph\", default \"svg\"), fontFamily (GRID_FONT).",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "kanban-board",
+      "category": "data",
+      "title": "Kanban Board",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "Columns of cards from JSON, [{ id, title, cards: [{ id, title, tag }] }], that move between columns by keyboard and by pointer. The core builds the columns as lists and each card as a focusable element with an accessible name of its title and position. Keyboard, after the rearrangeable listbox example in the WAI-ARIA Authoring Practices: Space picks a card up, arrows move it within and across columns, Space drops it, and Escape cancels. Pointer: drag with pointer events, no HTML drag and drop. A visually hidden live region the core creates announces each pick up, move, and drop. On drop it emits `move` with { card, from, to, index } and `valueChange` with the new columns. It is controlled through `value` (null means uncontrolled) with `defaultValue` as the starting columns; set meta.controlled to { value: \"valueChange\" }. Look: hairline columns with a mono title and count, cards with one-pixel lines and square corners, the picked-up card outlined in the accent. meta.interactions: Tab to the first card, Space, ArrowRight, Space, then expect `move`. meta.palette lists fg and accent.",
+      "props": "value (json or null, default null), defaultValue (json, default three columns, Backlog with three cards, Doing with two, Done with one, each card with a short title and a tag such as ui or data), label (default \"Board\"), fontFamily (GRID_FONT).",
+      "events": "move: { card: string, from: string, to: string, index: number }; valueChange: the columns after the move.",
+      "credits": [
+        { "relation": "technique", "title": "Rearrangeable listbox example", "author": "W3C WAI-ARIA Authoring Practices Guide", "url": "https://www.w3.org/WAI/ARIA/apg/patterns/listbox/examples/listbox-rearrangeable/", "license": "W3C document" }
+      ]
+    },
+    {
+      "slug": "marquee",
+      "category": "motion",
+      "title": "Marquee",
+      "kind": "CSS with a loop",
+      "animated": true,
+      "decorative": false,
+      "brief": "Its children scroll sideways in an endless loop, like a ticker. The core never moves or rewrites the children: it lays the host out as one row through a scoped stylesheet, translates every non-data-pica child by the same offset through a custom property driven by lib/loop.ts, and appends aria-hidden, inert clones (data-pica) of the row to fill the loop without a seam. It re-clones when the children change, watching the host's child list with a MutationObserver that ignores its own nodes. It pauses on hover and while focus is inside, and holds still at rest under reduced motion. Set meta.wraps to \"content\" and give meta.demo children of six short labels, such as <span>ASCII</span> through <span>Controls</span>. The host keeps no role; its children stay readable. Slow by default. meta.palette is empty unless the core draws with a token.",
+      "props": "speed (5 to 200 pixels per second, default 40), direction (\"left\" or \"right\", default \"left\"), gap (0 to 4 em, default 2), pauseOnHover (default true), fps (30), plus paused, time, seed.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "hero",
+      "category": "sections",
+      "title": "Hero",
+      "kind": "section",
+      "animated": true,
+      "decorative": false,
+      "brief": "A page hero. Its children are the headline and copy; the core adds a row of calls to action and a background. The background composes an existing core into an under layer (layer from lib/host.ts): registry/shaders/mesh-gradient for \"mesh\", registry/ascii/ascii-noise-field for \"noise\", or none, imported as namespaces per the contract. Calls to action come from JSON, [{ label, href }], as links the core builds in the button grammar of STYLE.md and registry/ui/button: the first solid in the accent with cssOn text, the rest outline. Layout: a content column no wider than 40rem, aligned start or center, over a background that fills the host, at least `minHeight` of the viewport tall. Headline typography is the page's own. Forward paused, time, and seed to the background, and destroy it in destroy. Set meta.wraps to \"content\" and meta.demo children to <h1>Components drawn in text.</h1><p>ASCII-first components for React and plain HTML.</p>. meta.palette lists fg and accent.",
+      "props": "background (\"mesh\", \"noise\", or \"none\", default \"mesh\"), actions (json, default \"Browse components\" to #components and \"Read the docs\" to #docs), align (\"start\" or \"center\", default \"start\"), minHeight (30 to 100 vh, default 60), intensity (0 to 1, default 0.6, passed to the background), plus paused, time, seed.",
+      "composes": ["shaders/mesh-gradient", "ascii/ascii-noise-field"],
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "bento-grid",
+      "category": "sections",
+      "title": "Bento Grid",
+      "kind": "section",
+      "animated": false,
+      "decorative": false,
+      "brief": "Its children laid out as a bento grid. The core makes the host a CSS grid through a scoped stylesheet and sizes tiles by their position with nth-child selectors that skip its own data-pica nodes, following a named `pattern`: \"feature\" (one large tile, then small ones), \"mosaic\" (alternating wide and tall tiles), or \"columns\" (equal tiles). It never touches the children themselves. Tiles get one-pixel lines, square corners, and padding from the UI grammar; with `corners` on, each tile shows box-drawing corners in mono through pseudo-elements. Below `minTile` per column it collapses to one column, switched by a data attribute on the host from a ResizeObserver or by a container query. Set meta.wraps to \"content\" and meta.demo children to five <article> tiles, each an <h3> and a short <p> about a Pica family. meta.palette lists fg.",
+      "props": "pattern (\"feature\", \"mosaic\", or \"columns\", default \"feature\"), columns (2 to 6, default 4), gap (0 to 2 rem, default 0.75), corners (default true), minTile (160 to 400 pixels, default 220).",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "pricing",
+      "category": "sections",
+      "title": "Pricing",
+      "kind": "section",
+      "animated": false,
+      "decorative": false,
+      "brief": "Pricing tiers from JSON, [{ name, monthly, yearly, blurb, features: string[], cta: { label, href }, featured }], as columns that stack below a width. Each tier is a card with one-pixel lines and square corners; the featured tier is outlined in the accent with a small mono \"Recommended\" tag. Prices are large mono tabular figures, names and blurbs take the page's font, and features are a list with a drawn check glyph. A monthly and yearly switch sits above the tiers, a radio group after the WAI-ARIA Authoring Practices, which emits `billingChange` with \"monthly\" or \"yearly\" and is controlled through `billing` (null means uncontrolled) with `defaultBilling`; set meta.controlled to { billing: \"billingChange\" }. Calls to action are links in the button grammar, solid for the featured tier and outline for the rest. meta.interactions: Tab to the switch, ArrowRight, then expect billingChange \"yearly\". meta.palette lists fg and accent.",
+      "props": "tiers (json, default three tiers, Starter free, Team 24 monthly or 19 yearly and featured, Studio 64 monthly or 52 yearly, each with a blurb, three to five features, and a call to action), billing (\"monthly\", \"yearly\", or null, default null), defaultBilling (default \"monthly\"), currency (default \"$\"), label (default \"Pricing\").",
+      "events": "billingChange: \"monthly\" or \"yearly\".",
+      "credits": [
+        { "relation": "technique", "title": "Radio group pattern", "author": "W3C WAI-ARIA Authoring Practices Guide", "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/", "license": "W3C document" }
+      ]
+    },
+    {
+      "slug": "testimonials",
+      "category": "sections",
+      "title": "Testimonials",
+      "kind": "section",
+      "animated": true,
+      "decorative": false,
+      "brief": "Quotes from JSON, [{ quote, name, role }], as a grid of cards or one rotating quote. \"grid\": cards with one-pixel lines, the quote in the page's font, the name in mono, and an initials badge drawn in text (no images). \"rotate\": one quote at a time, the quote text composed from registry/ascii/ascii-reveal so each new quote resolves from scrambled glyphs, advancing every `interval` ms, with previous and next buttons the core builds, after the carousel pattern of the WAI-ARIA Authoring Practices: rotation stops on hover and focus, the live region is off while it rotates and polite when the user steps. Under reduced motion it never rotates by itself. meta.demo can stay the grid default. meta.palette lists fg.",
+      "props": "items (json, default four short quotes from made-up people and roles about using components in plain HTML and React), layout (\"grid\" or \"rotate\", default \"grid\"), columns (1 to 4, default 2), interval (3000 to 15000, default 7000), label (default \"What people say\"), fontFamily (GRID_FONT), plus paused, time, seed.",
+      "composes": ["ascii/ascii-reveal"],
+      "credits": [
+        { "relation": "technique", "title": "Carousel pattern", "author": "W3C WAI-ARIA Authoring Practices Guide", "url": "https://www.w3.org/WAI/ARIA/apg/patterns/carousel/", "license": "W3C document" }
+      ]
+    },
+    {
+      "slug": "stats-kpi",
+      "category": "sections",
+      "title": "Stats KPI",
+      "kind": "section",
+      "animated": true,
+      "decorative": false,
+      "brief": "A row of key numbers from JSON, [{ label, value, unit, delta, trend: number[] }]. Each stat shows the value in large mono tabular figures (formatNumber from lib/chart.ts), the label in the page's font, the delta with a drawn up or down glyph (the `highlight` stat's delta in the accent, others in fg), and, when `trend` is present, an inline sparkline composed from registry/text-mode/ascii-sparkline. With `countUp`, values count up once from zero over `duration` ms through lib/loop.ts; under reduced motion and at a fixed `time` past the duration, final values show at once. The stats are readable text, and each sparkline keeps its own label. It wraps to fewer columns below a width. meta.capture is 1500 so captures show final values. meta.palette lists fg and accent.",
+      "props": "items (json, default four stats: Components 29, Weekly installs 1840 with delta +12%, Median size 3.9 KB, Median verify 41 s with delta -8%, each with an eight-point trend), columns (1 to 6, default 4), highlight (-1 to 10, default 1), countUp (default true), duration (300 to 3000, default 900), plus paused, time, seed.",
+      "composes": ["text-mode/ascii-sparkline"],
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "select",
+      "category": "ui",
+      "title": "Select",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A single-choice select after the select-only combobox pattern of the WAI-ARIA Authoring Practices. The core builds a trigger that shows the selected option and a listbox of options from JSON, [{ value, label, disabled }]. Keyboard: Up and Down, Home and End, typeahead, Enter and Space to choose, Escape to close, and Tab to leave. Pointer: click to open and choose. The listbox is a Popover API popover the core builds, placed under the trigger with CSS anchor positioning where supported and getBoundingClientRect otherwise. It emits `valueChange` with the value and is controlled through `value` (null means uncontrolled) with `defaultValue`; set meta.controlled to { value: \"valueChange\" }. Look, from the UI grammar: a hairline trigger with a mono chevron glyph, options in the page's font, the active option with a fg tint, and the chosen one with a drawn check in the accent. Set meta.host to \"div\" and meta.stage to \"inline\"; the wrapper renders a div with display inline-block. meta.interactions: Tab, Enter, ArrowDown, Enter, then expect valueChange with the second option's value and aria-expanded false on the trigger. meta.palette lists fg and accent.",
+      "props": "options (json, default ASCII, Dither, Shaders, Charts, with values ascii, dither, shaders, charts), value (string or null, default null), defaultValue (default \"ascii\"), placeholder (default \"Choose one\"), label (default \"Family\"), disabled (default false).",
+      "events": "valueChange: the chosen option's value.",
+      "credits": [
+        { "relation": "technique", "title": "Select-only combobox example", "author": "W3C WAI-ARIA Authoring Practices Guide", "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/", "license": "W3C document" },
+        { "relation": "technique", "title": "Popover API", "author": "MDN", "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API", "license": "CC-BY-SA documentation" }
+      ]
+    },
+    {
+      "slug": "dialog",
+      "category": "ui",
+      "title": "Dialog",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A modal dialog on the native <dialog> element: set meta.host to \"dialog\", and the wrapper renders a <dialog>. The core calls showModal() when open and close() when closed, so focus containment, Escape, and the top layer come from the browser. It builds a heading from `title`, linked by aria-labelledby, and, when `closable`, a close button in the corner with a mono glyph and an accessible name. Its children are the body. It emits `openChange` with the new state on Escape, the close button, or a backdrop click when `dismissOnBackdrop`, and is controlled through `open` (null means uncontrolled) with `defaultOpen`; set meta.controlled to { open: \"openChange\" }. Look, from the UI grammar: one-pixel lines, square corners, no shadow, and a backdrop tinted with fg at a low alpha through color-mix. Set meta.wraps to \"content\" and meta.demo to { props: { defaultOpen: true }, children: <p>This publishes the current build to production.</p><button type=\"button\">Deploy</button> }. meta.interactions: press Escape, then expect openChange false. meta.palette lists fg.",
+      "props": "open (boolean or null, default null), defaultOpen (default false), title (default \"Deploy to production\"), closable (default true), dismissOnBackdrop (default true), width (20 to 60 rem, default 32).",
+      "events": "openChange: the new open state.",
+      "credits": [
+        { "relation": "technique", "title": "Dialog (modal) pattern", "author": "W3C WAI-ARIA Authoring Practices Guide", "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/", "license": "W3C document" }
+      ]
+    },
+    {
+      "slug": "tabs",
+      "category": "ui",
+      "title": "Tabs",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "Tabs after the tabs pattern of the WAI-ARIA Authoring Practices, with selection following focus. The core builds the tablist from JSON, [{ id, label }], ahead of the children. The host's direct children are the panels, in order: set meta.wraps to \"panels\". The core may set only role tabpanel, an id, aria-labelledby, and hidden on each direct child, restores them on destroy, and reapplies them when React replaces a child, watching the child list with a MutationObserver. A tab with no panel is disabled. Keyboard: Left and Right, Home and End. It emits `valueChange` with the tab id and is controlled through `value` (null means uncontrolled) with `defaultValue`; set meta.controlled to { value: \"valueChange\" }. Look, from the UI grammar: labels in the page's font, the active tab marked by a two-pixel accent rule under it, a hairline under the tablist, and no pills. meta.demo children: three <section> panels with a short heading and a paragraph each. meta.interactions: Tab, ArrowRight, then expect valueChange \"props\" and aria-selected true on the second tab. meta.palette lists fg and accent.",
+      "props": "tabs (json, default Overview, Props, and Install, with ids overview, props, install), value (string or null, default null), defaultValue (default \"overview\"), label (default \"Sections\").",
+      "events": "valueChange: the active tab's id.",
+      "credits": [
+        { "relation": "technique", "title": "Tabs pattern", "author": "W3C WAI-ARIA Authoring Practices Guide", "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tabs/", "license": "W3C document" }
+      ]
+    },
+    {
+      "slug": "popover-tooltip",
+      "category": "ui",
+      "title": "Popover Tooltip",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A trigger with a small overlay, chosen by `kind`. \"tooltip\", after the tooltip pattern of the WAI-ARIA Authoring Practices: the overlay shows after `delay` ms on hover and at once on focus of the trigger, hides on Escape, blur, and pointer leave, has role tooltip, and describes the trigger through aria-describedby. \"popover\", after the disclosure pattern: the trigger toggles a non-modal panel, sets aria-expanded, and Escape closes it and returns focus to the trigger. Both overlays are Popover API popovers the core builds (popover=\"manual\" for the tooltip, \"auto\" for the popover), placed next to the trigger with CSS anchor positioning where supported and getBoundingClientRect otherwise, holding `content` as text. The trigger is a button the core builds from `triggerLabel`. It emits `openChange` and is controlled through `open` (null means uncontrolled) with `defaultOpen`; set meta.controlled to { open: \"openChange\" }. Look: one-pixel lines, square corners, mono content for the tooltip and the page's font for the popover. Set meta.host to \"div\", meta.stage to \"inline\", and meta.demo props to { defaultOpen: true } so captures show the overlay; the wrapper renders a div with display inline-block. meta.interactions: Tab, press Escape, then expect openChange false. meta.palette lists fg.",
+      "props": "kind (\"tooltip\" or \"popover\", default \"tooltip\"), content (textarea, default \"Installs with one command and no dependencies.\"), triggerLabel (default \"How it installs\"), placement (\"top\", \"bottom\", \"start\", or \"end\", default \"top\"), delay (0 to 1500 ms, default 400), open (boolean or null, default null), defaultOpen (default false).",
+      "events": "openChange: the new open state.",
+      "credits": [
+        { "relation": "technique", "title": "Tooltip pattern", "author": "W3C WAI-ARIA Authoring Practices Guide", "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/", "license": "W3C document" },
+        { "relation": "technique", "title": "Disclosure pattern", "author": "W3C WAI-ARIA Authoring Practices Guide", "url": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/", "license": "W3C document" }
+      ]
+    }
+  ]
+}

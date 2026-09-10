@@ -1,8 +1,10 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
-import { bayerMatrix } from "../../../lib/dither";
+import { braille, brailleDot } from "../../../lib/blocks";
+import { threshold } from "../../../lib/dither";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { createSampler } from "../../../lib/sample";
-import { litSphere } from "../../../lib/subject";
+import { fitFor, fitHostAspect, loadSource, showNote, type Source } from "../../../lib/source";
 import type { Mount } from "../../../lib/types";
 
 export interface BrailleImageProps {
@@ -37,30 +39,22 @@ export const defaults: BrailleImageProps = {
   contrast: 1.1,
   fit: "cover",
   tone: "auto",
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1.2,
 };
 
-/** Dot bit for each row of a cell's left column, top to bottom. */
-const LEFT_BITS = [1, 2, 4, 64];
-/** Dot bit for each row of a cell's right column, top to bottom. */
-const RIGHT_BITS = [8, 16, 32, 128];
-/** First codepoint of the Braille Patterns block: the cell with every dot off. */
-const BRAILLE_BASE = 0x2800;
 /** Dot samples per cell: two columns by four rows. */
 const DOTS_X = 2;
 const DOTS_Y = 4;
 
 export const mount: Mount<BrailleImageProps> = (host, initial = {}) => {
   let props: BrailleImageProps = { ...defaults, ...initial };
-  let source: CanvasImageSource | null = null;
-  let sourceW = 0;
-  let sourceH = 0;
+  let source: Source | null = null;
   let failed = false;
-  let request = 0;
-  let setAspect = false;
+  let cancel = (): void => undefined;
+  let undoAspect = (): void => undefined;
+  let removeNote: (() => void) | null = null;
   const sampler = createSampler();
-  const bayer = bayerMatrix(4);
   const grid = createGrid(host, gridOptions(props), draw);
 
   function gridOptions(p: BrailleImageProps): GridOptions {
@@ -70,69 +64,53 @@ export const mount: Mount<BrailleImageProps> = (host, initial = {}) => {
     return { fontFamily: p.fontFamily, fontSize: 12, columns: p.columns, lineHeight: p.lineHeight, renderer: "canvas", color: "" };
   }
 
-  /** Whether one dot is on: ordered dithering by default, or a flat cut at `threshold`. */
-  function dotOn(ink: Float32Array, sw: number, sx: number, sy: number): boolean {
-    const v = ink[sy * sw + sx] ?? 0;
-    if (!props.dither) return v >= props.threshold;
-    const cell = bayer[(sy % 4) * 4 + (sx % 4)] ?? 0.5;
-    return v >= cell + props.threshold - 0.5;
-  }
-
   function load(): void {
-    const mine = ++request;
+    cancel();
     failed = false;
-    if (!props.src) {
-      use(litSphere(), 256, 256);
-      return;
-    }
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.decoding = "async";
-    img.onload = () => {
-      if (mine === request) use(img, img.naturalWidth, img.naturalHeight);
-    };
-    img.onerror = () => {
-      if (mine !== request) return;
+    cancel = loadSource(props.src, use, () => {
       source = null;
       failed = true;
       draw();
-    };
-    img.src = props.src;
+    });
   }
 
-  function use(next: CanvasImageSource, w: number, h: number): void {
+  function use(next: Source): void {
     source = next;
-    sourceW = w;
-    sourceH = h;
     // A host with no height of its own takes the image's proportions.
-    if (host.clientHeight < 2 && w > 0 && h > 0) {
-      host.style.aspectRatio = `${w} / ${h}`;
-      setAspect = true;
-    }
+    undoAspect();
+    undoAspect = fitHostAspect(host, next.width, next.height);
     draw();
+  }
+
+  function setNote(on: boolean): void {
+    if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+    if (!on && removeNote) {
+      removeNote();
+      removeNote = null;
+    }
   }
 
   function draw(): void {
     grid.clear();
-    const { cols, rows, aspect } = grid;
-    if (failed) {
-      const note = "image unavailable";
-      grid.write(Math.max(0, Math.floor((cols - note.length) / 2)), Math.floor(rows / 2), note);
-    } else if (source) {
-      const ink = sampler.sample(source, sourceW, sourceH, host, {
-        cols, rows, aspect, n: DOTS_X, ny: DOTS_Y, fit: props.fit, tone: props.tone, contrast: props.contrast, mirror: false,
+    setNote(failed);
+    if (source && !failed) {
+      const { cols, rows, aspect } = grid;
+      const ink = sampler.sample(source.image, source.width, source.height, host, {
+        cols, rows, aspect, n: DOTS_X, ny: DOTS_Y, fit: fitFor(source, props.fit), tone: props.tone, contrast: props.contrast, mirror: false,
       });
       const sw = cols * DOTS_X;
+      const sh = rows * DOTS_Y;
+      const dots = threshold(ink, sw, sh, props.threshold, props.dither ? 4 : 0);
       for (let y = 0; y < rows; y++) {
         const sy0 = y * DOTS_Y;
         for (let x = 0; x < cols; x++) {
           const sx0 = x * DOTS_X;
           let bits = 0;
           for (let r = 0; r < DOTS_Y; r++) {
-            if (dotOn(ink, sw, sx0, sy0 + r)) bits |= LEFT_BITS[r] ?? 0;
-            if (dotOn(ink, sw, sx0 + 1, sy0 + r)) bits |= RIGHT_BITS[r] ?? 0;
+            if (dots[(sy0 + r) * sw + sx0]) bits |= brailleDot(r, 0);
+            if (dots[(sy0 + r) * sw + sx0 + 1]) bits |= brailleDot(r, 1);
           }
-          grid.set(x, y, String.fromCodePoint(BRAILLE_BASE + bits));
+          grid.set(x, y, braille(bits));
         }
       }
     }
@@ -156,10 +134,11 @@ export const mount: Mount<BrailleImageProps> = (host, initial = {}) => {
       }
     },
     destroy() {
-      request++;
+      cancel();
+      setNote(false);
       grid.destroy();
+      undoAspect();
       unlabelHost(host);
-      if (setAspect) host.style.removeProperty("aspect-ratio");
       delete host.dataset.picaReady;
     },
   };

@@ -17,11 +17,34 @@ export interface SampleOptions {
   contrast: number;
   /** Mirror horizontally, as a webcam preview expects. */
   mirror: boolean;
+  /** Where a fitted source sits across the grid: 0 at the left, 0.5 centered, 1 at the right. */
+  alignX?: number;
+  /** Where a fitted source sits down the grid: 0 at the top, 0.5 centered, 1 at the bottom. */
+  alignY?: number;
 }
 
 export interface Sampler {
-  /** Ink wanted at each sample, 0 to 1, row-major, (cols * n) wide by (rows * (ny ?? n)) tall. The buffer is reused. */
+  /** Ink wanted at each sample, 0 to 1, row-major, (cols * n) wide by (rows * (ny ?? n)) tall.
+   *  THE BUFFER IS REUSED: the next call overwrites it. Copy it with .slice() before sampling again if you
+   *  need both results, as a morph between two sources does. */
   sample(source: CanvasImageSource, sourceW: number, sourceH: number, host: HTMLElement, options: SampleOptions): Float32Array;
+}
+
+/** Where a source lands when fitted into a box: "cover" fills the box and crops, "contain" shows all of it.
+ *  `alignX` and `alignY` place it: 0 at the left or top, 0.5 centered, 1 at the right or bottom. */
+export function fitRect(
+  sourceW: number,
+  sourceH: number,
+  boxW: number,
+  boxH: number,
+  fit: "cover" | "contain",
+  alignX = 0.5,
+  alignY = 0.5,
+): { x: number; y: number; w: number; h: number } {
+  const scale = fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+  const w = sourceW * scale;
+  const h = sourceH * scale;
+  return { x: (boxW - w) * alignX, y: (boxH - h) * alignY, w, h };
 }
 
 export function createSampler(): Sampler {
@@ -42,15 +65,9 @@ export function createSampler(): Sampler {
       ctx.clearRect(0, 0, sw, sh);
       if (o.mirror) ctx.setTransform(-1, 0, 0, 1, sw, 0);
       // Work in cell units, where a cell is `aspect` wide and 1 tall, then convert to sample pixels.
-      const boxW = o.cols * o.aspect;
-      const boxH = o.rows;
-      const scale = o.fit === "cover"
-        ? Math.max(boxW / sourceW, boxH / sourceH)
-        : Math.min(boxW / sourceW, boxH / sourceH);
-      const drawW = sourceW * scale;
-      const drawH = sourceH * scale;
+      const box = fitRect(sourceW, sourceH, o.cols * o.aspect, o.rows, o.fit, o.alignX, o.alignY);
       const toX = o.n / o.aspect;
-      ctx.drawImage(source, ((boxW - drawW) / 2) * toX, ((boxH - drawH) / 2) * ny, drawW * toX, drawH * ny);
+      ctx.drawImage(source, box.x * toX, box.y * ny, box.w * toX, box.h * ny);
       const data = ctx.getImageData(0, 0, sw, sh).data;
       const lightOnDark = (o.tone === "auto" ? hostTone(host) : o.tone) === "light-on-dark";
       for (let p = 0; p < sw * sh; p++) {

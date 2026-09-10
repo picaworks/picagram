@@ -1,25 +1,53 @@
 "use client";
-import { CATEGORY_TITLES, type CatalogItem, type PropValue, type Props } from "@/lib/catalog";
+import { CATEGORY_TITLES, type CatalogItem, type PaletteProp, type PropValue, type Props, type Token } from "@/lib/catalog";
 import { formatBytes } from "@/lib/props";
+import type { Json } from "../../lib/types";
 import { CodeTabs } from "./CodeTabs";
 import { ControlField } from "./Controls";
 
 const RELATION = { "port-of": "port of", "inspired-by": "inspired by", technique: "technique" } as const;
 
+/** One entry in the events panel: a pica:event message the live frame posted. */
+export interface EventEntry {
+  name: string;
+  detail: Json;
+  time: number;
+}
+
 interface InspectorProps {
   item: CatalogItem | null;
-  /** The defaults with the overrides applied. */
+  /** The defaults with the demo state and the overrides applied: what the controls and the live frame show. */
   values: Props;
-  /** The props that differ from the defaults. */
+  /** The props the user changed from the demo state. Sizes the changed count and the reset button. */
   overrides: Props;
+  /** The props that differ from the plain defaults, demo state included. What the code tabs copy. */
+  codeOverrides: Props;
   onChange: (name: string, value: PropValue) => void;
   onReset: () => void;
   activeTags: readonly string[];
   onToggleTag: (tag: string) => void;
   total: number;
+  /** Palette tokens the user set for this component. An unset token follows the page. */
+  palette: PaletteProp;
+  onPaletteChange: (token: Token, value: string) => void;
+  onPaletteReset: (token: Token) => void;
+  /** The latest pica:event messages from the live frame, newest first. */
+  events: readonly EventEntry[];
+  onClearEvents: () => void;
 }
 
-/** The right pane: what the selected component is, its controls, its code, and who it builds on. */
+function hexOf(value: string | undefined): string {
+  return value && /^#[0-9a-f]{6}$/i.test(value) ? value : "#000000";
+}
+
+function formatTime(ms: number): string {
+  const d = new Date(ms);
+  const pad = (n: number, width = 2) => String(n).padStart(width, "0");
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
+}
+
+/** The right pane: what the selected component is, its controls, its palette, its code, its events, and who
+ *  it builds on. */
 export function Inspector(p: InspectorProps) {
   const { item } = p;
   if (!item) {
@@ -49,6 +77,8 @@ export function Inspector(p: InspectorProps) {
 
   const controls = Object.entries(item.controls);
   const changed = Object.keys(p.overrides).length;
+  const palette = item.palette ?? ["fg"];
+  const showEvents = Object.keys(item.events ?? {}).length > 0 || p.events.length > 0;
 
   return (
     <aside className="inspector" aria-label="Inspector">
@@ -99,6 +129,7 @@ export function Inspector(p: InspectorProps) {
               name={name}
               control={control}
               value={p.values[name]}
+              defaultValue={item.defaults[name]}
               hint={item.docs[name]}
               onChange={(value) => p.onChange(name, value)}
             />
@@ -106,8 +137,72 @@ export function Inspector(p: InspectorProps) {
         )}
       </section>
 
+      <section className="inspector-section" aria-labelledby="palette-heading">
+        <h2 id="palette-heading" className="label">
+          Palette
+        </h2>
+        <div className="palette">
+          {palette.map((token) => {
+            const value = p.palette[token];
+            const id = `palette-${token}`;
+            return (
+              <div key={token} className="palette-row">
+                <label className="label palette-token" htmlFor={id}>
+                  {token}
+                </label>
+                <input
+                  type="color"
+                  value={hexOf(value)}
+                  aria-label={`${token} color`}
+                  onChange={(e) => p.onPaletteChange(token, e.target.value)}
+                />
+                <input
+                  id={id}
+                  className="field"
+                  type="text"
+                  value={value ?? ""}
+                  placeholder="page default"
+                  spellCheck={false}
+                  aria-label={`${token} as CSS`}
+                  onChange={(e) => p.onPaletteChange(token, e.target.value)}
+                />
+                <button type="button" className="btn" onClick={() => p.onPaletteReset(token)} disabled={!value}>
+                  reset
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {showEvents && (
+        <section className="inspector-section" aria-labelledby="events-heading">
+          <div className="section-head">
+            <h2 id="events-heading" className="label">
+              Events
+            </h2>
+            <button type="button" className="btn" onClick={p.onClearEvents} disabled={p.events.length === 0}>
+              clear
+            </button>
+          </div>
+          {p.events.length === 0 ? (
+            <p className="inspector-note">No events yet. Interact with the live frame to see one.</p>
+          ) : (
+            <ul className="events-log">
+              {p.events.map((event, i) => (
+                <li key={i} className="events-row">
+                  <span className="events-name">{event.name}</span>
+                  <span className="events-detail">{JSON.stringify(event.detail)}</span>
+                  <span className="events-time">{formatTime(event.time)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
+
       <section className="inspector-section" aria-label="Code">
-        <CodeTabs key={item.slug} item={item} overrides={p.overrides} />
+        <CodeTabs key={item.slug} item={item} overrides={p.codeOverrides} palette={p.palette} />
       </section>
 
       <section className="inspector-section" aria-labelledby="credits-heading">

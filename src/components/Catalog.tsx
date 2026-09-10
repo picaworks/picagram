@@ -1,15 +1,26 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { matches, type CatalogItem, type PropValue, type Props } from "@/lib/catalog";
+import { matches, type CatalogItem, type PaletteProp, type PropValue, type Props, type Token } from "@/lib/catalog";
 import type { Ground } from "@/lib/ground";
 import { useHashSlug } from "@/lib/hash";
 import { diffProps } from "@/lib/props";
 import { Canvas, type Reveal } from "./Canvas";
 import type { FrameWidth } from "./Frame";
-import { Inspector } from "./Inspector";
+import { Inspector, type EventEntry } from "./Inspector";
 import { Layers } from "./Layers";
 
 const NONE: Props = {};
+const NO_PALETTE: PaletteProp = {};
+const MAX_EVENTS = 20;
+
+function isEventMessage(data: unknown): data is { name: string; detail: unknown } {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    (data as { type?: unknown }).type === "pica:event" &&
+    typeof (data as { name?: unknown }).name === "string"
+  );
+}
 
 /** The catalog: layers, canvas, and inspector around one piece of state, the selected slug in the URL hash. */
 export function Catalog({ items }: { items: readonly CatalogItem[] }) {
@@ -17,8 +28,13 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
   const [selected, setSelected, external] = useHashSlug(slugs);
   const [query, setQuery] = useState("");
   const [activeTags, setActiveTags] = useState<readonly string[]>([]);
-  /** Per slug, the props that differ from its defaults, so switching frames and back keeps the tuning. */
+  /** Per slug, the props the user changed from the demo state, so switching frames and back keeps the tuning. */
   const [overrides, setOverrides] = useState<Readonly<Record<string, Props>>>({});
+  /** Per slug, the palette tokens the user set. */
+  const [palettes, setPalettes] = useState<Readonly<Record<string, PaletteProp>>>({});
+  /** The latest pica:event messages from the live frame, newest first. Reset when the selection changes,
+   *  since they belong to whichever frame was live when they arrived. */
+  const [events, setEvents] = useState<readonly EventEntry[]>([]);
   const [ground, setGround] = useState<Ground>("ink");
   const [frameWidth, setFrameWidth] = useState<FrameWidth>(1280);
   const [reveal, setReveal] = useState<Reveal | null>(null);
@@ -26,8 +42,17 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
   const handled = useRef(0);
 
   const item = useMemo(() => items.find((i) => i.slug === selected) ?? null, [items, selected]);
+  /** The user's own edits, tracked against the demo state so dialling a control back to the plain default
+   *  still counts as a change when the demo shows something else. Sizes the changed badge and the reset button. */
   const itemOverrides = (item && overrides[item.slug]) || NONE;
-  const values = useMemo(() => (item ? { ...item.defaults, ...itemOverrides } : NONE), [item, itemOverrides]);
+  const itemPalette = (item && palettes[item.slug]) || NO_PALETTE;
+  const demoProps = item?.demo?.props ?? NONE;
+  /** Defaults with the demo state layered on, so a freshly selected component starts looking finished. */
+  const baseline = useMemo(() => (item ? { ...item.defaults, ...demoProps } : NONE), [item, demoProps]);
+  const values = useMemo(() => ({ ...baseline, ...itemOverrides }), [baseline, itemOverrides]);
+  /** What differs from the plain defaults, demo state included. Sent to the live frame and copied into the
+   *  code tabs, so both always match what the controls show, however that state was reached. */
+  const codeOverrides = useMemo(() => (item ? diffProps(item.defaults, values) : NONE), [item, values]);
   const visible = useMemo(
     () => new Set(items.filter((i) => matches(i, query, activeTags)).map((i) => i.slug)),
     [items, query, activeTags],
@@ -52,6 +77,22 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // The events panel belongs to whichever frame is live now, so a fresh selection starts with an empty log.
+  useEffect(() => {
+    setEvents([]);
+  }, [selected]);
+
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (!isEventMessage(e.data)) return;
+      const detail = (e.data.detail === undefined ? null : e.data.detail) as EventEntry["detail"];
+      const entry: EventEntry = { name: e.data.name, detail, time: Date.now() };
+      setEvents((list) => [entry, ...list].slice(0, MAX_EVENTS));
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
   const selectOnCanvas = useCallback((slug: string | null) => setSelected(slug), [setSelected]);
   const selectInLayers = useCallback(
     (slug: string) => {
@@ -66,10 +107,10 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
       if (!item) return;
       setOverrides((all) => ({
         ...all,
-        [item.slug]: diffProps(item.defaults, { ...item.defaults, ...(all[item.slug] ?? {}), [name]: value }),
+        [item.slug]: diffProps(baseline, { ...baseline, ...(all[item.slug] ?? {}), [name]: value }),
       }));
     },
-    [item],
+    [item, baseline],
   );
 
   const reset = useCallback(() => {
@@ -80,6 +121,28 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
       return next;
     });
   }, [item]);
+
+  const setPaletteToken = useCallback(
+    (token: Token, value: string) => {
+      if (!item) return;
+      setPalettes((all) => ({ ...all, [item.slug]: { ...all[item.slug], [token]: value } }));
+    },
+    [item],
+  );
+
+  const resetPaletteToken = useCallback(
+    (token: Token) => {
+      if (!item) return;
+      setPalettes((all) => {
+        const current = { ...all[item.slug] };
+        delete current[token];
+        return { ...all, [item.slug]: current };
+      });
+    },
+    [item],
+  );
+
+  const clearEvents = useCallback(() => setEvents([]), []);
 
   const toggleTag = useCallback(
     (tag: string) => setActiveTags((tags) => (tags.includes(tag) ? tags.filter((t) => t !== tag) : [...tags, tag])),
@@ -110,17 +173,24 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
         frameWidth={frameWidth}
         onFrameWidth={setFrameWidth}
         liveDefaults={item?.defaults ?? null}
-        liveOverrides={itemOverrides}
+        liveOverrides={codeOverrides}
+        livePalette={itemPalette}
       />
       <Inspector
         item={item}
         values={values}
         overrides={itemOverrides}
+        codeOverrides={codeOverrides}
         onChange={setProp}
         onReset={reset}
         activeTags={activeTags}
         onToggleTag={toggleTag}
         total={items.length}
+        palette={itemPalette}
+        onPaletteChange={setPaletteToken}
+        onPaletteReset={resetPaletteToken}
+        events={events}
+        onClearEvents={clearEvents}
       />
     </main>
   );

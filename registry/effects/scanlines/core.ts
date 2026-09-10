@@ -1,5 +1,6 @@
-import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { layer, scope } from "../../../lib/host";
 import { createLoop } from "../../../lib/loop";
+import { cssVar } from "../../../lib/palette";
 import type { Mount, MotionProps } from "../../../lib/types";
 
 export interface ScanlinesProps extends MotionProps {
@@ -29,27 +30,21 @@ export const defaults: ScanlinesProps = {
   seed: 1,
 };
 
-/** Counts instances so each one gets its own class, never repeated while the page is open. */
-let instances = 0;
-
 /** The roll band as one tile the height of the host: transparent above and below a soft ink peak at its
  *  center. Tiled with repeat-y and slid down by lib/loop.ts, adjacent tiles meet at matching transparent
  *  edges, so the drift loops with no seam. */
-const ROLL_BAND =
-  "linear-gradient(to bottom, transparent 0%, transparent 38%, var(--pica-fg, currentColor) 50%, transparent 62%, transparent 100%)";
+const ROLL_BAND = `linear-gradient(to bottom, transparent 0%, transparent 38%, ${cssVar("fg")} 50%, transparent 62%, transparent 100%)`;
 
 /** The custom property lib/loop.ts writes the roll band's vertical position into, read back by the
- *  scoped rule in `sheet`. Private to this component; not one of STYLE.md's shared tokens. */
+ *  scoped rule. Private to this component; not one of STYLE.md's shared tokens. */
 const ROLL_VAR = "--pica-scanlines-roll";
 
 export const mount: Mount<ScanlinesProps> = (host, initial = {}) => {
   let props: ScanlinesProps = { ...defaults, ...initial };
-  const className = `pica-scanlines-${++instances}`;
-  const reposition = getComputedStyle(host).position === "static";
-  const styleEl = document.createElement("style");
-  const layer = document.createElement("div");
-  layer.className = className;
-  layer.setAttribute("aria-hidden", "true");
+  // The lines sit over the content in a layer of their own, hidden from assistive technology. The host
+  // and the content inside it stay readable and clickable, exactly as they were.
+  const lines = layer(host, "over");
+  const sheet = scope(host);
 
   function draw(t: number): void {
     if (props.roll) {
@@ -57,19 +52,13 @@ export const mount: Mount<ScanlinesProps> = (host, initial = {}) => {
       // formula is (box - image) * percent, which is zero at equal sizes), so the shift is a pixel
       // value computed from the host's own height instead.
       const period = Math.max(1, props.rollSpeed) * 1000;
-      const phase = ((t % period) + period) % period / period;
-      const height = host.clientHeight;
-      layer.style.setProperty(ROLL_VAR, `${(phase * height).toFixed(2)}px`);
+      const phase = (((t % period) + period) % period) / period;
+      lines.el.style.setProperty(ROLL_VAR, `${(phase * host.clientHeight).toFixed(2)}px`);
     }
     host.dataset.picaReady = "true";
   }
 
-  labelHost(host, "");
-  if (reposition) host.style.position = "relative";
-  styleEl.textContent = sheet(className, props);
-  host.appendChild(styleEl);
-  host.appendChild(layer);
-
+  sheet.setRules(rules(sheet.selector, props));
   const loop = createLoop({
     el: host,
     fps: props.fps,
@@ -89,40 +78,37 @@ export const mount: Mount<ScanlinesProps> = (host, initial = {}) => {
         props.opacity !== before.opacity ||
         props.roll !== before.roll
       ) {
-        styleEl.textContent = sheet(className, props);
+        sheet.setRules(rules(sheet.selector, props));
       }
       loop.update({ paused: props.paused, time: props.time, fps: props.fps });
       loop.redraw();
     },
     destroy() {
       loop.destroy();
-      styleEl.remove();
-      layer.remove();
-      unlabelHost(host);
-      if (reposition) host.style.removeProperty("position");
+      sheet.destroy();
+      lines.remove();
       delete host.dataset.picaReady;
     },
   };
 };
 
-/** The scoped rule for one instance: fine horizontal lines from a repeating gradient, plus an optional
- *  roll band whose position lib/loop.ts drives through one custom property. Both layers live in one
- *  element's background, so only one div is ever added. */
-function sheet(className: string, p: ScanlinesProps): string {
+/** The scoped rule for this host's layer: fine horizontal lines from a repeating gradient, plus an optional
+ *  roll band whose position lib/loop.ts drives through one custom property. Both live in the layer's
+ *  background, so the overlay is a single node. */
+function rules(selector: string, p: ScanlinesProps): string {
   const thickness = Math.min(p.thickness, p.spacing);
-  const lines =
-    `repeating-linear-gradient(to bottom, var(--pica-fg, currentColor) 0, ` +
-    `var(--pica-fg, currentColor) ${thickness}px, transparent ${thickness}px, transparent ${p.spacing}px)`;
-  const rules = ["position:absolute", "inset:0", "pointer-events:none", `opacity:${p.opacity}`];
+  const ink = cssVar("fg");
+  const stripes = `repeating-linear-gradient(to bottom, ${ink} 0, ${ink} ${thickness}px, transparent ${thickness}px, transparent ${p.spacing}px)`;
+  const declarations = [`opacity:${p.opacity}`];
   if (p.roll) {
-    rules.push(
-      `background-image:${ROLL_BAND},${lines}`,
+    declarations.push(
+      `background-image:${ROLL_BAND},${stripes}`,
       `background-size:100% 100%,100% ${p.spacing}px`,
       "background-repeat:repeat-y,repeat-y",
       `background-position:0 var(${ROLL_VAR},0px),0 0`,
     );
   } else {
-    rules.push(`background-image:${lines}`, `background-size:100% ${p.spacing}px`, "background-repeat:repeat-y");
+    declarations.push(`background-image:${stripes}`, `background-size:100% ${p.spacing}px`, "background-repeat:repeat-y");
   }
-  return `.${className}{${rules.join(";")}}`;
+  return `${selector} > div[data-pica]{${declarations.join(";")}}`;
 }

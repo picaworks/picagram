@@ -1,4 +1,5 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
+import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type GridOptions } from "../../../lib/glyph-grid";
 import { createLoop } from "../../../lib/loop";
 import { createNoise, type Noise } from "../../../lib/noise";
@@ -29,7 +30,7 @@ export const defaults: AsciiTopoProps = {
   speed: 0.05,
   ascii: false,
   fontSize: 12,
-  fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+  fontFamily: GRID_FONT,
   lineHeight: 1.2,
   fps: 15,
   paused: false,

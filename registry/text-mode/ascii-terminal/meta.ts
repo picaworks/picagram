@@ -9,7 +9,11 @@ export const meta: Meta = {
   wave: 2,
   animated: true,
   decorative: false,
+  palette: ["fg", "accent"],
+  // The frame at 4000 ms shows the whole default transcript; the one at 1200 ms shows half a command.
+  capture: 4000,
   controls: {
+    script: { type: "textarea", rows: 5, label: "Script" },
     prompt: { type: "string" },
     typeSpeed: { type: "number", min: 4, max: 40, step: 1, label: "Type speed" },
     lineDelay: { type: "number", min: 0, max: 1500, step: 10, label: "Line delay" },

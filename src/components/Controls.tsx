@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Control, PropValue } from "@/lib/catalog";
 import { formatNumbers, humanize, parseNumbers } from "@/lib/props";
 
@@ -7,13 +7,15 @@ interface FieldProps {
   name: string;
   control: Control;
   value: PropValue | undefined;
+  /** The prop's own default, so a json control can tell an array from an object from a plain value. */
+  defaultValue: PropValue | undefined;
   /** The prop's JSDoc, from the catalog. */
   hint: string | undefined;
   onChange: (value: PropValue) => void;
 }
 
 /** One inspector control, generated from a catalog item's `controls` entry. */
-export function ControlField({ name, control, value, hint, onChange }: FieldProps) {
+export function ControlField({ name, control, value, defaultValue, hint, onChange }: FieldProps) {
   const id = `control-${name}`;
   const hintId = hint ? `${id}-hint` : undefined;
   const label = control.label ?? humanize(name);
@@ -65,6 +67,20 @@ export function ControlField({ name, control, value, hint, onChange }: FieldProp
           spellCheck={false}
           onChange={(e) => onChange(e.target.value)}
         />
+      )}
+      {control.type === "textarea" && (
+        <textarea
+          id={id}
+          className="field control-textarea"
+          rows={control.rows}
+          value={typeof value === "string" ? value : ""}
+          aria-describedby={hintId}
+          spellCheck={false}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+      {control.type === "json" && (
+        <JsonField id={id} value={value} defaultValue={defaultValue} hintId={hintId} onChange={onChange} />
       )}
       {control.type === "select" && (
         <div className="control-select">
@@ -174,8 +190,14 @@ interface NumbersFieldProps {
   onChange: (value: PropValue) => void;
 }
 
+/** The finite numbers in a value that should hold an array of them. Anything else in the array is dropped,
+ *  which only matters if a prop disagrees with its own contract. */
+function numbersOf(value: PropValue | undefined): number[] {
+  return Array.isArray(value) ? value.filter((v): v is number => typeof v === "number") : [];
+}
+
 function NumbersField({ id, value, hintId, onChange }: NumbersFieldProps) {
-  const canonical = Array.isArray(value) ? formatNumbers(value) : "";
+  const canonical = formatNumbers(numbersOf(value));
   const [draft, setDraft] = useDraft(canonical);
   return (
     <input
@@ -193,5 +215,77 @@ function NumbersField({ id, value, hintId, onChange }: NumbersFieldProps) {
       }}
       onBlur={() => setDraft(canonical, canonical)}
     />
+  );
+}
+
+interface JsonFieldProps {
+  id: string;
+  value: PropValue | undefined;
+  defaultValue: PropValue | undefined;
+  hintId: string | undefined;
+  onChange: (value: PropValue) => void;
+}
+
+type Kind = "array" | "object" | "other";
+
+function kindOf(value: unknown): Kind {
+  if (Array.isArray(value)) return "array";
+  if (value !== null && typeof value === "object") return "object";
+  return "other";
+}
+
+const KIND_NAME: Readonly<Record<Kind, string>> = { array: "an array", object: "an object", other: "a plain value" };
+
+/** A monospace textarea for a prop that holds arbitrary JSON. A value is sent only once it parses and its
+ *  kind (array, object, or other) matches the prop's own default, so a component never receives, for
+ *  example, an array where it expects an object. Anything else stays a draft, marked aria-invalid. */
+function JsonField({ id, value, defaultValue, hintId, onChange }: JsonFieldProps) {
+  const canonical = JSON.stringify(value ?? null, null, 2);
+  const [draft, setDraft] = useDraft(canonical);
+  const [error, setError] = useState<string | null>(null);
+  // A value that arrived from outside this field, such as a reset, drops whatever the draft could not send.
+  useEffect(() => setError(null), [canonical]);
+
+  const onText = (text: string) => {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      setDraft(text, canonical);
+      setError("Not valid JSON.");
+      return;
+    }
+    const expected = kindOf(defaultValue);
+    if (kindOf(parsed) !== expected) {
+      setDraft(text, canonical);
+      setError(`Expected ${KIND_NAME[expected]}, to match the default.`);
+      return;
+    }
+    setError(null);
+    setDraft(text, JSON.stringify(parsed, null, 2));
+    onChange(parsed as PropValue);
+  };
+
+  const errorId = error ? `${id}-error` : undefined;
+  const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
+
+  return (
+    <div className="control-json">
+      <textarea
+        id={id}
+        className="field control-textarea"
+        rows={4}
+        value={draft}
+        spellCheck={false}
+        aria-describedby={describedBy}
+        aria-invalid={error ? "true" : undefined}
+        onChange={(e) => onText(e.target.value)}
+      />
+      {error && (
+        <p id={errorId} className="control-error" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
   );
 }

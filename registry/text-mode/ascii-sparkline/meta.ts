@@ -9,6 +9,7 @@ export const meta: Meta = {
   wave: 1,
   animated: false,
   decorative: false,
+  stage: "inline",
   controls: {
     values: { type: "numbers", label: "Values" },
     mode: { type: "select", options: ["blocks", "braille"] },
