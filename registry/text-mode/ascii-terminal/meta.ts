@@ -1,0 +1,20 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "ascii-terminal",
+  title: "ASCII Terminal",
+  category: "text-mode",
+  description: "A terminal session that types a command and prints its output, then rests on a blinking cursor.",
+  tags: ["terminal", "typing", "cursor", "cli"],
+  wave: 2,
+  animated: true,
+  decorative: false,
+  controls: {
+    prompt: { type: "string" },
+    typeSpeed: { type: "number", min: 4, max: 40, step: 1, label: "Type speed" },
+    lineDelay: { type: "number", min: 0, max: 1500, step: 10, label: "Line delay" },
+    loop: { type: "number", min: 0, max: 8000, step: 100 },
+  },
+  credits: [],
+  original: true,
+};

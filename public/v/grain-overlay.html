@@ -1,0 +1,266 @@
+<!doctype html>
+<!--
+  Pica · Grain Overlay · grain-overlay
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Grain Overlay · Pica</title>
+<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaGrainOverlay = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/effects/grain-overlay/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame, still } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime());
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime());
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0);
+      },
+      redraw() {
+        frame(heldTime());
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // registry/effects/grain-overlay/core.ts
+  var defaults = {
+    frequency: 0.8,
+    opacity: 0.12,
+    size: 160,
+    blend: "overlay",
+    jitter: true,
+    fps: 10,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL_TIME = 1200;
+  var OCTAVES = 3;
+  var CONTRAST_SLOPE = 3;
+  var CONTRAST_INTERCEPT = -1;
+  var SHIFT_PX = 6;
+  var instances = 0;
+  function stepSeed(seed, step) {
+    return Math.imul(Math.round(seed), 2654435761) + step >>> 0;
+  }
+  function jitterOffset(seed, step) {
+    const rng = createRng(stepSeed(seed, step));
+    return [Math.round((rng() * 2 - 1) * SHIFT_PX), Math.round((rng() * 2 - 1) * SHIFT_PX)];
+  }
+  function noiseTile(seed, frequency, size) {
+    const curve = `type="linear" slope="${CONTRAST_SLOPE}" intercept="${CONTRAST_INTERCEPT}"`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><filter id="g" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="${frequency}" numOctaves="${OCTAVES}" seed="${Math.round(seed)}" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1"/><feComponentTransfer><feFuncR ${curve}/><feFuncG ${curve}/><feFuncB ${curve}/></feComponentTransfer></filter><rect width="100%" height="100%" filter="url(#g)"/></svg>`;
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  }
+  function sheet(className, p) {
+    const rules = [
+      "position:absolute",
+      "inset:0",
+      "pointer-events:none",
+      `background-image:url("${noiseTile(p.seed, p.frequency, p.size)}")`,
+      "background-repeat:repeat",
+      `background-size:${p.size}px ${p.size}px`,
+      `mix-blend-mode:${p.blend}`,
+      `opacity:${p.opacity}`
+    ];
+    return `.${className}{${rules.join(";")}}`;
+  }
+  function shouldAnimate(p) {
+    return !p.paused && p.jitter;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const className = `pica-grain-overlay-${++instances}`;
+    const reposition = getComputedStyle(host).position === "static";
+    const style = document.createElement("style");
+    const layer = document.createElement("div");
+    layer.className = className;
+    layer.setAttribute("aria-hidden", "true");
+    function frame(t) {
+      if (props.jitter) {
+        const step = Math.floor(t / (1e3 / Math.max(1, props.fps)));
+        const [dx, dy] = jitterOffset(props.seed, step);
+        layer.style.backgroundPosition = `${dx}px ${dy}px`;
+      } else {
+        layer.style.backgroundPosition = "0px 0px";
+      }
+      host.dataset.picaReady = "true";
+    }
+    labelHost(host, "");
+    if (reposition) host.style.position = "relative";
+    host.style.isolation = "isolate";
+    style.textContent = sheet(className, props);
+    host.appendChild(style);
+    host.appendChild(layer);
+    const loop = createLoop({ el: host, fps: props.fps, paused: !shouldAnimate(props), time: props.time, still: STILL_TIME, frame });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.seed !== before.seed || props.frequency !== before.frequency || props.size !== before.size || props.opacity !== before.opacity || props.blend !== before.blend) {
+          style.textContent = sheet(className, props);
+        }
+        const motion = {};
+        if (shouldAnimate(props) !== shouldAnimate(before)) motion.paused = !shouldAnimate(props);
+        if (props.time !== before.time) motion.time = props.time;
+        if (props.fps !== before.fps) motion.fps = props.fps;
+        if (Object.keys(motion).length > 0) loop.update(motion);
+        else if (props.jitter !== before.jitter || props.seed !== before.seed) loop.redraw();
+      },
+      destroy() {
+        loop.destroy();
+        style.remove();
+        layer.remove();
+        unlabelHost(host);
+        if (reposition) host.style.removeProperty("position");
+        host.style.removeProperty("isolation");
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var instance = PicaGrainOverlay.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+# Pica
+
+> ASCII-first components for React and plain HTML. Each component ships as one React file that imports only react, and one HTML file that needs nothing. Every page below is markdown with both files inline.
+
+Install any component with `npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/<slug>.json`. License: MIT + Commons Clause. Use it in anything, including commercial work; do not resell the components as a library or template pack.
+
+## ASCII
+
+- [ASCII Image](/c/ascii-image.md): An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.
+- [ASCII Morph](/c/ascii-morph.md): Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.
+- [ASCII Noise Field](/c/ascii-noise-field.md): A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.
+- [ASCII Pointer Ripple](/c/ascii-pointer-ripple.md): A glyph field of low-density noise that sends rippling rings outward from the pointer, as if the grid were water.
+- [ASCII Rain](/c/ascii-rain.md): Columns of glyphs fall at their own speed, each with a bright head and a trail that fades down the measured ramp.
+- [ASCII Reveal](/c/ascii-reveal.md): Text that resolves from scrambled glyphs into its final characters, left to right.
+- [ASCII Solid](/c/ascii-solid.md): A torus, sphere, or cube rotated in three dimensions and shaded with the measured ramp.
+- [ASCII Text](/c/ascii-text.md): A headline rastered from a display face, then redrawn as a grid of glyphs chosen by measured ink and shape.
+- [ASCII Topo](/c/ascii-topo.md): Contour lines of a slowly drifting noise height field, drawn like a topographic survey in text.
+- [ASCII Video](/c/ascii-video.md): A video or webcam feed drawn as a live grid of glyphs, chosen each frame by the ink they put down in the font in use.
+- [ASCII Waves](/c/ascii-waves.md): Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.
+
+## Text mode
+
+- [ASCII Frame](/c/ascii-frame.md): A container framed in box-drawing characters, with an optional title set into the top rule.
+- [ASCII Loader](/c/ascii-loader.md): A text-mode loading indicator: a braille dot orbit, a progress bar, a shade pulse, or animated dots.
+- [ASCII Sparkline](/c/ascii-sparkline.md): A series of numbers drawn inline as eighth-block bars or a braille line, scaled to its own range.
+- [ASCII Terminal](/c/ascii-terminal.md): A terminal session that types a command and prints its output, then rests on a blinking cursor.
+- [Block Banner](/c/block-banner.md): Large block letters drawn in text from an original five row pixel font, sized to fit the host's width.
+- [Block Image](/c/block-image.md): An image drawn with the sixteen quadrant block characters, each matching the corners a 2 by 2 sample fills.
+- [Braille Image](/c/braille-image.md): An image drawn with braille characters, each cell's eight dots giving twice the horizontal and four times the vertical resolution of plain ASCII.
+
+## Dither
+
+- [Dither Gradient](/c/dither-gradient.md): A two-tone gradient dithered through a Bayer matrix, drifting slowly like light across a surface.
+- [Dither Image](/c/dither-image.md): An image reduced to two tones by ordered or error diffusion dithering, drawn crisp on a canvas.
+- [Halftone Image](/c/halftone-image.md): An image screened into halftone dots, squares, or lines, their area set by darkness like a page of newsprint.
+
+## Effects
+
+- [Duotone Image](/c/duotone-image.md): An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.
+- [Glitch Text](/c/glitch-text.md): Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.
+- [Grain Overlay](/c/grain-overlay.md): An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.
+- [Halftone CSS](/c/halftone-css.md): A halftone dot pattern made entirely of layered CSS gradients, for use as a background.
+- [Pixel Sort](/c/pixel-sort.md): An image whose pixel rows or columns are sorted by brightness within threshold bands, smearing tone into streaks.
+- [Scanlines](/c/scanlines.md): A CRT scanline overlay in the ink color, with an optional soft band that rolls slowly down the screen.
+
+## Optional
+
+- [Every component in one file](/llms-full.txt)
+- [shadcn registry index](/r/registry.json)
+- [Catalog as JSON](/catalog.json)

@@ -1,0 +1,20 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.DS_Store
+
+# Build and verify scratch: single-file intermediates, harness pages, captures.
+.pica/
+
+# Reference media Rish captures for the clean-room path. Never committed:
+# only specs written from it are. See docs/decisions/0003-clean-room-soft-clone.md.
+sources/inbox/
+
+test-results/
+playwright-report/
+
+# Catalog thumbnails. npm run verify regenerates them, and committing them would add megabytes of
+# binary history on every re-verify.
+public/thumbs/

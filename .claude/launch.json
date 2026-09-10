@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pica-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3100
+    },
+    {
+      "name": "pica-review-1",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "review", "--", "1"],
+      "port": 3200
+    },
+    {
+      "name": "pica-review-2",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["PICA_REVIEW_PORT=3201", "npm", "run", "review", "--", "2"],
+      "port": 3201
+    }
+  ]
+}

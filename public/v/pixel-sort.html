@@ -1,0 +1,354 @@
+<!doctype html>
+<!--
+  Pica · Pixel Sort · pixel-sort
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Pixel Sort · Pica</title>
+<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaPixelSort = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/effects/pixel-sort/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+  function relativeLuminance(color) {
+    const [r, g, b] = parseColor(color);
+    const linear = (v) => {
+      const c = v / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+  }
+  function inkColor(host) {
+    const style = getComputedStyle(host);
+    return style.getPropertyValue("--pica-fg").trim() || style.color;
+  }
+  function hostTone(host) {
+    const fg = relativeLuminance(inkColor(host));
+    let bg = 1;
+    for (let el = host; el; el = el.parentElement) {
+      const background = getComputedStyle(el).backgroundColor;
+      if (parseColor(background)[3] > 0) {
+        bg = relativeLuminance(background);
+        break;
+      }
+    }
+    return fg > bg ? "light-on-dark" : "dark-on-light";
+  }
+
+  // lib/subject.ts
+  function litSphere(size = 256, lightX = 0.36, lightY = 0.34) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const light = ctx.createRadialGradient(size * lightX, size * lightY, size * 0.02, size * 0.5, size * 0.5, size * 0.46);
+      light.addColorStop(0, "#ffffff");
+      light.addColorStop(0.55, "#8a8a8a");
+      light.addColorStop(1, "#141414");
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return canvas;
+  }
+
+  // registry/effects/pixel-sort/core.ts
+  var defaults = {
+    src: "",
+    alt: "",
+    direction: "horizontal",
+    low: 0.25,
+    high: 0.8,
+    color: false,
+    fit: "cover",
+    tone: "auto"
+  };
+  var WORK_MAX = 480;
+  var NOTE_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+  function luma(r, g, b) {
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  }
+  function sortPixels(data, width, height, vertical, low, high) {
+    const count = width * height;
+    const bright = new Float32Array(count);
+    for (let p = 0; p < count; p++) {
+      const o = p * 4;
+      bright[p] = luma(data[o] ?? 0, data[o + 1] ?? 0, data[o + 2] ?? 0);
+    }
+    const lines = vertical ? width : height;
+    const length = vertical ? height : width;
+    const at = (line, pos) => vertical ? pos * width + line : line * width + pos;
+    const order = new Uint32Array(length);
+    const rTmp = new Uint8ClampedArray(length);
+    const gTmp = new Uint8ClampedArray(length);
+    const bTmp = new Uint8ClampedArray(length);
+    const aTmp = new Uint8ClampedArray(length);
+    for (let line = 0; line < lines; line++) {
+      let start = -1;
+      for (let pos = 0; pos <= length; pos++) {
+        const value = pos < length ? bright[at(line, pos)] ?? 0 : 0;
+        const inRun = pos < length && value > low && value < high;
+        if (inRun) {
+          if (start === -1) start = pos;
+          continue;
+        }
+        if (start !== -1) {
+          const n = pos - start;
+          if (n > 1) {
+            for (let i = 0; i < n; i++) order[i] = start + i;
+            const run = order.subarray(0, n);
+            run.sort((a, b) => (bright[at(line, a)] ?? 0) - (bright[at(line, b)] ?? 0));
+            for (let i = 0; i < n; i++) {
+              const src = at(line, run[i] ?? 0) * 4;
+              rTmp[i] = data[src] ?? 0;
+              gTmp[i] = data[src + 1] ?? 0;
+              bTmp[i] = data[src + 2] ?? 0;
+              aTmp[i] = data[src + 3] ?? 0;
+            }
+            for (let i = 0; i < n; i++) {
+              const dst = at(line, start + i) * 4;
+              data[dst] = rTmp[i] ?? 0;
+              data[dst + 1] = gTmp[i] ?? 0;
+              data[dst + 2] = bTmp[i] ?? 0;
+              data[dst + 3] = aTmp[i] ?? 0;
+            }
+          }
+          start = -1;
+        }
+      }
+    }
+  }
+  function inkTint(data, lightOnDark, ink) {
+    const [ir, ig, ib, ia] = ink;
+    const inkAlpha = ia / 255;
+    for (let p = 0; p < data.length; p += 4) {
+      const value = luma(data[p] ?? 0, data[p + 1] ?? 0, data[p + 2] ?? 0);
+      const srcAlpha = (data[p + 3] ?? 0) / 255;
+      data[p] = ir;
+      data[p + 1] = ig;
+      data[p + 2] = ib;
+      data[p + 3] = (lightOnDark ? value : 1 - value) * srcAlpha * inkAlpha * 255;
+    }
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let source = null;
+    let sourceW = 0;
+    let sourceH = 0;
+    let failed = false;
+    let request = 0;
+    let setAspect = false;
+    let sorted = null;
+    const work = document.createElement("canvas");
+    const workCtx = work.getContext("2d", { willReadFrequently: true });
+    const canvas = document.createElement("canvas");
+    canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none";
+    canvas.setAttribute("aria-hidden", "true");
+    const ctx = canvas.getContext("2d");
+    if (getComputedStyle(host).position === "static") host.style.position = "relative";
+    host.style.overflow = "hidden";
+    host.appendChild(canvas);
+    function load() {
+      const mine = ++request;
+      failed = false;
+      if (!props.src) {
+        use(litSphere(), 256, 256);
+        return;
+      }
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.decoding = "async";
+      img.onload = () => {
+        if (mine === request) use(img, img.naturalWidth, img.naturalHeight);
+      };
+      img.onerror = () => {
+        if (mine !== request) return;
+        source = null;
+        sorted = null;
+        failed = true;
+        draw();
+      };
+      img.src = props.src;
+    }
+    function use(next, w, h) {
+      source = next;
+      sourceW = w;
+      sourceH = h;
+      if (host.clientHeight < 2 && w > 0 && h > 0) {
+        host.style.aspectRatio = `${w} / ${h}`;
+        setAspect = true;
+      }
+      process();
+    }
+    function process() {
+      if (!workCtx || !source || sourceW <= 0 || sourceH <= 0) {
+        sorted = null;
+        draw();
+        return;
+      }
+      const scale = Math.min(1, WORK_MAX / Math.max(sourceW, sourceH));
+      const w = Math.max(1, Math.round(sourceW * scale));
+      const h = Math.max(1, Math.round(sourceH * scale));
+      work.width = w;
+      work.height = h;
+      workCtx.clearRect(0, 0, w, h);
+      workCtx.drawImage(source, 0, 0, w, h);
+      const image = workCtx.getImageData(0, 0, w, h);
+      sortPixels(image.data, w, h, props.direction === "vertical", props.low, props.high);
+      sorted = image;
+      draw();
+    }
+    function draw() {
+      const w = Math.max(1, host.clientWidth);
+      const h = Math.max(1, host.clientHeight);
+      const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+      const pw = Math.max(1, Math.round(w * dpr));
+      const ph = Math.max(1, Math.round(h * dpr));
+      if (canvas.width !== pw) canvas.width = pw;
+      if (canvas.height !== ph) canvas.height = ph;
+      if (!ctx) {
+        if (source || failed) host.dataset.picaReady = "true";
+        return;
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      if (failed) {
+        const [r, g, b, a] = parseColor(inkColor(host));
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+        ctx.font = `14px ${NOTE_FONT}`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("image unavailable", w / 2, h / 2);
+      } else if (sorted && workCtx) {
+        if (props.color) {
+          workCtx.putImageData(sorted, 0, 0);
+        } else {
+          const painted = new ImageData(new Uint8ClampedArray(sorted.data), sorted.width, sorted.height);
+          const resolved = props.tone === "auto" ? hostTone(host) : props.tone;
+          inkTint(painted.data, resolved === "light-on-dark", parseColor(inkColor(host)));
+          workCtx.putImageData(painted, 0, 0);
+        }
+        const scale = props.fit === "cover" ? Math.max(w / sorted.width, h / sorted.height) : Math.min(w / sorted.width, h / sorted.height);
+        const dw = sorted.width * scale;
+        const dh = sorted.height * scale;
+        ctx.drawImage(work, (w - dw) / 2, (h - dh) / 2, dw, dh);
+      }
+      if (source || failed) host.dataset.picaReady = "true";
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => draw()) : null;
+    resizeObserver?.observe(host);
+    labelHost(host, props.alt);
+    load();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        labelHost(host, props.alt);
+        if (props.src !== before.src) {
+          load();
+        } else if (props.direction !== before.direction || props.low !== before.low || props.high !== before.high) {
+          process();
+        } else {
+          draw();
+        }
+      },
+      destroy() {
+        request++;
+        resizeObserver?.disconnect();
+        canvas.remove();
+        unlabelHost(host);
+        if (setAspect) host.style.removeProperty("aspect-ratio");
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var instance = PicaPixelSort.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

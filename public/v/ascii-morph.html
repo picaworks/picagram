@@ -1,0 +1,720 @@
+<!doctype html>
+<!--
+  Pica · ASCII Morph · ascii-morph
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>ASCII Morph · Pica</title>
+<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaAsciiMorph = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ascii/ascii-morph/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+  function relativeLuminance(color) {
+    const [r, g, b] = parseColor(color);
+    const linear = (v) => {
+      const c = v / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+  }
+  function inkColor(host) {
+    const style = getComputedStyle(host);
+    return style.getPropertyValue("--pica-fg").trim() || style.color;
+  }
+  function hostTone(host) {
+    const fg = relativeLuminance(inkColor(host));
+    let bg = 1;
+    for (let el = host; el; el = el.parentElement) {
+      const background = getComputedStyle(el).backgroundColor;
+      if (parseColor(background)[3] > 0) {
+        bg = relativeLuminance(background);
+        break;
+      }
+    }
+    return fg > bg ? "light-on-dark" : "dark-on-light";
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const probe = document.createElement("canvas").getContext("2d");
+    if (getComputedStyle(host).position === "static") host.style.position = "relative";
+    host.style.overflow = "hidden";
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      let advance = 0.6;
+      if (probe) {
+        probe.font = `100px ${opts.fontFamily}`;
+        advance = probe.measureText("M").width / 100 || 0.6;
+      }
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || "var(--pica-fg)";
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color}`;
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const rowTints = tints.slice(start, start + cols);
+        let key = cells.slice(start, start + cols).join("");
+        if (rowTints.some((tint) => tint !== void 0)) key += "\0" + rowTints.join(",");
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        let x = 0;
+        while (x < cols) {
+          const tint = rowTints[x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (rowTints[end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+      }
+    };
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame, still } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime());
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime());
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0);
+      },
+      redraw() {
+        frame(heldTime());
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/ramp.ts
+  var FALLBACK_RAMP = " .:-=+*#%@";
+  var rampCache = /* @__PURE__ */ new Map();
+  function uniqueGlyphs(chars) {
+    return Array.from(new Set(Array.from(chars.length > 0 ? chars : FALLBACK_RAMP)));
+  }
+  function fontSettled(fontFamily) {
+    try {
+      return document.fonts.check(`12px ${fontFamily}`);
+    } catch {
+      return true;
+    }
+  }
+  function inkMaps(glyphs, fontFamily, lineHeight, n) {
+    if (typeof document === "undefined") return null;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    const fontPx = 40;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    const w = Math.max(1, Math.ceil(ctx.measureText("M").width || fontPx * 0.6));
+    const h = Math.max(1, Math.ceil(fontPx * lineHeight));
+    canvas.width = w;
+    canvas.height = h;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#000";
+    return glyphs.map((glyph) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillText(glyph, 0, h / 2);
+      const alpha = ctx.getImageData(0, 0, w, h).data;
+      const sums = new Array(n * n).fill(0);
+      for (let y = 0; y < h; y++) {
+        const sy = Math.min(n - 1, Math.floor(y / h * n));
+        for (let x = 0; x < w; x++) {
+          const k = sy * n + Math.min(n - 1, Math.floor(x / w * n));
+          sums[k] = (sums[k] ?? 0) + (alpha[(y * w + x) * 4 + 3] ?? 0);
+        }
+      }
+      return sums;
+    });
+  }
+  function measureRamp(chars, fontFamily, lineHeight = 1.2) {
+    const glyphs = uniqueGlyphs(chars);
+    const key = `${fontFamily}|${lineHeight}|${glyphs.join("")}`;
+    const cached = rampCache.get(key);
+    if (cached) return cached;
+    const maps = inkMaps(glyphs, fontFamily, lineHeight, 1);
+    if (!maps) {
+      const last = Math.max(1, glyphs.length - 1);
+      return { glyphs, levels: glyphs.map((_, i) => i / last) };
+    }
+    const order = glyphs.map((glyph, i) => ({ glyph, ink: maps[i]?.[0] ?? 0 })).sort((a, b) => a.ink - b.ink);
+    const lightest = order[0]?.ink ?? 0;
+    const span = (order[order.length - 1]?.ink ?? 1) - lightest || 1;
+    const ramp = {
+      glyphs: order.map((o) => o.glyph),
+      levels: order.map((o) => (o.ink - lightest) / span)
+    };
+    if (fontSettled(fontFamily)) rampCache.set(key, ramp);
+    return ramp;
+  }
+  function pick(ramp, v) {
+    const { glyphs, levels } = ramp;
+    const last = glyphs.length - 1;
+    if (last < 0) return " ";
+    if (v <= 0) return glyphs[0] ?? " ";
+    if (v >= 1) return glyphs[last] ?? " ";
+    let lo = 0;
+    let hi = last;
+    while (hi - lo > 1) {
+      const mid = lo + hi >> 1;
+      if ((levels[mid] ?? 0) < v) lo = mid;
+      else hi = mid;
+    }
+    const nearer = v - (levels[lo] ?? 0) <= (levels[hi] ?? 1) - v ? lo : hi;
+    return glyphs[nearer] ?? " ";
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // lib/sample.ts
+  function createSampler() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    let ink = new Float32Array(0);
+    return {
+      sample(source, sourceW, sourceH, host, o) {
+        const ny = o.ny ?? o.n;
+        const sw = o.cols * o.n;
+        const sh = o.rows * ny;
+        if (ink.length !== sw * sh) ink = new Float32Array(sw * sh);
+        if (!ctx || sourceW <= 0 || sourceH <= 0) return ink.fill(0);
+        if (canvas.width !== sw) canvas.width = sw;
+        if (canvas.height !== sh) canvas.height = sh;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, sw, sh);
+        if (o.mirror) ctx.setTransform(-1, 0, 0, 1, sw, 0);
+        const boxW = o.cols * o.aspect;
+        const boxH = o.rows;
+        const scale = o.fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+        const drawW = sourceW * scale;
+        const drawH = sourceH * scale;
+        const toX = o.n / o.aspect;
+        ctx.drawImage(source, (boxW - drawW) / 2 * toX, (boxH - drawH) / 2 * ny, drawW * toX, drawH * ny);
+        const data = ctx.getImageData(0, 0, sw, sh).data;
+        const lightOnDark = (o.tone === "auto" ? hostTone(host) : o.tone) === "light-on-dark";
+        for (let p = 0; p < sw * sh; p++) {
+          const i = p * 4;
+          const alpha = (data[i + 3] ?? 0) / 255;
+          const luma = (0.2126 * (data[i] ?? 0) + 0.7152 * (data[i + 1] ?? 0) + 0.0722 * (data[i + 2] ?? 0)) / 255;
+          const linear = Math.min(1, Math.max(0, (luma - 0.5) * o.contrast + 0.5)) ** 2.2;
+          ink[p] = alpha * (lightOnDark ? linear : 1 - linear);
+        }
+        return ink;
+      }
+    };
+  }
+
+  // lib/subject.ts
+  function litSphere(size = 256, lightX = 0.36, lightY = 0.34) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const light = ctx.createRadialGradient(size * lightX, size * lightY, size * 0.02, size * 0.5, size * 0.5, size * 0.46);
+      light.addColorStop(0, "#ffffff");
+      light.addColorStop(0.55, "#8a8a8a");
+      light.addColorStop(1, "#141414");
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return canvas;
+  }
+
+  // registry/ascii/ascii-morph/core.ts
+  var defaults = {
+    from: "PICA",
+    to: "",
+    hold: 1400,
+    transition: 1600,
+    columns: 80,
+    glyphs: FALLBACK_RAMP,
+    font: '700 "Barlow Condensed", "Helvetica Neue", Arial, sans-serif',
+    fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+    lineHeight: 1.2,
+    fps: 24,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var DEFAULT_ASPECT = 2;
+  var SPHERE_SIZE = 256;
+  var TEXT_CANVAS_H = 200;
+  var INK_CONTRAST = 1.1;
+  var BAND = 0.18;
+  function easeInOut(x) {
+    const t = Math.min(1, Math.max(0, x));
+    return t * t * (3 - 2 * t);
+  }
+  function smoothstep(edge0, edge1, x) {
+    if (edge0 === edge1) return x < edge0 ? 0 : 1;
+    return easeInOut((x - edge0) / (edge1 - edge0));
+  }
+  function phaseAt(t, hold, transition) {
+    const cycle = 2 * hold + 2 * transition;
+    if (cycle <= 0) return 0;
+    const pos = (t % cycle + cycle) % cycle;
+    if (pos < hold) return 0;
+    if (pos < hold + transition) return easeInOut((pos - hold) / transition);
+    if (pos < 2 * hold + transition) return 1;
+    return 1 - easeInOut((pos - (2 * hold + transition)) / transition);
+  }
+  function sizedFont(stack, px) {
+    const keyword = /^(normal|italic|oblique|small-caps|bold|bolder|lighter|[1-9]00)$/;
+    const trimmed = stack.trim();
+    const tokens = trimmed.split(/\s+/);
+    let i = 0;
+    while (i < tokens.length && keyword.test(tokens[i] ?? "")) i++;
+    const prefix = tokens.slice(0, i).join(" ");
+    const rest = trimmed.slice(prefix.length).trim();
+    return prefix ? `${prefix} ${px}px ${rest}` : `${px}px ${rest}`;
+  }
+  function rasterizeText(text, font, fill) {
+    const canvas = document.createElement("canvas");
+    canvas.height = TEXT_CANVAS_H;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return canvas;
+    const fontPx = Math.round(TEXT_CANVAS_H * 0.62);
+    ctx.font = sizedFont(font, fontPx);
+    const pad = fontPx * 0.3;
+    canvas.width = Math.max(1, Math.ceil(ctx.measureText(text).width + pad * 2));
+    ctx.font = sizedFont(font, fontPx);
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillStyle = fill;
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+    return canvas;
+  }
+  function subjectOf(text, font, tone) {
+    if (!text) return { source: litSphere(SPHERE_SIZE), w: SPHERE_SIZE, h: SPHERE_SIZE };
+    const canvas = rasterizeText(text, font, tone === "light-on-dark" ? "#fff" : "#000");
+    return { source: canvas, w: canvas.width, h: canvas.height };
+  }
+  var STILL = 0.015;
+  function reorder(a, b, seed) {
+    const n = a.length;
+    const rng = createRng(seed);
+    const jitter = new Float32Array(n);
+    const delta = new Float32Array(n);
+    const moving = [];
+    for (let i = 0; i < n; i++) {
+      jitter[i] = rng();
+      delta[i] = Math.abs((b[i] ?? 0) - (a[i] ?? 0));
+      if ((delta[i] ?? 0) > STILL) moving.push(i);
+    }
+    moving.sort((x, y) => {
+      const dx = delta[x] ?? 0;
+      const dy = delta[y] ?? 0;
+      return dx !== dy ? dy - dx : (jitter[x] ?? 0) - (jitter[y] ?? 0);
+    });
+    const start = new Float32Array(n);
+    const span = Math.max(1, moving.length - 1);
+    for (let rank = 0; rank < moving.length; rank++) start[moving[rank] ?? 0] = rank / span * (1 - BAND);
+    return start;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let inkFrom = new Float32Array(0);
+    let inkTo = new Float32Array(0);
+    let start = new Float32Array(0);
+    let setAspect = false;
+    let started = false;
+    const sampler = createSampler();
+    function gridOptions(p) {
+      return { fontFamily: p.fontFamily, fontSize: 12, columns: p.columns, lineHeight: p.lineHeight, renderer: "auto", color: "" };
+    }
+    function sampleInk(subject, tone) {
+      const { cols, rows, aspect } = grid;
+      return sampler.sample(subject.source, subject.w, subject.h, host, {
+        cols,
+        rows,
+        aspect,
+        n: 1,
+        fit: "contain",
+        tone,
+        contrast: INK_CONTRAST,
+        mirror: false
+      }).slice();
+    }
+    function rebuild() {
+      if (!setAspect && host.clientHeight < 2) {
+        host.style.aspectRatio = String(DEFAULT_ASPECT);
+        setAspect = true;
+        grid.update(gridOptions(props));
+        return;
+      }
+      const tone = hostTone(host);
+      inkFrom = sampleInk(subjectOf(props.from, props.font, tone), tone);
+      inkTo = sampleInk(subjectOf(props.to, props.font, tone), tone);
+      start = reorder(inkFrom, inkTo, props.seed);
+    }
+    function renderFrame(t) {
+      const { cols, rows } = grid;
+      const ramp = measureRamp(props.glyphs, props.fontFamily, props.lineHeight);
+      const p = phaseAt(t, props.hold, props.transition);
+      const n = Math.min(cols * rows, inkFrom.length, inkTo.length, start.length);
+      for (let i = 0; i < n; i++) {
+        const s = start[i] ?? 0;
+        const localT = smoothstep(s, s + BAND, p);
+        const a = inkFrom[i] ?? 0;
+        const b = inkTo[i] ?? 0;
+        grid.set(i % cols, i / cols | 0, pick(ramp, a + (b - a) * localT));
+      }
+      grid.flush();
+    }
+    function onLayout() {
+      rebuild();
+      if (started) loop.redraw();
+    }
+    labelHost(host, "");
+    const grid = createGrid(host, gridOptions(props), onLayout);
+    rebuild();
+    const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: 0, frame: renderFrame });
+    started = true;
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        const relayout = props.columns !== before.columns || props.fontFamily !== before.fontFamily || props.lineHeight !== before.lineHeight;
+        const subjectChanged = props.from !== before.from || props.to !== before.to || props.font !== before.font;
+        const seedChanged = props.seed !== before.seed;
+        const motionChanged = props.paused !== before.paused || props.time !== before.time || props.fps !== before.fps;
+        if (motionChanged) loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+        if (relayout) {
+          grid.update(gridOptions(props));
+        } else {
+          if (subjectChanged) rebuild();
+          else if (seedChanged) start = reorder(inkFrom, inkTo, props.seed);
+          loop.redraw();
+        }
+      },
+      destroy() {
+        loop.destroy();
+        grid.destroy();
+        unlabelHost(host);
+        if (setAspect) host.style.removeProperty("aspect-ratio");
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var instance = PicaAsciiMorph.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

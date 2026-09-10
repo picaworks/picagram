@@ -1,0 +1,2615 @@
+[
+  {
+    "slug": "ascii-image",
+    "title": "ASCII Image",
+    "category": "ascii",
+    "description": "An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.",
+    "tags": [
+      "image",
+      "static",
+      "measured ramp",
+      "shape matching"
+    ],
+    "wave": 1,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "columns": {
+        "type": "number",
+        "min": 24,
+        "max": 240,
+        "step": 1
+      },
+      "glyphs": {
+        "type": "string"
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2.5,
+        "step": 0.05
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "shape": {
+        "type": "boolean",
+        "label": "Shape matching"
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      }
+    },
+    "credits": [
+      {
+        "relation": "port-of",
+        "title": "AsciiImage, rishab.fyi",
+        "author": "Rishab Balak",
+        "url": "https://rishab.fyi",
+        "license": "Author's own work, relicensed under Pica's license"
+      },
+      {
+        "relation": "technique",
+        "title": "Beyond the luminance ramp: a shape-aware ASCII renderer",
+        "author": "Codrops",
+        "url": "https://tympanus.net/codrops/2026/09/04/beyond-the-luminance-ramp-a-shape-aware-ascii-renderer-in-three-js/",
+        "license": "MIT"
+      },
+      {
+        "relation": "technique",
+        "title": "Ditherpunk",
+        "author": "Surma",
+        "url": "https://surma.dev/things/ditherpunk/",
+        "license": "Article"
+      }
+    ],
+    "exportName": "AsciiImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "columns": 96,
+      "glyphs": " .:-=+*#%@",
+      "contrast": 1.1,
+      "fit": "cover",
+      "tone": "auto",
+      "shape": false,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "columns": "Columns across the host. Rows follow from the host's height, or from the image when the host has none.",
+      "glyphs": "Glyphs to draw with, in any order: they are sorted by the ink each one puts down in the font.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" maps bright pixels to dense glyphs; \"dark-on-light\" does the reverse.",
+      "shape": "Match each cell's shape as well as its brightness: sharper edges, more work.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size."
+    },
+    "gzipBytes": 4258
+  },
+  {
+    "slug": "ascii-morph",
+    "title": "ASCII Morph",
+    "category": "ascii",
+    "description": "Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.",
+    "tags": [
+      "text",
+      "animated",
+      "measured ramp",
+      "morph",
+      "transition"
+    ],
+    "wave": 2,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "from": {
+        "type": "string",
+        "label": "First subject"
+      },
+      "to": {
+        "type": "string",
+        "label": "Second subject"
+      },
+      "hold": {
+        "type": "number",
+        "min": 400,
+        "max": 4000,
+        "step": 50,
+        "label": "Hold (ms)"
+      },
+      "transition": {
+        "type": "number",
+        "min": 400,
+        "max": 4000,
+        "step": 50,
+        "label": "Transition (ms)"
+      },
+      "columns": {
+        "type": "number",
+        "min": 40,
+        "max": 160,
+        "step": 1
+      },
+      "glyphs": {
+        "type": "string"
+      },
+      "font": {
+        "type": "string",
+        "label": "Text font"
+      },
+      "fontFamily": {
+        "type": "string",
+        "label": "Grid font"
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 12,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiMorph",
+    "defaults": {
+      "from": "PICA",
+      "to": "",
+      "hold": 1400,
+      "transition": 1600,
+      "columns": 80,
+      "glyphs": " .:-=+*#%@",
+      "font": "700 \"Barlow Condensed\", \"Helvetica Neue\", Arial, sans-serif",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "from": "Text for the first subject. Empty draws the built-in lit sphere.",
+      "to": "Text for the second subject. Empty draws the built-in lit sphere.",
+      "hold": "Milliseconds each subject holds fully resolved before the next transition starts.",
+      "transition": "Milliseconds one transition between subjects takes.",
+      "columns": "Columns across the host. Rows follow from the host's height.",
+      "glyphs": "Glyphs to draw with, in any order: they are sorted by the ink each one puts down in the font.",
+      "font": "CSS font used to draw a text subject before it is sampled. Unused while a subject is the sphere.",
+      "fontFamily": "CSS font-family stack for the glyph grid. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size.",
+      "fps": "Frames per second ceiling."
+    },
+    "gzipBytes": 5234
+  },
+  {
+    "slug": "ascii-noise-field",
+    "title": "ASCII Noise Field",
+    "category": "ascii",
+    "description": "A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.",
+    "tags": [
+      "background",
+      "noise",
+      "animated",
+      "decorative"
+    ],
+    "wave": 1,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "scale": {
+        "type": "number",
+        "min": 0.02,
+        "max": 0.3,
+        "step": 0.01
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "octaves": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 3,
+        "step": 0.05
+      },
+      "density": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "glyphs": {
+        "type": "string"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 8,
+        "max": 24,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Simplex noise demystified",
+        "author": "Stefan Gustavson",
+        "url": "https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf",
+        "license": "Public domain"
+      }
+    ],
+    "exportName": "AsciiNoiseField",
+    "defaults": {
+      "scale": 0.08,
+      "speed": 0.15,
+      "octaves": 2,
+      "contrast": 1.4,
+      "density": 0.45,
+      "glyphs": " .:-=+*#%@",
+      "fontSize": 12,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "scale": "Spatial frequency of the noise. Smaller values stretch it into broad drifting shapes, larger values pack in fine grain.",
+      "speed": "How fast the field drifts, in noise units per second.",
+      "octaves": "Layers of noise summed at doubling frequency and halving weight, for finer detail.",
+      "contrast": "How sharply ink rises around `density`. 1 is a soft gradient; 3 pushes the field toward a threshold.",
+      "density": "The noise level mapped to the middle of the glyph ramp. Raise it for a sparser field, lower it for a denser one.",
+      "glyphs": "Glyphs to draw with, in any order: they are sorted by the ink each one puts down in the font.",
+      "fontSize": "Glyph size in CSS pixels.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size.",
+      "fps": "Frames per second ceiling for the animation."
+    },
+    "gzipBytes": 4312
+  },
+  {
+    "slug": "ascii-pointer-ripple",
+    "title": "ASCII Pointer Ripple",
+    "category": "ascii",
+    "description": "A glyph field of low-density noise that sends rippling rings outward from the pointer, as if the grid were water.",
+    "tags": [
+      "pointer",
+      "ripple",
+      "noise",
+      "interactive"
+    ],
+    "wave": 1,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "growth": {
+        "type": "number",
+        "min": 6,
+        "max": 40,
+        "step": 1
+      },
+      "width": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 0.1
+      },
+      "lifetime": {
+        "type": "number",
+        "min": 0.5,
+        "max": 3,
+        "step": 0.1
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "base": {
+        "type": "number",
+        "min": 0,
+        "max": 0.4,
+        "step": 0.01
+      },
+      "glyphs": {
+        "type": "string"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 8,
+        "max": 28,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 12,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "play.core",
+        "author": "Andreas Gysin",
+        "url": "https://github.com/ertdfgcvb/play.core",
+        "license": "Apache-2.0"
+      }
+    ],
+    "exportName": "AsciiPointerRipple",
+    "defaults": {
+      "growth": 18,
+      "width": 2.5,
+      "lifetime": 1.6,
+      "strength": 0.8,
+      "base": 0.12,
+      "glyphs": " .:-=+*#%@",
+      "fontSize": 12,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "growth": "How many cells per second a ripple's ring moves outward.",
+      "width": "How wide a ripple's ring is, in cells.",
+      "lifetime": "Seconds a ripple takes to expand and fade away completely.",
+      "strength": "Ink a fresh ripple's ring adds at its peak, 0 to 1.",
+      "base": "Ink of the resting field with no ripples on it, 0 to 0.4.",
+      "glyphs": "Glyphs to draw with, in any order: they are sorted by the ink each one puts down in the font.",
+      "fontSize": "Glyph size in CSS pixels.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size.",
+      "fps": "Frames per second ceiling."
+    },
+    "gzipBytes": 4759
+  },
+  {
+    "slug": "ascii-rain",
+    "title": "ASCII Rain",
+    "category": "ascii",
+    "description": "Columns of glyphs fall at their own speed, each with a bright head and a trail that fades down the measured ramp.",
+    "tags": [
+      "rain",
+      "animated",
+      "measured ramp",
+      "generative"
+    ],
+    "wave": 1,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "density": {
+        "type": "number",
+        "min": 0.1,
+        "max": 1,
+        "step": 0.05
+      },
+      "speed": {
+        "type": "number",
+        "min": 4,
+        "max": 40,
+        "step": 1
+      },
+      "trail": {
+        "type": "number",
+        "min": 4,
+        "max": 40,
+        "step": 1
+      },
+      "change": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "glyphs": {
+        "type": "string"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 8,
+        "max": 24,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Matrix digital rain",
+        "author": "Simon Whiteley, title design for The Matrix (1999)",
+        "url": "https://en.wikipedia.org/wiki/Matrix_digital_rain",
+        "license": "Cultural reference, no code"
+      }
+    ],
+    "exportName": "AsciiRain",
+    "defaults": {
+      "density": 0.5,
+      "speed": 14,
+      "trail": 16,
+      "change": 0.06,
+      "glyphs": "0123456789:;+=*#%",
+      "fontSize": 12,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "density": "Share of columns that fall. The rest stay empty.",
+      "speed": "Base fall speed, in rows per second. Each column varies around it by a seeded amount.",
+      "trail": "Length of the fading trail behind the head, in rows.",
+      "change": "Chance a trail glyph swaps for another glyph on a given frame, for flicker.",
+      "glyphs": "Glyphs to fall with, in any order: they are sorted by the ink each one puts down in the font.",
+      "fontSize": "Glyph size in CSS pixels.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size.",
+      "fps": "Frames per second ceiling."
+    },
+    "gzipBytes": 3843
+  },
+  {
+    "slug": "ascii-reveal",
+    "title": "ASCII Reveal",
+    "category": "ascii",
+    "description": "Text that resolves from scrambled glyphs into its final characters, left to right.",
+    "tags": [
+      "text",
+      "reveal",
+      "scramble",
+      "decode"
+    ],
+    "wave": 1,
+    "animated": true,
+    "decorative": false,
+    "controls": {
+      "text": {
+        "type": "string",
+        "label": "Text"
+      },
+      "duration": {
+        "type": "number",
+        "min": 400,
+        "max": 5000,
+        "step": 100
+      },
+      "stagger": {
+        "type": "number",
+        "min": 0,
+        "max": 0.9,
+        "step": 0.05
+      },
+      "glyphs": {
+        "type": "string",
+        "label": "Scramble glyphs"
+      },
+      "loop": {
+        "type": "number",
+        "min": 0,
+        "max": 4000,
+        "step": 100
+      },
+      "fps": {
+        "type": "number",
+        "min": 5,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiReveal",
+    "defaults": {
+      "text": "Drawn on a monospace grid.",
+      "duration": 1600,
+      "stagger": 0.6,
+      "glyphs": ".:-=+*#%@/\\|_",
+      "loop": 0,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "fps": 20,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "text": "Text to reveal. Also the host's accessible label.",
+      "duration": "Milliseconds from the first frame to the last character locking onto its own glyph.",
+      "stagger": "Share of the duration spent spreading out when characters lock, from 0 (all lock together) to 1 (locks spread across nearly the whole duration).",
+      "glyphs": "Glyphs a character cycles through before it settles on its own character.",
+      "loop": "Milliseconds to hold the settled text before it scrambles again. 0 never replays.",
+      "fontFamily": "CSS font family stack. Kept monospace so the revealed width never jitters.",
+      "fps": "Frames per second the scramble cycles through glyphs at."
+    },
+    "gzipBytes": 1960
+  },
+  {
+    "slug": "ascii-solid",
+    "title": "ASCII Solid",
+    "category": "ascii",
+    "description": "A torus, sphere, or cube rotated in three dimensions and shaded with the measured ramp.",
+    "tags": [
+      "3d",
+      "rotation",
+      "measured ramp",
+      "depth buffer"
+    ],
+    "wave": 1,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "shape": {
+        "type": "select",
+        "options": [
+          "torus",
+          "sphere",
+          "cube"
+        ]
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05
+      },
+      "size": {
+        "type": "number",
+        "min": 0.3,
+        "max": 1,
+        "step": 0.05
+      },
+      "glyphs": {
+        "type": "string"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 8,
+        "max": 24,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 12,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Donut math: how donut.c works",
+        "author": "Andy Sloane",
+        "url": "https://www.a1k0n.net/2011/07/20/donut-math.html",
+        "license": "Article"
+      }
+    ],
+    "exportName": "AsciiSolid",
+    "defaults": {
+      "shape": "torus",
+      "speed": 0.6,
+      "size": 0.8,
+      "glyphs": " .:-=+*#%@",
+      "fontSize": 12,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "shape": "Solid to rasterize: a torus, a sphere, or a cube.",
+      "speed": "Rotation speed. 0 holds the solid at its starting orientation, and 2 tumbles it quickly.",
+      "size": "Diameter of the solid as a fraction of the host's smaller side.",
+      "glyphs": "Glyphs to shade with, in any order: they are sorted by the ink each one puts down in the font.",
+      "fontSize": "Glyph size in CSS pixels.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size.",
+      "fps": "Frames per second ceiling."
+    },
+    "gzipBytes": 4160
+  },
+  {
+    "slug": "ascii-text",
+    "title": "ASCII Text",
+    "category": "ascii",
+    "description": "A headline rastered from a display face, then redrawn as a grid of glyphs chosen by measured ink and shape.",
+    "tags": [
+      "text",
+      "headline",
+      "static",
+      "measured ramp",
+      "shape matching"
+    ],
+    "wave": 1,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "text": {
+        "type": "string",
+        "label": "Text"
+      },
+      "font": {
+        "type": "string",
+        "label": "Display font"
+      },
+      "columns": {
+        "type": "number",
+        "min": 20,
+        "max": 200,
+        "step": 1
+      },
+      "glyphs": {
+        "type": "string"
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2.5,
+        "step": 0.05
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "center",
+          "left"
+        ]
+      },
+      "shape": {
+        "type": "boolean",
+        "label": "Shape matching"
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Beyond the luminance ramp: a shape-aware ASCII renderer",
+        "author": "Codrops",
+        "url": "https://tympanus.net/codrops/2026/09/04/beyond-the-luminance-ramp-a-shape-aware-ascii-renderer-in-three-js/",
+        "license": "MIT"
+      }
+    ],
+    "exportName": "AsciiText",
+    "defaults": {
+      "text": "PICA",
+      "font": "700 \"Barlow Condensed\", \"Helvetica Neue\", Arial, sans-serif",
+      "columns": 80,
+      "glyphs": " .:-=+*#%@",
+      "contrast": 1.2,
+      "tone": "auto",
+      "align": "center",
+      "shape": true,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "text": "The words to draw. This component always speaks them to assistive technology, so it is never decorative.",
+      "font": "CSS font weight and family for the offscreen raster, with no size of its own. Must be a face the page has loaded.",
+      "columns": "Columns across the host. Rows follow from the host's height, or from the text's proportions when the host has none.",
+      "glyphs": "Glyphs to draw with, in any order: they are sorted by the ink each one puts down in the font.",
+      "contrast": "Contrast around mid grey, applied before glyphs are chosen. 1 leaves the raster as it is.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" maps bright pixels to dense glyphs; \"dark-on-light\" does the reverse.",
+      "align": "Where the text sits when the host is wider than the text needs.",
+      "shape": "Match each cell's shape as well as its coverage: sharper letterforms, more work.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size."
+    },
+    "gzipBytes": 4443
+  },
+  {
+    "slug": "ascii-topo",
+    "title": "ASCII Topo",
+    "category": "ascii",
+    "description": "Contour lines of a slowly drifting noise height field, drawn like a topographic survey in text.",
+    "tags": [
+      "noise",
+      "contours",
+      "marching squares",
+      "topography"
+    ],
+    "wave": 2,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "scale": {
+        "type": "number",
+        "min": 0.02,
+        "max": 0.2,
+        "step": 0.005
+      },
+      "levels": {
+        "type": "number",
+        "min": 4,
+        "max": 24,
+        "step": 1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 0.5,
+        "step": 0.01
+      },
+      "ascii": {
+        "type": "boolean",
+        "label": "ASCII glyphs"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 8,
+        "max": 24,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Marching squares",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Marching_squares",
+        "license": "Algorithm, no code"
+      },
+      {
+        "relation": "technique",
+        "title": "Simplex noise demystified",
+        "author": "Stefan Gustavson",
+        "url": "https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf",
+        "license": "Public domain"
+      }
+    ],
+    "exportName": "AsciiTopo",
+    "defaults": {
+      "scale": 0.06,
+      "levels": 10,
+      "speed": 0.05,
+      "ascii": false,
+      "fontSize": 12,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2,
+      "fps": 15,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "scale": "Noise frequency. Higher values pack the contour lines closer together.",
+      "levels": "Number of evenly spaced contour levels sampled across the height field.",
+      "speed": "How fast the height field drifts, in noise units per second. Zero holds it still.",
+      "ascii": "Draws with the plain characters - | / and a backslash instead of box-drawing glyphs.",
+      "fontSize": "Glyph size in CSS pixels.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size.",
+      "fps": "Frames per second ceiling for the drift."
+    },
+    "gzipBytes": 3993
+  },
+  {
+    "slug": "ascii-video",
+    "title": "ASCII Video",
+    "category": "ascii",
+    "description": "A video or webcam feed drawn as a live grid of glyphs, chosen each frame by the ink they put down in the font in use.",
+    "tags": [
+      "video",
+      "webcam",
+      "animated",
+      "measured ramp"
+    ],
+    "wave": 1,
+    "animated": true,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Video URL"
+      },
+      "webcam": {
+        "type": "boolean",
+        "label": "Use webcam"
+      },
+      "mirror": {
+        "type": "boolean"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "columns": {
+        "type": "number",
+        "min": 24,
+        "max": 240,
+        "step": 1
+      },
+      "glyphs": {
+        "type": "string"
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2.5,
+        "step": 0.05
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "play.core",
+        "author": "Andreas Gysin",
+        "url": "https://github.com/ertdfgcvb/play.core",
+        "license": "Apache-2.0"
+      },
+      {
+        "relation": "technique",
+        "title": "ascii-camera",
+        "author": "Andrei Gheorghe",
+        "url": "https://github.com/idevelop/ascii-camera",
+        "license": "MIT"
+      }
+    ],
+    "exportName": "AsciiVideo",
+    "defaults": {
+      "src": "",
+      "webcam": false,
+      "mirror": true,
+      "alt": "",
+      "columns": 96,
+      "glyphs": " .:-=+*#%@",
+      "contrast": 1.1,
+      "fit": "cover",
+      "tone": "auto",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Video URL. Ignored while webcam is true. Empty draws a built-in subject, so the component can render with no network.",
+      "webcam": "Draw the camera instead of src. Requests permission only while this is true, and stops the camera as soon as it turns false.",
+      "mirror": "Flip the picture left to right, as a mirror does. Only visible while webcam is true.",
+      "alt": "Text alternative. Empty marks the video decorative and hides it from assistive technology.",
+      "columns": "Columns across the host. Rows follow from the host's height, or from the source's proportions when the host has none.",
+      "glyphs": "Glyphs to draw with, in any order: they are sorted by the ink each one puts down in the font.",
+      "contrast": "Contrast around mid grey. 1 leaves the frame as it is.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole frame.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" maps bright pixels to dense glyphs; \"dark-on-light\" does the reverse.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size.",
+      "fps": "Frames drawn per second, at most 30."
+    },
+    "gzipBytes": 5003
+  },
+  {
+    "slug": "ascii-waves",
+    "title": "ASCII Waves",
+    "category": "ascii",
+    "description": "Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.",
+    "tags": [
+      "interference",
+      "waves",
+      "animated",
+      "background"
+    ],
+    "wave": 1,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "sources": {
+        "type": "number",
+        "min": 1,
+        "max": 5,
+        "step": 1
+      },
+      "frequency": {
+        "type": "number",
+        "min": 0.05,
+        "max": 1,
+        "step": 0.01
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 4,
+        "step": 0.1
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 3,
+        "step": 0.05
+      },
+      "drift": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "glyphs": {
+        "type": "string"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 8,
+        "max": 24,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiWaves",
+    "defaults": {
+      "sources": 3,
+      "frequency": 0.12,
+      "speed": 1.2,
+      "contrast": 1.3,
+      "drift": 0.3,
+      "glyphs": " .:-=+*#%@",
+      "fontSize": 12,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "sources": "Number of circular wave sources that interfere with each other.",
+      "frequency": "Spatial frequency of each wave, in cycles per cell.",
+      "speed": "Angular speed the interference pattern advances at, in radians per second.",
+      "contrast": "Contrast around the midpoint, sharpening the rings into bands.",
+      "drift": "How far each source wanders from its resting point, as a share of the grid. 0 holds them still.",
+      "glyphs": "Glyphs to draw with, in any order: they are sorted by the ink each one puts down in the font.",
+      "fontSize": "Glyph size in CSS pixels.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size.",
+      "fps": "Frames per second ceiling for the animation."
+    },
+    "gzipBytes": 3791
+  },
+  {
+    "slug": "dither-gradient",
+    "title": "Dither Gradient",
+    "category": "dither",
+    "description": "A two-tone gradient dithered through a Bayer matrix, drifting slowly like light across a surface.",
+    "tags": [
+      "gradient",
+      "ordered dither",
+      "bayer matrix",
+      "background"
+    ],
+    "wave": 2,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "shape": {
+        "type": "select",
+        "options": [
+          "linear",
+          "radial",
+          "noise"
+        ]
+      },
+      "scale": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1,
+        "label": "Pixel scale"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Ditherpunk",
+        "author": "Surma",
+        "url": "https://surma.dev/things/ditherpunk/",
+        "license": "Article"
+      },
+      {
+        "relation": "technique",
+        "title": "Ordered dithering",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "DitherGradient",
+    "defaults": {
+      "shape": "noise",
+      "scale": 4,
+      "speed": 0.2,
+      "contrast": 1,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "shape": "Field the gradient follows. \"linear\" sweeps at a slowly turning angle, \"radial\" drifts its center, \"noise\" evolves a simplex field.",
+      "scale": "CSS pixels each computed pixel covers before the canvas is scaled up. Higher values draw a coarser, cheaper grid.",
+      "speed": "How fast the gradient moves. 0 holds it still.",
+      "contrast": "Contrast around mid grey, applied before the Bayer threshold. 1 leaves the gradient as it is.",
+      "fps": "Frames per second ceiling."
+    },
+    "gzipBytes": 3210
+  },
+  {
+    "slug": "dither-image",
+    "title": "Dither Image",
+    "category": "dither",
+    "description": "An image reduced to two tones by ordered or error diffusion dithering, drawn crisp on a canvas.",
+    "tags": [
+      "image",
+      "static",
+      "dither",
+      "canvas"
+    ],
+    "wave": 2,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "algorithm": {
+        "type": "select",
+        "options": [
+          "bayer2",
+          "bayer4",
+          "bayer8",
+          "floyd-steinberg",
+          "atkinson"
+        ]
+      },
+      "scale": {
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "step": 1
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2.5,
+        "step": 0.05
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Ditherpunk",
+        "author": "Surma",
+        "url": "https://surma.dev/things/ditherpunk/",
+        "license": "Article"
+      },
+      {
+        "relation": "technique",
+        "title": "Atkinson dithering",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Atkinson_dithering",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "DitherImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "algorithm": "atkinson",
+      "scale": 3,
+      "contrast": 1.1,
+      "fit": "cover",
+      "tone": "auto"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "algorithm": "How ink is placed: ordered Bayer at three matrix sizes, or error diffusion by Floyd-Steinberg or Atkinson.",
+      "scale": "CSS pixels per dithered pixel. Higher values give a coarser, more graphic result.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones."
+    },
+    "gzipBytes": 2585
+  },
+  {
+    "slug": "halftone-image",
+    "title": "Halftone Image",
+    "category": "dither",
+    "description": "An image screened into halftone dots, squares, or lines, their area set by darkness like a page of newsprint.",
+    "tags": [
+      "image",
+      "static",
+      "halftone",
+      "canvas"
+    ],
+    "wave": 2,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "cell": {
+        "type": "number",
+        "min": 6,
+        "max": 24,
+        "step": 1
+      },
+      "angle": {
+        "type": "number",
+        "min": 0,
+        "max": 90,
+        "step": 1
+      },
+      "shape": {
+        "type": "select",
+        "options": [
+          "circle",
+          "square",
+          "line"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2.5,
+        "step": 0.05
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Halftone",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Halftone",
+        "license": "Reference, no code"
+      }
+    ],
+    "exportName": "HalftoneImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "cell": 10,
+      "angle": 45,
+      "shape": "circle",
+      "contrast": 1.1,
+      "fit": "cover",
+      "tone": "auto"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "cell": "Grid spacing in CSS pixels: the distance between dot centers.",
+      "angle": "Rotation of the dot grid, in degrees. 45 gives the classic printing screen angle.",
+      "shape": "Dot shape. \"circle\" and \"square\" sit on the grid; \"line\" draws a rotated line screen for an engraving look.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" screens the bright pixels; \"dark-on-light\" screens the dark ones."
+    },
+    "gzipBytes": 2643
+  },
+  {
+    "slug": "duotone-image",
+    "title": "Duotone Image",
+    "category": "effects",
+    "description": "An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.",
+    "tags": [
+      "image",
+      "static",
+      "duotone",
+      "canvas"
+    ],
+    "wave": 2,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1
+      },
+      "accent": {
+        "type": "boolean"
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2.5,
+        "step": 0.05
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "DuotoneImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "levels": 4,
+      "accent": false,
+      "contrast": 1.1,
+      "fit": "cover",
+      "tone": "auto"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "levels": "Flat tone bands the image's ink is quantized into.",
+      "accent": "Draws the band with the most ink in --pica-accent instead of the host's ink color.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones."
+    },
+    "gzipBytes": 2234
+  },
+  {
+    "slug": "glitch-text",
+    "title": "Glitch Text",
+    "category": "effects",
+    "description": "Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.",
+    "tags": [
+      "text",
+      "glitch",
+      "burst",
+      "distortion"
+    ],
+    "wave": 2,
+    "animated": true,
+    "decorative": false,
+    "controls": {
+      "text": {
+        "type": "string"
+      },
+      "interval": {
+        "type": "number",
+        "min": 1500,
+        "max": 8000,
+        "step": 100
+      },
+      "burst": {
+        "type": "number",
+        "min": 100,
+        "max": 400,
+        "step": 10
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "glyphs": {
+        "type": "string"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "GlitchText",
+    "defaults": {
+      "text": "SIGNAL LOST",
+      "interval": 2500,
+      "burst": 280,
+      "intensity": 0.5,
+      "glyphs": " .:-=+*#%@",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "text": "The text to show. Always available to assistive technology, even while the visible layer glitches.",
+      "interval": "Milliseconds from the start of one burst to the start of the next.",
+      "burst": "How long each burst lasts, in milliseconds.",
+      "intensity": "How strongly a burst distorts the text: 0 never glitches, 1 shifts strips furthest and swaps the most characters.",
+      "glyphs": "Glyphs a character may swap to during a burst, in any order: they are sorted by the ink each one puts down in the font.",
+      "fontFamily": "CSS font-family stack. Must be monospace, so the sliced strips line up. Size and color are inherited from the host.",
+      "fps": "Frames per second ceiling for the glitch animation."
+    },
+    "gzipBytes": 2588
+  },
+  {
+    "slug": "grain-overlay",
+    "title": "Grain Overlay",
+    "category": "effects",
+    "description": "An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.",
+    "tags": [
+      "overlay",
+      "grain",
+      "texture",
+      "blend mode"
+    ],
+    "wave": 2,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "frequency": {
+        "type": "number",
+        "min": 0.4,
+        "max": 1.2,
+        "step": 0.05
+      },
+      "opacity": {
+        "type": "number",
+        "min": 0.04,
+        "max": 0.4,
+        "step": 0.02
+      },
+      "size": {
+        "type": "number",
+        "min": 64,
+        "max": 256,
+        "step": 8
+      },
+      "blend": {
+        "type": "select",
+        "options": [
+          "overlay",
+          "soft-light",
+          "normal"
+        ]
+      },
+      "jitter": {
+        "type": "boolean"
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Grainy gradients",
+        "author": "CSS-Tricks",
+        "url": "https://css-tricks.com/grainy-gradients/",
+        "license": "Article"
+      }
+    ],
+    "exportName": "GrainOverlay",
+    "defaults": {
+      "frequency": 0.8,
+      "opacity": 0.12,
+      "size": 160,
+      "blend": "overlay",
+      "jitter": true,
+      "fps": 10,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "frequency": "Spatial frequency of the turbulence noise. Lower values draw coarser flecks, higher values draw finer grain.",
+      "opacity": "How strongly the grain shows over the content beneath it.",
+      "size": "Width and height of the noise tile, in pixels, before it repeats.",
+      "blend": "CSS blend mode the grain composites with the content beneath it.",
+      "jitter": "Shifts the tile a few pixels several times a second, so the grain lives instead of sitting fixed.",
+      "fps": "Frames per second the jitter steps at."
+    },
+    "gzipBytes": 2146
+  },
+  {
+    "slug": "halftone-css",
+    "title": "Halftone CSS",
+    "category": "effects",
+    "description": "A halftone dot pattern made entirely of layered CSS gradients, for use as a background.",
+    "tags": [
+      "background",
+      "pattern",
+      "halftone",
+      "css"
+    ],
+    "wave": 2,
+    "animated": false,
+    "decorative": true,
+    "controls": {
+      "size": {
+        "type": "number",
+        "min": 8,
+        "max": 32,
+        "step": 1
+      },
+      "dot": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.5,
+        "step": 0.01
+      },
+      "fade": {
+        "type": "select",
+        "options": [
+          "radial",
+          "linear",
+          "none"
+        ]
+      },
+      "angle": {
+        "type": "number",
+        "min": 0,
+        "max": 360,
+        "step": 1
+      },
+      "strength": {
+        "type": "number",
+        "min": 0.1,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "CSS halftone patterns",
+        "author": "Michelle Barker, CSS { In Real Life }",
+        "url": "https://css-irl.info/css-halftone-patterns/",
+        "license": "Article"
+      }
+    ],
+    "exportName": "HalftoneCss",
+    "defaults": {
+      "size": 14,
+      "dot": 0.28,
+      "fade": "radial",
+      "angle": 45,
+      "strength": 0.6
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "size": "Spacing between dots, in pixels.",
+      "dot": "Dot radius, as a fraction of size. At 0.5 dots in the same layer touch their neighbors.",
+      "fade": "How the dots fade across the host. \"none\" keeps their strength uniform.",
+      "angle": "Direction of the linear fade, in degrees. Used only when fade is \"linear\".",
+      "strength": "How strongly the dots show, from faint to fully inked."
+    },
+    "gzipBytes": 1004
+  },
+  {
+    "slug": "pixel-sort",
+    "title": "Pixel Sort",
+    "category": "effects",
+    "description": "An image whose pixel rows or columns are sorted by brightness within threshold bands, smearing tone into streaks.",
+    "tags": [
+      "image",
+      "static",
+      "canvas",
+      "glitch"
+    ],
+    "wave": 2,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "direction": {
+        "type": "select",
+        "options": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      "low": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "high": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "color": {
+        "type": "boolean",
+        "label": "Keep color"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "ASDF pixel sorting",
+        "author": "Kim Asendorf",
+        "url": "https://github.com/kimasendorf/ASDFPixelSort",
+        "license": "Technique, no code read"
+      }
+    ],
+    "exportName": "PixelSort",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "direction": "horizontal",
+      "low": 0.25,
+      "high": 0.8,
+      "color": false,
+      "fit": "cover",
+      "tone": "auto"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "direction": "The line the sort runs along: horizontal rows or vertical columns.",
+      "low": "Lower brightness bound, 0 to 1. A pixel at or below it ends a run instead of joining it.",
+      "high": "Upper brightness bound, 0 to 1. A pixel at or above it ends a run instead of joining it.",
+      "color": "Keeps the source's own colors. Off renders one ink tone by luminance instead.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones. Has no effect when color is true."
+    },
+    "gzipBytes": 2589
+  },
+  {
+    "slug": "scanlines",
+    "title": "Scanlines",
+    "category": "effects",
+    "description": "A CRT scanline overlay in the ink color, with an optional soft band that rolls slowly down the screen.",
+    "tags": [
+      "overlay",
+      "crt",
+      "scanlines",
+      "css"
+    ],
+    "wave": 2,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "spacing": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1,
+        "label": "Spacing (px)"
+      },
+      "thickness": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Thickness (px)"
+      },
+      "opacity": {
+        "type": "number",
+        "min": 0.05,
+        "max": 0.5,
+        "step": 0.01
+      },
+      "roll": {
+        "type": "boolean"
+      },
+      "rollSpeed": {
+        "type": "number",
+        "min": 4,
+        "max": 20,
+        "step": 1,
+        "label": "Roll speed (s)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "Scanlines",
+    "defaults": {
+      "spacing": 3,
+      "thickness": 1,
+      "opacity": 0.18,
+      "roll": true,
+      "rollSpeed": 9,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "spacing": "Vertical gap from the top of one line to the top of the next, in pixels.",
+      "thickness": "Thickness of each line, in pixels. Never drawn thicker than spacing.",
+      "opacity": "Opacity of the whole overlay, from barely visible to strong.",
+      "roll": "Draws a soft, brighter band that drifts down the screen and loops.",
+      "rollSpeed": "Seconds for the roll band to cross the full height once before it repeats.",
+      "fps": "Frames drawn per second while the roll band moves."
+    },
+    "gzipBytes": 1696
+  },
+  {
+    "slug": "ascii-frame",
+    "title": "ASCII Frame",
+    "category": "text-mode",
+    "description": "A container framed in box-drawing characters, with an optional title set into the top rule.",
+    "tags": [
+      "frame",
+      "border",
+      "box-drawing",
+      "static"
+    ],
+    "wave": 1,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "variant": {
+        "type": "select",
+        "options": [
+          "light",
+          "heavy",
+          "double",
+          "dashed",
+          "ascii"
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "titleAlign": {
+        "type": "select",
+        "options": [
+          "left",
+          "center",
+          "right"
+        ],
+        "label": "Title align"
+      },
+      "padding": {
+        "type": "number",
+        "min": 0,
+        "max": 4,
+        "step": 1
+      },
+      "accent": {
+        "type": "boolean",
+        "label": "Accent title"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 10,
+        "max": 24,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiFrame",
+    "defaults": {
+      "variant": "light",
+      "title": "",
+      "titleAlign": "left",
+      "padding": 1,
+      "accent": false,
+      "fontSize": 14,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "variant": "Border style: a box-drawing weight, or plain ASCII characters.",
+      "title": "Text set into the top rule. Empty draws a plain border with no title.",
+      "titleAlign": "Where the title sits along the top rule.",
+      "padding": "Cells of inward spacing between the border and the host's content, in addition to the one cell the border always reserves.",
+      "accent": "Draws the title in --pica-accent instead of the border's own ink.",
+      "fontSize": "Glyph size in CSS pixels.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size."
+    },
+    "gzipBytes": 2811
+  },
+  {
+    "slug": "ascii-loader",
+    "title": "ASCII Loader",
+    "category": "text-mode",
+    "description": "A text-mode loading indicator: a braille dot orbit, a progress bar, a shade pulse, or animated dots.",
+    "tags": [
+      "loader",
+      "spinner",
+      "progress",
+      "inline"
+    ],
+    "wave": 1,
+    "animated": true,
+    "decorative": false,
+    "controls": {
+      "variant": {
+        "type": "select",
+        "options": [
+          "braille",
+          "bar",
+          "blocks",
+          "dots"
+        ]
+      },
+      "progress": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "width": {
+        "type": "number",
+        "min": 8,
+        "max": 60,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiLoader",
+    "defaults": {
+      "variant": "braille",
+      "progress": null,
+      "width": 24,
+      "label": "loading",
+      "speed": 1,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "fps": 12,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "variant": "Which indicator to draw: a braille dot orbit, a progress bar, a shade pulse, or animated dots.",
+      "progress": "Progress from 0 to 1, clamped. Null animates indeterminately; the bar variant fills to this value instead.",
+      "width": "Width of the bar variant, in character cells. The other variants ignore it.",
+      "label": "Accessible label, read as the progress bar or status announcement. Empty hides the host from assistive technology.",
+      "speed": "Multiplies how fast the indeterminate animation plays.",
+      "fontFamily": "CSS font-family stack for the glyphs. Must be monospace; size and color are inherited from the host.",
+      "fps": "Frames drawn per second, at speed 1."
+    },
+    "gzipBytes": 1952
+  },
+  {
+    "slug": "ascii-sparkline",
+    "title": "ASCII Sparkline",
+    "category": "text-mode",
+    "description": "A series of numbers drawn inline as eighth-block bars or a braille line, scaled to its own range.",
+    "tags": [
+      "sparkline",
+      "chart",
+      "braille",
+      "inline"
+    ],
+    "wave": 1,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "values": {
+        "type": "numbers",
+        "label": "Values"
+      },
+      "mode": {
+        "type": "select",
+        "options": [
+          "blocks",
+          "braille"
+        ]
+      },
+      "width": {
+        "type": "number",
+        "min": 0,
+        "max": 120,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Sparkline theory and practice",
+        "author": "Edward Tufte",
+        "url": "https://www.edwardtufte.com/notebook/sparkline-theory-and-practice-edward-tufte/",
+        "license": "Concept, no code"
+      }
+    ],
+    "exportName": "AsciiSparkline",
+    "defaults": {
+      "values": [
+        3.1,
+        3.5,
+        3.3,
+        3.9,
+        4.4,
+        4.1,
+        4.7,
+        5.2,
+        4.9,
+        5.5,
+        6.1,
+        5.8,
+        6.4,
+        7,
+        6.7,
+        7.3,
+        7.9,
+        8.4,
+        9.1,
+        9.8,
+        9.3,
+        8.6,
+        7.9,
+        7.2
+      ],
+      "mode": "blocks",
+      "width": 0,
+      "min": null,
+      "max": null,
+      "label": "trend",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "values": "Series to plot, in order. Values that are not finite numbers are skipped.",
+      "mode": "\"blocks\" draws one eighth-block bar per cell. \"braille\" draws a higher-resolution line, two values per cell.",
+      "width": "Cells to draw. 0 fits one cell per value in blocks mode, or one cell per two values in braille mode. A positive width resamples the series to that many cells.",
+      "min": "Value mapped to the bottom of the range. Null reads the series' own minimum.",
+      "max": "Value mapped to the top of the range. Null reads the series' own maximum.",
+      "label": "Name for the series, read by assistive technology before its size, range, and latest value.",
+      "fontFamily": "CSS font-family stack. Must be monospace."
+    },
+    "gzipBytes": 1350
+  },
+  {
+    "slug": "ascii-terminal",
+    "title": "ASCII Terminal",
+    "category": "text-mode",
+    "description": "A terminal session that types a command and prints its output, then rests on a blinking cursor.",
+    "tags": [
+      "terminal",
+      "typing",
+      "cursor",
+      "cli"
+    ],
+    "wave": 2,
+    "animated": true,
+    "decorative": false,
+    "controls": {
+      "prompt": {
+        "type": "string"
+      },
+      "typeSpeed": {
+        "type": "number",
+        "min": 4,
+        "max": 40,
+        "step": 1,
+        "label": "Type speed"
+      },
+      "lineDelay": {
+        "type": "number",
+        "min": 0,
+        "max": 1500,
+        "step": 10,
+        "label": "Line delay"
+      },
+      "loop": {
+        "type": "number",
+        "min": 0,
+        "max": 8000,
+        "step": 100
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiTerminal",
+    "defaults": {
+      "script": "$ npx shadcn add pica/ascii-image\nresolving ascii-image\nwrote components/ascii-image.tsx\n$ ",
+      "prompt": "$",
+      "typeSpeed": 14,
+      "lineDelay": 320,
+      "loop": 0,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "script": "The full transcript. A line starting with the prompt character and a space is typed as a command, and every other line is shown as output.",
+      "prompt": "The character shown before each typed command.",
+      "typeSpeed": "Typing speed for commands, in characters per second.",
+      "lineDelay": "Delay after a line finishes before the next line appears, in milliseconds.",
+      "loop": "Milliseconds to wait after the transcript ends before it types itself again. 0 does not replay.",
+      "fontFamily": "CSS font-family stack for the transcript. Must be monospace. Size and color are inherited from the host.",
+      "fps": "Frames per second ceiling for the typing animation."
+    },
+    "gzipBytes": 2368
+  },
+  {
+    "slug": "block-banner",
+    "title": "Block Banner",
+    "category": "text-mode",
+    "description": "Large block letters drawn in text from an original five row pixel font, sized to fit the host's width.",
+    "tags": [
+      "text",
+      "logotype",
+      "static",
+      "pixel font"
+    ],
+    "wave": 2,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "text": {
+        "type": "string",
+        "label": "Text"
+      },
+      "spacing": {
+        "type": "number",
+        "min": 0,
+        "max": 3,
+        "step": 1
+      },
+      "shadow": {
+        "type": "boolean",
+        "label": "Shadow"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "left",
+          "center"
+        ]
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "BlockBanner",
+    "defaults": {
+      "text": "PICA",
+      "spacing": 1,
+      "shadow": false,
+      "align": "center",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "text": "Text to render as large blocks. Letters are uppercased, and any character outside A to Z, 0 to 9, space, and . , ! ? - : / draws blank.",
+      "spacing": "Blank pixel columns between characters.",
+      "shadow": "Draws a one pixel drop shadow below and right of the text, in the light shade glyph.",
+      "align": "Where the banner sits when the host is wider than the text.",
+      "fontFamily": "CSS font-family stack for the block glyphs. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size. 1 makes the blocks touch."
+    },
+    "gzipBytes": 3017
+  },
+  {
+    "slug": "block-image",
+    "title": "Block Image",
+    "category": "text-mode",
+    "description": "An image drawn with the sixteen quadrant block characters, each matching the corners a 2 by 2 sample fills.",
+    "tags": [
+      "image",
+      "static",
+      "quadrant blocks",
+      "ordered dither"
+    ],
+    "wave": 2,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "columns": {
+        "type": "number",
+        "min": 24,
+        "max": 160,
+        "step": 1
+      },
+      "threshold": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.8,
+        "step": 0.01
+      },
+      "dither": {
+        "type": "boolean",
+        "label": "Ordered dither"
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2.5,
+        "step": 0.05
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Block Elements, Unicode block U+2580",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Block_Elements",
+        "license": "Reference, no code"
+      }
+    ],
+    "exportName": "BlockImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "columns": 64,
+      "threshold": 0.5,
+      "dither": true,
+      "contrast": 1.1,
+      "fit": "contain",
+      "tone": "auto",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "columns": "Columns across the host. Each cell packs a 2 by 2 sample, so the image reads at double this resolution. Rows follow from the host's height, or from the image when the host has none.",
+      "threshold": "Ink level that turns a quadrant on. Lower fills more of the image; higher leaves more of it empty.",
+      "dither": "Jitters the threshold with a 4 by 4 Bayer matrix, so a flat tone reads as a pattern instead of a hard edge.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" fills quadrants for bright pixels; \"dark-on-light\" does the reverse.",
+      "fontFamily": "CSS font-family stack for the blocks. Must be monospace.",
+      "lineHeight": "Line height as a multiple of the glyph size. 1 keeps blocks flush from row to row."
+    },
+    "gzipBytes": 3783
+  },
+  {
+    "slug": "braille-image",
+    "title": "Braille Image",
+    "category": "text-mode",
+    "description": "An image drawn with braille characters, each cell's eight dots giving twice the horizontal and four times the vertical resolution of plain ASCII.",
+    "tags": [
+      "image",
+      "static",
+      "braille",
+      "dither"
+    ],
+    "wave": 2,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "columns": {
+        "type": "number",
+        "min": 40,
+        "max": 200,
+        "step": 1
+      },
+      "threshold": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.8,
+        "step": 0.05
+      },
+      "dither": {
+        "type": "boolean",
+        "label": "Dither"
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2.5,
+        "step": 0.05
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 1.6,
+        "step": 0.05
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Braille Patterns, Unicode block U+2800",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Braille_Patterns",
+        "license": "Reference, no code"
+      },
+      {
+        "relation": "technique",
+        "title": "Ditherpunk",
+        "author": "Surma",
+        "url": "https://surma.dev/things/ditherpunk/",
+        "license": "Article"
+      }
+    ],
+    "exportName": "BrailleImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "columns": 96,
+      "threshold": 0.5,
+      "dither": true,
+      "contrast": 1.1,
+      "fit": "cover",
+      "tone": "auto",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.2
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "columns": "Columns across the host. Rows follow from the host's height, or from the image when the host has none.",
+      "threshold": "Ink level a dot must reach to turn on. Raising it thins the image out; lowering it fills it in.",
+      "dither": "Spread the threshold over a 4 by 4 Bayer matrix, so mid-tones become dot patterns instead of a hard edge.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" maps bright pixels to more dots; \"dark-on-light\" does the reverse.",
+      "fontFamily": "CSS font-family stack for the glyphs. Needs a font covering Braille Patterns, U+2800 to U+28FF.",
+      "lineHeight": "Line height as a multiple of the glyph size."
+    },
+    "gzipBytes": 3769
+  }
+]

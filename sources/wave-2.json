@@ -1,0 +1,199 @@
+{
+  "wave": 2,
+  "path": "A: technique components. Built from published techniques; no reference component's code or page is read.",
+  "components": [
+    {
+      "slug": "ascii-morph",
+      "category": "ascii",
+      "title": "ASCII Morph",
+      "kind": "glyph grid",
+      "animated": true,
+      "decorative": true,
+      "brief": "Two subjects that morph into each other and back, drawn as measured-density glyphs. By default the subjects are the word PICA and the built-in lit sphere from lib/subject.ts. Rasterize each subject to an offscreen canvas and sample it with lib/sample.ts. Transition cell by cell, ordered by how much each cell's ink changes, so the change reads as one image resolving into the other rather than a flat crossfade. Hold on each subject for `hold` milliseconds and transition over `transition` milliseconds, as a pure function of time. The still frame under reduced motion is the first subject fully resolved.",
+      "props": "from (text; empty means the built-in sphere; default \"PICA\"), to (text; empty means the built-in sphere; default \"\"), hold (400 to 4000 ms, default 1400), transition (400 to 4000 ms, default 1600), columns (40 to 160, default 80), glyphs, font (the display stack for rasterizing text, default '700 \"Barlow Condensed\", \"Helvetica Neue\", Arial, sans-serif'), fontFamily, lineHeight, fps (24), plus paused, time, seed.",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "ascii-topo",
+      "category": "ascii",
+      "title": "ASCII Topo",
+      "kind": "glyph grid",
+      "animated": true,
+      "decorative": true,
+      "brief": "Contour lines of a slowly drifting noise height field, like a topographic survey drawn in text. Sample 2D fractal noise into a height value at each cell corner, find where the field crosses evenly spaced levels with marching squares, and draw each crossing with the line glyph that matches its direction: box-drawing lines and the diagonals U+2571 and U+2572 by default, or the ASCII characters - | / and backslash when `ascii` is true. Every fifth level is an index contour, drawn with heavy box-drawing lines. Cells between lines stay empty. It drifts slowly; the still frame is t = 1200.",
+      "props": "scale (0.02 to 0.2, default 0.06), levels (4 to 24, default 10), speed (0 to 0.5, default 0.05), ascii (default false), fontSize (default 12), fontFamily, lineHeight, fps (15), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "Marching squares", "author": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Marching_squares", "license": "Algorithm, no code" },
+        { "relation": "technique", "title": "Simplex noise demystified", "author": "Stefan Gustavson", "url": "https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf", "license": "Public domain" }
+      ]
+    },
+    {
+      "slug": "ascii-terminal",
+      "category": "text-mode",
+      "title": "ASCII Terminal",
+      "kind": "text run",
+      "animated": true,
+      "decorative": false,
+      "brief": "A terminal session that types itself: a prompt, a command typed at a human cadence, then output lines appearing one at a time, then a resting cursor. The whole transcript comes from one `script` prop, where lines starting with the prompt character followed by a space are typed commands and every other line is output. Render monospace text in the host's size and color; the prompt character and the cursor may use --pica-accent. The cursor blinks only while typing is in progress and stays solid once the script ends, so motion stops. The host gets role group and aria-label \"Terminal transcript\", a visually hidden copy of the full transcript (lib/a11y.ts hiddenText), and the animated layer is aria-hidden. The characters shown at time t are a pure function of seed (cadence jitter) and t. `loop` above 0 replays after that many milliseconds. Under reduced motion show the full transcript with a solid cursor.",
+      "props": "script (default \"$ npx shadcn add pica/ascii-image\\nresolving ascii-image\\nwrote components/ascii-image.tsx\\n$ \"), prompt (default \"$\"), typeSpeed (4 to 40 characters per second, default 14), lineDelay (0 to 1500 ms, default 320), loop (0), fontFamily (monospace stack; size and color inherit), fps (30), plus paused, time, seed.",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "braille-image",
+      "category": "text-mode",
+      "title": "Braille Image",
+      "kind": "glyph grid",
+      "animated": false,
+      "decorative": false,
+      "brief": "An image drawn with braille characters: eight dots per cell in a 2 by 4 grid, for twice the horizontal and four times the vertical resolution of plain ASCII. Sample the image with lib/sample.ts using n = 2 and ny = 4, threshold each sample with a 4 by 4 Bayer matrix (lib/dither.ts) so mid-tones become dot patterns, and set each cell to U+2800 plus the dot bits: left column top to bottom is 1, 2, 4, 64 and right column top to bottom is 8, 16, 32, 128. The default subject is the built-in lit sphere. Braille glyphs need a font that has them, so use the canvas renderer (renderer \"canvas\") and each glyph stays on its cell even when the font falls back. Accessible like ascii-image: role img with aria-label from alt, otherwise aria-hidden.",
+      "props": "src, alt, columns (40 to 200, default 96), threshold (0.2 to 0.8, default 0.5), dither (default true), contrast (default 1.1), fit (cover or contain), tone (auto, light-on-dark, dark-on-light), fontFamily, lineHeight.",
+      "credits": [
+        { "relation": "technique", "title": "Braille Patterns, Unicode block U+2800", "author": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Braille_Patterns", "license": "Reference, no code" },
+        { "relation": "technique", "title": "Ditherpunk", "author": "Surma", "url": "https://surma.dev/things/ditherpunk/", "license": "Article" }
+      ]
+    },
+    {
+      "slug": "block-image",
+      "category": "text-mode",
+      "title": "Block Image",
+      "kind": "glyph grid",
+      "animated": false,
+      "decorative": false,
+      "brief": "An image drawn with quadrant block characters. Each cell splits 2 by 2 and takes whichever of the sixteen quadrant glyphs (space, the four single quadrants, the half blocks, the diagonals, the three-quadrant blocks, and the full block) has filled quadrants that match the image, for a chunky pixel-art look at double resolution. Sample with lib/sample.ts using n = 2 and threshold with a 2 by 2 or 4 by 4 Bayer matrix. The default subject is the built-in lit sphere. Use the canvas renderer so blocks stay on their cells. Accessible like ascii-image.",
+      "props": "src, alt, columns (24 to 160, default 64), threshold (0.2 to 0.8, default 0.5), dither (default true), contrast (default 1.1), fit (cover or contain), tone (auto, light-on-dark, dark-on-light), fontFamily, lineHeight.",
+      "credits": [
+        { "relation": "technique", "title": "Block Elements, Unicode block U+2580", "author": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Block_Elements", "license": "Reference, no code" }
+      ]
+    },
+    {
+      "slug": "block-banner",
+      "category": "text-mode",
+      "title": "Block Banner",
+      "kind": "glyph grid",
+      "animated": false,
+      "decorative": false,
+      "brief": "Large block letters drawn in text, from an original pixel font defined in the core: five rows tall, covering A to Z, 0 to 9, space, and . , ! ? - : / as small bitmaps. Draw with half-block characters (upper half, lower half, full block) so each row of cells carries two pixel rows. Choose the cell size so the text fits the host's width. Optional letter spacing, and an optional shadow offset one pixel down and right, drawn with the light shade glyph in the same ink color. Accessible: role img with aria-label set to the text.",
+      "props": "text (default \"PICA\"), spacing (0 to 3 pixels, default 1), shadow (default false), align (left or center, default center), fontFamily, lineHeight (default 1, so blocks touch).",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "dither-image",
+      "category": "dither",
+      "title": "Dither Image",
+      "kind": "canvas",
+      "animated": false,
+      "decorative": false,
+      "brief": "An image reduced to two tones by dithering, drawn on a canvas at a chosen pixel scale with crisp, unsmoothed pixels (image-rendering pixelated). Algorithms: Bayer ordered at 2, 4, or 8, Floyd-Steinberg, and Atkinson, all from lib/dither.ts. Work in linear light, as lib/sample.ts already does. The two tones are the ink (--pica-fg or the inherited color) and transparent, so the page shows through. The default subject is the built-in lit sphere. Accessible like ascii-image. Static: recompute on resize or prop change.",
+      "props": "src, alt, algorithm (bayer2, bayer4, bayer8, floyd-steinberg, atkinson; default atkinson), scale (1 to 8 CSS px per pixel, default 3), contrast (default 1.1), fit (cover or contain), tone (auto, light-on-dark, dark-on-light).",
+      "credits": [
+        { "relation": "technique", "title": "Ditherpunk", "author": "Surma", "url": "https://surma.dev/things/ditherpunk/", "license": "Article" },
+        { "relation": "technique", "title": "Atkinson dithering", "author": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Atkinson_dithering", "license": "Algorithm, no code" }
+      ]
+    },
+    {
+      "slug": "dither-gradient",
+      "category": "dither",
+      "title": "Dither Gradient",
+      "kind": "canvas",
+      "animated": true,
+      "decorative": true,
+      "brief": "A slowly moving gradient rendered through an 8 by 8 Bayer matrix: two tones only, so the gradient is carried entirely by dot density, drifting like light across a surface. Compute at low resolution on a canvas scaled up with image-rendering pixelated, so each frame is cheap. Shapes: linear (the angle turns slowly), radial (the center drifts), or noise (a simplex field). Ink only; the background stays transparent. The still frame is t = 1200.",
+      "props": "shape (linear, radial, noise; default noise), scale (2 to 8 CSS px per pixel, default 4), speed (0 to 1, default 0.2), contrast (0.5 to 2, default 1), fps (24), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "Ditherpunk", "author": "Surma", "url": "https://surma.dev/things/ditherpunk/", "license": "Article" },
+        { "relation": "technique", "title": "Ordered dithering", "author": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Ordered_dithering", "license": "Algorithm, no code" }
+      ]
+    },
+    {
+      "slug": "halftone-image",
+      "category": "dither",
+      "title": "Halftone Image",
+      "kind": "canvas",
+      "animated": false,
+      "decorative": false,
+      "brief": "An image as a halftone screen: a grid of dots whose area follows the image's darkness, like newsprint. Dots sit on a grid rotated by `angle` (default 45 degrees). Shapes: circle, square, or line, where the line screen gives an engraving look. Draw on a canvas in the ink color, sized by cell in CSS pixels. Map tone to dot area, not radius, so mid-greys read correctly. The default subject is the built-in lit sphere. Accessible like ascii-image.",
+      "props": "src, alt, cell (6 to 24 px, default 10), angle (0 to 90, default 45), shape (circle, square, line; default circle), contrast (default 1.1), fit (cover or contain), tone (auto, light-on-dark, dark-on-light).",
+      "credits": [
+        { "relation": "technique", "title": "Halftone", "author": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Halftone", "license": "Reference, no code" }
+      ]
+    },
+    {
+      "slug": "halftone-css",
+      "category": "effects",
+      "title": "Halftone CSS",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "A halftone dot pattern made entirely in CSS, for backgrounds: radial-gradient dots in a repeating grid plus a second offset layer, optionally masked so the dots fade across the area. There is no canvas and no per-frame JavaScript. The core injects one style element scoped to this instance with a unique class, adds one div, and removes both on destroy. Ink comes from --pica-fg or currentColor.",
+      "props": "size (8 to 32 px grid, default 14), dot (0.1 to 0.5 of the size, default 0.28), fade (radial, linear, none; default radial), angle (0 to 360, the direction of a linear fade, default 45), strength (0.1 to 1, how strongly the dots show, default 0.6).",
+      "credits": [
+        { "relation": "technique", "title": "CSS halftone patterns", "author": "Michelle Barker, CSS { In Real Life }", "url": "https://css-irl.info/css-halftone-patterns/", "license": "Article" }
+      ]
+    },
+    {
+      "slug": "pixel-sort",
+      "category": "effects",
+      "title": "Pixel Sort",
+      "kind": "canvas",
+      "animated": false,
+      "decorative": false,
+      "brief": "An image with its pixels sorted by brightness along rows or columns, within intervals: runs of pixels brighter than `low` and darker than `high` are sorted, which smears them into bands while the rest stays intact. By default the result is one tone, ink on transparent by luminance, following STYLE.md's one-color rule; when `color` is true it keeps the source's colors. Downscale large images first, to at most 480 px on the long side, so the one-time sort stays fast. The default subject is the built-in lit sphere. Accessible like ascii-image.",
+      "props": "src, alt, direction (horizontal or vertical, default horizontal), low (0 to 1, default 0.25), high (0 to 1, default 0.8), color (default false), fit (cover or contain), tone (auto, light-on-dark, dark-on-light).",
+      "credits": [
+        { "relation": "technique", "title": "ASDF pixel sorting", "author": "Kim Asendorf", "url": "https://github.com/kimasendorf/ASDFPixelSort", "license": "Technique, no code read" }
+      ]
+    },
+    {
+      "slug": "glitch-text",
+      "category": "effects",
+      "title": "Glitch Text",
+      "kind": "text run",
+      "animated": true,
+      "decorative": false,
+      "brief": "Text that glitches in short bursts. Every few seconds, for a fraction of a second, horizontal slices of the line shift sideways and a few characters swap for glyphs from the ramp, then it snaps back clean. One ink color and no RGB split, because hue carries nothing in this style. Render in the host's size and color, monospace so slices line up. The clean text is always available to assistive technology: a visually hidden copy (lib/a11y.ts hiddenText), an aria-hidden animated layer, and aria-label on the host. Bursts are seeded and a pure function of time, at most one every 2.5 s, each under 400 ms. Under reduced motion the text never glitches. The frame at t = 1200 should land inside a burst, so reviewers see the effect.",
+      "props": "text (default \"SIGNAL LOST\"), interval (1500 to 8000 ms between bursts, default 2500), burst (100 to 400 ms, default 280), intensity (0 to 1, default 0.5), glyphs, fontFamily (monospace stack; size and color inherit), fps (30), plus paused, time, seed.",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "duotone-image",
+      "category": "effects",
+      "title": "Duotone Image",
+      "kind": "canvas",
+      "animated": false,
+      "decorative": false,
+      "brief": "An image mapped to flat, posterized tone bands. Luminance is quantized into `levels` bands, and each band is drawn as ink at a stepped opacity over transparent, so the result looks printed, in the host's ink color. When `accent` is true, the brightest band uses --pica-accent. Canvas; static. The default subject is the built-in lit sphere. Accessible like ascii-image.",
+      "props": "src, alt, levels (2 to 8, default 4), accent (default false), contrast (default 1.1), fit (cover or contain), tone (auto, light-on-dark, dark-on-light).",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "scanlines",
+      "category": "effects",
+      "title": "Scanlines",
+      "kind": "css",
+      "animated": true,
+      "decorative": true,
+      "brief": "A CRT scanline overlay that sits on top of whatever is under it: fine horizontal lines in the ink color at low opacity, plus an optional slow roll band, a soft brighter band that drifts down the screen every few seconds. Draw the lines with a repeating-linear-gradient in one scoped style element. Drive the roll through createLoop, not a CSS animation, so paused, time, and reduced motion all hold it. The overlay never takes pointer events. In React, children render underneath the overlay; in the vanilla shape it overlays the host's existing content.",
+      "props": "spacing (2 to 8 px, default 3), thickness (1 to 3 px, default 1), opacity (0.05 to 0.5, default 0.18), roll (default true), rollSpeed (4 to 20 seconds per pass, default 9), fps (30), plus paused, time, seed.",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "grain-overlay",
+      "category": "effects",
+      "title": "Grain Overlay",
+      "kind": "css",
+      "animated": true,
+      "decorative": true,
+      "brief": "Film grain as an overlay: an SVG feTurbulence noise tile rendered once into a data URI, so nothing is fetched, then laid over content at low opacity with a blend mode. An optional jitter shifts the tile a few pixels several times a second so the grain lives. The jitter runs through createLoop at a low fps and stops under reduced motion, when paused, and when time is set. The overlay never takes pointer events. In React, children render underneath.",
+      "props": "frequency (0.4 to 1.2, default 0.8), opacity (0.04 to 0.4, default 0.12), size (64 to 256 px tile, default 160), blend (overlay, soft-light, normal; default overlay), jitter (default true), fps (10), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "Grainy gradients", "author": "CSS-Tricks", "url": "https://css-tricks.com/grainy-gradients/", "license": "Article" }
+      ]
+    }
+  ]
+}

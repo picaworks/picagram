@@ -1,0 +1,521 @@
+<!doctype html>
+<!--
+  Pica · Dither Gradient · dither-gradient
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Dither Gradient · Pica</title>
+<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaDitherGradient = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/dither/dither-gradient/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+  function inkColor(host) {
+    const style = getComputedStyle(host);
+    return style.getPropertyValue("--pica-fg").trim() || style.color;
+  }
+
+  // lib/dither.ts
+  function bayerMatrix(size) {
+    let m = [0];
+    let n = 1;
+    while (n < size) {
+      const next = new Array(4 * n * n).fill(0);
+      for (let y = 0; y < n; y++) {
+        for (let x = 0; x < n; x++) {
+          const v = 4 * (m[y * n + x] ?? 0);
+          next[y * 2 * n + x] = v;
+          next[y * 2 * n + x + n] = v + 2;
+          next[(y + n) * 2 * n + x] = v + 3;
+          next[(y + n) * 2 * n + x + n] = v + 1;
+        }
+      }
+      m = next;
+      n *= 2;
+    }
+    const out = new Float32Array(size * size);
+    for (let i = 0; i < out.length; i++) out[i] = ((m[i] ?? 0) + 0.5) / (size * size);
+    return out;
+  }
+  var KERNELS = {
+    "floyd-steinberg": [[1, 0, 7 / 16], [-1, 1, 3 / 16], [0, 1, 5 / 16], [1, 1, 1 / 16]],
+    // Atkinson spreads three quarters of the error, which keeps highlights and shadows cleaner.
+    atkinson: [[1, 0, 1 / 8], [2, 0, 1 / 8], [-1, 1, 1 / 8], [0, 1, 1 / 8], [1, 1, 1 / 8], [0, 2, 1 / 8]]
+  };
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame, still } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime());
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime());
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0);
+      },
+      redraw() {
+        frame(heldTime());
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // lib/noise.ts
+  var SIMPLEX_GRAD = [
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1,
+    0,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    -1,
+    0,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1
+  ];
+  var SIMPLEX_F2 = 0.5 * (Math.sqrt(3) - 1);
+  var SIMPLEX_G2 = (3 - Math.sqrt(3)) / 6;
+  var SIMPLEX_F3 = 1 / 3;
+  var SIMPLEX_G3 = 1 / 6;
+  function createNoise(seed = 1) {
+    const random = createRng(seed);
+    const p = [];
+    for (let i = 0; i < 256; i++) p.push(i);
+    for (let i = 255; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      const swap = p[i];
+      p[i] = p[j];
+      p[j] = swap;
+    }
+    const perm = [];
+    const grad = [];
+    for (let i = 0; i < 512; i++) {
+      const v = p[i & 255];
+      perm.push(v);
+      grad.push(v % 12 * 3);
+    }
+    function corner2(g, x, y) {
+      let t = 0.5 - x * x - y * y;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y);
+    }
+    function corner3(g, x, y, z) {
+      let t = 0.6 - x * x - y * y - z * z;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y + SIMPLEX_GRAD[g + 2] * z);
+    }
+    function noise2(xin, yin) {
+      const s = (xin + yin) * SIMPLEX_F2;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const t = (i + j) * SIMPLEX_G2;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const i1 = x0 > y0 ? 1 : 0;
+      const j1 = 1 - i1;
+      const ii = i & 255;
+      const jj = j & 255;
+      return 70 * (corner2(grad[ii + perm[jj]], x0, y0) + corner2(grad[ii + i1 + perm[jj + j1]], x0 - i1 + SIMPLEX_G2, y0 - j1 + SIMPLEX_G2) + corner2(grad[ii + 1 + perm[jj + 1]], x0 - 1 + 2 * SIMPLEX_G2, y0 - 1 + 2 * SIMPLEX_G2));
+    }
+    function noise3(xin, yin, zin) {
+      const s = (xin + yin + zin) * SIMPLEX_F3;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const k = Math.floor(zin + s);
+      const t = (i + j + k) * SIMPLEX_G3;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const z0 = zin - (k - t);
+      let i1 = 0, j1 = 0, k1 = 0, i2 = 0, j2 = 0, k2 = 0;
+      if (x0 >= y0) {
+        if (y0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          j2 = 1;
+        } else if (x0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          k2 = 1;
+        } else {
+          k1 = 1;
+          i2 = 1;
+          k2 = 1;
+        }
+      } else if (y0 < z0) {
+        k1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else if (x0 < z0) {
+        j1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else {
+        j1 = 1;
+        i2 = 1;
+        j2 = 1;
+      }
+      const ii = i & 255;
+      const jj = j & 255;
+      const kk = k & 255;
+      const g = SIMPLEX_G3;
+      return 32 * (corner3(grad[ii + perm[jj + perm[kk]]], x0, y0, z0) + corner3(grad[ii + i1 + perm[jj + j1 + perm[kk + k1]]], x0 - i1 + g, y0 - j1 + g, z0 - k1 + g) + corner3(grad[ii + i2 + perm[jj + j2 + perm[kk + k2]]], x0 - i2 + 2 * g, y0 - j2 + 2 * g, z0 - k2 + 2 * g) + corner3(grad[ii + 1 + perm[jj + 1 + perm[kk + 1]]], x0 - 1 + 3 * g, y0 - 1 + 3 * g, z0 - 1 + 3 * g));
+    }
+    return { noise2, noise3 };
+  }
+
+  // registry/dither/dither-gradient/core.ts
+  var defaults = {
+    shape: "noise",
+    scale: 4,
+    speed: 0.2,
+    contrast: 1,
+    fps: 24,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL_TIME = 1200;
+  var BAYER = bayerMatrix(8);
+  var LINEAR_RATE = 0.3;
+  var RADIAL_RATE_X = 0.22;
+  var RADIAL_RATE_Y = 0.17;
+  var RADIAL_DRIFT = 0.18;
+  var NOISE_RATE = 0.1;
+  var NOISE_FEATURES = 1.1;
+  var NOISE_GAIN = 1.7;
+  function clamp01(v) {
+    return v < 0 ? 0 : v > 1 ? 1 : v;
+  }
+  function deriveSeed(seed) {
+    const rng = createRng(seed);
+    return { noise: createNoise(seed), angle0: rng() * Math.PI * 2, phaseX: rng() * Math.PI * 2, phaseY: rng() * Math.PI * 2 };
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let cols = 1;
+    let rows = 1;
+    let imageData = null;
+    let inkKey = "";
+    let inkR = 0;
+    let inkG = 0;
+    let inkB = 0;
+    let inkA = 255;
+    let cachedSeed = props.seed;
+    let seedState = deriveSeed(props.seed);
+    const canvas = document.createElement("canvas");
+    canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;image-rendering:pixelated";
+    canvas.setAttribute("aria-hidden", "true");
+    const ctx = canvas.getContext("2d");
+    if (getComputedStyle(host).position === "static") host.style.position = "relative";
+    host.style.overflow = "hidden";
+    host.appendChild(canvas);
+    function refreshInk() {
+      const color = inkColor(host);
+      if (color === inkKey) return;
+      inkKey = color;
+      const [r, g, b, a] = parseColor(color);
+      inkR = r;
+      inkG = g;
+      inkB = b;
+      inkA = a;
+    }
+    function layout() {
+      const w = Math.max(1, Math.round(host.clientWidth / props.scale));
+      const h = Math.max(1, Math.round(host.clientHeight / props.scale));
+      if (w === cols && h === rows && imageData) return false;
+      cols = w;
+      rows = h;
+      canvas.width = cols;
+      canvas.height = rows;
+      imageData = ctx ? ctx.createImageData(cols, rows) : null;
+      return true;
+    }
+    function draw(t) {
+      const context = ctx;
+      const data = imageData;
+      if (!context || !data) {
+        host.dataset.picaReady = "true";
+        return;
+      }
+      if (props.seed !== cachedSeed) {
+        cachedSeed = props.seed;
+        seedState = deriveSeed(cachedSeed);
+      }
+      refreshInk();
+      const buf = data.data;
+      const contrast = props.contrast;
+      const timeS = t * 1e-3 * props.speed;
+      const norm = Math.max(cols, rows);
+      function put(o, v, threshold) {
+        const on = clamp01((v - 0.5) * contrast + 0.5) > threshold;
+        buf[o] = on ? inkR : 0;
+        buf[o + 1] = on ? inkG : 0;
+        buf[o + 2] = on ? inkB : 0;
+        buf[o + 3] = on ? inkA : 0;
+      }
+      if (props.shape === "linear") {
+        const angle = seedState.angle0 + timeS * LINEAR_RATE;
+        const dirX = Math.cos(angle);
+        const dirY = Math.sin(angle);
+        const halfW = cols / norm / 2;
+        const halfH = rows / norm / 2;
+        const maxR = halfW * Math.abs(dirX) + halfH * Math.abs(dirY);
+        let i = 0;
+        for (let y = 0; y < rows; y++) {
+          const ny = (y + 0.5) / norm - halfH;
+          const rowBayer = (y & 7) * 8;
+          for (let x = 0; x < cols; x++) {
+            const nx = (x + 0.5) / norm - halfW;
+            const v = (nx * dirX + ny * dirY) / (2 * maxR) + 0.5;
+            put(i * 4, v, BAYER[rowBayer + (x & 7)] ?? 0.5);
+            i++;
+          }
+        }
+      } else if (props.shape === "radial") {
+        const boxW = cols / norm;
+        const boxH = rows / norm;
+        const driftR = RADIAL_DRIFT * Math.min(boxW, boxH);
+        const cx = boxW / 2 + driftR * Math.sin(timeS * RADIAL_RATE_X + seedState.phaseX);
+        const cy = boxH / 2 + driftR * Math.cos(timeS * RADIAL_RATE_Y + seedState.phaseY);
+        const maxDist = Math.max(
+          Math.hypot(cx, cy),
+          Math.hypot(boxW - cx, cy),
+          Math.hypot(cx, boxH - cy),
+          Math.hypot(boxW - cx, boxH - cy)
+        );
+        let i = 0;
+        for (let y = 0; y < rows; y++) {
+          const ny = (y + 0.5) / norm;
+          const rowBayer = (y & 7) * 8;
+          for (let x = 0; x < cols; x++) {
+            const nx = (x + 0.5) / norm;
+            const v = Math.hypot(nx - cx, ny - cy) / maxDist;
+            put(i * 4, v, BAYER[rowBayer + (x & 7)] ?? 0.5);
+            i++;
+          }
+        }
+      } else {
+        const freq = NOISE_FEATURES / norm;
+        const nz = timeS * NOISE_RATE;
+        const noise = seedState.noise;
+        let i = 0;
+        for (let y = 0; y < rows; y++) {
+          const rowBayer = (y & 7) * 8;
+          for (let x = 0; x < cols; x++) {
+            const v = noise.noise3(x * freq, y * freq, nz) * NOISE_GAIN * 0.5 + 0.5;
+            put(i * 4, v, BAYER[rowBayer + (x & 7)] ?? 0.5);
+            i++;
+          }
+        }
+      }
+      context.putImageData(data, 0, 0);
+      host.dataset.picaReady = "true";
+    }
+    labelHost(host, "");
+    layout();
+    const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL_TIME, frame: draw });
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (layout()) loop.redraw();
+    }) : null;
+    resizeObserver?.observe(host);
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        layout();
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+      },
+      destroy() {
+        loop.destroy();
+        resizeObserver?.disconnect();
+        canvas.remove();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var instance = PicaDitherGradient.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

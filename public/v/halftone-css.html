@@ -1,0 +1,150 @@
+<!doctype html>
+<!--
+  Pica · Halftone CSS · halftone-css
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Halftone CSS · Pica</title>
+<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaHalftoneCss = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/effects/halftone-css/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // registry/effects/halftone-css/core.ts
+  var defaults = {
+    size: 14,
+    dot: 0.28,
+    fade: "radial",
+    angle: 45,
+    strength: 0.6
+  };
+  var instances = 0;
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const className = `pica-halftone-css-${++instances}`;
+    const reposition = getComputedStyle(host).position === "static";
+    const style = document.createElement("style");
+    const layer = document.createElement("div");
+    layer.className = className;
+    labelHost(host, "");
+    if (reposition) host.style.position = "relative";
+    style.textContent = sheet(className, props);
+    host.appendChild(style);
+    host.appendChild(layer);
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        style.textContent = sheet(className, props);
+      },
+      destroy() {
+        style.remove();
+        layer.remove();
+        unlabelHost(host);
+        if (reposition) host.style.removeProperty("position");
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  function sheet(className, p) {
+    const radius = p.size * p.dot;
+    const half = p.size / 2;
+    const dot = `radial-gradient(circle at center, var(--pica-fg, currentColor) ${radius}px, transparent ${radius}px)`;
+    const mask = maskImage(p.fade, p.angle);
+    const rules = [
+      "position:absolute",
+      "inset:0",
+      "pointer-events:none",
+      `background-image:${dot},${dot}`,
+      `background-size:${p.size}px ${p.size}px,${p.size}px ${p.size}px`,
+      `background-position:0 0,${half}px ${half}px`,
+      `opacity:${p.strength}`
+    ];
+    if (mask) {
+      rules.push(
+        `-webkit-mask-image:${mask}`,
+        `mask-image:${mask}`,
+        "-webkit-mask-repeat:no-repeat",
+        "mask-repeat:no-repeat",
+        "-webkit-mask-size:100% 100%",
+        "mask-size:100% 100%"
+      );
+    }
+    return `.${className}{${rules.join(";")}}`;
+  }
+  function maskImage(fade, angle) {
+    if (fade === "radial") return "radial-gradient(circle at center, #000 0%, transparent 100%)";
+    if (fade === "linear") return `linear-gradient(${angle}deg, #000 0%, transparent 100%)`;
+    return "";
+  }
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var instance = PicaHalftoneCss.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

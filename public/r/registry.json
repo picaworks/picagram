@@ -1,0 +1,732 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "pica",
+  "homepage": "https://github.com/rishabbalak/pica",
+  "items": [
+    {
+      "name": "ascii-image",
+      "type": "registry:component",
+      "title": "ASCII Image",
+      "description": "An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "port-of",
+            "title": "AsciiImage, rishab.fyi",
+            "author": "Rishab Balak",
+            "url": "https://rishab.fyi",
+            "license": "Author's own work, relicensed under Pica's license"
+          },
+          {
+            "relation": "technique",
+            "title": "Beyond the luminance ramp: a shape-aware ASCII renderer",
+            "author": "Codrops",
+            "url": "https://tympanus.net/codrops/2026/09/04/beyond-the-luminance-ramp-a-shape-aware-ascii-renderer-in-three-js/",
+            "license": "MIT"
+          },
+          {
+            "relation": "technique",
+            "title": "Ditherpunk",
+            "author": "Surma",
+            "url": "https://surma.dev/things/ditherpunk/",
+            "license": "Article"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ascii-morph",
+      "type": "registry:component",
+      "title": "ASCII Morph",
+      "description": "Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-morph.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-noise-field",
+      "type": "registry:component",
+      "title": "ASCII Noise Field",
+      "description": "A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-noise-field.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Simplex noise demystified",
+            "author": "Stefan Gustavson",
+            "url": "https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf",
+            "license": "Public domain"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ascii-pointer-ripple",
+      "type": "registry:component",
+      "title": "ASCII Pointer Ripple",
+      "description": "A glyph field of low-density noise that sends rippling rings outward from the pointer, as if the grid were water.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-pointer-ripple.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "play.core",
+            "author": "Andreas Gysin",
+            "url": "https://github.com/ertdfgcvb/play.core",
+            "license": "Apache-2.0"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ascii-rain",
+      "type": "registry:component",
+      "title": "ASCII Rain",
+      "description": "Columns of glyphs fall at their own speed, each with a bright head and a trail that fades down the measured ramp.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-rain.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Matrix digital rain",
+            "author": "Simon Whiteley, title design for The Matrix (1999)",
+            "url": "https://en.wikipedia.org/wiki/Matrix_digital_rain",
+            "license": "Cultural reference, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ascii-reveal",
+      "type": "registry:component",
+      "title": "ASCII Reveal",
+      "description": "Text that resolves from scrambled glyphs into its final characters, left to right.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-reveal.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-solid",
+      "type": "registry:component",
+      "title": "ASCII Solid",
+      "description": "A torus, sphere, or cube rotated in three dimensions and shaded with the measured ramp.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-solid.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Donut math: how donut.c works",
+            "author": "Andy Sloane",
+            "url": "https://www.a1k0n.net/2011/07/20/donut-math.html",
+            "license": "Article"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ascii-text",
+      "type": "registry:component",
+      "title": "ASCII Text",
+      "description": "A headline rastered from a display face, then redrawn as a grid of glyphs chosen by measured ink and shape.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-text.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Beyond the luminance ramp: a shape-aware ASCII renderer",
+            "author": "Codrops",
+            "url": "https://tympanus.net/codrops/2026/09/04/beyond-the-luminance-ramp-a-shape-aware-ascii-renderer-in-three-js/",
+            "license": "MIT"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ascii-topo",
+      "type": "registry:component",
+      "title": "ASCII Topo",
+      "description": "Contour lines of a slowly drifting noise height field, drawn like a topographic survey in text.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-topo.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Marching squares",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Marching_squares",
+            "license": "Algorithm, no code"
+          },
+          {
+            "relation": "technique",
+            "title": "Simplex noise demystified",
+            "author": "Stefan Gustavson",
+            "url": "https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf",
+            "license": "Public domain"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ascii-video",
+      "type": "registry:component",
+      "title": "ASCII Video",
+      "description": "A video or webcam feed drawn as a live grid of glyphs, chosen each frame by the ink they put down in the font in use.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-video.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "play.core",
+            "author": "Andreas Gysin",
+            "url": "https://github.com/ertdfgcvb/play.core",
+            "license": "Apache-2.0"
+          },
+          {
+            "relation": "technique",
+            "title": "ascii-camera",
+            "author": "Andrei Gheorghe",
+            "url": "https://github.com/idevelop/ascii-camera",
+            "license": "MIT"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ascii-waves",
+      "type": "registry:component",
+      "title": "ASCII Waves",
+      "description": "Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-waves.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "dither-gradient",
+      "type": "registry:component",
+      "title": "Dither Gradient",
+      "description": "A two-tone gradient dithered through a Bayer matrix, drifting slowly like light across a surface.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-gradient.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Ditherpunk",
+            "author": "Surma",
+            "url": "https://surma.dev/things/ditherpunk/",
+            "license": "Article"
+          },
+          {
+            "relation": "technique",
+            "title": "Ordered dithering",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "dither-image",
+      "type": "registry:component",
+      "title": "Dither Image",
+      "description": "An image reduced to two tones by ordered or error diffusion dithering, drawn crisp on a canvas.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Ditherpunk",
+            "author": "Surma",
+            "url": "https://surma.dev/things/ditherpunk/",
+            "license": "Article"
+          },
+          {
+            "relation": "technique",
+            "title": "Atkinson dithering",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Atkinson_dithering",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "halftone-image",
+      "type": "registry:component",
+      "title": "Halftone Image",
+      "description": "An image screened into halftone dots, squares, or lines, their area set by darkness like a page of newsprint.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/halftone-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Halftone",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Halftone",
+            "license": "Reference, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "duotone-image",
+      "type": "registry:component",
+      "title": "Duotone Image",
+      "description": "An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/duotone-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "glitch-text",
+      "type": "registry:component",
+      "title": "Glitch Text",
+      "description": "Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/glitch-text.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "grain-overlay",
+      "type": "registry:component",
+      "title": "Grain Overlay",
+      "description": "An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/grain-overlay.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Grainy gradients",
+            "author": "CSS-Tricks",
+            "url": "https://css-tricks.com/grainy-gradients/",
+            "license": "Article"
+          }
+        ]
+      }
+    },
+    {
+      "name": "halftone-css",
+      "type": "registry:component",
+      "title": "Halftone CSS",
+      "description": "A halftone dot pattern made entirely of layered CSS gradients, for use as a background.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/halftone-css.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "CSS halftone patterns",
+            "author": "Michelle Barker, CSS { In Real Life }",
+            "url": "https://css-irl.info/css-halftone-patterns/",
+            "license": "Article"
+          }
+        ]
+      }
+    },
+    {
+      "name": "pixel-sort",
+      "type": "registry:component",
+      "title": "Pixel Sort",
+      "description": "An image whose pixel rows or columns are sorted by brightness within threshold bands, smearing tone into streaks.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-sort.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "ASDF pixel sorting",
+            "author": "Kim Asendorf",
+            "url": "https://github.com/kimasendorf/ASDFPixelSort",
+            "license": "Technique, no code read"
+          }
+        ]
+      }
+    },
+    {
+      "name": "scanlines",
+      "type": "registry:component",
+      "title": "Scanlines",
+      "description": "A CRT scanline overlay in the ink color, with an optional soft band that rolls slowly down the screen.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/scanlines.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-frame",
+      "type": "registry:component",
+      "title": "ASCII Frame",
+      "description": "A container framed in box-drawing characters, with an optional title set into the top rule.",
+      "categories": [
+        "text-mode"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-frame.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-loader",
+      "type": "registry:component",
+      "title": "ASCII Loader",
+      "description": "A text-mode loading indicator: a braille dot orbit, a progress bar, a shade pulse, or animated dots.",
+      "categories": [
+        "text-mode"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-loader.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-sparkline",
+      "type": "registry:component",
+      "title": "ASCII Sparkline",
+      "description": "A series of numbers drawn inline as eighth-block bars or a braille line, scaled to its own range.",
+      "categories": [
+        "text-mode"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-sparkline.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Sparkline theory and practice",
+            "author": "Edward Tufte",
+            "url": "https://www.edwardtufte.com/notebook/sparkline-theory-and-practice-edward-tufte/",
+            "license": "Concept, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ascii-terminal",
+      "type": "registry:component",
+      "title": "ASCII Terminal",
+      "description": "A terminal session that types a command and prints its output, then rests on a blinking cursor.",
+      "categories": [
+        "text-mode"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-terminal.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "block-banner",
+      "type": "registry:component",
+      "title": "Block Banner",
+      "description": "Large block letters drawn in text from an original five row pixel font, sized to fit the host's width.",
+      "categories": [
+        "text-mode"
+      ],
+      "files": [
+        {
+          "path": "public/react/block-banner.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "block-image",
+      "type": "registry:component",
+      "title": "Block Image",
+      "description": "An image drawn with the sixteen quadrant block characters, each matching the corners a 2 by 2 sample fills.",
+      "categories": [
+        "text-mode"
+      ],
+      "files": [
+        {
+          "path": "public/react/block-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Block Elements, Unicode block U+2580",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Block_Elements",
+            "license": "Reference, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "braille-image",
+      "type": "registry:component",
+      "title": "Braille Image",
+      "description": "An image drawn with braille characters, each cell's eight dots giving twice the horizontal and four times the vertical resolution of plain ASCII.",
+      "categories": [
+        "text-mode"
+      ],
+      "files": [
+        {
+          "path": "public/react/braille-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Braille Patterns, Unicode block U+2800",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Braille_Patterns",
+            "license": "Reference, no code"
+          },
+          {
+            "relation": "technique",
+            "title": "Ditherpunk",
+            "author": "Surma",
+            "url": "https://surma.dev/things/ditherpunk/",
+            "license": "Article"
+          }
+        ]
+      }
+    }
+  ]
+}

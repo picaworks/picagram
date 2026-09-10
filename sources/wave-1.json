@@ -1,0 +1,135 @@
+{
+  "wave": 1,
+  "path": "A: technique components. Built from published techniques; no reference component's code or page is read.",
+  "components": [
+    {
+      "slug": "ascii-video",
+      "title": "ASCII Video",
+      "kind": "glyph grid",
+      "animated": true,
+      "decorative": false,
+      "brief": "Video or webcam drawn as a live glyph grid, the moving counterpart to ascii-image. Reuse lib/sample.ts and the measured ramp exactly as ascii-image does. Sources: `src` (a video URL) or `webcam: true`, which calls getUserMedia only when that prop is true and never on its own, and stops every track on destroy. With neither, draw a built-in subject so it renders with no network and no permission: a soft light sweeping slowly across a sphere, drawn on a canvas for each frame as a pure function of time. `time` seeks a real video (currentTime) or sets the built-in subject's frame. `paused` pauses the video element too. Under reduced motion show one still frame. Accessible like ascii-image: role img and aria-label from `alt`, otherwise aria-hidden.",
+      "props": "src, webcam, mirror (default true only matters for webcam), alt, columns (96), glyphs, contrast, fit, tone, fontFamily, lineHeight, fps (24), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "play.core", "author": "Andreas Gysin", "url": "https://github.com/ertdfgcvb/play.core", "license": "Apache-2.0" },
+        { "relation": "technique", "title": "ascii-camera", "author": "Andrei Gheorghe", "url": "https://github.com/idevelop/ascii-camera", "license": "MIT" }
+      ]
+    },
+    {
+      "slug": "ascii-text",
+      "title": "ASCII Text",
+      "kind": "glyph grid",
+      "animated": false,
+      "decorative": false,
+      "brief": "A headline set in a display face, then redrawn as glyph density. Draw the text large into an offscreen canvas, then sample it with lib/sample.ts (fit contain) so each cell takes the glyph whose measured ink matches the coverage there. Shape matching (measureShapes, matchShape) is on by default because letter edges benefit most. When the host has no height, take it from the text's proportions, as ascii-image does with an image. Accessible: role img and aria-label set to the text, never decorative, because it carries words. Redraw after fonts load (the grid's onLayout already fires then).",
+      "props": "text (default \"PICA\"), font (the display stack used only for the offscreen raster, default '700 \"Barlow Condensed\", \"Helvetica Neue\", Arial, sans-serif'), columns (80), glyphs, contrast, tone, align (center or left), shape (true), fontFamily and lineHeight for the grid.",
+      "credits": [
+        { "relation": "technique", "title": "Beyond the luminance ramp: a shape-aware ASCII renderer", "author": "Codrops", "url": "https://tympanus.net/codrops/2026/09/04/beyond-the-luminance-ramp-a-shape-aware-ascii-renderer-in-three-js/", "license": "MIT" }
+      ]
+    },
+    {
+      "slug": "ascii-reveal",
+      "title": "ASCII Reveal",
+      "kind": "text run",
+      "animated": true,
+      "decorative": false,
+      "brief": "Text that resolves from scrambled glyphs into its final characters, like a decoder settling. Each character cycles through scramble glyphs, then locks; characters lock left to right with a stagger. Render as text in the host's own size and color, in a monospace stack so width never jitters. Put the final text in a visually hidden span for assistive technology and mark the animated span aria-hidden; the host also carries aria-label with the text. Deterministic: the glyph shown at each position is a function of seed, position, and frame index (floor of t divided by the frame duration). A `time` at or past the duration shows the final text; the capture time of 1200 ms should land mid-reveal with the default duration. Under reduced motion show the final text. `loop` above 0 replays after that many milliseconds.",
+      "props": "text (default \"Drawn on a monospace grid.\"), duration (1600), stagger (0.6, the share of the duration spent staggering), glyphs (the scramble set, default the fallback ramp without the space plus /\\\\|_), loop (0), fontFamily (monospace stack; size and color inherit), fps (20), plus paused, time, seed.",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "ascii-noise-field",
+      "title": "ASCII Noise Field",
+      "kind": "glyph grid",
+      "animated": true,
+      "decorative": true,
+      "brief": "An animated field of 3D simplex noise drawn as measured-density glyphs: a quiet background texture. Each cell samples fractal noise, noise3(x * scale, y * scale / aspect, t * speed) summed over `octaves`, shapes it with a soft contrast curve around `density`, then picks a glyph. Correct for cell aspect so features are round, not stretched. Stay well under the long-task limit: precompute per-row values, allocate nothing per frame. The still frame for reduced motion is t = 1200.",
+      "props": "scale (0.02 to 0.3, default 0.08), speed (0 to 1 units per second, default 0.15), octaves (1 to 3, default 2), contrast (0.5 to 3, default 1.4), density (0 to 1, default 0.45), glyphs, fontSize (8 to 24, default 12), fontFamily, lineHeight, fps (24), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "Simplex noise demystified", "author": "Stefan Gustavson", "url": "https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf", "license": "Public domain" }
+      ]
+    },
+    {
+      "slug": "ascii-waves",
+      "title": "ASCII Waves",
+      "kind": "glyph grid",
+      "animated": true,
+      "decorative": true,
+      "brief": "Interference between a few circular wave sources, drawn as glyph density: rings that cross and beat. Place sources by seed inside the grid and let them drift slowly on smooth paths. Ink is 0.5 plus 0.5 times the mean over sources of cos(distance * frequency * 2pi - t * speed + phase), sharpened by contrast. Measure distance in cell units corrected by aspect so rings are circles. The still frame for reduced motion is t = 1200.",
+      "props": "sources (1 to 5, default 3), frequency (0.05 to 1, cycles per cell, default 0.12), speed (0 to 4 radians per second, default 1.2), contrast (0.5 to 3, default 1.3), drift (0 to 1, default 0.3), glyphs, fontSize (default 12), fontFamily, lineHeight, fps (24), plus paused, time, seed.",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "ascii-pointer-ripple",
+      "title": "ASCII Pointer Ripple",
+      "kind": "glyph grid",
+      "animated": true,
+      "decorative": true,
+      "brief": "A calm glyph field that answers the pointer: moving across it sends out rings that expand and fade, as if the grid were water. At rest it is low-density noise so it reads as texture. Pointer moves spawn ripples, throttled to one every 80 ms, at most 12 alive; each ripple adds a ring term exp(-((d - growth * age)^2) / width^2) that fades over its lifetime. Listen for pointermove and pointerdown on the host (the grid view ignores pointer events); touch works through pointer events. Under reduced motion there are no ripples, only the static base. With `time` set (captures), place three synthetic ripples by seed so the capture shows the effect deterministically. Remove every listener on destroy.",
+      "props": "growth (cells per second, 6 to 40, default 18), width (1 to 6 cells, default 2.5), lifetime (0.5 to 3 seconds, default 1.6), strength (0 to 1, default 0.8), base (0 to 0.4, default 0.12), glyphs, fontSize (default 12), fontFamily, lineHeight, fps (30), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "play.core", "author": "Andreas Gysin", "url": "https://github.com/ertdfgcvb/play.core", "license": "Apache-2.0" }
+      ]
+    },
+    {
+      "slug": "ascii-solid",
+      "title": "ASCII Solid",
+      "kind": "glyph grid",
+      "animated": true,
+      "decorative": true,
+      "brief": "A solid rotating in 3D, rasterized in software with a depth buffer and Lambert shading, drawn with the measured ramp: the classic spinning donut, done without three.js. Sample the parametric surface (torus, sphere, or cube faces), rotate by two angles driven by time, project with perspective, keep the nearest sample per cell, and shade by the dot product of the normal with a fixed light from the upper left. Correct projection for cell aspect so the torus is round. Scale sampling density with grid size so there are no holes and each frame stays well under 50 ms. The still frame for reduced motion is a pleasing three-quarter view, not an edge-on one.",
+      "props": "shape (torus, sphere, cube; default torus), speed (0 to 2, default 0.6), size (0.3 to 1 of the smaller host side, default 0.8), glyphs, fontSize (default 12), fontFamily, lineHeight, fps (30), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "Donut math: how donut.c works", "author": "Andy Sloane", "url": "https://www.a1k0n.net/2011/07/20/donut-math.html", "license": "Article" }
+      ]
+    },
+    {
+      "slug": "ascii-rain",
+      "title": "ASCII Rain",
+      "kind": "glyph grid",
+      "animated": true,
+      "decorative": true,
+      "brief": "Columns of glyphs falling at different speeds, each with a head and a fading trail: digital rain restated in the house style. One ink color, never green by default. The trail fades by stepping down the measured ramp, not by changing hue, and the head is the densest glyph. Glyphs default to digits and ASCII punctuation, not katakana. Make every frame a pure function of seed and time: column speeds, offsets, and glyph flips derive from the seed, so any frame can be drawn directly. The still frame for reduced motion is t = 1200.",
+      "props": "density (0.1 to 1, share of columns active, default 0.5), speed (4 to 40 rows per second, default 14), trail (4 to 40 rows, default 16), change (0 to 1, chance a trail glyph flips per frame, default 0.06), glyphs (default \"0123456789:;+=*#%\"), fontSize (default 12), fontFamily, lineHeight, fps (24), plus paused, time, seed.",
+      "credits": [
+        { "relation": "technique", "title": "Matrix digital rain", "author": "Simon Whiteley, title design for The Matrix (1999)", "url": "https://en.wikipedia.org/wiki/Matrix_digital_rain", "license": "Cultural reference, no code" }
+      ]
+    },
+    {
+      "slug": "ascii-loader",
+      "title": "ASCII Loader",
+      "kind": "text run",
+      "animated": true,
+      "decorative": false,
+      "brief": "Text-mode loading indicators in one component, with every frame computed rather than copied from a spinner list. Variants: braille (a dot travelling around a 2 by 4 braille cell, frames generated from the braille dot bit order), bar (a progress bar with eighth-block precision; indeterminate when progress is null, as a short block sweeping back and forth), blocks (a pulse through light, medium, dark, and full shade), dots (one, two, three periods). Render as text in the host's size and color, inline. Accessible: role progressbar with aria-valuemin 0, aria-valuemax 100, and aria-valuenow when progress is set; role status otherwise; aria-label from `label`. Under reduced motion indeterminate variants show one static glyph, while a determinate bar still shows its progress, because that is data rather than motion. The wrapper renders an inline-block span.",
+      "props": "variant (braille, bar, blocks, dots; default braille), progress (0 to 1 or null, default null), width (bar cells, 8 to 60, default 24), label (default \"loading\"), speed (0.25 to 3, default 1), fontFamily (monospace stack; size and color inherit), fps (12), plus paused, time, seed.",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "ascii-frame",
+      "title": "ASCII Frame",
+      "kind": "glyph grid",
+      "animated": false,
+      "decorative": false,
+      "brief": "A container whose border is drawn in box-drawing characters, with an optional title set into the top rule: STYLE.md's signature move. The core overlays a grid on the host and draws only the border cells; the host's own content stays in place, padded inward by one cell plus `padding` cells so it never sits under the border (set the host's padding from the cell size, and restore it on destroy). Variants: light, heavy, double, dashed, ascii (+, -, |). Never rounded corners. The host keeps its content accessible: set role group and aria-label to the title, or \"Frame\" when there is no title; never aria-hidden on the host, only on the drawn layer. The React wrapper accepts children and renders them inside the host.",
+      "props": "variant (light, heavy, double, dashed, ascii; default light), title (default \"\"), titleAlign (left, center, right; default left), padding (0 to 4 cells, default 1), accent (boolean: draw the title in --pica-accent, default false), fontSize (default 14), fontFamily, lineHeight.",
+      "credits": [],
+      "original": true
+    },
+    {
+      "slug": "ascii-sparkline",
+      "title": "ASCII Sparkline",
+      "kind": "text run",
+      "animated": false,
+      "decorative": false,
+      "brief": "A series of numbers drawn inline as a sparkline, in eighth-block bars or as a braille line at 2 by 4 dots per cell. It is scaled within its own series, a flat series draws flat rather than full, and non-finite values are skipped. Render as text in the host's size and color, inline. Accessible: role img and an aria-label such as \"trend: 24 values from 3.1 to 9.8, last 7.2\". The wrapper renders an inline-block span. The values prop uses the numbers control.",
+      "props": "values (number[], default a gentle 24-point series), mode (blocks or braille, default blocks), width (0 means one cell per value, or half the values for braille; otherwise resample to this many cells), min and max (null means auto from the series), label (default \"trend\"), fontFamily (monospace stack; size and color inherit).",
+      "credits": [
+        { "relation": "technique", "title": "Sparkline theory and practice", "author": "Edward Tufte", "url": "https://www.edwardtufte.com/notebook/sparkline-theory-and-practice-edward-tufte/", "license": "Concept, no code" }
+      ]
+    }
+  ]
+}

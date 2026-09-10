@@ -1,0 +1,379 @@
+<!doctype html>
+<!--
+  Pica · ASCII Frame · ascii-frame
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>ASCII Frame · Pica</title>
+<style>html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaAsciiFrame = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/text-mode/ascii-frame/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const probe = document.createElement("canvas").getContext("2d");
+    if (getComputedStyle(host).position === "static") host.style.position = "relative";
+    host.style.overflow = "hidden";
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      let advance = 0.6;
+      if (probe) {
+        probe.font = `100px ${opts.fontFamily}`;
+        advance = probe.measureText("M").width / 100 || 0.6;
+      }
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || "var(--pica-fg)";
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color}`;
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const rowTints = tints.slice(start, start + cols);
+        let key = cells.slice(start, start + cols).join("");
+        if (rowTints.some((tint) => tint !== void 0)) key += "\0" + rowTints.join(",");
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        let x = 0;
+        while (x < cols) {
+          const tint = rowTints[x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (rowTints[end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+      }
+    };
+  }
+
+  // registry/text-mode/ascii-frame/core.ts
+  var defaults = {
+    variant: "light",
+    title: "",
+    titleAlign: "left",
+    padding: 1,
+    accent: false,
+    fontSize: 14,
+    fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace',
+    lineHeight: 1.2
+  };
+  var VARIANTS = {
+    light: { tl: "┌", tr: "┐", bl: "└", br: "┘", h: "─", v: "│" },
+    heavy: { tl: "┏", tr: "┓", bl: "┗", br: "┛", h: "━", v: "┃" },
+    double: { tl: "╔", tr: "╗", bl: "╚", br: "╝", h: "═", v: "║" },
+    dashed: { tl: "┌", tr: "┐", bl: "└", br: "┘", h: "┄", v: "┆" },
+    ascii: { tl: "+", tr: "+", bl: "+", br: "+", h: "-", v: "|" }
+  };
+  function needsCanvas(p) {
+    return p.accent && p.title.length > 0;
+  }
+  function accentInk(host) {
+    const custom = getComputedStyle(host).getPropertyValue("--pica-accent").trim();
+    return custom || "#e8a020";
+  }
+  function measureCell(fontFamily, fontSize, lineHeight) {
+    const probe = document.createElement("canvas").getContext("2d");
+    let advance = 0.6;
+    if (probe) {
+      probe.font = `100px ${fontFamily}`;
+      advance = probe.measureText("M").width / 100 || 0.6;
+    }
+    return { w: fontSize * advance, h: Math.max(1, Math.round(fontSize * lineHeight)) };
+  }
+  function topRule(cols, chars, title, align) {
+    const inner = Math.max(0, cols - 2);
+    if (!title || inner < 3) return [chars.tl + chars.h.repeat(inner), "", chars.tr];
+    const wanted = ` ${title} `;
+    const maxLabel = Math.max(0, inner - 2);
+    const label = wanted.length > maxLabel ? wanted.slice(0, maxLabel) : wanted;
+    const fill = inner - label.length;
+    const left = align === "left" ? Math.min(1, fill) : align === "right" ? Math.max(0, fill - 1) : Math.floor(fill / 2);
+    const right = fill - left;
+    return [chars.tl + chars.h.repeat(left), label, chars.h.repeat(right) + chars.tr];
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const grid = createGrid(host, gridOptions(props), draw);
+    function gridOptions(p) {
+      return { fontFamily: p.fontFamily, fontSize: p.fontSize, columns: 0, lineHeight: p.lineHeight, renderer: needsCanvas(p) ? "canvas" : "auto", color: "" };
+    }
+    function applyPadding() {
+      const cell = measureCell(props.fontFamily, props.fontSize, props.lineHeight);
+      const inset = 1 + props.padding;
+      host.style.boxSizing = "border-box";
+      host.style.paddingTop = `${inset * cell.h}px`;
+      host.style.paddingBottom = `${inset * cell.h}px`;
+      host.style.paddingLeft = `${inset * cell.w}px`;
+      host.style.paddingRight = `${inset * cell.w}px`;
+    }
+    function draw() {
+      grid.clear();
+      const { cols, rows } = grid;
+      const chars = VARIANTS[props.variant];
+      const [left, label, right] = topRule(cols, chars, props.title, props.titleAlign);
+      grid.write(0, 0, left);
+      grid.write(left.length, 0, label, props.accent ? accentInk(host) : void 0);
+      grid.write(left.length + label.length, 0, right);
+      if (rows > 1) grid.write(0, rows - 1, chars.bl + chars.h.repeat(Math.max(0, cols - 2)) + chars.br);
+      for (let y = 1; y < rows - 1; y++) {
+        grid.set(0, y, chars.v);
+        grid.set(cols - 1, y, chars.v);
+      }
+      grid.flush();
+      host.dataset.picaReady = "true";
+    }
+    labelHost(host, props.title || "Frame", "group");
+    applyPadding();
+    draw();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        labelHost(host, props.title || "Frame", "group");
+        const metricsChanged = props.fontSize !== before.fontSize || props.fontFamily !== before.fontFamily || props.lineHeight !== before.lineHeight;
+        const rebuildGrid = metricsChanged || needsCanvas(props) !== needsCanvas(before);
+        if (rebuildGrid) grid.update(gridOptions(props));
+        else draw();
+        if (metricsChanged || props.padding !== before.padding) applyPadding();
+      },
+      destroy() {
+        grid.destroy();
+        unlabelHost(host);
+        host.style.removeProperty("padding-top");
+        host.style.removeProperty("padding-right");
+        host.style.removeProperty("padding-bottom");
+        host.style.removeProperty("padding-left");
+        host.style.removeProperty("box-sizing");
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var instance = PicaAsciiFrame.mount(document.getElementById("pica"), window.PICA_PROPS || {});
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(event.data.props);
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>
