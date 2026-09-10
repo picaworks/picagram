@@ -1,0 +1,336 @@
+<!doctype html>
+<!--
+  Pica · Popover Tooltip · popover-tooltip
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Popover Tooltip · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaPopoverTooltip = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/popover-tooltip/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/popover-tooltip/core.ts
+  var defaults = {
+    kind: "tooltip",
+    content: "Installs with one command and no dependencies.",
+    triggerLabel: "How it installs",
+    placement: "top",
+    delay: 400,
+    open: null,
+    defaultOpen: false
+  };
+  var GAP = "0.5em";
+  var PLACEMENT = {
+    top: `bottom:calc(anchor(top) + ${GAP});justify-self:anchor-center`,
+    bottom: `top:calc(anchor(bottom) + ${GAP});justify-self:anchor-center`,
+    start: `right:calc(anchor(left) + ${GAP});align-self:anchor-center`,
+    end: `left:calc(anchor(right) + ${GAP});align-self:anchor-center`
+  };
+  function rules(s, p, anchorName) {
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    return [
+      `${s} [data-pica="trigger"]{appearance:none;margin:0;font:inherit;line-height:1.2;padding:0.45em 0.95em;border:1px solid ${fg};border-radius:0;background:transparent;color:${fg};cursor:pointer;anchor-name:${anchorName}}`,
+      `${s} [data-pica="trigger"]:hover{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${s} [data-pica="trigger"]:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${s} [data-pica="panel"]{position:fixed;position-anchor:${anchorName};margin:0;inset:auto;max-width:20em;padding:0.4em 0.65em;border:1px solid ${fg};border-radius:0;background:transparent;color:${fg};font-size:0.875em;line-height:1.4;white-space:pre-wrap;overflow-wrap:break-word}`,
+      `${s} [data-pica="panel"]{${PLACEMENT[p.placement]}}`,
+      ...p.kind === "tooltip" ? [`${s} [data-pica="panel"]{font-family:${GRID_FONT}}`] : []
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const emit = emitter(host);
+    const sheet = scope(host);
+    const panelId = nextId("pica-overlay");
+    const anchorName = `--${nextId("pica-anchor")}`;
+    const supportsAnchor = CSS.supports("anchor-name", anchorName);
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.setAttribute("data-pica", "trigger");
+    const panel = document.createElement("div");
+    panel.setAttribute("data-pica", "panel");
+    panel.id = panelId;
+    panel.popover = props.kind === "tooltip" ? "manual" : "auto";
+    host.append(trigger, panel);
+    let prevKind = props.kind;
+    let openState = false;
+    let showTimer = null;
+    let suppressToggle = false;
+    const desired = () => props.open ?? openState;
+    function clearShowTimer() {
+      if (showTimer !== null) {
+        clearTimeout(showTimer);
+        showTimer = null;
+      }
+    }
+    function positionFallback() {
+      if (supportsAnchor) return;
+      const t = trigger.getBoundingClientRect();
+      const p = panel.getBoundingClientRect();
+      const gap = 8;
+      let top;
+      let left;
+      if (props.placement === "top") {
+        top = t.top - p.height - gap;
+        left = t.left + t.width / 2 - p.width / 2;
+      } else if (props.placement === "bottom") {
+        top = t.bottom + gap;
+        left = t.left + t.width / 2 - p.width / 2;
+      } else if (props.placement === "start") {
+        top = t.top + t.height / 2 - p.height / 2;
+        left = t.left - p.width - gap;
+      } else {
+        top = t.top + t.height / 2 - p.height / 2;
+        left = t.right + gap;
+      }
+      panel.style.top = `${Math.round(top)}px`;
+      panel.style.left = `${Math.round(left)}px`;
+    }
+    function show() {
+      if (!panel.matches(":popover-open")) {
+        suppressToggle = true;
+        panel.showPopover();
+        suppressToggle = false;
+      }
+      positionFallback();
+    }
+    function hide() {
+      if (panel.matches(":popover-open")) {
+        suppressToggle = true;
+        panel.hidePopover();
+        suppressToggle = false;
+      }
+    }
+    function reflect(next) {
+      if (next) show();
+      else hide();
+      openState = next;
+      if (props.kind === "popover") trigger.setAttribute("aria-expanded", String(next));
+    }
+    function request(next) {
+      if (next === desired()) return;
+      clearShowTimer();
+      emit("openChange", next);
+      if (props.open === null) reflect(next);
+    }
+    function applyKindAttrs() {
+      if (props.kind === "tooltip") {
+        panel.setAttribute("role", "tooltip");
+        trigger.setAttribute("aria-describedby", panelId);
+        trigger.removeAttribute("aria-expanded");
+      } else {
+        panel.removeAttribute("role");
+        trigger.removeAttribute("aria-describedby");
+        trigger.setAttribute("aria-expanded", String(desired()));
+      }
+    }
+    const onPointerEnter = () => {
+      if (props.kind !== "tooltip") return;
+      clearShowTimer();
+      showTimer = setTimeout(() => {
+        showTimer = null;
+        request(true);
+      }, props.delay);
+    };
+    const onPointerLeave = () => {
+      clearShowTimer();
+      if (props.kind === "tooltip") request(false);
+    };
+    const onFocus = () => {
+      if (props.kind === "tooltip") request(true);
+    };
+    const onBlur = () => {
+      clearShowTimer();
+      if (props.kind === "tooltip") request(false);
+    };
+    const onClick = () => {
+      if (props.kind === "popover") request(!desired());
+    };
+    const onToggle = (event) => {
+      if (suppressToggle) return;
+      const next = event.newState === "open";
+      if (next === openState) return;
+      clearShowTimer();
+      openState = next;
+      if (props.kind === "popover") trigger.setAttribute("aria-expanded", String(next));
+      emit("openChange", next);
+    };
+    const onKeydown = (event) => {
+      if (event.key !== "Escape" || !desired()) return;
+      const wasPopover = props.kind === "popover";
+      request(false);
+      if (wasPopover) trigger.focus();
+    };
+    trigger.addEventListener("pointerenter", onPointerEnter);
+    trigger.addEventListener("pointerleave", onPointerLeave);
+    trigger.addEventListener("focus", onFocus);
+    trigger.addEventListener("blur", onBlur);
+    trigger.addEventListener("click", onClick);
+    panel.addEventListener("toggle", onToggle);
+    document.addEventListener("keydown", onKeydown);
+    function apply() {
+      trigger.textContent = props.triggerLabel;
+      panel.textContent = props.content;
+      sheet.setRules(rules(sheet.selector, props, anchorName));
+      if (props.kind !== prevKind) {
+        hide();
+        panel.popover = props.kind === "tooltip" ? "manual" : "auto";
+        prevKind = props.kind;
+      }
+      applyKindAttrs();
+      if (props.open !== null) reflect(props.open);
+      if (!supportsAnchor && desired()) positionFallback();
+    }
+    apply();
+    if (props.open === null && props.defaultOpen) reflect(true);
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        apply();
+      },
+      destroy() {
+        clearShowTimer();
+        trigger.removeEventListener("pointerenter", onPointerEnter);
+        trigger.removeEventListener("pointerleave", onPointerLeave);
+        trigger.removeEventListener("focus", onFocus);
+        trigger.removeEventListener("blur", onBlur);
+        trigger.removeEventListener("click", onClick);
+        panel.removeEventListener("toggle", onToggle);
+        document.removeEventListener("keydown", onKeydown);
+        hide();
+        trigger.remove();
+        panel.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaPopoverTooltip.mount(host, take(window.PICA_PROPS || {}));
+  ["openChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

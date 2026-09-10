@@ -316,6 +316,110 @@
       }
     },
     {
+      "name": "bar-chart",
+      "type": "registry:component",
+      "title": "Bar Chart",
+      "description": "Vertical bars from labeled values, drawn as SVG or a monospace glyph grid, with a hidden data table.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/bar-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Nice Numbers for Graph Labels",
+            "author": "Paul Heckbert, Graphics Gems",
+            "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "donut-chart",
+      "type": "registry:component",
+      "title": "Donut Chart",
+      "description": "Parts of a whole drawn as a ring, either as SVG segments or a monospace glyph grid, with a hidden data table.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/donut-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "kanban-board",
+      "type": "registry:component",
+      "title": "Kanban Board",
+      "description": "Columns of cards that move between columns by keyboard or by pointer drag.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/kanban-board.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Rearrangeable listbox example",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/listbox/examples/listbox-rearrangeable/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "line-chart",
+      "type": "registry:component",
+      "title": "Line Chart",
+      "description": "One or more series plotted as lines over a shared set of labels, in an svg or braille glyph look.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/line-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Nice Numbers for Graph Labels",
+            "author": "Paul Heckbert, Graphics Gems",
+            "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
       "name": "dither-gradient",
       "type": "registry:component",
       "title": "Dither Gradient",
@@ -558,6 +662,205 @@
       }
     },
     {
+      "name": "globe",
+      "type": "registry:component",
+      "title": "Globe",
+      "description": "A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/globe.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Evenly distributing points on a sphere",
+            "author": "Martin Roberts",
+            "url": "https://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/",
+            "license": "Article"
+          }
+        ]
+      }
+    },
+    {
+      "name": "marquee",
+      "type": "registry:component",
+      "title": "Marquee",
+      "description": "Scrolls its children sideways in an endless loop, like a ticker.",
+      "categories": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "public/react/marquee.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "bento-grid",
+      "type": "registry:component",
+      "title": "Bento Grid",
+      "description": "A CSS grid section that sizes its children by position into a feature, mosaic, or equal column pattern.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/bento-grid.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "hero",
+      "type": "registry:component",
+      "title": "Hero",
+      "description": "A page hero that adds calls to action and a composed background behind a headline and copy.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pricing",
+      "type": "registry:component",
+      "title": "Pricing",
+      "description": "Pricing tiers with a monthly and yearly switch, each plan a card with its own call to action.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/pricing.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Radio group pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "stats-kpi",
+      "type": "registry:component",
+      "title": "Stats KPI",
+      "description": "A row of key numbers in mono figures, each with a delta glyph and an inline trend sparkline.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/stats-kpi.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "testimonials",
+      "type": "registry:component",
+      "title": "Testimonials",
+      "description": "Quotes shown as a grid of cards, or as one quote at a time that resolves from scrambled glyphs.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/testimonials.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Carousel pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/carousel/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "aurora",
+      "type": "registry:component",
+      "title": "Aurora",
+      "description": "Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/aurora.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Improving Noise",
+            "author": "Ken Perlin",
+            "url": "https://mrl.cs.nyu.edu/~perlin/paper445.pdf",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Ordered dithering",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
       "name": "mesh-gradient",
       "type": "registry:component",
       "title": "Mesh Gradient",
@@ -595,6 +898,41 @@
             "author": "Wikipedia",
             "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
             "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "shader-flow",
+      "type": "registry:component",
+      "title": "Shader Flow",
+      "description": "Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/shader-flow.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Domain warping",
+            "author": "Inigo Quilez",
+            "url": "https://iquilezles.org/articles/warp/",
+            "license": "Article"
+          },
+          {
+            "relation": "technique",
+            "title": "Improving Noise",
+            "author": "Ken Perlin",
+            "url": "https://mrl.cs.nyu.edu/~perlin/paper445.pdf",
+            "license": "Paper"
           }
         ]
       }
@@ -793,6 +1131,132 @@
             "title": "Button pattern",
             "author": "W3C WAI-ARIA Authoring Practices Guide",
             "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "dialog",
+      "type": "registry:component",
+      "title": "Dialog",
+      "description": "A modal dialog on the native dialog element, with focus containment, Escape, and the top layer handled by the browser.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/dialog.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Dialog (modal) pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "popover-tooltip",
+      "type": "registry:component",
+      "title": "Popover Tooltip",
+      "description": "A trigger button that shows a tooltip on hover and focus, or toggles a popover panel on click, built on the Popover API.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/popover-tooltip.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Tooltip pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/",
+            "license": "W3C document"
+          },
+          {
+            "relation": "technique",
+            "title": "Disclosure pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "select",
+      "type": "registry:component",
+      "title": "Select",
+      "description": "A single-choice select with a keyboard-driven listbox, styled after the WAI-ARIA select-only combobox pattern.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/select.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Select-only combobox example",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/",
+            "license": "W3C document"
+          },
+          {
+            "relation": "technique",
+            "title": "Popover API",
+            "author": "MDN",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+            "license": "CC-BY-SA documentation"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tabs",
+      "type": "registry:component",
+      "title": "Tabs",
+      "description": "A tabbed view for switching between panels, with the active tab following keyboard focus.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/tabs.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/pica/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Tabs pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tabs/",
             "license": "W3C document"
           }
         ]

@@ -50,6 +50,22 @@ Original to Pica.
 
 Original to Pica.
 
+## Bar Chart (`bar-chart`)
+
+- Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
+
+## Donut Chart (`donut-chart`)
+
+Original to Pica.
+
+## Kanban Board (`kanban-board`)
+
+- Technique from [Rearrangeable listbox example](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/examples/listbox-rearrangeable/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Line Chart (`line-chart`)
+
+- Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
+
 ## Dither Gradient (`dither-gradient`)
 
 - Technique from [Ditherpunk](https://surma.dev/things/ditherpunk/) by Surma (Article).
@@ -88,11 +104,49 @@ Original to Pica.
 
 Original to Pica.
 
+## Globe (`globe`)
+
+- Technique from [Evenly distributing points on a sphere](https://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/) by Martin Roberts (Article).
+
+## Marquee (`marquee`)
+
+Original to Pica.
+
+## Bento Grid (`bento-grid`)
+
+Original to Pica.
+
+## Hero (`hero`)
+
+Original to Pica.
+
+## Pricing (`pricing`)
+
+- Technique from [Radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Stats KPI (`stats-kpi`)
+
+Original to Pica.
+
+## Testimonials (`testimonials`)
+
+- Technique from [Carousel pattern](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Aurora (`aurora`)
+
+- Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
+- Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
+
 ## Mesh Gradient (`mesh-gradient`)
 
 - Technique from [Domain warping](https://iquilezles.org/articles/warp/) by Inigo Quilez (Article).
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
+
+## Shader Flow (`shader-flow`)
+
+- Technique from [Domain warping](https://iquilezles.org/articles/warp/) by Inigo Quilez (Article).
+- Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 
 ## ASCII Frame (`ascii-frame`)
 
@@ -126,3 +180,21 @@ Original to Pica.
 ## Button (`button`)
 
 - Technique from [Button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Dialog (`dialog`)
+
+- Technique from [Dialog (modal) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Popover Tooltip (`popover-tooltip`)
+
+- Technique from [Tooltip pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+- Technique from [Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Select (`select`)
+
+- Technique from [Select-only combobox example](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+- Technique from [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) by MDN (CC-BY-SA documentation).
+
+## Tabs (`tabs`)
+
+- Technique from [Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).

@@ -45,11 +45,40 @@ Install any component with `npx shadcn@latest add https://raw.githubusercontent.
 
 ## Shaders
 
+- [Aurora](/c/aurora.md): Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.
 - [Mesh Gradient](/c/mesh-gradient.md): A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.
+- [Shader Flow](/c/shader-flow.md): Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.
+
+## Motion
+
+- [Marquee](/c/marquee.md): Scrolls its children sideways in an endless loop, like a ticker.
+
+## Data
+
+- [Bar Chart](/c/bar-chart.md): Vertical bars from labeled values, drawn as SVG or a monospace glyph grid, with a hidden data table.
+- [Donut Chart](/c/donut-chart.md): Parts of a whole drawn as a ring, either as SVG segments or a monospace glyph grid, with a hidden data table.
+- [Kanban Board](/c/kanban-board.md): Columns of cards that move between columns by keyboard or by pointer drag.
+- [Line Chart](/c/line-chart.md): One or more series plotted as lines over a shared set of labels, in an svg or braille glyph look.
 
 ## UI
 
 - [Button](/c/button.md): A button in four looks, solid, outline, ghost, and monospace brackets, with a braille spinner while it loads.
+- [Dialog](/c/dialog.md): A modal dialog on the native dialog element, with focus containment, Escape, and the top layer handled by the browser.
+- [Popover Tooltip](/c/popover-tooltip.md): A trigger button that shows a tooltip on hover and focus, or toggles a popover panel on click, built on the Popover API.
+- [Select](/c/select.md): A single-choice select with a keyboard-driven listbox, styled after the WAI-ARIA select-only combobox pattern.
+- [Tabs](/c/tabs.md): A tabbed view for switching between panels, with the active tab following keyboard focus.
+
+## Sections
+
+- [Bento Grid](/c/bento-grid.md): A CSS grid section that sizes its children by position into a feature, mosaic, or equal column pattern.
+- [Hero](/c/hero.md): A page hero that adds calls to action and a composed background behind a headline and copy.
+- [Pricing](/c/pricing.md): Pricing tiers with a monthly and yearly switch, each plan a card with its own call to action.
+- [Stats KPI](/c/stats-kpi.md): A row of key numbers in mono figures, each with a delta glyph and an inline trend sparkline.
+- [Testimonials](/c/testimonials.md): Quotes shown as a grid of cards, or as one quote at a time that resolves from scrambled glyphs.
+
+## Immersive
+
+- [Globe](/c/globe.md): A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.
 
 ## Optional
 

@@ -1,0 +1,615 @@
+<!doctype html>
+<!--
+  Pica · Kanban Board · kanban-board
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Kanban Board · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaKanbanBoard = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/data/kanban-board/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function hiddenText(text) {
+    const span = document.createElement("span");
+    span.textContent = text;
+    span.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    return span;
+  }
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/data/kanban-board/core.ts
+  var defaults = {
+    value: null,
+    defaultValue: [
+      {
+        id: "backlog",
+        title: "Backlog",
+        cards: [
+          { id: "c1", title: "Measure glyph ramp", tag: "ascii" },
+          { id: "c2", title: "Wire palette tokens", tag: "data" },
+          { id: "c3", title: "Draft focus ring", tag: "ui" }
+        ]
+      },
+      {
+        id: "doing",
+        title: "Doing",
+        cards: [
+          { id: "c4", title: "Spec mesh gradient", tag: "shaders" },
+          { id: "c5", title: "Scope pointer drag", tag: "ui" }
+        ]
+      },
+      {
+        id: "done",
+        title: "Done",
+        cards: [{ id: "c6", title: "Ship scanlines", tag: "effects" }]
+      }
+    ],
+    label: "Board",
+    fontFamily: GRID_FONT
+  };
+  function cloneCard(card) {
+    return { id: card.id, title: card.title, tag: card.tag };
+  }
+  function cloneColumns(cols) {
+    return cols.map((column) => ({ id: column.id, title: column.title, cards: column.cards.map(cloneCard) }));
+  }
+  function locateCard(cols, cardId) {
+    for (let columnIndex = 0; columnIndex < cols.length; columnIndex++) {
+      const column = cols[columnIndex];
+      if (!column) continue;
+      const cardIndex = column.cards.findIndex((card) => card.id === cardId);
+      if (cardIndex !== -1) return { columnIndex, cardIndex };
+    }
+    return null;
+  }
+  function locateStop(cols, stop) {
+    if (stop.cardId === null) {
+      const column = cols[stop.columnIndex];
+      return column && column.cards.length === 0 ? { columnIndex: stop.columnIndex, cardIndex: -1 } : null;
+    }
+    return locateCard(cols, stop.cardId);
+  }
+  function firstStop(cols) {
+    const column = cols[0];
+    if (!column) return null;
+    const card = column.cards[0];
+    return { columnIndex: 0, cardId: card ? card.id : null };
+  }
+  function stopEquals(a, b) {
+    if (!a || !b) return a === b;
+    if (a.cardId !== null || b.cardId !== null) return a.cardId === b.cardId;
+    return a.columnIndex === b.columnIndex;
+  }
+  function navigate(cols, stop, key) {
+    const spot = locateStop(cols, stop);
+    if (!spot) return stop;
+    if (key === "ArrowUp" || key === "ArrowDown") {
+      const column = cols[spot.columnIndex];
+      if (!column || column.cards.length === 0) return stop;
+      const card = column.cards[spot.cardIndex + (key === "ArrowUp" ? -1 : 1)];
+      return card ? { columnIndex: spot.columnIndex, cardId: card.id } : stop;
+    }
+    if (key === "ArrowLeft" || key === "ArrowRight") {
+      const columnIndex = spot.columnIndex + (key === "ArrowLeft" ? -1 : 1);
+      const column = cols[columnIndex];
+      if (!column) return stop;
+      const card = column.cards[0];
+      return { columnIndex, cardId: card ? card.id : null };
+    }
+    return stop;
+  }
+  function dragMove(cols, cardId, key) {
+    const spot = locateCard(cols, cardId);
+    const column = spot ? cols[spot.columnIndex] : void 0;
+    if (!spot || !column) return false;
+    if (key === "ArrowUp" || key === "ArrowDown") {
+      const target = spot.cardIndex + (key === "ArrowUp" ? -1 : 1);
+      const card = column.cards[spot.cardIndex];
+      if (target < 0 || target >= column.cards.length || !card) return false;
+      column.cards.splice(spot.cardIndex, 1);
+      column.cards.splice(target, 0, card);
+      return true;
+    }
+    if (key === "ArrowLeft" || key === "ArrowRight") {
+      const target = cols[spot.columnIndex + (key === "ArrowLeft" ? -1 : 1)];
+      const card = column.cards[spot.cardIndex];
+      if (!target || !card) return false;
+      column.cards.splice(spot.cardIndex, 1);
+      target.cards.unshift(card);
+      return true;
+    }
+    return false;
+  }
+  function relocateTo(cols, cardId, columnIndex, index) {
+    const spot = locateCard(cols, cardId);
+    const from = spot ? cols[spot.columnIndex] : void 0;
+    const to = cols[columnIndex];
+    const card = spot && from ? from.cards[spot.cardIndex] : void 0;
+    if (!spot || !from || !to || !card) return false;
+    const sameColumn = spot.columnIndex === columnIndex;
+    if (sameColumn && index === spot.cardIndex) return false;
+    from.cards.splice(spot.cardIndex, 1);
+    const at = Math.max(0, Math.min(to.cards.length, sameColumn && index > spot.cardIndex ? index - 1 : index));
+    to.cards.splice(at, 0, card);
+    return true;
+  }
+  function hitTest(host, x, y) {
+    const hit = document.elementFromPoint(x, y);
+    const columnEl = hit instanceof HTMLElement ? hit.closest("[data-column-index]") : null;
+    if (!(columnEl instanceof HTMLElement) || !host.contains(columnEl)) return null;
+    const columnIndex = Number(columnEl.dataset.columnIndex);
+    const cardEl = hit instanceof HTMLElement ? hit.closest('[data-pica="card"]') : null;
+    if (cardEl instanceof HTMLElement && host.contains(cardEl) && Number(cardEl.dataset.columnIndex) === columnIndex) {
+      const cardIndex = Number(cardEl.dataset.cardIndex);
+      const rect = cardEl.getBoundingClientRect();
+      return { columnIndex, index: y < rect.top + rect.height / 2 ? cardIndex : cardIndex + 1 };
+    }
+    return { columnIndex, index: Number.POSITIVE_INFINITY };
+  }
+  function el(tag, attrs) {
+    const node = document.createElement(tag);
+    for (const [name, value] of Object.entries(attrs)) node.setAttribute(name, value);
+    return node;
+  }
+  function rules(s, fontFamily) {
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    const dim = (pct) => `color-mix(in srgb, ${fg} ${pct}%, transparent)`;
+    return [
+      `${s}{font-family:${fontFamily};}`,
+      `${s} [data-pica="columns"]{display:flex;gap:1em;align-items:flex-start;overflow-x:auto;}`,
+      `${s} [data-pica="column"]{flex:0 0 auto;width:16em;box-sizing:border-box;border:1px solid ${dim(35)};}`,
+      `${s} [data-pica="column-head"]{display:flex;justify-content:space-between;align-items:baseline;gap:0.5em;padding:0.6em 0.7em;text-transform:uppercase;letter-spacing:0.04em;font-size:0.85em;color:${fg};}`,
+      `${s} [data-pica="column-count"]{color:${accent};font-variant-numeric:tabular-nums;}`,
+      `${s} [data-pica="sr-only"]{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}`,
+      `${s} [data-pica="list"]{display:flex;flex-direction:column;gap:0.6em;padding:0 0.7em 0.7em;min-height:2.6em;}`,
+      `${s} [data-pica="card"],${s} [data-pica="placeholder"]{box-sizing:border-box;border:1px solid ${dim(35)};padding:0.5em 0.6em;color:${fg};}`,
+      `${s} [data-pica="card"]{cursor:pointer;touch-action:none;}`,
+      `${s} [data-pica="placeholder"]{color:${dim(65)};text-align:center;font-size:0.85em;}`,
+      `${s} [data-pica="card-title"]{display:block;}`,
+      `${s} [data-pica="card-tag"]{display:block;margin-top:0.35em;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;color:${dim(65)};}`,
+      `${s} [data-pica="card"]:hover{background:${dim(10)};}`,
+      `${s} [data-pica="card"]:focus-visible,${s} [data-pica="placeholder"]:focus-visible{outline:2px solid ${accent};outline-offset:2px;}`,
+      `${s} [data-pica="card"][data-grabbed="true"]{border-color:${accent};border-width:2px;padding:calc(0.5em - 1px) calc(0.6em - 1px);}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const emit = emitter(host);
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    const uid = nextId("kanban");
+    let destroyed = false;
+    let columns = cloneColumns(props.defaultValue);
+    let grabbed = null;
+    let working = null;
+    let focusedStop = firstStop(props.value ?? columns);
+    const live = hiddenText("");
+    live.setAttribute("data-pica", "live");
+    live.setAttribute("role", "status");
+    live.setAttribute("aria-live", "polite");
+    live.setAttribute("aria-atomic", "true");
+    const board = el("div", { "data-pica": "columns" });
+    host.append(live, board);
+    const announce = (text) => {
+      live.textContent = text;
+    };
+    const committedColumns = () => props.value ?? columns;
+    function findStopElement(stop) {
+      const nodes = board.querySelectorAll('[data-pica="card"],[data-pica="placeholder"]');
+      for (const node of nodes) {
+        const candidate = node;
+        const at = { columnIndex: Number(candidate.dataset.columnIndex), cardId: candidate.dataset.cardId ?? null };
+        if (stopEquals(at, stop)) return candidate;
+      }
+      return null;
+    }
+    function buildCard(card, column, columnIndex, cardIndex) {
+      const isGrabbed = grabbed?.cardId === card.id;
+      const node = el("div", {
+        "data-pica": "card",
+        role: "option",
+        "aria-selected": isGrabbed ? "true" : "false",
+        "aria-label": `${card.title}, ${cardIndex + 1} of ${column.cards.length}`,
+        tabindex: stopEquals(focusedStop, { columnIndex, cardId: card.id }) ? "0" : "-1",
+        "data-card-id": card.id,
+        "data-column-index": String(columnIndex),
+        "data-card-index": String(cardIndex)
+      });
+      if (isGrabbed) node.setAttribute("data-grabbed", "true");
+      const title = el("span", { "data-pica": "card-title" });
+      title.textContent = card.title;
+      const tag = el("span", { "data-pica": "card-tag" });
+      tag.textContent = card.tag;
+      node.append(title, tag);
+      return node;
+    }
+    function buildPlaceholder(column, columnIndex) {
+      const node = el("div", {
+        "data-pica": "placeholder",
+        role: "option",
+        "aria-selected": "false",
+        "aria-label": `${column.title} is empty`,
+        tabindex: stopEquals(focusedStop, { columnIndex, cardId: null }) ? "0" : "-1",
+        "data-column-index": String(columnIndex),
+        "data-card-index": "0"
+      });
+      node.textContent = "No cards";
+      return node;
+    }
+    function buildColumn(column, columnIndex) {
+      const headId = `${uid}-head-${columnIndex}`;
+      const head = el("div", { "data-pica": "column-head", id: headId });
+      const title = el("span", { "data-pica": "column-title" });
+      title.textContent = column.title;
+      const count = el("span", { "data-pica": "column-count" });
+      count.textContent = String(column.cards.length);
+      const countWord = el("span", { "data-pica": "sr-only" });
+      countWord.textContent = column.cards.length === 1 ? " card" : " cards";
+      count.append(countWord);
+      head.append(title, " ", count);
+      const list = el("div", { "data-pica": "list", role: "listbox", "aria-labelledby": headId, "data-column-index": String(columnIndex) });
+      if (column.cards.length === 0) list.append(buildPlaceholder(column, columnIndex));
+      else column.cards.forEach((card, cardIndex) => list.append(buildCard(card, column, columnIndex, cardIndex)));
+      const wrap = el("div", { "data-pica": "column", "data-column-index": String(columnIndex) });
+      wrap.append(head, list);
+      return wrap;
+    }
+    function apply() {
+      attrs.set("role", "group");
+      attrs.set("aria-label", props.label ? props.label : null);
+      sheet.setRules(rules(sheet.selector, props.fontFamily));
+      const display = grabbed && working ? working : committedColumns();
+      const hadFocus = host.contains(document.activeElement);
+      board.replaceChildren(...display.map((column, index) => buildColumn(column, index)));
+      if (hadFocus && focusedStop) findStopElement(focusedStop)?.focus({ preventScroll: true });
+    }
+    function pickUp(cardId) {
+      const committed = committedColumns();
+      const spot = locateCard(committed, cardId);
+      const column = spot ? committed[spot.columnIndex] : void 0;
+      const card = spot && column ? column.cards[spot.cardIndex] : void 0;
+      if (!spot || !column || !card) return;
+      grabbed = { cardId, fromColumnId: column.id, fromIndex: spot.cardIndex, fromCount: column.cards.length };
+      working = cloneColumns(committed);
+      focusedStop = { columnIndex: spot.columnIndex, cardId };
+      announce(`Picked up ${card.title}, ${spot.cardIndex + 1} of ${column.cards.length} in ${column.title}. Arrow keys move it, space drops it, escape cancels.`);
+      apply();
+    }
+    function dropGrabbed() {
+      const active = grabbed;
+      const draft = working;
+      if (!active || !draft) return;
+      const spot = locateCard(draft, active.cardId);
+      const column = spot ? draft[spot.columnIndex] : void 0;
+      const card = spot && column ? column.cards[spot.cardIndex] : void 0;
+      if (spot && column && card) {
+        if (column.id !== active.fromColumnId || spot.cardIndex !== active.fromIndex) {
+          const snapshot = cloneColumns(draft);
+          emit("move", { card: card.id, from: active.fromColumnId, to: column.id, index: spot.cardIndex });
+          emit("valueChange", snapshot);
+          if (props.value === null) columns = cloneColumns(draft);
+          announce(`Dropped ${card.title} in ${column.title}, ${spot.cardIndex + 1} of ${column.cards.length}.`);
+        } else {
+          announce(`Dropped ${card.title}.`);
+        }
+      }
+      grabbed = null;
+      working = null;
+      apply();
+    }
+    function cancelGrab() {
+      const active = grabbed;
+      if (!active) return;
+      const committed = committedColumns();
+      const spot = locateCard(committed, active.cardId);
+      const column = spot ? committed[spot.columnIndex] : void 0;
+      const card = spot && column ? column.cards[spot.cardIndex] : void 0;
+      announce(card && column ? `Cancelled. ${card.title} stayed in ${column.title}, ${active.fromIndex + 1} of ${active.fromCount}.` : "Cancelled.");
+      grabbed = null;
+      working = null;
+      apply();
+    }
+    function onKeydown(event) {
+      const target = event.target;
+      const stopEl = target instanceof HTMLElement ? target.closest('[data-pica="card"],[data-pica="placeholder"]') : null;
+      if (!(stopEl instanceof HTMLElement) || !host.contains(stopEl)) return;
+      if (event.key === " ") {
+        event.preventDefault();
+        if (grabbed) dropGrabbed();
+        else if (stopEl.dataset.cardId) pickUp(stopEl.dataset.cardId);
+        return;
+      }
+      if (event.key === "Escape") {
+        if (grabbed) {
+          event.preventDefault();
+          cancelGrab();
+        }
+        return;
+      }
+      if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        const active = grabbed;
+        const draft = working;
+        if (active && draft) {
+          if (!dragMove(draft, active.cardId, event.key)) return;
+          const spot = locateCard(draft, active.cardId);
+          const column = spot ? draft[spot.columnIndex] : void 0;
+          const card = spot && column ? column.cards[spot.cardIndex] : void 0;
+          if (spot && column && card) {
+            focusedStop = { columnIndex: spot.columnIndex, cardId: active.cardId };
+            announce(`${card.title} now ${spot.cardIndex + 1} of ${column.cards.length} in ${column.title}.`);
+          }
+          apply();
+        } else if (focusedStop) {
+          const next = navigate(committedColumns(), focusedStop, event.key);
+          if (!stopEquals(next, focusedStop)) {
+            focusedStop = next;
+            apply();
+          }
+        }
+      }
+    }
+    let pointerId = null;
+    let pointerCardId = null;
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let dragging = false;
+    function onPointerDown(event) {
+      if (event.button !== 0) return;
+      const target = event.target;
+      const cardEl = target instanceof HTMLElement ? target.closest('[data-pica="card"]') : null;
+      if (!(cardEl instanceof HTMLElement) || !host.contains(cardEl) || !cardEl.dataset.cardId) return;
+      if (grabbed && grabbed.cardId !== cardEl.dataset.cardId) cancelGrab();
+      pointerId = event.pointerId;
+      pointerCardId = cardEl.dataset.cardId;
+      pointerStartX = event.clientX;
+      pointerStartY = event.clientY;
+      dragging = false;
+      host.setPointerCapture(event.pointerId);
+    }
+    function onPointerMove(event) {
+      const activeId = pointerId;
+      const cardId = pointerCardId;
+      if (activeId === null || event.pointerId !== activeId || !cardId) return;
+      if (!dragging) {
+        if (Math.hypot(event.clientX - pointerStartX, event.clientY - pointerStartY) < 5) return;
+        dragging = true;
+        if (!grabbed) pickUp(cardId);
+      }
+      event.preventDefault();
+      const draft = working;
+      if (!grabbed || !draft) return;
+      const hit = hitTest(host, event.clientX, event.clientY);
+      if (hit && relocateTo(draft, cardId, hit.columnIndex, hit.index)) {
+        const spot = locateCard(draft, cardId);
+        if (spot) focusedStop = { columnIndex: spot.columnIndex, cardId };
+        apply();
+      }
+    }
+    function endPointer(event, cancel) {
+      const activeId = pointerId;
+      if (activeId === null || event.pointerId !== activeId) return;
+      if (host.hasPointerCapture(activeId)) host.releasePointerCapture(activeId);
+      pointerId = null;
+      pointerCardId = null;
+      const wasDragging = dragging;
+      dragging = false;
+      if (wasDragging) {
+        if (cancel) cancelGrab();
+        else dropGrabbed();
+      }
+    }
+    const onPointerUp = (event) => endPointer(event, false);
+    const onPointerCancel = (event) => endPointer(event, true);
+    function onFocusIn(event) {
+      const target = event.target;
+      const stopEl = target instanceof HTMLElement ? target.closest('[data-pica="card"],[data-pica="placeholder"]') : null;
+      if (!(stopEl instanceof HTMLElement) || !host.contains(stopEl)) return;
+      const next = { columnIndex: Number(stopEl.dataset.columnIndex), cardId: stopEl.dataset.cardId ?? null };
+      if (stopEquals(next, focusedStop)) return;
+      focusedStop = next;
+      for (const node of board.querySelectorAll('[data-pica="card"],[data-pica="placeholder"]')) node.tabIndex = node === stopEl ? 0 : -1;
+    }
+    host.addEventListener("keydown", onKeydown);
+    host.addEventListener("pointerdown", onPointerDown);
+    host.addEventListener("pointermove", onPointerMove);
+    host.addEventListener("pointerup", onPointerUp);
+    host.addEventListener("pointercancel", onPointerCancel);
+    host.addEventListener("focusin", onFocusIn);
+    apply();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const prevValue = props.value;
+        props = { ...props, ...next };
+        if (!sameJson(prevValue, props.value)) {
+          grabbed = null;
+          working = null;
+          const committed = committedColumns();
+          if (!focusedStop || !locateStop(committed, focusedStop)) focusedStop = firstStop(committed);
+        }
+        apply();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        host.removeEventListener("keydown", onKeydown);
+        host.removeEventListener("pointerdown", onPointerDown);
+        host.removeEventListener("pointermove", onPointerMove);
+        host.removeEventListener("pointerup", onPointerUp);
+        host.removeEventListener("pointercancel", onPointerCancel);
+        host.removeEventListener("focusin", onFocusIn);
+        live.remove();
+        board.remove();
+        sheet.destroy();
+        attrs.restore();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaKanbanBoard.mount(host, take(window.PICA_PROPS || {}));
+  ["move","valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

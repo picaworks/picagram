@@ -1,0 +1,345 @@
+<!doctype html>
+<!--
+  Pica · Marquee · marquee
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Marquee · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><span>ASCII</span><span>Dither</span><span>Effects</span><span>Shaders</span><span>Motion</span><span>Controls</span></div>
+<script>
+"use strict";
+var PicaMarquee = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/motion/marquee/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // registry/motion/marquee/core.ts
+  var defaults = {
+    speed: 40,
+    direction: "left",
+    gap: 2,
+    pauseOnHover: true,
+    fps: 30,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var DATA_PICA = "data-pica";
+  var OFFSET_VAR = "--pica-marquee-x";
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const sheet = scope(host);
+    const restoreHost = styleHost(host, {
+      display: "flex",
+      "flex-wrap": "nowrap",
+      "align-items": "center",
+      overflow: "hidden",
+      gap: `${props.gap}em`,
+      [OFFSET_VAR]: "0px"
+    });
+    sheet.setRules(`${sheet.selector} > *:not([${DATA_PICA}]){flex:none;transform:translateX(var(${OFFSET_VAR},0px))}`);
+    let hovered = false;
+    let focused = false;
+    let period = 0;
+    let clones = [];
+    function isOwn(node) {
+      return node instanceof HTMLElement && node.hasAttribute(DATA_PICA);
+    }
+    function realChildren() {
+      const out = [];
+      for (const child of Array.from(host.children)) {
+        if (child instanceof HTMLElement && !child.hasAttribute(DATA_PICA)) out.push(child);
+      }
+      return out;
+    }
+    function buildClone(children) {
+      const group = document.createElement("div");
+      group.setAttribute(DATA_PICA, "");
+      group.setAttribute("aria-hidden", "true");
+      group.setAttribute("inert", "");
+      group.style.cssText = `display:flex;flex:none;gap:${props.gap}em;transform:translateX(var(${OFFSET_VAR},0px))`;
+      for (const child of children) group.appendChild(child.cloneNode(true));
+      return group;
+    }
+    function clearClones() {
+      for (const clone of clones) clone.remove();
+      clones = [];
+    }
+    function rebuildClones() {
+      clearClones();
+      const children = realChildren();
+      const first = children[0];
+      if (!first) {
+        period = 0;
+        return;
+      }
+      const startLeft = first.getBoundingClientRect().left;
+      const probe = buildClone(children);
+      host.append(probe);
+      period = Math.max(1, probe.getBoundingClientRect().left - startLeft);
+      probe.remove();
+      const needed = Math.max(1, Math.ceil(host.clientWidth / period));
+      const built = [];
+      for (let i = 0; i < needed; i++) {
+        const clone = buildClone(children);
+        if (props.direction === "right") host.prepend(clone);
+        else host.append(clone);
+        built.push(clone);
+      }
+      clones = built;
+    }
+    rebuildClones();
+    const childObserver = new MutationObserver((records) => {
+      const changed = records.some(
+        (record) => Array.from(record.addedNodes).some((node) => !isOwn(node)) || Array.from(record.removedNodes).some((node) => !isOwn(node))
+      );
+      if (changed) rebuildClones();
+    });
+    childObserver.observe(host, { childList: true });
+    function isPaused() {
+      return props.paused || props.pauseOnHover && hovered || focused;
+    }
+    function draw(t) {
+      const wrapped = period > 0 ? t / 1e3 * props.speed % period : 0;
+      const offset = props.direction === "left" ? -wrapped : wrapped;
+      host.style.setProperty(OFFSET_VAR, `${offset.toFixed(2)}px`);
+      host.dataset.picaReady = "true";
+    }
+    const loop = createLoop({
+      el: host,
+      fps: props.fps,
+      paused: isPaused(),
+      time: props.time,
+      still: 0,
+      frame: draw
+    });
+    function onEnter() {
+      hovered = true;
+      loop.update({ paused: isPaused() });
+    }
+    function onLeave() {
+      hovered = false;
+      loop.update({ paused: isPaused() });
+    }
+    function onFocusIn() {
+      focused = true;
+      loop.update({ paused: isPaused() });
+    }
+    function onFocusOut(event) {
+      focused = event.relatedTarget instanceof Node && host.contains(event.relatedTarget);
+      loop.update({ paused: isPaused() });
+    }
+    host.addEventListener("mouseenter", onEnter);
+    host.addEventListener("mouseleave", onLeave);
+    host.addEventListener("focusin", onFocusIn);
+    host.addEventListener("focusout", onFocusOut);
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.gap !== before.gap) host.style.setProperty("gap", `${props.gap}em`);
+        if (props.gap !== before.gap || props.direction !== before.direction) rebuildClones();
+        loop.update({ paused: isPaused(), time: props.time, fps: props.fps });
+        loop.redraw();
+      },
+      destroy() {
+        loop.destroy();
+        host.removeEventListener("mouseenter", onEnter);
+        host.removeEventListener("mouseleave", onLeave);
+        host.removeEventListener("focusin", onFocusIn);
+        host.removeEventListener("focusout", onFocusOut);
+        childObserver.disconnect();
+        clearClones();
+        sheet.destroy();
+        restoreHost();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaMarquee.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

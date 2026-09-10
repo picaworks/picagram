@@ -1,0 +1,543 @@
+<!doctype html>
+<!--
+  Pica · Select · select
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Select · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaSelect = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/select/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/select/core.ts
+  var defaults = {
+    options: [
+      { value: "ascii", label: "ASCII", disabled: false },
+      { value: "dither", label: "Dither", disabled: false },
+      { value: "shaders", label: "Shaders", disabled: false },
+      { value: "charts", label: "Charts", disabled: false }
+    ],
+    value: null,
+    defaultValue: "ascii",
+    placeholder: "Choose one",
+    label: "Family",
+    disabled: false
+  };
+  var CHECK = "✓";
+  var CHEVRON_CLOSED = "▾";
+  var CHEVRON_OPEN = "▴";
+  var TYPEAHEAD_RESET_MS = 600;
+  function rules(s, anchorVar) {
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    return [
+      `${s}{display:inline-flex;align-items:center;justify-content:space-between;gap:0.6em;min-width:8em;box-sizing:border-box;font:inherit;color:${fg};background:transparent;border:1px solid ${fg};border-radius:0;padding:0.45em 0.7em;cursor:pointer;user-select:none;white-space:nowrap;anchor-name:${anchorVar}}`,
+      `${s}:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${s}[aria-disabled="true"]{opacity:0.45;cursor:not-allowed}`,
+      `${s} [data-pica-chevron]{font-family:${GRID_FONT};color:${accent};line-height:1;flex:none}`,
+      `${s} [data-pica-listbox]{position:fixed;inset:auto;top:anchor(${anchorVar} bottom);left:anchor(${anchorVar} left);min-width:anchor-size(${anchorVar} width);margin:0.25em 0 0;padding:0.25em 0;border:1px solid ${fg};background:transparent;color:${fg};font:inherit;max-height:16em;overflow:auto;box-sizing:border-box}`,
+      `${s} [data-pica-option]{display:flex;align-items:center;gap:0.5em;padding:0.35em 0.7em;white-space:nowrap;cursor:pointer}`,
+      `${s} [data-pica-option][data-active="true"]{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${s} [data-pica-option][aria-disabled="true"]{opacity:0.45;cursor:not-allowed}`,
+      `${s} [data-pica-check]{font-family:${GRID_FONT};color:${accent};width:1em;flex:none;text-align:center}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let current = props.value ?? props.defaultValue;
+    let lastOptions;
+    let rows = [];
+    let activeIndex = -1;
+    let openState = false;
+    let typeaheadBuffer = "";
+    let typeaheadTimer;
+    const emit = emitter(host);
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    const listboxId = nextId("pica-select-listbox");
+    const anchorVar = `--${nextId("pica-select-anchor")}`;
+    const supportsAnchor = typeof CSS !== "undefined" && CSS.supports("anchor-name", anchorVar);
+    const valueEl = document.createElement("span");
+    valueEl.setAttribute("data-pica", "");
+    const chevronEl = document.createElement("span");
+    chevronEl.setAttribute("data-pica", "");
+    chevronEl.setAttribute("data-pica-chevron", "");
+    chevronEl.setAttribute("aria-hidden", "true");
+    const listboxEl = document.createElement("div");
+    listboxEl.setAttribute("data-pica", "");
+    listboxEl.setAttribute("data-pica-listbox", "");
+    listboxEl.setAttribute("popover", "manual");
+    listboxEl.setAttribute("role", "listbox");
+    listboxEl.id = listboxId;
+    host.append(valueEl, chevronEl, listboxEl);
+    function effectiveValue() {
+      return props.value !== null ? props.value : current;
+    }
+    function indexForValue(value) {
+      return props.options.findIndex((option) => option.value === value);
+    }
+    function enabledIndices() {
+      const list = [];
+      for (let i = 0; i < props.options.length; i++) {
+        if (!props.options[i]?.disabled) list.push(i);
+      }
+      return list;
+    }
+    function firstEnabled() {
+      return enabledIndices().at(0) ?? -1;
+    }
+    function lastEnabled() {
+      return enabledIndices().at(-1) ?? -1;
+    }
+    function stepEnabled(from, delta) {
+      const list = enabledIndices();
+      if (list.length === 0) return -1;
+      const at = list.indexOf(from);
+      const base = at === -1 ? delta > 0 ? -1 : list.length : at;
+      const next = Math.max(0, Math.min(list.length - 1, base + delta));
+      return list[next] ?? -1;
+    }
+    function defaultActiveIndex() {
+      const index = indexForValue(effectiveValue());
+      return index !== -1 ? index : firstEnabled();
+    }
+    function renderOptions() {
+      listboxEl.replaceChildren();
+      rows = props.options.map((option, index) => {
+        const row = document.createElement("div");
+        row.setAttribute("data-pica", "");
+        row.setAttribute("data-pica-option", "");
+        row.setAttribute("role", "option");
+        row.id = `${listboxId}-opt-${index}`;
+        row.dataset.picaIndex = String(index);
+        row.setAttribute("aria-selected", "false");
+        if (option.disabled) row.setAttribute("aria-disabled", "true");
+        const check = document.createElement("span");
+        check.setAttribute("data-pica", "");
+        check.setAttribute("data-pica-check", "");
+        check.setAttribute("aria-hidden", "true");
+        row.append(check, document.createTextNode(option.label));
+        return row;
+      });
+      listboxEl.append(...rows);
+    }
+    function renderChosenMarks() {
+      const chosen = indexForValue(effectiveValue());
+      rows.forEach((row, index) => {
+        const check = row.querySelector("[data-pica-check]");
+        if (check) check.textContent = index === chosen ? CHECK : "";
+      });
+    }
+    function renderTrigger() {
+      const index = indexForValue(effectiveValue());
+      const shown = index === -1 ? props.placeholder : props.options[index]?.label ?? props.placeholder;
+      valueEl.textContent = shown;
+      labelHost(host, props.label ? `${props.label}, ${shown}` : "", "combobox");
+    }
+    function applyState() {
+      const hidden = !props.label;
+      attrs.set("aria-controls", hidden ? null : listboxId);
+      attrs.set("aria-expanded", String(openState));
+      attrs.set("tabindex", hidden || props.disabled ? "-1" : "0");
+      attrs.set("aria-disabled", props.disabled ? "true" : null);
+      chevronEl.textContent = openState ? CHEVRON_OPEN : CHEVRON_CLOSED;
+    }
+    function setActive(index) {
+      if (index === activeIndex) return;
+      const prev = activeIndex >= 0 ? rows[activeIndex] : void 0;
+      prev?.removeAttribute("data-active");
+      prev?.setAttribute("aria-selected", "false");
+      activeIndex = index;
+      const row = activeIndex >= 0 ? rows[activeIndex] : void 0;
+      if (row) {
+        row.setAttribute("data-active", "true");
+        row.setAttribute("aria-selected", "true");
+        attrs.set("aria-activedescendant", row.id);
+        row.scrollIntoView({ block: "nearest" });
+      } else {
+        attrs.set("aria-activedescendant", null);
+      }
+    }
+    function position() {
+      if (supportsAnchor) return;
+      const rect = host.getBoundingClientRect();
+      listboxEl.style.top = `${rect.bottom}px`;
+      listboxEl.style.left = `${rect.left}px`;
+      listboxEl.style.minWidth = `${rect.width}px`;
+    }
+    function setOpen(next, options) {
+      if (openState === next) {
+        if (next && options?.activeIndex !== void 0) setActive(options.activeIndex);
+        return;
+      }
+      openState = next;
+      if (next) {
+        listboxEl.showPopover();
+        position();
+        setActive(options?.activeIndex ?? defaultActiveIndex());
+        document.addEventListener("pointerdown", onOutsidePointerDown, true);
+        if (!supportsAnchor) {
+          window.addEventListener("resize", position);
+          window.addEventListener("scroll", position, true);
+        }
+      } else {
+        listboxEl.hidePopover();
+        document.removeEventListener("pointerdown", onOutsidePointerDown, true);
+        if (!supportsAnchor) {
+          window.removeEventListener("resize", position);
+          window.removeEventListener("scroll", position, true);
+        }
+        setActive(-1);
+      }
+      applyState();
+    }
+    function choose(index) {
+      const option = props.options[index];
+      if (!option || option.disabled) return;
+      if (props.value === null) current = option.value;
+      emit("valueChange", option.value);
+      setOpen(false);
+      renderTrigger();
+      renderChosenMarks();
+    }
+    function typeaheadKey(key) {
+      if (key.length !== 1 || key === " ") return false;
+      if (typeaheadTimer !== void 0) clearTimeout(typeaheadTimer);
+      typeaheadBuffer += key.toLowerCase();
+      typeaheadTimer = setTimeout(() => {
+        typeaheadBuffer = "";
+      }, TYPEAHEAD_RESET_MS);
+      const first = typeaheadBuffer[0] ?? "";
+      const repeat = [...typeaheadBuffer].every((c) => c === first);
+      const query = repeat ? first : typeaheadBuffer;
+      const enabled = enabledIndices();
+      const at = enabled.indexOf(activeIndex);
+      const ordered = at === -1 ? enabled : [...enabled.slice(at + 1), ...enabled.slice(0, at + 1)];
+      const match = ordered.find((index) => (props.options[index]?.label ?? "").toLowerCase().startsWith(query));
+      if (match !== void 0) {
+        if (openState) setActive(match);
+        else setOpen(true, { activeIndex: match });
+      }
+      return true;
+    }
+    function onOutsidePointerDown(e) {
+      if (!host.contains(e.target)) setOpen(false);
+    }
+    function onHostFocusOut(e) {
+      if (host.contains(e.relatedTarget)) return;
+      if (openState) setOpen(false);
+    }
+    function onHostPointerOver(e) {
+      if (!openState || props.disabled) return;
+      const row = e.target.closest?.("[data-pica-option]");
+      if (!row || !listboxEl.contains(row)) return;
+      const index = Number(row.dataset.picaIndex);
+      if (Number.isNaN(index) || props.options[index]?.disabled) return;
+      setActive(index);
+    }
+    function onHostClick(e) {
+      if (props.disabled || !props.label) return;
+      const target = e.target;
+      const row = target.closest("[data-pica-option]");
+      if (row && listboxEl.contains(row)) {
+        const index = Number(row.dataset.picaIndex);
+        if (!Number.isNaN(index)) choose(index);
+        return;
+      }
+      if (listboxEl.contains(target)) return;
+      setOpen(!openState, openState ? void 0 : { activeIndex: defaultActiveIndex() });
+    }
+    function onKeyDown(e) {
+      if (props.disabled || !props.label) return;
+      const key = e.key;
+      if (!openState) {
+        if (key === "ArrowDown" || key === "Enter" || key === " ") {
+          e.preventDefault();
+          setOpen(true, { activeIndex: defaultActiveIndex() });
+          return;
+        }
+        if (key === "ArrowUp" || key === "Home") {
+          e.preventDefault();
+          setOpen(true, { activeIndex: firstEnabled() });
+          return;
+        }
+        if (key === "End") {
+          e.preventDefault();
+          setOpen(true, { activeIndex: lastEnabled() });
+          return;
+        }
+        if (typeaheadKey(key)) e.preventDefault();
+        return;
+      }
+      if (key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+        return;
+      }
+      if (key === "Enter" || key === " ") {
+        e.preventDefault();
+        choose(activeIndex);
+        return;
+      }
+      if (key === "Tab") {
+        choose(activeIndex);
+        return;
+      }
+      if (key === "ArrowDown") {
+        e.preventDefault();
+        setActive(stepEnabled(activeIndex, 1));
+        return;
+      }
+      if (key === "ArrowUp") {
+        e.preventDefault();
+        if (e.altKey) choose(activeIndex);
+        else setActive(stepEnabled(activeIndex, -1));
+        return;
+      }
+      if (key === "Home") {
+        e.preventDefault();
+        setActive(firstEnabled());
+        return;
+      }
+      if (key === "End") {
+        e.preventDefault();
+        setActive(lastEnabled());
+        return;
+      }
+      if (key === "PageDown") {
+        e.preventDefault();
+        setActive(stepEnabled(activeIndex, 10));
+        return;
+      }
+      if (key === "PageUp") {
+        e.preventDefault();
+        setActive(stepEnabled(activeIndex, -10));
+        return;
+      }
+      if (typeaheadKey(key)) e.preventDefault();
+    }
+    function apply() {
+      sheet.setRules(rules(sheet.selector, anchorVar));
+      if (lastOptions === void 0 || !sameJson(props.options, lastOptions)) {
+        lastOptions = props.options;
+        renderOptions();
+        activeIndex = -1;
+        if (openState) setActive(defaultActiveIndex());
+      }
+      if (props.value !== null) current = props.value;
+      renderTrigger();
+      renderChosenMarks();
+      if (props.disabled && openState) setOpen(false);
+      applyState();
+    }
+    host.addEventListener("keydown", onKeyDown);
+    host.addEventListener("click", onHostClick);
+    host.addEventListener("pointerover", onHostPointerOver);
+    host.addEventListener("focusout", onHostFocusOut);
+    apply();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        apply();
+      },
+      destroy() {
+        setOpen(false);
+        host.removeEventListener("keydown", onKeyDown);
+        host.removeEventListener("click", onHostClick);
+        host.removeEventListener("pointerover", onHostPointerOver);
+        host.removeEventListener("focusout", onHostFocusOut);
+        if (typeaheadTimer !== void 0) clearTimeout(typeaheadTimer);
+        unlabelHost(host);
+        valueEl.remove();
+        chevronEl.remove();
+        listboxEl.remove();
+        sheet.destroy();
+        attrs.restore();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaSelect.mount(host, take(window.PICA_PROPS || {}));
+  ["valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

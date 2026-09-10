@@ -1,0 +1,275 @@
+<!doctype html>
+<!--
+  Pica · Dialog · dialog
+  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/pica
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Dialog · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<dialog id="pica"><p>This publishes the current build to production.</p><button type="button">Deploy</button></dialog>
+<script>
+"use strict";
+var PicaDialog = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/dialog/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/dialog/core.ts
+  var defaults = {
+    open: null,
+    defaultOpen: false,
+    title: "Deploy to production",
+    closable: true,
+    dismissOnBackdrop: true,
+    width: 32
+  };
+  var CLOSE_GLYPH = "×";
+  function rules(s) {
+    const fg = cssVar("fg");
+    const bg = cssVar("bg");
+    const accent = cssVar("accent");
+    return [
+      `${s}{box-sizing:border-box;background:${bg};color:${fg};border:1px solid ${fg};border-radius:0;box-shadow:none;padding:1.5rem;max-width:calc(100vw - 2rem);max-height:calc(100vh - 2rem);overflow:auto}`,
+      `${s}::backdrop{background:color-mix(in srgb, ${fg} 35%, transparent)}`,
+      `${s} button[data-pica]{appearance:none;margin:0;background:transparent;border:1px solid transparent;color:${fg};font-family:${GRID_FONT};font-size:1.1em;line-height:1;padding:0.15em 0.5em;cursor:pointer}`,
+      `${s} button[data-pica]:hover{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${s} button[data-pica]:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const dialog = host;
+    const emit = emitter(host);
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    let openState = props.defaultOpen;
+    let restoreSize = null;
+    const titleId = nextId("pica-dialog-title");
+    const header = document.createElement("div");
+    header.setAttribute("data-pica", "");
+    header.style.cssText = `display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;border-bottom:1px solid ${cssVar("fg")};padding-bottom:0.75rem;margin-bottom:1rem`;
+    const heading = document.createElement("h2");
+    heading.setAttribute("data-pica", "");
+    heading.id = titleId;
+    heading.style.cssText = "margin:0;font-size:1.125em;font-weight:600";
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.setAttribute("data-pica", "");
+    closeButton.setAttribute("aria-label", "Close");
+    closeButton.textContent = CLOSE_GLYPH;
+    header.append(heading, closeButton);
+    host.prepend(header);
+    function requestClose() {
+      if (props.open === null) {
+        openState = false;
+        apply();
+      }
+      emit("openChange", false);
+    }
+    const onCancel = (event) => {
+      event.preventDefault();
+      requestClose();
+    };
+    const onCloseClick = () => {
+      requestClose();
+    };
+    const onBackdropClick = (event) => {
+      if (!props.dismissOnBackdrop || !dialog.open) return;
+      const rect = dialog.getBoundingClientRect();
+      const inside = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+      if (!inside) requestClose();
+    };
+    host.addEventListener("cancel", onCancel);
+    host.addEventListener("click", onBackdropClick);
+    closeButton.addEventListener("click", onCloseClick);
+    function apply() {
+      heading.textContent = props.title;
+      attrs.set("aria-labelledby", titleId);
+      attrs.set("aria-modal", "true");
+      if (props.closable && !closeButton.isConnected) header.append(closeButton);
+      if (!props.closable && closeButton.isConnected) closeButton.remove();
+      const width = `${props.width}rem`;
+      if (restoreSize) host.style.setProperty("width", width);
+      else restoreSize = styleHost(host, { width, height: "fit-content" });
+      sheet.setRules(rules(sheet.selector));
+      const desired = props.open ?? openState;
+      if (desired && !dialog.open) dialog.showModal();
+      if (!desired && dialog.open) dialog.close();
+    }
+    apply();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        apply();
+      },
+      destroy() {
+        if (dialog.open) dialog.close();
+        host.removeEventListener("cancel", onCancel);
+        host.removeEventListener("click", onBackdropClick);
+        closeButton.removeEventListener("click", onCloseClick);
+        header.remove();
+        sheet.destroy();
+        attrs.restore();
+        restoreSize?.();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaDialog.mount(host, take(window.PICA_PROPS || {}));
+  ["openChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>
