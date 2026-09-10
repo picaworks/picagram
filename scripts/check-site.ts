@@ -2,9 +2,9 @@
  *  end to end: every component listed, a frame that loads, every control type, the palette, the events
  *  panel, and the copy snippets. Usage: npm run check:site
  *
- *  Two control types, textarea and json, and the palette and events panels, have no real component yet.
- *  PICA_FIXTURE=1 makes src/lib/catalog.ts add one synthetic item, "pica-fixture", with every control type
- *  and a declared event. This script's own server answers /v/pica-fixture.html itself, a small page that
+ *  No single real component has every control type, so PICA_FIXTURE=1 makes src/lib/catalog.ts add one
+ *  synthetic item, "pica-fixture", with every control type and a declared event. The events panel is also
+ *  checked once against a real component, select, driven by keyboard inside its own frame. This script's own server answers /v/pica-fixture.html itself, a small page that
  *  mirrors the real contract (reads window.PICA_PROPS, applies a palette, answers pica:props messages) and
  *  reflects every prop onto its host as a data attribute, so a change is easy to observe from outside the
  *  frame. Nothing under registry/ or public/ changes; the fixture never appears in a normal build. */
@@ -253,6 +253,24 @@ async function main(): Promise<void> {
       return rows.some((row) => row.includes("ping") && row.includes('{"n":1}'));
     });
     checks.push({ name: "pica:event reaches the events panel", ok: eventShown, detail: eventShown ? "a ping row appeared" : "no matching row" });
+
+    // A real component's event, end to end: select's valueChange, driven by keyboard inside its frame.
+    await select(page, "Select");
+    await page.waitForSelector('iframe.frame-live[src="/v/select.html"]');
+    await waitUntil(async () => page.frame({ url: /\/v\/select\.html/ }) !== null);
+    const selectFrame = page.frame({ url: /\/v\/select\.html/ });
+    let valueChangeShown = false;
+    if (selectFrame) {
+      await selectFrame.waitForSelector('[data-pica-ready="true"]', { state: "attached", timeout: 5000 });
+      const combobox = selectFrame.locator("#pica");
+      await combobox.focus();
+      for (const key of ["Enter", "ArrowDown", "Enter"]) await combobox.press(key);
+      valueChangeShown = await waitUntil(async () => {
+        const rows = await page.locator(".events-row").allTextContents();
+        return rows.some((row) => row.includes("valueChange") && row.includes("dither"));
+      });
+    }
+    checks.push({ name: "select's valueChange reaches the events panel", ok: valueChangeShown, detail: valueChangeShown ? "a valueChange row naming dither appeared" : "no matching row" });
 
     checks.push({ name: "no console errors", ok: consoleErrors.length === 0, detail: consoleErrors[0] ?? "none" });
   } finally {
