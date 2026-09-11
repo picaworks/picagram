@@ -1,15 +1,17 @@
+<p align="center"><img src="public/wordmark.svg" alt="Picagram" width="360"></p>
+
 # Picagram
 
 ASCII-first components for React and plain HTML: text-mode, dither, and pattern effects, plus shaders, charts, controls, and page sections drawn in the same grammar. Every component ships in two shapes: one React file that imports only `react`, and one HTML file that needs nothing. Both are generated from a single source and checked against each other in a real browser.
 
-License: MIT + Commons Clause. See [LICENSE.md](LICENSE.md).
+Browse the catalog at [picagram.dev](https://picagram.dev). License: MIT + Commons Clause. See [LICENSE.md](LICENSE.md).
 
 ## Use a component
 
-- **shadcn CLI:** `npx shadcn@latest add <registry url>/<slug>.json`. The URL is on each component's page.
+- **shadcn CLI:** `npx shadcn@latest add https://picagram.dev/r/<slug>.json`. Each component's page has its exact line.
 - **Copy React:** one `.tsx` file per component. It imports only `react`, and needs no Tailwind and no `cn()`.
 - **Copy HTML:** one self-contained `.html` file per component. It needs no build step.
-- **Coding agents:** start at `/llms.txt`. Every component has a markdown twin at `/c/<slug>.md` with both files inline.
+- **Coding agents:** start at [picagram.dev/llms.txt](https://picagram.dev/llms.txt). Every component has a markdown twin at `/c/<slug>.md` with both files inline.
 
 ## What it looks like
 
@@ -30,4 +32,4 @@ Every component names what it builds on, on its own page and in [CREDITS.md](CRE
 
 ## Contributing
 
-Read [AGENTS.md](AGENTS.md) first, then [CONTRIBUTING.md](CONTRIBUTING.md). `npm run check` must pass before anything merges.
+Read [AGENTS.md](AGENTS.md) first, then [CONTRIBUTING.md](CONTRIBUTING.md). Every change arrives as a pull request: `main` is protected, and a pull request merges only after its `build` check passes. That check runs the same gate as `npm run check` and `npm run verify`, on macOS. Merging to `main` deploys the site.

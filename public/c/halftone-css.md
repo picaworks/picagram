@@ -7,7 +7,7 @@ Category: effects. Tags: background, pattern, halftone, css. Static. Size: 1.4 K
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/halftone-css.json
+npx shadcn@latest add https://picagram.dev/r/halftone-css.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

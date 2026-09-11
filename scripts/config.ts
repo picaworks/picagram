@@ -5,10 +5,10 @@ import type { Category } from "../lib/meta";
 export const LICENSE_LABEL = "MIT + Commons Clause";
 export const LICENSE_URL = "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md";
 export const HOMEPAGE = "https://github.com/rishabbalak/picagram";
-/** Where the catalog site is served: GitHub Pages, under /picagram until picagram.dev is set up. Moving to the
- *  domain means changing this, which also empties BASE_PATH, and adding public/CNAME. See
+/** Where the catalog site is served: picagram.dev, on GitHub Pages, with the domain set in the repository's Pages
+ *  settings. Serving it from a path instead means changing this, which also sets BASE_PATH. See
  *  docs/architecture/site.md. */
-export const SITE_URL = "https://rishabbalak.github.io/picagram";
+export const SITE_URL = "https://picagram.dev";
 /** The path the site is served under: Next's basePath for production builds. Empty at a domain's root. */
 export const BASE_PATH = new URL(SITE_URL).pathname.replace(/\/$/, "");
 /** Where `npx shadcn add` fetches registry items: the site's own /r, so it follows SITE_URL to the domain. */

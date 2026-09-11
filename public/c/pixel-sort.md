@@ -7,7 +7,7 @@ Category: effects. Tags: image, static, canvas, glitch. Static. Size: 3.5 KB gzi
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/pixel-sort.json
+npx shadcn@latest add https://picagram.dev/r/pixel-sort.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

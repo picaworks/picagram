@@ -7,7 +7,7 @@ Category: ascii. Tags: text, reveal, scramble, decode. Animated. Holds a still f
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-reveal.json
+npx shadcn@latest add https://picagram.dev/r/ascii-reveal.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

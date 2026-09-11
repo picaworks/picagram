@@ -7,7 +7,7 @@ Category: ascii. Tags: image, static, measured ramp, shape matching. Static. Siz
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-image.json
+npx shadcn@latest add https://picagram.dev/r/ascii-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

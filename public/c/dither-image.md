@@ -7,7 +7,7 @@ Category: dither. Tags: image, static, dither, canvas. Static. Size: 3.8 KB gzip
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/dither-image.json
+npx shadcn@latest add https://picagram.dev/r/dither-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

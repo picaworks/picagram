@@ -23,7 +23,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png" />
         <link rel="icon" href="icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="apple-touch-icon.png" />
         <link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt" />
       </head>
       <body>

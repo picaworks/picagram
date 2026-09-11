@@ -7,7 +7,7 @@ Category: ui. Tags: tooltip, popover, disclosure, overlay. Static. Size: 2.2 KB 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/popover-tooltip.json
+npx shadcn@latest add https://picagram.dev/r/popover-tooltip.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

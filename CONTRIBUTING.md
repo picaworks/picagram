@@ -4,7 +4,11 @@
 
 `docs/architecture/` is current; `docs/plans/` is history; `docs/decisions/` says why; `docs/testing/` says what done means.
 
-## Before you open a change
+## How a change lands
+
+`main` is protected, and nobody pushes to it, the maintainer included. Every change is a pull request from a branch or a fork. It merges, squashed, only after its `build` check passes. That check runs lint, the tests, the registry build, `npm run verify -- --quick` for every component, and `npm run check:site`, on macOS. Merging deploys the site at picagram.dev.
+
+## Before you open a pull request
 
 1. Run `npm install`, then `npx playwright install chromium` once.
 2. Run `npm run verify -- <slug>` for every component you touched.

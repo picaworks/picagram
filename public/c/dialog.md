@@ -7,7 +7,7 @@ Category: ui. Tags: dialog, modal, overlay, ui. Static. Size: 2.0 KB gzipped, ru
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/dialog.json
+npx shadcn@latest add https://picagram.dev/r/dialog.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

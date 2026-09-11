@@ -7,7 +7,7 @@ Category: ui. Tags: select, combobox, dropdown, listbox, form. Static. Size: 3.4
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/select.json
+npx shadcn@latest add https://picagram.dev/r/select.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

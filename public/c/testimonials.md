@@ -7,7 +7,7 @@ Category: sections. Tags: testimonials, quotes, carousel, section, social proof.
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/testimonials.json
+npx shadcn@latest add https://picagram.dev/r/testimonials.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

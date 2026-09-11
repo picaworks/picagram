@@ -7,7 +7,7 @@ Category: sections. Tags: pricing, tiers, billing, radio group, section. Static.
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/pricing.json
+npx shadcn@latest add https://picagram.dev/r/pricing.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

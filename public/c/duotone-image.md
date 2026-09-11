@@ -7,7 +7,7 @@ Category: effects. Tags: image, static, duotone, canvas. Static. Size: 3.3 KB gz
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/duotone-image.json
+npx shadcn@latest add https://picagram.dev/r/duotone-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

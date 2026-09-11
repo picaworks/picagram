@@ -7,7 +7,7 @@ Category: data. Tags: kanban, board, cards, drag, listbox. Static. Size: 4.4 KB 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/kanban-board.json
+npx shadcn@latest add https://picagram.dev/r/kanban-board.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

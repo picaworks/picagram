@@ -9,12 +9,20 @@ import { typecheckAlone } from "./helpers";
 
 const artifacts = await generate();
 
+/** Gzip sizes depend on the zlib inside each Node release, so both sides set them aside before comparing.
+ *  test/budget.test.ts still checks every size on the machine that runs it. */
+function withoutSizes(text: string): string {
+  return text.replace(/Size: [\d.]+ (?:B|KB|MB) gzipped/g, "Size: (gzip) gzipped").replace(/"gzipBytes": \d+/g, '"gzipBytes": 0');
+}
+
 describe("generated output", () => {
-  it("every committed generated file matches a fresh build", async () => {
+  it("every committed generated file matches a fresh build, apart from gzip sizes", async () => {
     for (const artifact of artifacts) {
       if (artifact.path.startsWith(".pica/")) continue;
       const committed = await readFile(join(ROOT, artifact.path), "utf8").catch(() => null);
-      expect(committed, `${artifact.path} is stale or missing: run npm run build:registry`).toBe(artifact.content);
+      expect(committed === null ? null : withoutSizes(committed), `${artifact.path} is stale or missing: run npm run build:registry`).toBe(
+        withoutSizes(artifact.content),
+      );
     }
   });
 

@@ -7,7 +7,7 @@ Category: ascii. Tags: 3d, rotation, measured ramp, depth buffer. Animated. Hold
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-solid.json
+npx shadcn@latest add https://picagram.dev/r/ascii-solid.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

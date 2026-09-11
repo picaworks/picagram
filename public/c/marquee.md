@@ -7,7 +7,7 @@ Category: motion. Tags: ticker, scroll, loop, css. Animated. Holds a still frame
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/marquee.json
+npx shadcn@latest add https://picagram.dev/r/marquee.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

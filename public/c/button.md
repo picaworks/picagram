@@ -7,7 +7,7 @@ Category: ui. Tags: button, action, form, ui. Static. Size: 2.4 KB gzipped, runt
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/button.json
+npx shadcn@latest add https://picagram.dev/r/button.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

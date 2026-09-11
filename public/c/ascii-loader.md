@@ -7,7 +7,7 @@ Category: text-mode. Tags: loader, spinner, progress, inline. Animated. Holds a 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-loader.json
+npx shadcn@latest add https://picagram.dev/r/ascii-loader.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

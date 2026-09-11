@@ -7,7 +7,7 @@ Category: ascii. Tags: background, noise, animated, decorative. Animated. Holds 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-noise-field.json
+npx shadcn@latest add https://picagram.dev/r/ascii-noise-field.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

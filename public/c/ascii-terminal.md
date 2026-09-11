@@ -7,7 +7,7 @@ Category: text-mode. Tags: terminal, typing, cursor, cli. Animated. Holds a stil
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-terminal.json
+npx shadcn@latest add https://picagram.dev/r/ascii-terminal.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

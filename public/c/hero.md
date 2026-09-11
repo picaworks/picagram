@@ -7,7 +7,7 @@ Category: sections. Tags: hero, landing, section, cta, background. Animated. Hol
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/hero.json
+npx shadcn@latest add https://picagram.dev/r/hero.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
