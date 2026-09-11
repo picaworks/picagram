@@ -11,3 +11,4 @@ Short, dated records of choices that constrain the code. One file per decision. 
 | 0005 | The palette is four CSS custom properties, read only through `lib/palette.ts`, and the palette prop writes them onto the host. |
 | 0006 | Shaders run on WebGL2 through `lib/gl.ts`, verified on the SwiftShader software renderer; vgpu is not the default runtime. |
 | 0007 | Only sections compose other components, each composed core is scoped in the React file, and byte budgets are set per category. |
+| 0008 | The public name is Picagram, and the code keeps its short prefix, pica. |

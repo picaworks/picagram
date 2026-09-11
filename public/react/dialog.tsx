@@ -3,8 +3,8 @@
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Dialog · dialog
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower

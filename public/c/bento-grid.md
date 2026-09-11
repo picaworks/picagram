@@ -2,12 +2,12 @@
 
 > A CSS grid section that sizes its children by position into a feature, mosaic, or equal column pattern.
 
-Category: sections. Tags: grid, layout, bento, section, css. Static. Size: 1.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: sections. Tags: grid, layout, bento, section, css. Static. Size: 1.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/bento-grid.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/bento-grid.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -38,8 +38,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Bento Grid · bento-grid
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -543,8 +543,8 @@ export function BentoGrid({ className, style, palette, children, ...props }: Ben
 <!doctype html>
 <!--
   Pica · Bento Grid · bento-grid
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -742,4 +742,4 @@ var PicaBentoGrid = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.

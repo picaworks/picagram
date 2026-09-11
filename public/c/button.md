@@ -2,12 +2,12 @@
 
 > A button in four looks, solid, outline, ghost, and monospace brackets, with a braille spinner while it loads.
 
-Category: ui. Tags: button, action, form, ui. Static. Size: 2.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ui. Tags: button, action, form, ui. Static. Size: 2.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/button.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/button.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -46,8 +46,8 @@ Draws with `--pica-accent`. Set it on any ancestor, pass `palette` to the React 
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Button · button
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -774,8 +774,8 @@ export function Button({ className, style, palette, children, ...props }: Button
 <!doctype html>
 <!--
   Pica · Button · button
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

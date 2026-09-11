@@ -8,3 +8,4 @@ How to add a plan: write it as `docs/plans/YYYY-MM-DD-<slug>.md`, get it approve
 |---|---|
 | `2026-09-10-v0.md` | Done: waves 1 and 2, 27 components, awaiting review |
 | `2026-09-10-phase-2.md` | Done through wave 3: the runtime and 17 new components, 46 in all, awaiting review |
+| `2026-09-10-site-polish-and-pages.md` | Built locally; the first deploy waits for the repository |

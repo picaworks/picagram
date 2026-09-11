@@ -8,7 +8,7 @@ import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { CATEGORY_TITLES, type Category, type Meta } from "../lib/meta";
 import { loadAll, ROOT, type Entry } from "./catalog";
-import { BUDGETS, HOMEPAGE, LICENSE_LABEL, LICENSE_URL, REGISTRY_BASE } from "./config";
+import { BUDGETS, HOMEPAGE, LICENSE_LABEL, LICENSE_URL, REGISTRY_BASE, SITE_URL } from "./config";
 import { reactSingleFile, vanillaBundle, vanillaHtml, vanillaParts } from "./single-file";
 
 const run = promisify(execFile);
@@ -68,7 +68,7 @@ function propType(entry: Entry, name: string): string {
 }
 
 function creditLines(meta: Meta): string[] {
-  if (meta.original && meta.credits.length === 0) return ["Original to Pica."];
+  if (meta.original && meta.credits.length === 0) return ["Original to Picagram."];
   const verb = { "port-of": "Port of", "inspired-by": "Inspired by", technique: "Technique from" } as const;
   return meta.credits.map((c) => `- ${verb[c.relation]} [${c.title}](${c.url}) by ${c.author} (${c.license}).`);
 }
@@ -159,11 +159,11 @@ function llmsTxt(entries: readonly Entry[]): string {
   const sections = byCategory(entries).flatMap(([category, list]) => [
     `## ${CATEGORY_TITLES[category]}`,
     "",
-    ...list.map((e) => `- [${e.meta.title}](/c/${e.meta.slug}.md): ${e.meta.description}`),
+    ...list.map((e) => `- [${e.meta.title}](${SITE_URL}/c/${e.meta.slug}.md): ${e.meta.description}`),
     "",
   ]);
   return [
-    "# Pica",
+    "# Picagram",
     "",
     "> ASCII-first components for React and plain HTML. Each component ships as one React file that imports only react, and one HTML file that needs nothing. Every page below is markdown with both files inline.",
     "",
@@ -172,9 +172,9 @@ function llmsTxt(entries: readonly Entry[]): string {
     ...sections,
     "## Optional",
     "",
-    "- [Every component in one file](/llms-full.txt)",
-    "- [shadcn registry index](/r/registry.json)",
-    "- [Catalog as JSON](/catalog.json)",
+    `- [Every component in one file](${SITE_URL}/llms-full.txt)`,
+    `- [shadcn registry index](${SITE_URL}/r/registry.json)`,
+    `- [Catalog as JSON](${SITE_URL}/catalog.json)`,
     "",
   ].join("\n");
 }
@@ -182,7 +182,7 @@ function llmsTxt(entries: readonly Entry[]): string {
 function registryJson(entries: readonly Entry[]): string {
   const registry = {
     $schema: "https://ui.shadcn.com/schema/registry.json",
-    name: "pica",
+    name: "picagram",
     homepage: HOMEPAGE,
     items: entries.map((e) => ({
       name: e.meta.slug,

@@ -2,12 +2,12 @@
 
 > A container framed in box-drawing characters, with an optional title set into the top rule.
 
-Category: text-mode. Tags: frame, border, box-drawing, static. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: frame, border, box-drawing, static. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-frame.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-frame.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -41,8 +41,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · ASCII Frame · ascii-frame
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -933,8 +933,8 @@ export function AsciiFrame({ className, style, palette, children, ...props }: As
 <!doctype html>
 <!--
   Pica · ASCII Frame · ascii-frame
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -1437,4 +1437,4 @@ var PicaAsciiFrame = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.

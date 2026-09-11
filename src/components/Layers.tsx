@@ -2,6 +2,7 @@
 import { useState, type RefObject } from "react";
 import { allTags, groupByCategory, type CatalogItem, type Category } from "@/lib/catalog";
 import { useMetaKey } from "@/lib/platform";
+import { Logo } from "./Logo";
 
 interface LayersProps {
   items: readonly CatalogItem[];
@@ -16,9 +17,11 @@ interface LayersProps {
   searchRef: RefObject<HTMLInputElement | null>;
 }
 
-/** The left pane: search, tag chips, and the component list grouped by category. */
+/** The left pane: search, tag chips behind a toggle, and the component list grouped by category. */
 export function Layers(p: LayersProps) {
   const [collapsed, setCollapsed] = useState<readonly Category[]>([]);
+  /** The tag chips start folded away, so the component list comes straight after the search. */
+  const [tagsOpen, setTagsOpen] = useState(false);
   const meta = useMetaKey();
   const groups = groupByCategory(p.items.filter((item) => p.visible.has(item.slug)));
   const tags = allTags(p.items);
@@ -29,7 +32,7 @@ export function Layers(p: LayersProps) {
   return (
     <aside className="layers" aria-label="Layers">
       <div className="layers-brand">
-        <strong>Pica</strong>
+        <Logo />
         <span className="label">
           {p.visible.size} of {p.items.length}
         </span>
@@ -56,18 +59,33 @@ export function Layers(p: LayersProps) {
         <kbd aria-hidden="true">{meta} K</kbd>
       </div>
       {tags.length > 0 && (
-        <div className="layers-tags" role="group" aria-label="Filter by tag">
-          {tags.map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              className="chip"
-              aria-pressed={p.activeTags.includes(tag)}
-              onClick={() => p.onToggleTag(tag)}
-            >
-              {tag}
-            </button>
-          ))}
+        <div className="layers-filter">
+          <button
+            type="button"
+            className="layers-head"
+            aria-expanded={tagsOpen}
+            aria-controls="layers-tags"
+            onClick={() => setTagsOpen((open) => !open)}
+          >
+            <span className="layers-twist" aria-hidden="true">
+              {tagsOpen ? "−" : "+"}
+            </span>
+            <span className="label">Tags</span>
+            <span className="layers-count">{p.activeTags.length > 0 ? `${p.activeTags.length} on` : tags.length}</span>
+          </button>
+          <div id="layers-tags" className="layers-tags" role="group" aria-label="Filter by tag" hidden={!tagsOpen}>
+            {tags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                className="chip"
+                aria-pressed={p.activeTags.includes(tag)}
+                onClick={() => p.onToggleTag(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
         </div>
       )}
       <nav className="layers-list" aria-label="Components">

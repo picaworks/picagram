@@ -1,87 +1,87 @@
-# Pica
+# Picagram
 
 > ASCII-first components for React and plain HTML. Each component ships as one React file that imports only react, and one HTML file that needs nothing. Every page below is markdown with both files inline.
 
-Install any component with `npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/<slug>.json`. License: MIT + Commons Clause. Use it in anything, including commercial work; do not resell the components as a library or template pack.
+Install any component with `npx shadcn@latest add https://rishabbalak.github.io/picagram/r/<slug>.json`. License: MIT + Commons Clause. Use it in anything, including commercial work; do not resell the components as a library or template pack.
 
 ## ASCII
 
-- [ASCII Image](/c/ascii-image.md): An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.
-- [ASCII Morph](/c/ascii-morph.md): Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.
-- [ASCII Noise Field](/c/ascii-noise-field.md): A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.
-- [ASCII Pointer Ripple](/c/ascii-pointer-ripple.md): A glyph field of low-density noise that sends rippling rings outward from the pointer, as if the grid were water.
-- [ASCII Rain](/c/ascii-rain.md): Columns of glyphs fall at their own speed, each with a bright head and a trail that fades down the measured ramp.
-- [ASCII Reveal](/c/ascii-reveal.md): Text that resolves from scrambled glyphs into its final characters, left to right.
-- [ASCII Solid](/c/ascii-solid.md): A torus, sphere, or cube rotated in three dimensions and shaded with the measured ramp.
-- [ASCII Text](/c/ascii-text.md): A headline rastered from a display face, then redrawn as a grid of glyphs chosen by measured ink and shape.
-- [ASCII Topo](/c/ascii-topo.md): Contour lines of a slowly drifting noise height field, drawn like a topographic survey in text.
-- [ASCII Video](/c/ascii-video.md): A video or webcam feed drawn as a live grid of glyphs, chosen each frame by the ink they put down in the font in use.
-- [ASCII Waves](/c/ascii-waves.md): Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.
+- [ASCII Image](https://rishabbalak.github.io/picagram/c/ascii-image.md): An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.
+- [ASCII Morph](https://rishabbalak.github.io/picagram/c/ascii-morph.md): Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.
+- [ASCII Noise Field](https://rishabbalak.github.io/picagram/c/ascii-noise-field.md): A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.
+- [ASCII Pointer Ripple](https://rishabbalak.github.io/picagram/c/ascii-pointer-ripple.md): A glyph field of low-density noise that sends rippling rings outward from the pointer, as if the grid were water.
+- [ASCII Rain](https://rishabbalak.github.io/picagram/c/ascii-rain.md): Columns of glyphs fall at their own speed, each with a bright head and a trail that fades down the measured ramp.
+- [ASCII Reveal](https://rishabbalak.github.io/picagram/c/ascii-reveal.md): Text that resolves from scrambled glyphs into its final characters, left to right.
+- [ASCII Solid](https://rishabbalak.github.io/picagram/c/ascii-solid.md): A torus, sphere, or cube rotated in three dimensions and shaded with the measured ramp.
+- [ASCII Text](https://rishabbalak.github.io/picagram/c/ascii-text.md): A headline rastered from a display face, then redrawn as a grid of glyphs chosen by measured ink and shape.
+- [ASCII Topo](https://rishabbalak.github.io/picagram/c/ascii-topo.md): Contour lines of a slowly drifting noise height field, drawn like a topographic survey in text.
+- [ASCII Video](https://rishabbalak.github.io/picagram/c/ascii-video.md): A video or webcam feed drawn as a live grid of glyphs, chosen each frame by the ink they put down in the font in use.
+- [ASCII Waves](https://rishabbalak.github.io/picagram/c/ascii-waves.md): Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.
 
 ## Text mode
 
-- [ASCII Frame](/c/ascii-frame.md): A container framed in box-drawing characters, with an optional title set into the top rule.
-- [ASCII Loader](/c/ascii-loader.md): A text-mode loading indicator: a braille dot orbit, a progress bar, a shade pulse, or animated dots.
-- [ASCII Sparkline](/c/ascii-sparkline.md): A series of numbers drawn inline as eighth-block bars or a braille line, scaled to its own range.
-- [ASCII Terminal](/c/ascii-terminal.md): A terminal session that types a command and prints its output, then rests on a blinking cursor.
-- [Block Banner](/c/block-banner.md): Large block letters drawn in text from an original five row pixel font, sized to fit the host's width.
-- [Block Image](/c/block-image.md): An image drawn with the sixteen quadrant block characters, each matching the corners a 2 by 2 sample fills.
-- [Braille Image](/c/braille-image.md): An image drawn with braille characters, each cell's eight dots giving twice the horizontal and four times the vertical resolution of plain ASCII.
+- [ASCII Frame](https://rishabbalak.github.io/picagram/c/ascii-frame.md): A container framed in box-drawing characters, with an optional title set into the top rule.
+- [ASCII Loader](https://rishabbalak.github.io/picagram/c/ascii-loader.md): A text-mode loading indicator: a braille dot orbit, a progress bar, a shade pulse, or animated dots.
+- [ASCII Sparkline](https://rishabbalak.github.io/picagram/c/ascii-sparkline.md): A series of numbers drawn inline as eighth-block bars or a braille line, scaled to its own range.
+- [ASCII Terminal](https://rishabbalak.github.io/picagram/c/ascii-terminal.md): A terminal session that types a command and prints its output, then rests on a blinking cursor.
+- [Block Banner](https://rishabbalak.github.io/picagram/c/block-banner.md): Large block letters drawn in text from an original five row pixel font, sized to fit the host's width.
+- [Block Image](https://rishabbalak.github.io/picagram/c/block-image.md): An image drawn with the sixteen quadrant block characters, each matching the corners a 2 by 2 sample fills.
+- [Braille Image](https://rishabbalak.github.io/picagram/c/braille-image.md): An image drawn with braille characters, each cell's eight dots giving twice the horizontal and four times the vertical resolution of plain ASCII.
 
 ## Dither
 
-- [Dither Gradient](/c/dither-gradient.md): A two-tone gradient dithered through a Bayer matrix, drifting slowly like light across a surface.
-- [Dither Image](/c/dither-image.md): An image reduced to two tones by ordered or error diffusion dithering, drawn crisp on a canvas.
-- [Halftone Image](/c/halftone-image.md): An image screened into halftone dots, squares, or lines, their area set by darkness like a page of newsprint.
+- [Dither Gradient](https://rishabbalak.github.io/picagram/c/dither-gradient.md): A two-tone gradient dithered through a Bayer matrix, drifting slowly like light across a surface.
+- [Dither Image](https://rishabbalak.github.io/picagram/c/dither-image.md): An image reduced to two tones by ordered or error diffusion dithering, drawn crisp on a canvas.
+- [Halftone Image](https://rishabbalak.github.io/picagram/c/halftone-image.md): An image screened into halftone dots, squares, or lines, their area set by darkness like a page of newsprint.
 
 ## Effects
 
-- [Duotone Image](/c/duotone-image.md): An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.
-- [Glitch Text](/c/glitch-text.md): Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.
-- [Grain Overlay](/c/grain-overlay.md): An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.
-- [Halftone CSS](/c/halftone-css.md): A halftone dot pattern made entirely of layered CSS gradients, for use as a background.
-- [Pixel Sort](/c/pixel-sort.md): An image whose pixel rows or columns are sorted by brightness within threshold bands, smearing tone into streaks.
-- [Scanlines](/c/scanlines.md): A CRT scanline overlay in the ink color, with an optional soft band that rolls slowly down the screen.
+- [Duotone Image](https://rishabbalak.github.io/picagram/c/duotone-image.md): An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.
+- [Glitch Text](https://rishabbalak.github.io/picagram/c/glitch-text.md): Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.
+- [Grain Overlay](https://rishabbalak.github.io/picagram/c/grain-overlay.md): An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.
+- [Halftone CSS](https://rishabbalak.github.io/picagram/c/halftone-css.md): A halftone dot pattern made entirely of layered CSS gradients, for use as a background.
+- [Pixel Sort](https://rishabbalak.github.io/picagram/c/pixel-sort.md): An image whose pixel rows or columns are sorted by brightness within threshold bands, smearing tone into streaks.
+- [Scanlines](https://rishabbalak.github.io/picagram/c/scanlines.md): A CRT scanline overlay in the ink color, with an optional soft band that rolls slowly down the screen.
 
 ## Shaders
 
-- [Aurora](/c/aurora.md): Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.
-- [Mesh Gradient](/c/mesh-gradient.md): A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.
-- [Shader Flow](/c/shader-flow.md): Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.
+- [Aurora](https://rishabbalak.github.io/picagram/c/aurora.md): Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.
+- [Mesh Gradient](https://rishabbalak.github.io/picagram/c/mesh-gradient.md): A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.
+- [Shader Flow](https://rishabbalak.github.io/picagram/c/shader-flow.md): Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.
 
 ## Motion
 
-- [Marquee](/c/marquee.md): Scrolls its children sideways in an endless loop, like a ticker.
+- [Marquee](https://rishabbalak.github.io/picagram/c/marquee.md): Scrolls its children sideways in an endless loop, like a ticker.
 
 ## Data
 
-- [Bar Chart](/c/bar-chart.md): Vertical bars from labeled values, drawn as SVG or a monospace glyph grid, with a hidden data table.
-- [Donut Chart](/c/donut-chart.md): Parts of a whole drawn as a ring, either as SVG segments or a monospace glyph grid, with a hidden data table.
-- [Kanban Board](/c/kanban-board.md): Columns of cards that move between columns by keyboard or by pointer drag.
-- [Line Chart](/c/line-chart.md): One or more series plotted as lines over a shared set of labels, in an svg or braille glyph look.
+- [Bar Chart](https://rishabbalak.github.io/picagram/c/bar-chart.md): Vertical bars from labeled values, drawn as SVG or a monospace glyph grid, with a hidden data table.
+- [Donut Chart](https://rishabbalak.github.io/picagram/c/donut-chart.md): Parts of a whole drawn as a ring, either as SVG segments or a monospace glyph grid, with a hidden data table.
+- [Kanban Board](https://rishabbalak.github.io/picagram/c/kanban-board.md): Columns of cards that move between columns by keyboard or by pointer drag.
+- [Line Chart](https://rishabbalak.github.io/picagram/c/line-chart.md): One or more series plotted as lines over a shared set of labels, in an svg or braille glyph look.
 
 ## UI
 
-- [Button](/c/button.md): A button in four looks, solid, outline, ghost, and monospace brackets, with a braille spinner while it loads.
-- [Dialog](/c/dialog.md): A modal dialog on the native dialog element, with focus containment, Escape, and the top layer handled by the browser.
-- [Popover Tooltip](/c/popover-tooltip.md): A trigger button that shows a tooltip on hover and focus, or toggles a popover panel on click, built on the Popover API.
-- [Select](/c/select.md): A single-choice select with a keyboard-driven listbox, styled after the WAI-ARIA select-only combobox pattern.
-- [Tabs](/c/tabs.md): A tabbed view for switching between panels, with the active tab following keyboard focus.
+- [Button](https://rishabbalak.github.io/picagram/c/button.md): A button in four looks, solid, outline, ghost, and monospace brackets, with a braille spinner while it loads.
+- [Dialog](https://rishabbalak.github.io/picagram/c/dialog.md): A modal dialog on the native dialog element, with focus containment, Escape, and the top layer handled by the browser.
+- [Popover Tooltip](https://rishabbalak.github.io/picagram/c/popover-tooltip.md): A trigger button that shows a tooltip on hover and focus, or toggles a popover panel on click, built on the Popover API.
+- [Select](https://rishabbalak.github.io/picagram/c/select.md): A single-choice select with a keyboard-driven listbox, styled after the WAI-ARIA select-only combobox pattern.
+- [Tabs](https://rishabbalak.github.io/picagram/c/tabs.md): A tabbed view for switching between panels, with the active tab following keyboard focus.
 
 ## Sections
 
-- [Bento Grid](/c/bento-grid.md): A CSS grid section that sizes its children by position into a feature, mosaic, or equal column pattern.
-- [Hero](/c/hero.md): A page hero that adds calls to action and a composed background behind a headline and copy.
-- [Pricing](/c/pricing.md): Pricing tiers with a monthly and yearly switch, each plan a card with its own call to action.
-- [Stats KPI](/c/stats-kpi.md): A row of key numbers in mono figures, each with a delta glyph and an inline trend sparkline.
-- [Testimonials](/c/testimonials.md): Quotes shown as a grid of cards, or as one quote at a time that resolves from scrambled glyphs.
+- [Bento Grid](https://rishabbalak.github.io/picagram/c/bento-grid.md): A CSS grid section that sizes its children by position into a feature, mosaic, or equal column pattern.
+- [Hero](https://rishabbalak.github.io/picagram/c/hero.md): A page hero that adds calls to action and a composed background behind a headline and copy.
+- [Pricing](https://rishabbalak.github.io/picagram/c/pricing.md): Pricing tiers with a monthly and yearly switch, each plan a card with its own call to action.
+- [Stats KPI](https://rishabbalak.github.io/picagram/c/stats-kpi.md): A row of key numbers in mono figures, each with a delta glyph and an inline trend sparkline.
+- [Testimonials](https://rishabbalak.github.io/picagram/c/testimonials.md): Quotes shown as a grid of cards, or as one quote at a time that resolves from scrambled glyphs.
 
 ## Immersive
 
-- [Globe](/c/globe.md): A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.
+- [Globe](https://rishabbalak.github.io/picagram/c/globe.md): A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.
 
 ## Optional
 
-- [Every component in one file](/llms-full.txt)
-- [shadcn registry index](/r/registry.json)
-- [Catalog as JSON](/catalog.json)
+- [Every component in one file](https://rishabbalak.github.io/picagram/llms-full.txt)
+- [shadcn registry index](https://rishabbalak.github.io/picagram/r/registry.json)
+- [Catalog as JSON](https://rishabbalak.github.io/picagram/catalog.json)

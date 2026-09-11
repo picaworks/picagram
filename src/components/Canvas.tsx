@@ -74,9 +74,10 @@ export interface Reveal {
 
 const clamp = (k: number) => Math.min(MAX_K, Math.max(MIN_K, k));
 
-/** One band per non-empty category, frames in rows. Sized for 12 to 60 components. */
+/** One band per non-empty category, frames in rows of up to four, so a board fitted to its width shows frames
+ *  large enough to read and label. Sized for 12 to 60 components. */
 function layoutBoard(items: readonly CatalogItem[]): Board {
-  const cols = Math.max(1, Math.min(8, Math.ceil(Math.sqrt(items.length))));
+  const cols = Math.max(1, Math.min(4, Math.ceil(Math.sqrt(items.length))));
   const frames: Placed[] = [];
   const sections: Section[] = [];
   let y = 0;
@@ -168,9 +169,19 @@ export function Canvas(p: CanvasProps) {
     [board, size],
   );
 
+  /** The opening view: the board fitted to its width and seen from the top, so frames open large enough to
+   *  read. The fit button still shows the whole board. */
+  const fitStart = useCallback(() => {
+    const { w, h } = size();
+    if (!w || !h || !board.width) return;
+    const k = clamp(Math.min(1, (w - 2 * PAD) / board.width));
+    setEased(false);
+    setView({ k, x: (w - board.width * k) / 2, y: PAD });
+  }, [board, size]);
+
   useLayoutEffect(() => {
-    fitAll(false);
-  }, [fitAll]);
+    fitStart();
+  }, [fitStart]);
 
   useEffect(() => {
     if (p.reveal) revealFrame(p.reveal.slug);
@@ -178,11 +189,11 @@ export function Canvas(p: CanvasProps) {
 
   useEffect(() => {
     const onResize = () => {
-      if (!touched.current) fitAll(false);
+      if (!touched.current) fitStart();
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [fitAll]);
+  }, [fitStart]);
 
   useEffect(() => {
     const held = new Set<string>();

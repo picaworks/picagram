@@ -2,12 +2,12 @@
 
 > An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.
 
-Category: ascii. Tags: image, static, measured ramp, shape matching. Static. Size: 4.9 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: image, static, measured ramp, shape matching. Static. Size: 4.9 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-image.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -39,8 +39,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Image · ascii-image
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -1366,8 +1366,8 @@ export function AsciiImage({ className, style, palette, ...props }: AsciiImageCo
 <!doctype html>
 <!--
   Pica · ASCII Image · ascii-image
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

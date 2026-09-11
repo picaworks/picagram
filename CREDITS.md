@@ -10,7 +10,7 @@ Generated from each component's meta by `npm run build:registry`. Edit the meta,
 
 ## ASCII Morph (`ascii-morph`)
 
-Original to Pica.
+Original to Picagram.
 
 ## ASCII Noise Field (`ascii-noise-field`)
 
@@ -26,7 +26,7 @@ Original to Pica.
 
 ## ASCII Reveal (`ascii-reveal`)
 
-Original to Pica.
+Original to Picagram.
 
 ## ASCII Solid (`ascii-solid`)
 
@@ -48,7 +48,7 @@ Original to Pica.
 
 ## ASCII Waves (`ascii-waves`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Bar Chart (`bar-chart`)
 
@@ -56,7 +56,7 @@ Original to Pica.
 
 ## Donut Chart (`donut-chart`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Kanban Board (`kanban-board`)
 
@@ -82,11 +82,11 @@ Original to Pica.
 
 ## Duotone Image (`duotone-image`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Glitch Text (`glitch-text`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Grain Overlay (`grain-overlay`)
 
@@ -102,7 +102,7 @@ Original to Pica.
 
 ## Scanlines (`scanlines`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Globe (`globe`)
 
@@ -110,15 +110,15 @@ Original to Pica.
 
 ## Marquee (`marquee`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Bento Grid (`bento-grid`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Hero (`hero`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Pricing (`pricing`)
 
@@ -126,7 +126,7 @@ Original to Pica.
 
 ## Stats KPI (`stats-kpi`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Testimonials (`testimonials`)
 
@@ -150,11 +150,11 @@ Original to Pica.
 
 ## ASCII Frame (`ascii-frame`)
 
-Original to Pica.
+Original to Picagram.
 
 ## ASCII Loader (`ascii-loader`)
 
-Original to Pica.
+Original to Picagram.
 
 ## ASCII Sparkline (`ascii-sparkline`)
 
@@ -162,11 +162,11 @@ Original to Pica.
 
 ## ASCII Terminal (`ascii-terminal`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Block Banner (`block-banner`)
 
-Original to Pica.
+Original to Picagram.
 
 ## Block Image (`block-image`)
 

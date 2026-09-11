@@ -2,12 +2,12 @@
 
 > A tabbed view for switching between panels, with the active tab following keyboard focus.
 
-Category: ui. Tags: tabs, navigation, panels, ui. Static. Size: 2.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ui. Tags: tabs, navigation, panels, ui. Static. Size: 2.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/tabs.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/tabs.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -45,8 +45,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Tabs · tabs
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -683,8 +683,8 @@ export function Tabs({ className, style, palette, children, ...props }: TabsComp
 <!doctype html>
 <!--
   Pica · Tabs · tabs
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

@@ -2,12 +2,12 @@
 
 > A trigger button that shows a tooltip on hover and focus, or toggles a popover panel on click, built on the Popover API.
 
-Category: ui. Tags: tooltip, popover, disclosure, overlay. Static. Size: 2.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ui. Tags: tooltip, popover, disclosure, overlay. Static. Size: 2.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/popover-tooltip.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/popover-tooltip.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -44,8 +44,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Popover Tooltip · popover-tooltip
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -701,8 +701,8 @@ export function PopoverTooltip({ className, style, palette, ...props }: PopoverT
 <!doctype html>
 <!--
   Pica · Popover Tooltip · popover-tooltip
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

@@ -2,12 +2,12 @@
 
 > Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.
 
-Category: effects. Tags: text, glitch, burst, distortion. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: effects. Tags: text, glitch, burst, distortion. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/glitch-text.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/glitch-text.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -39,8 +39,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Glitch Text · glitch-text
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -819,8 +819,8 @@ export function GlitchText({ className, style, palette, ...props }: GlitchTextCo
 <!doctype html>
 <!--
   Pica · Glitch Text · glitch-text
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -1192,4 +1192,4 @@ var PicaGlitchText = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.

@@ -2,12 +2,12 @@
 
 > A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.
 
-Category: shaders. Tags: gradient, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: shaders. Tags: gradient, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/mesh-gradient.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/mesh-gradient.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -39,8 +39,8 @@ Draws with `--pica-fg`, `--pica-bg`, `--pica-accent`. Set them on any ancestor, 
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Mesh Gradient · mesh-gradient
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -1155,8 +1155,8 @@ export function MeshGradient({ className, style, palette, ...props }: MeshGradie
 <!doctype html>
 <!--
   Pica · Mesh Gradient · mesh-gradient
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

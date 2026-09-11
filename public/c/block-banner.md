@@ -2,12 +2,12 @@
 
 > Large block letters drawn in text from an original five row pixel font, sized to fit the host's width.
 
-Category: text-mode. Tags: text, logotype, static, pixel font. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: text, logotype, static, pixel font. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/block-banner.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/block-banner.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -35,8 +35,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Block Banner · block-banner
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -1005,8 +1005,8 @@ export function BlockBanner({ className, style, palette, ...props }: BlockBanner
 <!doctype html>
 <!--
   Pica · Block Banner · block-banner
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -1495,4 +1495,4 @@ var PicaBlockBanner = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.

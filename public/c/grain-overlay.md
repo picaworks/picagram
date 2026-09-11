@@ -2,12 +2,12 @@
 
 > An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.
 
-Category: effects. Tags: overlay, grain, texture, blend mode. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: effects. Tags: overlay, grain, texture, blend mode. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/grain-overlay.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/grain-overlay.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -42,8 +42,8 @@ Draws with . Set them on any ancestor, pass `palette` to the React component, or
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Grain Overlay · grain-overlay
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -623,8 +623,8 @@ export function GrainOverlay({ className, style, palette, children, ...props }: 
 <!doctype html>
 <!--
   Pica · Grain Overlay · grain-overlay
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

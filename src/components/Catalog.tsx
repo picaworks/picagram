@@ -98,6 +98,10 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
     (slug: string) => {
       setSelected(slug);
       setReveal({ slug, nonce: Date.now() });
+      // Under 900px the canvas sits above the list, so a pick from the list brings the live frame into view.
+      if (window.matchMedia("(max-width: 899px)").matches) {
+        document.querySelector(".canvas")?.scrollIntoView({ block: "start" });
+      }
     },
     [setSelected],
   );

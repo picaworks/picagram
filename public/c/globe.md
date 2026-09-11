@@ -2,12 +2,12 @@
 
 > A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.
 
-Category: immersive. Tags: 3d, rotation, map, canvas. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: immersive. Tags: 3d, rotation, map, canvas. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/globe.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/globe.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -39,8 +39,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Globe · globe
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -977,8 +977,8 @@ export function Globe({ className, style, palette, ...props }: GlobeComponentPro
 <!doctype html>
 <!--
   Pica · Globe · globe
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

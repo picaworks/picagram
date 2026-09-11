@@ -3,10 +3,16 @@ import type { Category } from "../lib/meta";
 
 /** The license as a reader sees it. test/license.test.ts checks it agrees everywhere it appears. */
 export const LICENSE_LABEL = "MIT + Commons Clause";
-export const LICENSE_URL = "https://github.com/rishabbalak/pica/blob/main/LICENSE.md";
-export const HOMEPAGE = "https://github.com/rishabbalak/pica";
-/** Where registry items are fetched from by `npx shadcn add`. Moves to the site's /r once there is a domain. */
-export const REGISTRY_BASE = "https://raw.githubusercontent.com/rishabbalak/pica/main/public/r";
+export const LICENSE_URL = "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md";
+export const HOMEPAGE = "https://github.com/rishabbalak/picagram";
+/** Where the catalog site is served: GitHub Pages, under /picagram until picagram.dev is set up. Moving to the
+ *  domain means changing this, which also empties BASE_PATH, and adding public/CNAME. See
+ *  docs/architecture/site.md. */
+export const SITE_URL = "https://rishabbalak.github.io/picagram";
+/** The path the site is served under: Next's basePath for production builds. Empty at a domain's root. */
+export const BASE_PATH = new URL(SITE_URL).pathname.replace(/\/$/, "");
+/** Where `npx shadcn add` fetches registry items: the site's own /r, so it follows SITE_URL to the domain. */
+export const REGISTRY_BASE = `${SITE_URL}/r`;
 
 /** The most a component's vanilla bundle may weigh, minified and gzipped, shared runtime included. Sections
  *  inline the components they compose, and interactive and GPU components carry more runtime, so the budget

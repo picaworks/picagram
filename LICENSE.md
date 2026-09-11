@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Pica
+Copyright (c) 2026 Picagram
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,6 @@ whose value derives, entirely or substantially, from the functionality of the
 Software. Any license notice or attribution required by the License must also
 include this Commons Clause License Condition notice.
 
-Software: Pica
+Software: Picagram
 License: MIT
-Licensor: Pica
+Licensor: Picagram

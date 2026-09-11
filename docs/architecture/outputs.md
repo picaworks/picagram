@@ -8,7 +8,7 @@ Everything the build and the verifier write. All of it is generated. `test/gener
 | `public/v/<slug>.html` | `scripts/build.ts` | one per component; opens from disk with no build step | An HTML page with the IIFE bundle inline. The host is a div, a span for an inline text run, or the element `meta.host` names, holding any demo children. See the vanilla page protocol below. |
 | `public/v/<slug>.json` | `scripts/build.ts` | the same content as the HTML file, split | `{ html, css, js }` |
 | `public/c/<slug>.md` | `scripts/build.ts` | one per component | Markdown: description, install line, a props table with declared types, events, children, colors, both files inline, credits |
-| `public/llms.txt` | `scripts/build.ts` | follows llmstxt.org | H1, a summary, and one link per component, grouped by category |
+| `public/llms.txt` | `scripts/build.ts` | follows llmstxt.org; links are absolute URLs on `SITE_URL`, since agents read the file on its own | H1, a summary, and one link per component, grouped by category |
 | `public/llms-full.txt` | `scripts/build.ts` | every markdown twin, concatenated | markdown |
 | `public/catalog.json` | `scripts/build.ts` | read by the site | an array of meta, plus defaults, prop docs and types, events, and size |
 | `registry.json` | `scripts/build.ts` | shadcn registry schema, pointing at `public/react/` | one `registry:component` item per component |

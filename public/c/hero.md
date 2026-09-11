@@ -2,12 +2,12 @@
 
 > A page hero that adds calls to action and a composed background behind a headline and copy.
 
-Category: sections. Tags: hero, landing, section, cta, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 9.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: sections. Tags: hero, landing, section, cta, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 9.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/hero.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/hero.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -41,8 +41,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Hero · hero
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -2062,8 +2062,8 @@ export function Hero({ className, style, palette, children, ...props }: HeroComp
 <!doctype html>
 <!--
   Pica · Hero · hero
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -3394,4 +3394,4 @@ void main() {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.

@@ -22,14 +22,15 @@ interface CodeTabsProps {
 /** React, HTML, Install, and LLM, each with a copy button that bakes in the current values. */
 export function CodeTabs({ item, overrides, palette }: CodeTabsProps) {
   const [tab, setTab] = useState<Tab>("react");
-  const react = useFileText(tab === "react" ? `/react/${item.slug}.tsx` : null);
-  const html = useFileText(tab === "html" ? `/v/${item.slug}.html` : null);
+  // Paths are relative to the page, so the site works under any base path.
+  const react = useFileText(tab === "react" ? `react/${item.slug}.tsx` : null);
+  const html = useFileText(tab === "html" ? `v/${item.slug}.html` : null);
 
   const snippet = reactSnippet(item.exportName, overrides, palette, item.demo?.children);
   const baked = html.text === null ? null : withPicaProps(html.text, overrides, palette);
   const paletteSet = Object.values(palette).some(Boolean);
   const install = installCommand(item.slug);
-  const twin = `/c/${item.slug}.md`;
+  const twin = `c/${item.slug}.md`;
   const twinUrl = typeof window === "undefined" ? twin : new URL(twin, window.location.href).href;
 
   const onTabKey = (e: KeyboardEvent<HTMLButtonElement>) => {
@@ -112,15 +113,15 @@ export function CodeTabs({ item, overrides, palette }: CodeTabsProps) {
             </div>
             <ul className="tabs-links">
               <li>
-                <a href={twin}>{twin}</a>
+                <a href={twin}>/{twin}</a>
                 <span>This component as markdown, both files inline.</span>
               </li>
               <li>
-                <a href="/llms.txt">/llms.txt</a>
+                <a href="llms.txt">/llms.txt</a>
                 <span>The index, one line per component.</span>
               </li>
               <li>
-                <a href="/llms-full.txt">/llms-full.txt</a>
+                <a href="llms-full.txt">/llms-full.txt</a>
                 <span>Every component in one file.</span>
               </li>
             </ul>

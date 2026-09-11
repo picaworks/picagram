@@ -62,11 +62,11 @@ export function Inspector(p: InspectorProps) {
           <p className="label">for agents</p>
           <ul className="tabs-links">
             <li>
-              <a href="/llms.txt">/llms.txt</a>
+              <a href="llms.txt">/llms.txt</a>
               <span>The index, one line per component.</span>
             </li>
             <li>
-              <a href="/llms-full.txt">/llms-full.txt</a>
+              <a href="llms-full.txt">/llms-full.txt</a>
               <span>Every component in one file.</span>
             </li>
           </ul>
@@ -210,7 +210,7 @@ export function Inspector(p: InspectorProps) {
           Credits
         </h2>
         {item.credits.length === 0 ? (
-          <p className="inspector-note">Original to Pica.</p>
+          <p className="inspector-note">Original to Picagram.</p>
         ) : (
           <ul className="credits">
             {item.credits.map((credit) => (

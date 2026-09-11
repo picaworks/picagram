@@ -14,6 +14,7 @@ import { readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, type Frame, type Page } from "@playwright/test";
+import { BASE_PATH } from "./config";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const OUT = join(ROOT, "out");
@@ -79,7 +80,14 @@ const TYPES: Readonly<Record<string, string>> = {
 /** Serves out/, with the fixture's own routes answered in memory. */
 async function serve(): Promise<{ url: string; close: () => Promise<void> }> {
   const server = createServer((req, res) => {
-    const pathname = decodeURIComponent((req.url ?? "/").split("?")[0] ?? "/");
+    // A production build is served under BASE_PATH, the way GitHub Pages serves it.
+    const full = decodeURIComponent((req.url ?? "/").split("?")[0] ?? "/");
+    if (BASE_PATH && full !== BASE_PATH && !full.startsWith(`${BASE_PATH}/`)) {
+      res.writeHead(404);
+      res.end("not found");
+      return;
+    }
+    const pathname = full.slice(BASE_PATH.length) || "/";
     const fixture = FIXTURE_ROUTES[pathname];
     if (fixture) {
       res.writeHead(200, { "Content-Type": fixture.type });
@@ -165,7 +173,7 @@ async function main(): Promise<void> {
     page.on("response", (response) => {
       if (response.status() >= 400) consoleErrors.push(`${response.status()} for ${response.url()}`);
     });
-    await page.goto(site.url);
+    await page.goto(`${site.url}${BASE_PATH}/`);
     await page.waitForSelector(".layers-list");
 
     // Every catalog item is listed.
@@ -177,7 +185,7 @@ async function main(): Promise<void> {
     const first = catalog[0];
     if (first) {
       await select(page, first.title);
-      await page.waitForSelector(`iframe.frame-live[src="/v/${first.slug}.html"]`);
+      await page.waitForSelector(`iframe.frame-live[src="v/${first.slug}.html"]`);
       const frame = page.frame({ url: new RegExp(`${first.slug}\\.html`) });
       const ready = frame
         ? await frame.waitForSelector('[data-pica-ready="true"]', { state: "attached", timeout: 5000 }).then(() => true, () => false)
@@ -256,7 +264,7 @@ async function main(): Promise<void> {
 
     // A real component's event, end to end: select's valueChange, driven by keyboard inside its frame.
     await select(page, "Select");
-    await page.waitForSelector('iframe.frame-live[src="/v/select.html"]');
+    await page.waitForSelector('iframe.frame-live[src="v/select.html"]');
     await waitUntil(async () => page.frame({ url: /\/v\/select\.html/ }) !== null);
     const selectFrame = page.frame({ url: /\/v\/select\.html/ });
     let valueChangeShown = false;

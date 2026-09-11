@@ -2,12 +2,12 @@
 
 > A terminal session that types a command and prints its output, then rests on a blinking cursor.
 
-Category: text-mode. Tags: terminal, typing, cursor, cli. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: terminal, typing, cursor, cli. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-terminal.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-terminal.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -39,8 +39,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Terminal · ascii-terminal
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -854,8 +854,8 @@ export function AsciiTerminal({ className, style, palette, ...props }: AsciiTerm
 <!doctype html>
 <!--
   Pica · ASCII Terminal · ascii-terminal
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -1221,4 +1221,4 @@ var PicaAsciiTerminal = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.

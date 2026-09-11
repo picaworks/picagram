@@ -2,12 +2,12 @@
 
 > Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.
 
-Category: shaders. Tags: aurora, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: shaders. Tags: aurora, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/aurora.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/aurora.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -40,8 +40,8 @@ Draws with `--pica-fg`, `--pica-accent`, `--pica-bg`. Set them on any ancestor, 
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Aurora · aurora
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -1180,8 +1180,8 @@ export function Aurora({ className, style, palette, ...props }: AuroraComponentP
 <!doctype html>
 <!--
   Pica · Aurora · aurora
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

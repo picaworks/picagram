@@ -2,12 +2,12 @@
 
 > Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.
 
-Category: ascii. Tags: interference, waves, animated, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: interference, waves, animated, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-waves.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-waves.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -42,8 +42,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Waves · ascii-waves
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -1252,8 +1252,8 @@ export function AsciiWaves({ className, style, palette, ...props }: AsciiWavesCo
 <!doctype html>
 <!--
   Pica · ASCII Waves · ascii-waves
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -1880,4 +1880,4 @@ var PicaAsciiWaves = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.

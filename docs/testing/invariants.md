@@ -68,3 +68,11 @@ Properties that must hold for every input, and where each is checked.
 | A controlled prop echoed back ends where the uncontrolled component ends, and a controlled prop never updated stays put | `scripts/verify/interact.ts` |
 | Shaders render on SwiftShader, survive a lost context, and fall back without WebGL2 | `scripts/verify/gpu.ts` |
 | Image components render a real PNG, and the video component renders a camera | `scripts/verify/fixtures.ts` |
+
+## Site
+
+| Invariant | Check |
+|---|---|
+| The site links to its own files with relative paths, so it works under any base path | `test/site.test.ts` |
+| `llms.txt` links with absolute URLs on `SITE_URL` | `test/site.test.ts` |
+| A production build works end to end under `BASE_PATH`, the way GitHub Pages serves it: every component listed, a live frame, every control type, the palette, the snippets, and events from a fixture and from select | `scripts/check-site.ts` |

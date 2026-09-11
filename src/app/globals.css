@@ -174,12 +174,7 @@ kbd {
   padding: 0 var(--gutter);
   border-bottom: 1px solid var(--line);
 }
-.layers-brand strong {
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
+.layers-brand svg { flex: none; }
 .layers-search {
   position: relative;
   display: flex;
@@ -198,6 +193,8 @@ kbd {
   padding: 10px var(--gutter);
   border-bottom: 1px solid var(--line);
 }
+.layers-tags[hidden] { display: none; }
+.layers-filter { flex: none; }
 .layers-list { flex: 1; }
 .layers-head {
   display: flex;

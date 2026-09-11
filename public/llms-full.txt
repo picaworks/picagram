@@ -2,12 +2,12 @@
 
 > An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.
 
-Category: ascii. Tags: image, static, measured ramp, shape matching. Static. Size: 4.9 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: image, static, measured ramp, shape matching. Static. Size: 4.9 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-image.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -39,8 +39,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Image · ascii-image
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -1366,8 +1366,8 @@ export function AsciiImage({ className, style, palette, ...props }: AsciiImageCo
 <!doctype html>
 <!--
   Pica · ASCII Image · ascii-image
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -2133,12 +2133,12 @@ var PicaAsciiImage = (() => {
 
 > Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.
 
-Category: ascii. Tags: text, animated, measured ramp, morph, transition. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: text, animated, measured ramp, morph, transition. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-morph.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-morph.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -2173,8 +2173,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Morph · ascii-morph
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -3630,8 +3630,8 @@ export function AsciiMorph({ className, style, palette, ...props }: AsciiMorphCo
 <!doctype html>
 <!--
   Pica · ASCII Morph · ascii-morph
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -4481,7 +4481,7 @@ var PicaAsciiMorph = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -4489,12 +4489,12 @@ Original to Pica.
 
 > A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.
 
-Category: ascii. Tags: background, noise, animated, decorative. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: background, noise, animated, decorative. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-noise-field.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-noise-field.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -4529,8 +4529,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Noise Field · ascii-noise-field
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -5811,8 +5811,8 @@ export function AsciiNoiseField({ className, style, palette, ...props }: AsciiNo
 <!doctype html>
 <!--
   Pica · ASCII Noise Field · ascii-noise-field
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -6571,12 +6571,12 @@ var PicaAsciiNoiseField = (() => {
 
 > A glyph field of low-density noise that sends rippling rings outward from the pointer, as if the grid were water.
 
-Category: ascii. Tags: pointer, ripple, noise, interactive. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: pointer, ripple, noise, interactive. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-pointer-ripple.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-pointer-ripple.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -6611,8 +6611,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Pointer Ripple · ascii-pointer-ripple
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -7949,8 +7949,8 @@ export function AsciiPointerRipple({ className, style, palette, ...props }: Asci
 <!doctype html>
 <!--
   Pica · ASCII Pointer Ripple · ascii-pointer-ripple
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -8753,12 +8753,12 @@ var PicaAsciiPointerRipple = (() => {
 
 > Columns of glyphs fall at their own speed, each with a bright head and a trail that fades down the measured ramp.
 
-Category: ascii. Tags: rain, animated, measured ramp, generative. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: rain, animated, measured ramp, generative. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-rain.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-rain.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -8792,8 +8792,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Rain · ascii-rain
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -9970,8 +9970,8 @@ export function AsciiRain({ className, style, palette, ...props }: AsciiRainComp
 <!doctype html>
 <!--
   Pica · ASCII Rain · ascii-rain
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -10600,12 +10600,12 @@ var PicaAsciiRain = (() => {
 
 > Text that resolves from scrambled glyphs into its final characters, left to right.
 
-Category: ascii. Tags: text, reveal, scramble, decode. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: text, reveal, scramble, decode. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-reveal.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-reveal.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -10637,8 +10637,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Reveal · ascii-reveal
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -11255,8 +11255,8 @@ export function AsciiReveal({ className, style, palette, ...props }: AsciiReveal
 <!doctype html>
 <!--
   Pica · ASCII Reveal · ascii-reveal
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -11567,7 +11567,7 @@ var PicaAsciiReveal = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -11575,12 +11575,12 @@ Original to Pica.
 
 > A torus, sphere, or cube rotated in three dimensions and shaded with the measured ramp.
 
-Category: ascii. Tags: 3d, rotation, measured ramp, depth buffer. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: 3d, rotation, measured ramp, depth buffer. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-solid.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-solid.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -11613,8 +11613,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Solid · ascii-solid
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -12865,8 +12865,8 @@ export function AsciiSolid({ className, style, palette, ...props }: AsciiSolidCo
 <!doctype html>
 <!--
   Pica · ASCII Solid · ascii-solid
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -13575,12 +13575,12 @@ var PicaAsciiSolid = (() => {
 
 > A headline rastered from a display face, then redrawn as a grid of glyphs chosen by measured ink and shape.
 
-Category: ascii. Tags: text, headline, static, measured ramp, shape matching. Static. Size: 5.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: text, headline, static, measured ramp, shape matching. Static. Size: 5.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-text.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-text.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -13612,8 +13612,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Text · ascii-text
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -14934,8 +14934,8 @@ export function AsciiText({ className, style, palette, ...props }: AsciiTextComp
 <!doctype html>
 <!--
   Pica · ASCII Text · ascii-text
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -15675,12 +15675,12 @@ var PicaAsciiText = (() => {
 
 > Contour lines of a slowly drifting noise height field, drawn like a topographic survey in text.
 
-Category: ascii. Tags: noise, contours, marching squares, topography. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.3 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: noise, contours, marching squares, topography. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.3 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-topo.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-topo.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -15713,8 +15713,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Topo · ascii-topo
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -16914,8 +16914,8 @@ export function AsciiTopo({ className, style, palette, ...props }: AsciiTopoComp
 <!doctype html>
 <!--
   Pica · ASCII Topo · ascii-topo
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -17648,12 +17648,12 @@ var PicaAsciiTopo = (() => {
 
 > A video or webcam feed drawn as a live grid of glyphs, chosen each frame by the ink they put down in the font in use.
 
-Category: ascii. Tags: video, webcam, animated, measured ramp. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: video, webcam, animated, measured ramp. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-video.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-video.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -17690,8 +17690,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Video · ascii-video
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -19258,8 +19258,8 @@ export function AsciiVideo({ className, style, palette, ...props }: AsciiVideoCo
 <!doctype html>
 <!--
   Pica · ASCII Video · ascii-video
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -20145,12 +20145,12 @@ var PicaAsciiVideo = (() => {
 
 > Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.
 
-Category: ascii. Tags: interference, waves, animated, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ascii. Tags: interference, waves, animated, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-waves.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-waves.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -20185,8 +20185,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Waves · ascii-waves
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -21395,8 +21395,8 @@ export function AsciiWaves({ className, style, palette, ...props }: AsciiWavesCo
 <!doctype html>
 <!--
   Pica · ASCII Waves · ascii-waves
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -22023,7 +22023,7 @@ var PicaAsciiWaves = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -22031,12 +22031,12 @@ Original to Pica.
 
 > Vertical bars from labeled values, drawn as SVG or a monospace glyph grid, with a hidden data table.
 
-Category: data. Tags: chart, bars, svg, glyph grid, data table. Static. Size: 5.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: data. Tags: chart, bars, svg, glyph grid, data table. Static. Size: 5.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/bar-chart.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/bar-chart.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -22065,8 +22065,8 @@ Draws with `--pica-fg`, `--pica-accent`, `--pica-muted`. Set them on any ancesto
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Bar Chart · bar-chart
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -23332,8 +23332,8 @@ export function BarChart({ className, style, palette, ...props }: BarChartCompon
 <!doctype html>
 <!--
   Pica · Bar Chart · bar-chart
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -24077,12 +24077,12 @@ var PicaBarChart = (() => {
 
 > Parts of a whole drawn as a ring, either as SVG segments or a monospace glyph grid, with a hidden data table.
 
-Category: data. Tags: chart, donut, svg, glyph grid, data table. Static. Size: 5.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: data. Tags: chart, donut, svg, glyph grid, data table. Static. Size: 5.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/donut-chart.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/donut-chart.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -24112,8 +24112,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Donut Chart · donut-chart
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -25424,8 +25424,8 @@ export function DonutChart({ className, style, palette, ...props }: DonutChartCo
 <!doctype html>
 <!--
   Pica · Donut Chart · donut-chart
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -26150,7 +26150,7 @@ var PicaDonutChart = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -26158,12 +26158,12 @@ Original to Pica.
 
 > Columns of cards that move between columns by keyboard or by pointer drag.
 
-Category: data. Tags: kanban, board, cards, drag, listbox. Static. Size: 4.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: data. Tags: kanban, board, cards, drag, listbox. Static. Size: 4.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/kanban-board.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/kanban-board.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -26198,8 +26198,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Kanban Board · kanban-board
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -27236,8 +27236,8 @@ export function KanbanBoard({ className, style, palette, ...props }: KanbanBoard
 <!doctype html>
 <!--
   Pica · Kanban Board · kanban-board
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -27860,12 +27860,12 @@ var PicaKanbanBoard = (() => {
 
 > One or more series plotted as lines over a shared set of labels, in an svg or braille glyph look.
 
-Category: data. Tags: chart, line, svg, braille, data. Static. Size: 5.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: data. Tags: chart, line, svg, braille, data. Static. Size: 5.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/line-chart.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/line-chart.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -27894,8 +27894,8 @@ Draws with `--pica-fg`, `--pica-accent`, `--pica-muted`. Set them on any ancesto
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Line Chart · line-chart
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -29196,8 +29196,8 @@ export function LineChart({ className, style, palette, ...props }: LineChartComp
 <!doctype html>
 <!--
   Pica · Line Chart · line-chart
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -29991,12 +29991,12 @@ var PicaLineChart = (() => {
 
 > A two-tone gradient dithered through a Bayer matrix, drifting slowly like light across a surface.
 
-Category: dither. Tags: gradient, ordered dither, bayer matrix, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: dither. Tags: gradient, ordered dither, bayer matrix, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/dither-gradient.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/dither-gradient.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -30026,8 +30026,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Dither Gradient · dither-gradient
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -31198,8 +31198,8 @@ export function DitherGradient({ className, style, palette, ...props }: DitherGr
 <!doctype html>
 <!--
   Pica · Dither Gradient · dither-gradient
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -31897,12 +31897,12 @@ var PicaDitherGradient = (() => {
 
 > An image reduced to two tones by ordered or error diffusion dithering, drawn crisp on a canvas.
 
-Category: dither. Tags: image, static, dither, canvas. Static. Size: 3.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: dither. Tags: image, static, dither, canvas. Static. Size: 3.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/dither-image.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/dither-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -31931,8 +31931,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Dither Image · dither-image
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -33005,8 +33005,8 @@ export function DitherImage({ className, style, palette, ...props }: DitherImage
 <!doctype html>
 <!--
   Pica · Dither Image · dither-image
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -33595,12 +33595,12 @@ var PicaDitherImage = (() => {
 
 > An image screened into halftone dots, squares, or lines, their area set by darkness like a page of newsprint.
 
-Category: dither. Tags: image, static, halftone, canvas. Static. Size: 3.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: dither. Tags: image, static, halftone, canvas. Static. Size: 3.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/halftone-image.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/halftone-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -33630,8 +33630,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Halftone Image · halftone-image
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -34683,8 +34683,8 @@ export function HalftoneImage({ className, style, palette, ...props }: HalftoneI
 <!doctype html>
 <!--
   Pica · Halftone Image · halftone-image
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -35257,12 +35257,12 @@ var PicaHalftoneImage = (() => {
 
 > An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.
 
-Category: effects. Tags: image, static, duotone, canvas. Static. Size: 3.3 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: effects. Tags: image, static, duotone, canvas. Static. Size: 3.3 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/duotone-image.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/duotone-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -35291,8 +35291,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Duotone Image · duotone-image
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -36271,8 +36271,8 @@ export function DuotoneImage({ className, style, palette, ...props }: DuotoneIma
 <!doctype html>
 <!--
   Pica · Duotone Image · duotone-image
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -36774,7 +36774,7 @@ var PicaDuotoneImage = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -36782,12 +36782,12 @@ Original to Pica.
 
 > Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.
 
-Category: effects. Tags: text, glitch, burst, distortion. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: effects. Tags: text, glitch, burst, distortion. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/glitch-text.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/glitch-text.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -36819,8 +36819,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Glitch Text · glitch-text
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -37599,8 +37599,8 @@ export function GlitchText({ className, style, palette, ...props }: GlitchTextCo
 <!doctype html>
 <!--
   Pica · Glitch Text · glitch-text
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -37972,7 +37972,7 @@ var PicaGlitchText = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -37980,12 +37980,12 @@ Original to Pica.
 
 > An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.
 
-Category: effects. Tags: overlay, grain, texture, blend mode. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: effects. Tags: overlay, grain, texture, blend mode. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/grain-overlay.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/grain-overlay.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -38020,8 +38020,8 @@ Draws with . Set them on any ancestor, pass `palette` to the React component, or
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Grain Overlay · grain-overlay
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -38601,8 +38601,8 @@ export function GrainOverlay({ className, style, palette, children, ...props }: 
 <!doctype html>
 <!--
   Pica · Grain Overlay · grain-overlay
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -38930,12 +38930,12 @@ var PicaGrainOverlay = (() => {
 
 > A halftone dot pattern made entirely of layered CSS gradients, for use as a background.
 
-Category: effects. Tags: background, pattern, halftone, css. Static. Size: 1.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: effects. Tags: background, pattern, halftone, css. Static. Size: 1.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/halftone-css.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/halftone-css.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -38962,8 +38962,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Halftone CSS · halftone-css
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -39506,8 +39506,8 @@ export function HalftoneCss({ className, style, palette, ...props }: HalftoneCss
 <!doctype html>
 <!--
   Pica · Halftone CSS · halftone-css
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -39743,12 +39743,12 @@ var PicaHalftoneCss = (() => {
 
 > An image whose pixel rows or columns are sorted by brightness within threshold bands, smearing tone into streaks.
 
-Category: effects. Tags: image, static, canvas, glitch. Static. Size: 3.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: effects. Tags: image, static, canvas, glitch. Static. Size: 3.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/pixel-sort.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/pixel-sort.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -39778,8 +39778,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Pixel Sort · pixel-sort
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -40864,8 +40864,8 @@ export function PixelSort({ className, style, palette, ...props }: PixelSortComp
 <!doctype html>
 <!--
   Pica · Pixel Sort · pixel-sort
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -41426,12 +41426,12 @@ var PicaPixelSort = (() => {
 
 > A CRT scanline overlay in the ink color, with an optional soft band that rolls slowly down the screen.
 
-Category: effects. Tags: overlay, crt, scanlines, css. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: effects. Tags: overlay, crt, scanlines, css. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/scanlines.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/scanlines.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -41466,8 +41466,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Scanlines · scanlines
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -42105,8 +42105,8 @@ export function Scanlines({ className, style, palette, children, ...props }: Sca
 <!doctype html>
 <!--
   Pica · Scanlines · scanlines
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -42408,7 +42408,7 @@ var PicaScanlines = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -42416,12 +42416,12 @@ Original to Pica.
 
 > A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.
 
-Category: immersive. Tags: 3d, rotation, map, canvas. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: immersive. Tags: 3d, rotation, map, canvas. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/globe.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/globe.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -42453,8 +42453,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Globe · globe
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -43391,8 +43391,8 @@ export function Globe({ className, style, palette, ...props }: GlobeComponentPro
 <!doctype html>
 <!--
   Pica · Globe · globe
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -43904,12 +43904,12 @@ var PicaGlobe = (() => {
 
 > Scrolls its children sideways in an endless loop, like a ticker.
 
-Category: motion. Tags: ticker, scroll, loop, css. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: motion. Tags: ticker, scroll, loop, css. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/marquee.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/marquee.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -43943,8 +43943,8 @@ Draws with . Set them on any ancestor, pass `palette` to the React component, or
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Marquee · marquee
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -44546,8 +44546,8 @@ export function Marquee({ className, style, palette, children, ...props }: Marqu
 <!doctype html>
 <!--
   Pica · Marquee · marquee
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -44892,7 +44892,7 @@ var PicaMarquee = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -44900,12 +44900,12 @@ Original to Pica.
 
 > A CSS grid section that sizes its children by position into a feature, mosaic, or equal column pattern.
 
-Category: sections. Tags: grid, layout, bento, section, css. Static. Size: 1.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: sections. Tags: grid, layout, bento, section, css. Static. Size: 1.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/bento-grid.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/bento-grid.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -44936,8 +44936,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Bento Grid · bento-grid
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -45441,8 +45441,8 @@ export function BentoGrid({ className, style, palette, children, ...props }: Ben
 <!doctype html>
 <!--
   Pica · Bento Grid · bento-grid
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -45640,7 +45640,7 @@ var PicaBentoGrid = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -45648,12 +45648,12 @@ Original to Pica.
 
 > A page hero that adds calls to action and a composed background behind a headline and copy.
 
-Category: sections. Tags: hero, landing, section, cta, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 9.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: sections. Tags: hero, landing, section, cta, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 9.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/hero.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/hero.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -45687,8 +45687,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Hero · hero
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -47708,8 +47708,8 @@ export function Hero({ className, style, palette, children, ...props }: HeroComp
 <!doctype html>
 <!--
   Pica · Hero · hero
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -49040,7 +49040,7 @@ void main() {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -49048,12 +49048,12 @@ Original to Pica.
 
 > Pricing tiers with a monthly and yearly switch, each plan a card with its own call to action.
 
-Category: sections. Tags: pricing, tiers, billing, radio group, section. Static. Size: 3.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: sections. Tags: pricing, tiers, billing, radio group, section. Static. Size: 3.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/pricing.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/pricing.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -49088,8 +49088,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Pricing · pricing
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -49881,8 +49881,8 @@ export function Pricing({ className, style, palette, ...props }: PricingComponen
 <!doctype html>
 <!--
   Pica · Pricing · pricing
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -50283,12 +50283,12 @@ var PicaPricing = (() => {
 
 > A row of key numbers in mono figures, each with a delta glyph and an inline trend sparkline.
 
-Category: sections. Tags: stats, kpi, metrics, dashboard, section. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: sections. Tags: stats, kpi, metrics, dashboard, section. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/stats-kpi.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/stats-kpi.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -50318,8 +50318,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Stats KPI · stats-kpi
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -51537,8 +51537,8 @@ export function StatsKpi({ className, style, palette, ...props }: StatsKpiCompon
 <!doctype html>
 <!--
   Pica · Stats KPI · stats-kpi
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -52155,7 +52155,7 @@ var PicaStatsKpi = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -52163,12 +52163,12 @@ Original to Pica.
 
 > Quotes shown as a grid of cards, or as one quote at a time that resolves from scrambled glyphs.
 
-Category: sections. Tags: testimonials, quotes, carousel, section, social proof. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.9 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: sections. Tags: testimonials, quotes, carousel, section, social proof. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.9 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/testimonials.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/testimonials.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -52199,8 +52199,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Testimonials · testimonials
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -53398,8 +53398,8 @@ export function Testimonials({ className, style, palette, ...props }: Testimonia
 <!doctype html>
 <!--
   Pica · Testimonials · testimonials
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -54152,12 +54152,12 @@ var PicaTestimonials = (() => {
 
 > Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.
 
-Category: shaders. Tags: aurora, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: shaders. Tags: aurora, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/aurora.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/aurora.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -54190,8 +54190,8 @@ Draws with `--pica-fg`, `--pica-accent`, `--pica-bg`. Set them on any ancestor, 
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Aurora · aurora
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -55330,8 +55330,8 @@ export function Aurora({ className, style, palette, ...props }: AuroraComponentP
 <!doctype html>
 <!--
   Pica · Aurora · aurora
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -55975,12 +55975,12 @@ void main() {
 
 > A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.
 
-Category: shaders. Tags: gradient, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: shaders. Tags: gradient, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/mesh-gradient.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/mesh-gradient.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -56012,8 +56012,8 @@ Draws with `--pica-fg`, `--pica-bg`, `--pica-accent`. Set them on any ancestor, 
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Mesh Gradient · mesh-gradient
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -57128,8 +57128,8 @@ export function MeshGradient({ className, style, palette, ...props }: MeshGradie
 <!doctype html>
 <!--
   Pica · Mesh Gradient · mesh-gradient
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -57755,12 +57755,12 @@ void main() {
 
 > Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.
 
-Category: shaders. Tags: gradient, shader, webgl, background, dither, flow. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: shaders. Tags: gradient, shader, webgl, background, dither, flow. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/shader-flow.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/shader-flow.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -57794,8 +57794,8 @@ Draws with `--pica-fg`, `--pica-accent`, `--pica-bg`. Set them on any ancestor, 
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Shader Flow · shader-flow
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -58960,8 +58960,8 @@ export function ShaderFlow({ className, style, palette, ...props }: ShaderFlowCo
 <!doctype html>
 <!--
   Pica · Shader Flow · shader-flow
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -59625,12 +59625,12 @@ void main() {
 
 > A container framed in box-drawing characters, with an optional title set into the top rule.
 
-Category: text-mode. Tags: frame, border, box-drawing, static. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: frame, border, box-drawing, static. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-frame.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-frame.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -59664,8 +59664,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · ASCII Frame · ascii-frame
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -60556,8 +60556,8 @@ export function AsciiFrame({ className, style, palette, children, ...props }: As
 <!doctype html>
 <!--
   Pica · ASCII Frame · ascii-frame
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -61060,7 +61060,7 @@ var PicaAsciiFrame = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -61068,12 +61068,12 @@ Original to Pica.
 
 > A text-mode loading indicator: a braille dot orbit, a progress bar, a shade pulse, or animated dots.
 
-Category: text-mode. Tags: loader, spinner, progress, inline. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: loader, spinner, progress, inline. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-loader.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-loader.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -61105,8 +61105,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Loader · ascii-loader
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -61801,8 +61801,8 @@ export function AsciiLoader({ className, style, palette, ...props }: AsciiLoader
 <!doctype html>
 <!--
   Pica · ASCII Loader · ascii-loader
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -62142,7 +62142,7 @@ var PicaAsciiLoader = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -62150,12 +62150,12 @@ Original to Pica.
 
 > A series of numbers drawn inline as eighth-block bars or a braille line, scaled to its own range.
 
-Category: text-mode. Tags: sparkline, chart, braille, inline. Static. Size: 1.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: sparkline, chart, braille, inline. Static. Size: 1.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-sparkline.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-sparkline.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -62184,8 +62184,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Sparkline · ascii-sparkline
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -62707,8 +62707,8 @@ export function AsciiSparkline({ className, style, palette, ...props }: AsciiSpa
 <!doctype html>
 <!--
   Pica · ASCII Sparkline · ascii-sparkline
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -62962,12 +62962,12 @@ var PicaAsciiSparkline = (() => {
 
 > A terminal session that types a command and prints its output, then rests on a blinking cursor.
 
-Category: text-mode. Tags: terminal, typing, cursor, cli. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: terminal, typing, cursor, cli. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 2.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/ascii-terminal.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-terminal.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -62999,8 +62999,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · ASCII Terminal · ascii-terminal
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -63814,8 +63814,8 @@ export function AsciiTerminal({ className, style, palette, ...props }: AsciiTerm
 <!doctype html>
 <!--
   Pica · ASCII Terminal · ascii-terminal
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -64181,7 +64181,7 @@ var PicaAsciiTerminal = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -64189,12 +64189,12 @@ Original to Pica.
 
 > Large block letters drawn in text from an original five row pixel font, sized to fit the host's width.
 
-Category: text-mode. Tags: text, logotype, static, pixel font. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: text, logotype, static, pixel font. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/block-banner.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/block-banner.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -64222,8 +64222,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Block Banner · block-banner
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -65192,8 +65192,8 @@ export function BlockBanner({ className, style, palette, ...props }: BlockBanner
 <!doctype html>
 <!--
   Pica · Block Banner · block-banner
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -65682,7 +65682,7 @@ var PicaBlockBanner = (() => {
 
 ## Credits
 
-Original to Pica.
+Original to Picagram.
 
 ---
 
@@ -65690,12 +65690,12 @@ Original to Pica.
 
 > An image drawn with the sixteen quadrant block characters, each matching the corners a 2 by 2 sample fills.
 
-Category: text-mode. Tags: image, static, quadrant blocks, ordered dither. Static. Size: 4.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: image, static, quadrant blocks, ordered dither. Static. Size: 4.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/block-image.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/block-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -65727,8 +65727,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Block Image · block-image
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -67049,8 +67049,8 @@ export function BlockImage({ className, style, palette, ...props }: BlockImageCo
 <!doctype html>
 <!--
   Pica · Block Image · block-image
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -67757,12 +67757,12 @@ var PicaBlockImage = (() => {
 
 > An image drawn with braille characters, each cell's eight dots giving twice the horizontal and four times the vertical resolution of plain ASCII.
 
-Category: text-mode. Tags: image, static, braille, dither. Static. Size: 4.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: text-mode. Tags: image, static, braille, dither. Static. Size: 4.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/braille-image.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/braille-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -67794,8 +67794,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Braille Image · braille-image
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -69120,8 +69120,8 @@ export function BrailleImage({ className, style, palette, ...props }: BrailleIma
 <!doctype html>
 <!--
   Pica · Braille Image · braille-image
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -69836,12 +69836,12 @@ var PicaBrailleImage = (() => {
 
 > A button in four looks, solid, outline, ghost, and monospace brackets, with a braille spinner while it loads.
 
-Category: ui. Tags: button, action, form, ui. Static. Size: 2.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ui. Tags: button, action, form, ui. Static. Size: 2.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/button.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/button.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -69880,8 +69880,8 @@ Draws with `--pica-accent`. Set it on any ancestor, pass `palette` to the React 
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Button · button
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -70608,8 +70608,8 @@ export function Button({ className, style, palette, children, ...props }: Button
 <!doctype html>
 <!--
   Pica · Button · button
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -70968,12 +70968,12 @@ var PicaButton = (() => {
 
 > A modal dialog on the native dialog element, with focus containment, Escape, and the top layer handled by the browser.
 
-Category: ui. Tags: dialog, modal, overlay, ui. Static. Size: 2.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ui. Tags: dialog, modal, overlay, ui. Static. Size: 2.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/dialog.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/dialog.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -71013,8 +71013,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Dialog · dialog
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -71575,8 +71575,8 @@ export function Dialog({ className, style, palette, children, ...props }: Dialog
 <!doctype html>
 <!--
   Pica · Dialog · dialog
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -71859,12 +71859,12 @@ var PicaDialog = (() => {
 
 > A trigger button that shows a tooltip on hover and focus, or toggles a popover panel on click, built on the Popover API.
 
-Category: ui. Tags: tooltip, popover, disclosure, overlay. Static. Size: 2.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ui. Tags: tooltip, popover, disclosure, overlay. Static. Size: 2.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/popover-tooltip.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/popover-tooltip.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -71901,8 +71901,8 @@ Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React comp
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Popover Tooltip · popover-tooltip
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -72558,8 +72558,8 @@ export function PopoverTooltip({ className, style, palette, ...props }: PopoverT
 <!doctype html>
 <!--
   Pica · Popover Tooltip · popover-tooltip
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -72904,12 +72904,12 @@ var PicaPopoverTooltip = (() => {
 
 > A single-choice select with a keyboard-driven listbox, styled after the WAI-ARIA select-only combobox pattern.
 
-Category: ui. Tags: select, combobox, dropdown, listbox, form. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ui. Tags: select, combobox, dropdown, listbox, form. Static. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/select.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/select.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -72945,8 +72945,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Select · select
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -73871,8 +73871,8 @@ export function Select({ className, style, palette, ...props }: SelectComponentP
 <!doctype html>
 <!--
   Pica · Select · select
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>
@@ -74424,12 +74424,12 @@ var PicaSelect = (() => {
 
 > A tabbed view for switching between panels, with the active tab following keyboard focus.
 
-Category: ui. Tags: tabs, navigation, panels, ui. Static. Size: 2.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: ui. Tags: tabs, navigation, panels, ui. Static. Size: 2.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/tabs.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/tabs.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -74467,8 +74467,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
 // Pica · Tabs · tabs
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -75105,8 +75105,8 @@ export function Tabs({ className, style, palette, children, ...props }: TabsComp
 <!doctype html>
 <!--
   Pica · Tabs · tabs
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

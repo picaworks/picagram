@@ -1,0 +1,52 @@
+# Builds the catalog site and publishes it to GitHub Pages on every push to main.
+# The build runs on macOS, so the thumbnails npm run verify captures use the same fonts a Mac does, and the
+# whole gate runs first: a failing check stops the deploy. See docs/architecture/site.md.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build:registry
+      # Captures every component's thumbnails while it checks them; they are not committed.
+      - run: npm run verify -- --quick
+      - run: npm run check:site
+      # check:site builds with a test fixture in the catalog, so the published build is a clean one.
+      - run: npx next build
+      - run: touch out/.nojekyll
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

@@ -2,12 +2,12 @@
 
 > Columns of cards that move between columns by keyboard or by pointer drag.
 
-Category: data. Tags: kanban, board, cards, drag, listbox. Static. Size: 4.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: data. Tags: kanban, board, cards, drag, listbox. Static. Size: 4.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/kanban-board.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/kanban-board.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -42,8 +42,8 @@ Draws with `--pica-fg`, `--pica-accent`. Set them on any ancestor, pass `palette
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Kanban Board · kanban-board
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -1080,8 +1080,8 @@ export function KanbanBoard({ className, style, palette, ...props }: KanbanBoard
 <!doctype html>
 <!--
   Pica · Kanban Board · kanban-board
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

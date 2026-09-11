@@ -36,9 +36,10 @@ interface FrameProps {
 
 /** One frame on the board: the capture, or the live page when selected. */
 export function Frame({ item, x, y, selected, dimmed, ground, onSelect, live }: FrameProps) {
-  // The capture that matches the ground, then the dark capture, then the title in muted text.
+  // The capture that matches the ground, then the dark capture, then the title in muted text. Paths are
+  // relative to the page, so the site works under any base path.
   const sources = useMemo(
-    () => (ground === "paper" ? [`/thumbs/${item.slug}-light.jpg`, `/thumbs/${item.slug}.jpg`] : [`/thumbs/${item.slug}.jpg`]),
+    () => (ground === "paper" ? [`thumbs/${item.slug}-light.jpg`, `thumbs/${item.slug}.jpg`] : [`thumbs/${item.slug}.jpg`]),
     [item.slug, ground],
   );
   const [failed, setFailed] = useState<readonly string[]>([]);
@@ -149,7 +150,7 @@ function Live({ item, live }: { item: CatalogItem; live: LiveState }) {
       <iframe
         ref={frameRef}
         className="frame-live"
-        src={`/v/${item.slug}.html`}
+        src={`v/${item.slug}.html`}
         title={`${item.title}, live`}
         style={{ width }}
         onLoad={() => {

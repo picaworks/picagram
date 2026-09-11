@@ -15,6 +15,7 @@
     "build": "npm run build:registry && npm run build:site",
     "verify": "tsx scripts/verify/index.ts",
     "check:site": "tsx scripts/check-site.ts",
+    "social-card": "tsx scripts/social-card.ts",
     "review": "node scripts/review.mjs",
     "lint": "eslint . && tsc --noEmit",
     "test": "vitest run",

@@ -2,12 +2,12 @@
 
 > Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.
 
-Category: shaders. Tags: gradient, shader, webgl, background, dither, flow. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/pica/blob/main/LICENSE.md.
+Category: shaders. Tags: gradient, shader, webgl, background, dither, flow. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
 ```bash
-npx shadcn@latest add https://raw.githubusercontent.com/rishabbalak/pica/main/public/r/shader-flow.json
+npx shadcn@latest add https://rishabbalak.github.io/picagram/r/shader-flow.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -41,8 +41,8 @@ Draws with `--pica-fg`, `--pica-accent`, `--pica-bg`. Set them on any ancestor, 
 import { type CSSProperties, useEffect, useRef } from "react";
 
 // Pica · Shader Flow · shader-flow
-// MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-// Docs and credits: https://github.com/rishabbalak/pica
+// MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+// Docs and credits: https://github.com/rishabbalak/picagram
 
 // lib/events.ts
 /** Events a core reports from its host. Each is a CustomEvent named "pica:" plus the event's name in lower
@@ -1207,8 +1207,8 @@ export function ShaderFlow({ className, style, palette, ...props }: ShaderFlowCo
 <!doctype html>
 <!--
   Pica · Shader Flow · shader-flow
-  MIT + Commons Clause · https://github.com/rishabbalak/pica/blob/main/LICENSE.md
-  Docs and credits: https://github.com/rishabbalak/pica
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
 -->
 <html lang="en">
 <head>

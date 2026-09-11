@@ -1,4 +1,4 @@
-# Pica
+# Picagram
 
 ASCII-first components for React and plain HTML: text-mode, dither, and pattern effects, plus shaders, charts, controls, and page sections drawn in the same grammar. Every component ships in two shapes: one React file that imports only `react`, and one HTML file that needs nothing. Both are generated from a single source and checked against each other in a real browser.
 
@@ -22,7 +22,7 @@ Every component draws with four palette tokens, so a single palette matches it t
 
 ## License
 
-MIT + Commons Clause, the same model React Bits uses. You can use the components in anything, including commercial work. You cannot sell or republish them as a component library or template pack. This makes Pica source-available rather than OSI open source.
+MIT + Commons Clause, the same model React Bits uses. You can use the components in anything, including commercial work. You cannot sell or republish them as a component library or template pack. This makes Picagram source-available rather than OSI open source.
 
 ## Credits
 
