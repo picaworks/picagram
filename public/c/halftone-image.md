@@ -7,7 +7,7 @@ Category: dither. Tags: image, static, halftone, canvas. Static. Size: 3.7 KB gz
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/halftone-image.json
+npx shadcn@latest add https://picagram.dev/r/halftone-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

@@ -7,7 +7,7 @@ Category: effects. Tags: overlay, grain, texture, blend mode. Animated. Holds a 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/grain-overlay.json
+npx shadcn@latest add https://picagram.dev/r/grain-overlay.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

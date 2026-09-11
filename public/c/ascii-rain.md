@@ -7,7 +7,7 @@ Category: ascii. Tags: rain, animated, measured ramp, generative. Animated. Hold
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-rain.json
+npx shadcn@latest add https://picagram.dev/r/ascii-rain.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

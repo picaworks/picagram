@@ -1,6 +1,6 @@
 # Outputs
 
-Everything the build and the verifier write. All of it is generated. `test/generated.test.ts` fails when a committed copy differs from a fresh build.
+Everything the build and the verifier write. All of it is generated. `test/generated.test.ts` fails when a committed copy differs from a fresh build, apart from gzip sizes: those vary with the zlib inside each Node release, so the test sets them aside, and `test/budget.test.ts` checks every size on the machine that runs it.
 
 | File | Written by | Rule | Shape |
 |---|---|---|---|
@@ -15,6 +15,7 @@ Everything the build and the verifier write. All of it is generated. `test/gener
 | `public/r/<slug>.json` and `public/r/registry.json` | `shadcn build` | derived from `registry.json`; not compared by the equality test | shadcn registry items |
 | `CREDITS.md` | `scripts/build.ts` | built from each meta's credits | markdown |
 | `public/thumbs/<slug>.jpg` and `public/thumbs/<slug>-light.jpg` | `scripts/verify/render.ts` | the 1280 capture on the dark and the light ground; varies by machine, so not compared, and gitignored | JPEG |
+| `public/og.png`, `public/wordmark.svg`, `public/favicon-32.png`, `public/apple-touch-icon.png` | `scripts/brand.ts` (`npm run brand`) | the link preview, the README's wordmark, and PNG copies of the favicon, rendered from `src/lib/logo.ts` and `public/icon.svg`; run again when either changes | PNG and SVG |
 | `.pica/` | verify and tests | scratch, gitignored | staged shapes, harness and probe pages, captures, verify results, the standalone typechecks |
 
 ## The vanilla page protocol

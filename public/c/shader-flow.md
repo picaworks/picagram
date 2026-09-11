@@ -7,7 +7,7 @@ Category: shaders. Tags: gradient, shader, webgl, background, dither, flow. Anim
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/shader-flow.json
+npx shadcn@latest add https://picagram.dev/r/shader-flow.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

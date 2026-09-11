@@ -7,7 +7,7 @@ Category: shaders. Tags: gradient, shader, webgl, background, dither. Animated. 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/mesh-gradient.json
+npx shadcn@latest add https://picagram.dev/r/mesh-gradient.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

@@ -7,7 +7,7 @@ Category: sections. Tags: grid, layout, bento, section, css. Static. Size: 1.5 K
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/bento-grid.json
+npx shadcn@latest add https://picagram.dev/r/bento-grid.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

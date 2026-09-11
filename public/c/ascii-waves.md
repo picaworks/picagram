@@ -7,7 +7,7 @@ Category: ascii. Tags: interference, waves, animated, background. Animated. Hold
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-waves.json
+npx shadcn@latest add https://picagram.dev/r/ascii-waves.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

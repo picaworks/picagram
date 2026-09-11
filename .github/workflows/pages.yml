@@ -1,10 +1,13 @@
-# Builds the catalog site and publishes it to GitHub Pages on every push to main.
-# The build runs on macOS, so the thumbnails npm run verify captures use the same fonts a Mac does, and the
-# whole gate runs first: a failing check stops the deploy. See docs/architecture/site.md.
+# Builds the catalog site on every pull request and every push to main, and publishes it to GitHub Pages from
+# main. The build runs on macOS, so the thumbnails npm run verify captures use the same fonts a Mac does, and the
+# whole gate runs first. On a pull request, the build job is the check branch protection requires before it can
+# merge. See docs/architecture/site.md.
 name: Pages
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -14,8 +17,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -37,11 +40,13 @@ jobs:
       # check:site builds with a test fixture in the catalog, so the published build is a clean one.
       - run: npx next build
       - run: touch out/.nojekyll
-      - uses: actions/upload-pages-artifact@v5
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: out
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:

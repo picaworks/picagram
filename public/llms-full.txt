@@ -7,7 +7,7 @@ Category: ascii. Tags: image, static, measured ramp, shape matching. Static. Siz
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-image.json
+npx shadcn@latest add https://picagram.dev/r/ascii-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -2138,7 +2138,7 @@ Category: ascii. Tags: text, animated, measured ramp, morph, transition. Animate
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-morph.json
+npx shadcn@latest add https://picagram.dev/r/ascii-morph.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -4494,7 +4494,7 @@ Category: ascii. Tags: background, noise, animated, decorative. Animated. Holds 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-noise-field.json
+npx shadcn@latest add https://picagram.dev/r/ascii-noise-field.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -6576,7 +6576,7 @@ Category: ascii. Tags: pointer, ripple, noise, interactive. Animated. Holds a st
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-pointer-ripple.json
+npx shadcn@latest add https://picagram.dev/r/ascii-pointer-ripple.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -8758,7 +8758,7 @@ Category: ascii. Tags: rain, animated, measured ramp, generative. Animated. Hold
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-rain.json
+npx shadcn@latest add https://picagram.dev/r/ascii-rain.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -10605,7 +10605,7 @@ Category: ascii. Tags: text, reveal, scramble, decode. Animated. Holds a still f
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-reveal.json
+npx shadcn@latest add https://picagram.dev/r/ascii-reveal.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -11580,7 +11580,7 @@ Category: ascii. Tags: 3d, rotation, measured ramp, depth buffer. Animated. Hold
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-solid.json
+npx shadcn@latest add https://picagram.dev/r/ascii-solid.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -13580,7 +13580,7 @@ Category: ascii. Tags: text, headline, static, measured ramp, shape matching. St
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-text.json
+npx shadcn@latest add https://picagram.dev/r/ascii-text.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -15680,7 +15680,7 @@ Category: ascii. Tags: noise, contours, marching squares, topography. Animated. 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-topo.json
+npx shadcn@latest add https://picagram.dev/r/ascii-topo.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -17653,7 +17653,7 @@ Category: ascii. Tags: video, webcam, animated, measured ramp. Animated. Holds a
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-video.json
+npx shadcn@latest add https://picagram.dev/r/ascii-video.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -20150,7 +20150,7 @@ Category: ascii. Tags: interference, waves, animated, background. Animated. Hold
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-waves.json
+npx shadcn@latest add https://picagram.dev/r/ascii-waves.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -22036,7 +22036,7 @@ Category: data. Tags: chart, bars, svg, glyph grid, data table. Static. Size: 5.
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/bar-chart.json
+npx shadcn@latest add https://picagram.dev/r/bar-chart.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -24082,7 +24082,7 @@ Category: data. Tags: chart, donut, svg, glyph grid, data table. Static. Size: 5
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/donut-chart.json
+npx shadcn@latest add https://picagram.dev/r/donut-chart.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -26163,7 +26163,7 @@ Category: data. Tags: kanban, board, cards, drag, listbox. Static. Size: 4.4 KB 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/kanban-board.json
+npx shadcn@latest add https://picagram.dev/r/kanban-board.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -27865,7 +27865,7 @@ Category: data. Tags: chart, line, svg, braille, data. Static. Size: 5.7 KB gzip
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/line-chart.json
+npx shadcn@latest add https://picagram.dev/r/line-chart.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -29996,7 +29996,7 @@ Category: dither. Tags: gradient, ordered dither, bayer matrix, background. Anim
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/dither-gradient.json
+npx shadcn@latest add https://picagram.dev/r/dither-gradient.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -31902,7 +31902,7 @@ Category: dither. Tags: image, static, dither, canvas. Static. Size: 3.8 KB gzip
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/dither-image.json
+npx shadcn@latest add https://picagram.dev/r/dither-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -33600,7 +33600,7 @@ Category: dither. Tags: image, static, halftone, canvas. Static. Size: 3.7 KB gz
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/halftone-image.json
+npx shadcn@latest add https://picagram.dev/r/halftone-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -35262,7 +35262,7 @@ Category: effects. Tags: image, static, duotone, canvas. Static. Size: 3.3 KB gz
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/duotone-image.json
+npx shadcn@latest add https://picagram.dev/r/duotone-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -36787,7 +36787,7 @@ Category: effects. Tags: text, glitch, burst, distortion. Animated. Holds a stil
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/glitch-text.json
+npx shadcn@latest add https://picagram.dev/r/glitch-text.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -37985,7 +37985,7 @@ Category: effects. Tags: overlay, grain, texture, blend mode. Animated. Holds a 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/grain-overlay.json
+npx shadcn@latest add https://picagram.dev/r/grain-overlay.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -38935,7 +38935,7 @@ Category: effects. Tags: background, pattern, halftone, css. Static. Size: 1.4 K
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/halftone-css.json
+npx shadcn@latest add https://picagram.dev/r/halftone-css.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -39748,7 +39748,7 @@ Category: effects. Tags: image, static, canvas, glitch. Static. Size: 3.5 KB gzi
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/pixel-sort.json
+npx shadcn@latest add https://picagram.dev/r/pixel-sort.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -41431,7 +41431,7 @@ Category: effects. Tags: overlay, crt, scanlines, css. Animated. Holds a still f
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/scanlines.json
+npx shadcn@latest add https://picagram.dev/r/scanlines.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -42421,7 +42421,7 @@ Category: immersive. Tags: 3d, rotation, map, canvas. Animated. Holds a still fr
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/globe.json
+npx shadcn@latest add https://picagram.dev/r/globe.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -43909,7 +43909,7 @@ Category: motion. Tags: ticker, scroll, loop, css. Animated. Holds a still frame
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/marquee.json
+npx shadcn@latest add https://picagram.dev/r/marquee.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -44905,7 +44905,7 @@ Category: sections. Tags: grid, layout, bento, section, css. Static. Size: 1.5 K
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/bento-grid.json
+npx shadcn@latest add https://picagram.dev/r/bento-grid.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -45653,7 +45653,7 @@ Category: sections. Tags: hero, landing, section, cta, background. Animated. Hol
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/hero.json
+npx shadcn@latest add https://picagram.dev/r/hero.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -49053,7 +49053,7 @@ Category: sections. Tags: pricing, tiers, billing, radio group, section. Static.
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/pricing.json
+npx shadcn@latest add https://picagram.dev/r/pricing.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -50288,7 +50288,7 @@ Category: sections. Tags: stats, kpi, metrics, dashboard, section. Animated. Hol
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/stats-kpi.json
+npx shadcn@latest add https://picagram.dev/r/stats-kpi.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -52168,7 +52168,7 @@ Category: sections. Tags: testimonials, quotes, carousel, section, social proof.
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/testimonials.json
+npx shadcn@latest add https://picagram.dev/r/testimonials.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -54157,7 +54157,7 @@ Category: shaders. Tags: aurora, shader, webgl, background, dither. Animated. Ho
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/aurora.json
+npx shadcn@latest add https://picagram.dev/r/aurora.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -55980,7 +55980,7 @@ Category: shaders. Tags: gradient, shader, webgl, background, dither. Animated. 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/mesh-gradient.json
+npx shadcn@latest add https://picagram.dev/r/mesh-gradient.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -57760,7 +57760,7 @@ Category: shaders. Tags: gradient, shader, webgl, background, dither, flow. Anim
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/shader-flow.json
+npx shadcn@latest add https://picagram.dev/r/shader-flow.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -59630,7 +59630,7 @@ Category: text-mode. Tags: frame, border, box-drawing, static. Static. Size: 3.4
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-frame.json
+npx shadcn@latest add https://picagram.dev/r/ascii-frame.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -61073,7 +61073,7 @@ Category: text-mode. Tags: loader, spinner, progress, inline. Animated. Holds a 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-loader.json
+npx shadcn@latest add https://picagram.dev/r/ascii-loader.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -62155,7 +62155,7 @@ Category: text-mode. Tags: sparkline, chart, braille, inline. Static. Size: 1.5 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-sparkline.json
+npx shadcn@latest add https://picagram.dev/r/ascii-sparkline.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -62967,7 +62967,7 @@ Category: text-mode. Tags: terminal, typing, cursor, cli. Animated. Holds a stil
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-terminal.json
+npx shadcn@latest add https://picagram.dev/r/ascii-terminal.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -64194,7 +64194,7 @@ Category: text-mode. Tags: text, logotype, static, pixel font. Static. Size: 3.4
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/block-banner.json
+npx shadcn@latest add https://picagram.dev/r/block-banner.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -65695,7 +65695,7 @@ Category: text-mode. Tags: image, static, quadrant blocks, ordered dither. Stati
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/block-image.json
+npx shadcn@latest add https://picagram.dev/r/block-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -67762,7 +67762,7 @@ Category: text-mode. Tags: image, static, braille, dither. Static. Size: 4.5 KB 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/braille-image.json
+npx shadcn@latest add https://picagram.dev/r/braille-image.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -69841,7 +69841,7 @@ Category: ui. Tags: button, action, form, ui. Static. Size: 2.4 KB gzipped, runt
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/button.json
+npx shadcn@latest add https://picagram.dev/r/button.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -70973,7 +70973,7 @@ Category: ui. Tags: dialog, modal, overlay, ui. Static. Size: 2.0 KB gzipped, ru
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/dialog.json
+npx shadcn@latest add https://picagram.dev/r/dialog.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -71864,7 +71864,7 @@ Category: ui. Tags: tooltip, popover, disclosure, overlay. Static. Size: 2.2 KB 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/popover-tooltip.json
+npx shadcn@latest add https://picagram.dev/r/popover-tooltip.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -72909,7 +72909,7 @@ Category: ui. Tags: select, combobox, dropdown, listbox, form. Static. Size: 3.4
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/select.json
+npx shadcn@latest add https://picagram.dev/r/select.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
@@ -74429,7 +74429,7 @@ Category: ui. Tags: tabs, navigation, panels, ui. Static. Size: 2.2 KB gzipped, 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/tabs.json
+npx shadcn@latest add https://picagram.dev/r/tabs.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

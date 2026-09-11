@@ -40,19 +40,17 @@ A component that declares `events` in its catalog entry reports them as `pica:<n
 
 ## Hosting and paths
 
-GitHub Pages serves the site. `.github/workflows/pages.yml` runs on every push to `main`, on macOS so the captures use a Mac's fonts: the whole gate, then `npm run verify -- --quick`, which also writes the thumbnails, since `public/thumbs/` is not committed, then `check:site`, then a clean `next build` into `out/`, which it publishes.
+GitHub Pages serves the site at https://picagram.dev. `.github/workflows/pages.yml` runs on every pull request and every push to `main`, on macOS so the captures use a Mac's fonts: the whole gate, then `npm run verify -- --quick`, which also writes the thumbnails, since `public/thumbs/` is not committed, then `check:site`, then a clean `next build` into `out/`. On a pull request its `build` job is the check that branch protection requires; on `main` the workflow also publishes `out/`.
 
-`SITE_URL` in `scripts/config.ts` says where the site lives, and `BASE_PATH` follows from it: `/picagram` while Pages serves the site from the repository's path, until picagram.dev is set up. A production build uses `BASE_PATH` as Next's `basePath`, so `check:site` tests what Pages serves, and `next dev` stays at the root. The page links to its own files with relative paths (`thumbs/`, `v/`, `react/`, `c/`, `llms.txt`), so they resolve under any base path. Link previews and `llms.txt` need full URLs, so those come from `SITE_URL`. `test/site.test.ts` checks both.
+`main` is protected. Every change is a pull request, merged squashed only after `build` passes and only from a branch that is up to date with `main`. Nobody pushes to `main` directly, admins included, and force pushes and deletions are off.
 
-Moving to a custom domain:
-1. Set `SITE_URL` to the domain. `BASE_PATH` becomes empty.
-2. Add `public/CNAME` with the domain's name, and set the domain in the repository's Pages settings.
-3. Point the domain's DNS at GitHub Pages.
-4. Run `npm run build:registry`, since `llms.txt` links change, and commit.
+`SITE_URL` in `scripts/config.ts` says where the site lives, and `BASE_PATH` follows from it: empty at the domain's root, or a path such as `/picagram` when Pages serves the site from the repository's path. A production build uses `BASE_PATH` as Next's `basePath`, so `check:site` tests what Pages serves, and `next dev` stays at the root. The page links to its own files with relative paths (`thumbs/`, `v/`, `react/`, `c/`, `llms.txt`), so they resolve under any base path. Link previews, `llms.txt`, and the shadcn install lines need full URLs, so those come from `SITE_URL`. `test/site.test.ts` checks both.
+
+The domain's DNS, at the registrar, holds GitHub Pages' four A and four AAAA records, and `www` is a CNAME to `rishabbalak.github.io`. The domain is set in the repository's Pages settings, which is all a workflow deploy needs; it ignores a `CNAME` file. A .dev domain only loads over HTTPS, and GitHub issues its certificate. Moving the site to another address means changing `SITE_URL`, the Pages setting, and the DNS, then running `npm run build:registry`, since `llms.txt` and the install lines change.
 
 ## Brand
 
-The name is Picagram (see `docs/decisions/0008-public-name.md`), and the wordmark is "Picagram" set in Jacquarda Bastarda 9, a pixel blackletter on Google Fonts. The site never loads the font. `src/lib/logo.ts` holds the wordmark as one SVG path, traced from the font on its own pixel grid; the same trace of "Pica" matched Rish's original logo cell for cell. `src/components/Logo.tsx` draws it in the text color at 26 px, two screen pixels per pixel of the mark. The favicon, `public/icon.svg`, is the wordmark's P on an ink tile. The link preview, `public/og.png`, comes from `npm run social-card`; run it again when the wordmark or the tagline changes.
+The name is Picagram (see `docs/decisions/0008-public-name.md`), and the wordmark is "Picagram" set in Jacquarda Bastarda 9, a pixel blackletter on Google Fonts. The site never loads the font. `src/lib/logo.ts` holds the wordmark as one SVG path, traced from the font on its own pixel grid; the same trace of "Pica" matched Rish's original logo cell for cell. `src/components/Logo.tsx` draws it in the text color at 26 px, two screen pixels per pixel of the mark. The favicon, `public/icon.svg`, is Rish's shield with the wordmark's P: black on light browser chrome, and white with a black edge on dark, switched by `prefers-color-scheme` inside the file. `npm run brand` renders the rest from these: the link preview, `public/og.png`; the README's wordmark, `public/wordmark.svg`; and PNG copies of the favicon, `public/favicon-32.png` and `public/apple-touch-icon.png`, for browsers that skip SVG icons. Run it again when the wordmark, the tagline, or the favicon changes.
 
 ## Rules the stylesheet keeps
 

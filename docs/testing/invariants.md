@@ -43,7 +43,7 @@ Properties that must hold for every input, and where each is checked.
 | The license label agrees in `LICENSE.md`, `package.json`, the README, and the site footer | `test/license.test.ts` |
 | Every generated copy opens with the license header. In the React file the header follows `"use client"`, so the shadcn CLI keeps it on install. | `test/license.test.ts` |
 | Every category has a budget, and every component fits its category's budget, minified and gzipped | `test/budget.test.ts`; `scripts/build.ts` |
-| Every committed generated file equals a fresh build | `test/generated.test.ts` |
+| Every committed generated file equals a fresh build, apart from gzip sizes, which vary with the zlib inside each Node release | `test/generated.test.ts` |
 | Every generated React file typechecks with only `react` installed and `erasableSyntaxOnly` on | `test/generated.test.ts` |
 | No single React file declares a top-level name twice | `scripts/single-file.ts` (checkCollisions) |
 | A composed core is scoped in its section's React file, which still typechecks alone | `test/compose.test.ts` |

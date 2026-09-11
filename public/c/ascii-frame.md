@@ -7,7 +7,7 @@ Category: text-mode. Tags: frame, border, box-drawing, static. Static. Size: 3.4
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-frame.json
+npx shadcn@latest add https://picagram.dev/r/ascii-frame.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Picagram
+Copyright (c) 2026 rbalak
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,4 +39,4 @@ include this Commons Clause License Condition notice.
 
 Software: Picagram
 License: MIT
-Licensor: Picagram
+Licensor: rbalak

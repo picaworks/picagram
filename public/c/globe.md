@@ -7,7 +7,7 @@ Category: immersive. Tags: 3d, rotation, map, canvas. Animated. Holds a still fr
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/globe.json
+npx shadcn@latest add https://picagram.dev/r/globe.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

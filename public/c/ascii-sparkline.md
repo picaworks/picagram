@@ -7,7 +7,7 @@ Category: text-mode. Tags: sparkline, chart, braille, inline. Static. Size: 1.5 
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/ascii-sparkline.json
+npx shadcn@latest add https://picagram.dev/r/ascii-sparkline.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

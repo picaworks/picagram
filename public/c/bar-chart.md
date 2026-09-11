@@ -7,7 +7,7 @@ Category: data. Tags: chart, bars, svg, glyph grid, data table. Static. Size: 5.
 ## Install
 
 ```bash
-npx shadcn@latest add https://rishabbalak.github.io/picagram/r/bar-chart.json
+npx shadcn@latest add https://picagram.dev/r/bar-chart.json
 ```
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.

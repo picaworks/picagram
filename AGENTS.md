@@ -1,19 +1,20 @@
-# Pica agent guide
+# Picagram agent guide
 
 This file is a router. It carries the rules that must never be broken and points to everything else. `CLAUDE.md` imports it; other agents read it directly. Read the two tables below before touching code, then follow the links for the area you are working in.
 
-## What Pica is
+## What Picagram is
 
 A library of components, ASCII first. It starts with text-mode, dither, and pattern effects, and adds shaders, charts, controls, and page sections drawn in the same grammar.
 - **One source per component.** Each component is written once, as a framework-free core plus a thin React wrapper.
 - **Two generated shapes.** A React file that imports only `react`, and an HTML file that needs nothing.
-- **Two audiences.** A static catalog site serves the components to people. Generated files (`/llms.txt`, a markdown twin per component, a shadcn registry) serve them to coding agents.
+- **Two audiences.** A static catalog site, [picagram.dev](https://picagram.dev), serves the components to people. Generated files (`/llms.txt`, a markdown twin per component, a shadcn registry) serve them to coding agents.
 
-It is not a design system, not a general shader library, and not a mirror of any other catalog.
+It is not a design system, not a general shader library, and not a mirror of any other catalog. Pica was its codename, and the code keeps the short prefix `pica`: `--pica-*`, the `pica:` events, `data-pica`. See `docs/decisions/0008-public-name.md`.
 
 Status: phase 2.
 - The shared runtime now carries JSON data, events, children, a palette, WebGL2 shaders, and composition.
 - Waves 1 to 3 are built, 46 components in all, and all three are in review.
+- The catalog is live at picagram.dev, deployed from `main`.
 
 Open work is listed in `docs/plans/`.
 
@@ -30,6 +31,7 @@ Open work is listed in `docs/plans/`.
 | Both shapes are generated from one source and must render and behave the same. | `scripts/single-file.ts`; `test/generated.test.ts`; the parity, palette, and interaction checks in `npm run verify`. Details: `docs/decisions/0002-one-core-two-shapes.md`. |
 | Every component fits its category's byte budget, shared runtime included: `BUDGETS` in `scripts/config.ts`. | `test/budget.test.ts`; `scripts/build.ts` refuses to build a component over it. |
 | The license reads the same everywhere, and every generated copy carries it. | `test/license.test.ts`. Details: `docs/decisions/0001-license-mit-commons-clause.md`. |
+| No change reaches `main` except through a pull request whose `build` check passed, and nobody pushes to `main` directly, admins included. | GitHub branch protection on `main`; the `build` job in `.github/workflows/pages.yml`, which runs the whole gate on every pull request. Details: `docs/architecture/site.md`. |
 
 If a change needs an exception to any row, stop and say so.
 
@@ -45,6 +47,7 @@ If a change needs an exception to any row, stop and say so.
 | Build a shader, a control, a chart, or a section | the matching sections of `docs/architecture/contract.md`, then its reference in `docs/adding-a-component.md` |
 | Brief a wave of builder agents | `sources/BUILDER.md` |
 | Touch what the build emits | `docs/architecture/outputs.md` |
+| Change the site, its hosting, or its brand | `docs/architecture/site.md` |
 | Write or change a test | `docs/testing/README.md` and `docs/testing/invariants.md` |
 | Understand why something is the way it is | `docs/decisions/` |
 | Plan new work | `docs/plans/README.md`. Write a new dated plan; do not edit old ones. |
@@ -60,7 +63,7 @@ npm run check:site                # the catalog site, end to end in a real brows
 npm run review -- <wave>          # the contact sheet at http://localhost:3200
 ```
 
-Everything must be green before pushing. A push that turns CI red costs a review cycle.
+Everything must be green before you open a pull request. Its `build` check runs the same gate on macOS, and a pull request that turns it red cannot merge.
 
 ## Conventions
 
@@ -68,6 +71,7 @@ Everything must be green before pushing. A push that turns CI red costs a review
 - Props are JSON values. Callbacks never enter a core: a component reports input as events on its host, and React wrappers map those to `on` props. So a JSON key detects any change, and the catalog's inspector can set every prop.
 - A core sets `data-pica-ready="true"` on its host after its first complete frame, and it owns the host's accessibility attributes.
 - Colors come from the four palette tokens. See `STYLE.md`.
+- The site runs Next.js 16, whose APIs differ from older versions. Read the matching guide in `node_modules/next/dist/docs/` before changing `src/app/` or `next.config.ts`.
 - Commit messages: an imperative subject under 72 characters, a body that explains why, and one concern per commit.
 - No model identifiers in prose: not in a commit subject or body, a code comment, or a document. A `Co-Authored-By` trailer is attribution, not prose, and falls outside this rule.
 - Prose in docs and output: plain sentences, no dashes used as punctuation, no marketing language.
