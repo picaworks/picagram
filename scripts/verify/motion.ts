@@ -30,16 +30,33 @@ export async function motion(ctx: Ctx): Promise<void> {
         // Long-task timing is unsupported here, so the check reads zero.
       }
     });
-    // Six samples across three seconds rather than two instants, so an effect that moves in bursts (a
-    // glitch, a blink, a scramble that settles) still counts, and so does a single inline glyph.
-    const before = await page.screenshot();
-    let moved = 0;
-    for (let sample = 0; sample < 6; sample++) {
-      await page.waitForTimeout(500);
-      moved = Math.max(moved, diffPixels(before, await page.screenshot()));
+    // Samples as fast as the browser takes screenshots, for up to three seconds, and stops at the first change.
+    // Fixed gaps between samples let a short burst (glitch-text's 280 ms glitch) fall between two of them on a
+    // slow machine. Each shot is clipped to the host, which keeps it quick.
+    const box = await page.locator("#pica").boundingBox();
+    const view = page.viewportSize();
+    let clip: { x: number; y: number; width: number; height: number } | null = null;
+    if (box && view) {
+      const x = Math.max(0, Math.floor(box.x));
+      const y = Math.max(0, Math.floor(box.y));
+      const width = Math.min(view.width, Math.ceil(box.x + box.width)) - x;
+      const height = Math.min(view.height, Math.ceil(box.y + box.height)) - y;
+      if (width > 0 && height > 0) clip = { x, y, width, height };
     }
-    ctx.checks.push({ name: "animates", ok: moved > 0, detail: `up to ${moved} pixels changed across 3 s` });
+    const shot = () => page.screenshot(clip ? { clip } : {});
+    const started = Date.now();
+    const before = await shot();
+    let moved = 0;
+    while (moved === 0 && Date.now() - started < 3000) moved = diffPixels(before, await shot());
+    const elapsed = Date.now() - started;
+    ctx.checks.push({
+      name: "animates",
+      ok: moved > 0,
+      detail: moved > 0 ? `${moved} pixels changed within ${elapsed} ms` : "no change in 3 s",
+    });
     if (!ctx.quick) {
+      // The long-task check keeps its full three-second window, even when motion showed early.
+      if (elapsed < 3000) await page.waitForTimeout(3000 - elapsed);
       const longest = await page.evaluate(() => (window as unknown as { picaLongest: number }).picaLongest);
       ctx.checks.push({ name: "no long tasks", ok: longest === 0, detail: longest > 0 ? `a ${longest.toFixed(0)} ms task` : "none over 50 ms in 3 s" });
     }

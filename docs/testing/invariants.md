@@ -54,7 +54,7 @@ Properties that must hold for every input, and where each is checked.
 |---|---|
 | React and vanilla captures match within `PARITY_TOLERANCE`: at both viewports on the dark ground, at 1280 on the light ground, and with a palette | `scripts/verify/render.ts`, `colors.ts` |
 | An animated component shows no change for 700 ms under reduced motion | `scripts/verify/motion.ts` |
-| Otherwise an animated component changes in at least one of six samples taken across 3 s, and runs no task over 50 ms | `scripts/verify/motion.ts` |
+| Otherwise an animated component changes within 3 s, sampled continuously so a short burst cannot fall between two samples, and runs no task over 50 ms in those 3 s | `scripts/verify/motion.ts` |
 | A decorative host that wraps nothing is `aria-hidden` | `scripts/verify/access.ts` |
 | A wrapping host is never hidden, and never has a role that hides its children | `scripts/verify/access.ts` |
 | Any other host is hidden, or has a role and a label, or carries readable text | `scripts/verify/access.ts` |
