@@ -1,6 +1,6 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
 import { dataTable, extent, formatNumber, linearScale, niceTicks, svg } from "../../../lib/chart";
-import { createBraillePlot } from "../../../lib/braille-plot";
+import { chartCells, chartDots, type ChartInset } from "../../../lib/chart-plot";
 import { GRID_FONT } from "../../../lib/font";
 import { createGrid, measureCell, type Grid, type GridOptions } from "../../../lib/glyph-grid";
 import { sameJson } from "../../../lib/json";
@@ -253,55 +253,70 @@ function drawGlyph(host: HTMLElement, grid: Grid, props: ScatterPlotProps): void
 
   const [minX, maxX] = extent(data.map((d) => d.x));
   const [minY, maxY] = extent(data.map((d) => d.y));
+  const yTicks = niceTicks(minY, maxY, props.ticks);
+  const xTicks = niceTicks(minX, maxX, props.ticks);
+  const yFirst = yTicks[0] ?? minY;
+  const yLast = yTicks[yTicks.length - 1] ?? maxY;
+  const xFirst = xTicks[0] ?? minX;
+  const xLast = xTicks[xTicks.length - 1] ?? maxX;
+  const ySpan = yLast - yFirst || 1;
+  const xSpan = xLast - xFirst || 1;
 
-  const margin = 1;
-  const plotCols = Math.max(1, cols - 2 * margin);
-  const plotRows = Math.max(1, rows - 2 * margin);
+  // Reserve columns on the left for the widest y tick label plus the axis line, and rows on the
+  // bottom for the axis line plus the x tick labels beneath it.
+  const yLabelWidth = Math.max(1, ...yTicks.map((t) => formatNumber(t).length));
+  const inset: ChartInset = { left: yLabelWidth + 1, bottom: 2 };
+  const area = chartCells({ cols, rows }, inset);
+  const fitDots = chartDots(area, grid.aspect);
+  const pointDots = chartDots(area, grid.aspect);
+  const highlightDots = chartDots(area, grid.aspect);
 
-  const scaleX = linearScale([minX, maxX], [0, plotCols * 2 - 1]);
-  const scaleY = linearScale([minY, maxY], [plotRows * 4 - 1, 0]);
+  // Axis lines: a vertical rule at the plot's left edge, a horizontal rule under it.
+  const axisCol = area.col - 1;
+  const axisRow = area.row + area.rows;
+  for (let r = area.row; r < area.row + area.rows; r++) grid.set(axisCol, r, "│", colors.muted);
+  grid.set(axisCol, axisRow, "└", colors.muted);
+  for (let c = area.col; c < area.col + area.cols; c++) grid.set(c, axisRow, "─", colors.muted);
 
-  const plot = createBraillePlot(plotCols, plotRows);
+  // Y tick labels, right-aligned against the axis.
+  for (const t of yTicks) {
+    const fraction = (t - yFirst) / ySpan;
+    const row = area.rowAt(fraction);
+    const text = formatNumber(t);
+    grid.write(Math.max(0, axisCol - text.length), row, text, colors.muted);
+  }
 
-  // Draw fit line if requested
+  // X tick labels, centered under each tick, on the row below the axis.
+  for (const t of xTicks) {
+    const fraction = (t - xFirst) / xSpan;
+    const col = area.colAt(fraction);
+    const text = formatNumber(t);
+    grid.write(Math.max(0, col - Math.floor(text.length / 2)), rows - 1, text, colors.muted);
+  }
+
+  // Fit line, painted first so the points sit on top of it.
   if (props.fit) {
-    const fit = fitLine(data);
-    if (fit) {
-      const [slope, intercept] = fit;
-      const y1 = slope * minX + intercept;
-      const y2 = slope * maxX + intercept;
-      const x1 = scaleX(minX);
-      const y1p = scaleY(y1);
-      const x2 = scaleX(maxX);
-      const y2p = scaleY(y2);
-      plot.line(x1, y1p, x2, y2p);
+    const line = fitLine(data);
+    if (line) {
+      const [slope, intercept] = line;
+      const y0 = (slope * xFirst + intercept - yFirst) / ySpan;
+      const y1 = (slope * xLast + intercept - yFirst) / ySpan;
+      fitDots.stroke(0, y0, 1, y1);
     }
   }
 
-  // Draw points
+  // Points, split so a highlighted point can be painted last, in the accent.
+  const highlightSet = new Set(props.highlight);
   data.forEach((d) => {
-    const px = scaleX(d.x);
-    const py = scaleY(d.y);
-    plot.dot(px, py);
+    const fx = (d.x - xFirst) / xSpan;
+    const fy = (d.y - yFirst) / ySpan;
+    if (d.label && highlightSet.has(d.label)) highlightDots.mark(fx, fy);
+    else pointDots.mark(fx, fy);
   });
 
-  plot.paint(grid, margin, margin);
-
-  // Draw axis labels and ticks
-  const xLabelRow = margin + plotRows;
-  const yLabelCol = 0;
-
-  // Y-axis label
-  if (props.yLabel.length > 0) {
-    const label = props.yLabel.slice(0, 1);
-    grid.write(yLabelCol, margin, label, colors.muted);
-  }
-
-  // X-axis label
-  if (props.xLabel.length > 0) {
-    const label = props.xLabel.slice(0, 1);
-    grid.write(margin + plotCols, xLabelRow, label, colors.muted);
-  }
+  fitDots.paint(grid, colors.muted);
+  pointDots.paint(grid, colors.fg);
+  highlightDots.paint(grid, colors.accent);
 
   grid.flush();
   host.dataset.picaReady = "true";

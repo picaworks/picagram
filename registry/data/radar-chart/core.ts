@@ -1,11 +1,11 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
 import { arcPath, dataTable, formatNumber, svg } from "../../../lib/chart";
+import { chartCells, chartDots, type ChartInset } from "../../../lib/chart-plot";
 import { polarPoint } from "../../../lib/chart-marks";
 import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type Grid, type GridOptions } from "../../../lib/glyph-grid";
 import { sameJson } from "../../../lib/json";
 import { cssVar, readPalette } from "../../../lib/palette";
-import { createBraillePlot } from "../../../lib/braille-plot";
 import type { Mount } from "../../../lib/types";
 
 export interface RadarChartProps {
@@ -172,6 +172,7 @@ export const mount: Mount<RadarChartProps> = (host, initial = {}) => {
     if (!g) return;
     g.clear();
     const { cols, rows } = g;
+    const colors = readPalette(host);
 
     const axes = props.data.axes || [];
     const series = props.data.series || [];
@@ -183,61 +184,103 @@ export const mount: Mount<RadarChartProps> = (host, initial = {}) => {
       const note = "no data";
       const x = Math.max(0, Math.floor((cols - note.length) / 2));
       const y = Math.floor(rows / 2);
-      const colors = readPalette(host);
       g.write(x, y, note, colors.muted);
       g.flush();
       host.dataset.picaReady = "true";
       return;
     }
 
-    const centerCol = cols / 2;
-    const centerRow = rows / 2;
-    const maxRadiusDots = Math.min(cols - 2, (rows - 2) * 2) / 2;
+    // Hold back rows above and below, and columns to each side, for axis labels around the outside.
+    const maxLabelLen = Math.max(1, ...axes.map((a) => a.label.length));
+    const side = Math.max(3, Math.min(maxLabelLen, Math.max(1, Math.floor(cols / 4))));
+    const inset: ChartInset = { top: 1, bottom: 1, left: side, right: side };
+    const area = chartCells({ cols, rows }, inset);
+    const ringDots = chartDots(area, g.aspect);
+    const seriesDots = chartDots(area, g.aspect);
 
-    // Draw rings with braille
-    const braillePlot = createBraillePlot(cols, rows);
+    // The farthest a value can reach from centre without the star turning into an ellipse: a step in either
+    // direction has to cover the same physical distance, and `dots.aspect` is what one dot's step is worth
+    // in the other direction's dots.
+    const reach = (Math.min(ringDots.wide, ringDots.tall / ringDots.aspect) / 2) * 0.94;
 
+    /** A fractional point on the plot at `angle` (0 is straight up, turning clockwise) and `radiusFraction`
+     *  of `reach`, corrected by the dot aspect so the shape reads as a circle rather than an ellipse. */
+    function point(angle: number, radiusFraction: number): [number, number] {
+      const rx = reach * radiusFraction * Math.sin(angle);
+      const ry = reach * radiusFraction * Math.cos(angle) * ringDots.aspect;
+      return [0.5 + rx / ringDots.wide, 0.5 + ry / ringDots.tall];
+    }
+
+    /** The cell for a fraction pair, unclamped, so a label can sit past the ring in the held-back margin. */
+    function cellAt(fx: number, fy: number): [number, number] {
+      const col = Math.round(area.col + fx * (area.cols - 1));
+      const row = Math.round(area.row + (area.rows - 1) - fy * (area.rows - 1));
+      return [col, row];
+    }
+
+    // Rings, one polygon each so they read as circles rather than the star's own straight edges.
+    const ringSteps = Math.max(axisCount * 6, 24);
     for (let ringIdx = 1; ringIdx <= props.rings; ringIdx++) {
-      const radius = (ringIdx / props.rings) * maxRadiusDots;
-      for (let i = 0; i < axisCount; i++) {
-        const angle = (i / axisCount) * Math.PI * 2;
-        const x = centerCol + radius * Math.sin(angle);
-        const y = centerRow - radius * Math.cos(angle);
-        braillePlot.dot(x, y);
+      const radiusFraction = ringIdx / props.rings;
+      for (let s = 0; s < ringSteps; s++) {
+        const [fx0, fy0] = point((s / ringSteps) * Math.PI * 2, radiusFraction);
+        const [fx1, fy1] = point(((s + 1) / ringSteps) * Math.PI * 2, radiusFraction);
+        ringDots.stroke(fx0, fy0, fx1, fy1);
       }
     }
 
-    // Draw axes
+    // Spokes, one per axis, from the centre out to the outer ring.
     for (let i = 0; i < axisCount; i++) {
-      const angle = (i / axisCount) * Math.PI * 2;
-      const x = centerCol + maxRadiusDots * Math.sin(angle);
-      const y = centerRow - maxRadiusDots * Math.cos(angle);
-      braillePlot.line(centerCol, centerRow, x, y);
+      const [fx, fy] = point((i / axisCount) * Math.PI * 2, 1);
+      ringDots.stroke(0.5, 0.5, fx, fy);
     }
+    ringDots.paint(g, colors.muted);
 
-    // Draw series as polygons
-    series.forEach((s) => {
-      const pointsDots: Array<[number, number]> = [];
+    // Series polygons, the first in the accent and the rest in fg.
+    series.forEach((s, seriesIndex) => {
+      const points: [number, number][] = [];
       for (let i = 0; i < axisCount; i++) {
-        const angle = (i / axisCount) * Math.PI * 2;
         const value = Math.max(0, Math.min(s.values[i] ?? 0, maxValue));
-        const radius = (value / maxValue) * maxRadiusDots;
-        const x = centerCol + radius * Math.sin(angle);
-        const y = centerRow - radius * Math.cos(angle);
-        pointsDots.push([x, y] as [number, number]);
+        points.push(point((i / axisCount) * Math.PI * 2, value / maxValue));
       }
-
-      // Draw polygon edges
-      for (let i = 0; i < pointsDots.length; i++) {
-        const pt0 = pointsDots[i];
-        const pt1 = pointsDots[(i + 1) % pointsDots.length];
-        if (pt0 && pt1) {
-          braillePlot.line(pt0[0], pt0[1], pt1[0], pt1[1]);
-        }
+      for (let i = 0; i < points.length; i++) {
+        const p0 = points[i];
+        const p1 = points[(i + 1) % points.length];
+        if (p0 && p1) seriesDots.stroke(p0[0], p0[1], p1[0], p1[1]);
       }
+      seriesDots.paint(g, seriesIndex === 0 ? colors.accent : colors.fg);
+      seriesDots.clear();
     });
 
-    braillePlot.paint(g, 0, 0);
+    // Axis labels, placed in cell space just past the ring, in the margin held back for them.
+    axes.forEach((axis, i) => {
+      const [fx, fy] = point((i / axisCount) * Math.PI * 2, 1.5);
+      const [col, row] = cellAt(fx, fy);
+      const label = axis.label.slice(0, Math.max(1, side * 2));
+      const startCol = Math.max(0, Math.min(cols - label.length, col - Math.floor(label.length / 2)));
+      g.write(startCol, Math.max(0, Math.min(rows - 1, row)), label, colors.muted);
+    });
+
+    // Series names, placed inside the plot near each series' strongest axis.
+    series.forEach((s, seriesIndex) => {
+      const values = s.values || [];
+      if (values.length === 0) return;
+      let bestIdx = 0;
+      let bestValue = Number.NEGATIVE_INFINITY;
+      values.forEach((v, i) => {
+        if (v > bestValue) {
+          bestValue = v;
+          bestIdx = i;
+        }
+      });
+      const [fx, fy] = point((bestIdx / axisCount) * Math.PI * 2, 0.55);
+      const [col, row] = cellAt(fx, fy);
+      const name = s.name.slice(0, Math.max(1, area.cols));
+      const startCol = Math.max(area.col, Math.min(area.col + area.cols - name.length, col - Math.floor(name.length / 2)));
+      const tintRow = Math.max(area.row, Math.min(area.row + area.rows - 1, row));
+      g.write(startCol, tintRow, name, seriesIndex === 0 ? colors.accent : colors.fg);
+    });
+
     g.flush();
     host.dataset.picaReady = "true";
   }

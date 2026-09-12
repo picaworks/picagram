@@ -2,7 +2,7 @@
 
 > One number against its range, drawn as an arc with threshold ticks and the value in the middle.
 
-Category: data. Tags: chart, gauge, arc, svg, glyph grid, data table. Static. Size: 4.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
+Category: data. Tags: chart, gauge, arc, svg, glyph grid, data table. Static. Size: 5.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
@@ -245,59 +245,6 @@ function animatedText(host: HTMLElement, text: string, tag: "span" | "div" | "pr
   };
 }
 
-// lib/blocks.ts
-/** Unicode block and braille glyphs for text-mode drawing. Every glyph here is one UTF-16 code unit, so a
- *  table can be indexed like an array. */
-
-/** The braille pattern with no dots raised. Add dot bits to it. */
-const BRAILLE_BASE = 0x2800;
-
-/** The bit for the braille dot at `row` 0 to 3 and `col` 0 or 1. Rows 0 to 2 are dots 1 to 3 on the left
- *  and 4 to 6 on the right. Row 3 holds dots 7 and 8, which Unicode added later, so their bits come last. */
-function brailleDot(row: number, col: number): number {
-  if (row === 3) return col === 0 ? 0x40 : 0x80;
-  return 1 << (col === 0 ? row : row + 3);
-}
-
-/** The braille glyph for a set of dot bits. */
-function braille(bits: number): string {
-  return String.fromCharCode(BRAILLE_BASE + (bits & 0xff));
-}
-
-/** Quadrant glyphs, indexed by top left 1, top right 2, bottom left 4, and bottom right 8. */
-const QUADRANTS = " ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█";
-
-/** The glyph that inks the given quadrants of a cell. */
-function quadrant(tl: boolean, tr: boolean, bl: boolean, br: boolean): string {
-  return QUADRANTS[(tl ? 1 : 0) | (tr ? 2 : 0) | (bl ? 4 : 0) | (br ? 8 : 0)] ?? " ";
-}
-
-/** A cell filled from the bottom by 0 to 8 eighths. */
-const LOWER_EIGHTHS = " ▁▂▃▄▅▆▇█";
-
-/** A cell filled from the left by 0 to 8 eighths. */
-const LEFT_EIGHTHS = " ▏▎▍▌▋▊▉█";
-
-/** Blank, light shade, medium shade, dark shade, and full block. */
-const SHADES = " ░▒▓█";
-
-const clampEighths = (n: number): number => Math.max(0, Math.min(8, Math.round(n)));
-
-/** The glyph filling `n` eighths of a cell from the bottom, clamped to 0 to 8. */
-function lowerEighth(n: number): string {
-  return LOWER_EIGHTHS[clampEighths(n)] ?? " ";
-}
-
-/** The shade glyph for level `n`, clamped to 0 (blank) through 4 (full block). */
-function shade(n: number): string {
-  return SHADES[Math.max(0, Math.min(4, Math.round(n)))] ?? " ";
-}
-
-/** The glyph filling `n` eighths of a cell from the left, clamped to 0 to 8. */
-function leftEighth(n: number): string {
-  return LEFT_EIGHTHS[clampEighths(n)] ?? " ";
-}
-
 // lib/chart.ts
 /** Scales, ticks, number labels, and SVG paths for chart components, plus the table that carries a chart's
  *  numbers for assistive technology. Written once, so every chart reads the same way. See STYLE.md, charts. */
@@ -465,6 +412,59 @@ function dataTable(caption: string, head: readonly string[], rows: readonly (rea
     });
   }
   return table;
+}
+
+// lib/blocks.ts
+/** Unicode block and braille glyphs for text-mode drawing. Every glyph here is one UTF-16 code unit, so a
+ *  table can be indexed like an array. */
+
+/** The braille pattern with no dots raised. Add dot bits to it. */
+const BRAILLE_BASE = 0x2800;
+
+/** The bit for the braille dot at `row` 0 to 3 and `col` 0 or 1. Rows 0 to 2 are dots 1 to 3 on the left
+ *  and 4 to 6 on the right. Row 3 holds dots 7 and 8, which Unicode added later, so their bits come last. */
+function brailleDot(row: number, col: number): number {
+  if (row === 3) return col === 0 ? 0x40 : 0x80;
+  return 1 << (col === 0 ? row : row + 3);
+}
+
+/** The braille glyph for a set of dot bits. */
+function braille(bits: number): string {
+  return String.fromCharCode(BRAILLE_BASE + (bits & 0xff));
+}
+
+/** Quadrant glyphs, indexed by top left 1, top right 2, bottom left 4, and bottom right 8. */
+const QUADRANTS = " ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█";
+
+/** The glyph that inks the given quadrants of a cell. */
+function quadrant(tl: boolean, tr: boolean, bl: boolean, br: boolean): string {
+  return QUADRANTS[(tl ? 1 : 0) | (tr ? 2 : 0) | (bl ? 4 : 0) | (br ? 8 : 0)] ?? " ";
+}
+
+/** A cell filled from the bottom by 0 to 8 eighths. */
+const LOWER_EIGHTHS = " ▁▂▃▄▅▆▇█";
+
+/** A cell filled from the left by 0 to 8 eighths. */
+const LEFT_EIGHTHS = " ▏▎▍▌▋▊▉█";
+
+/** Blank, light shade, medium shade, dark shade, and full block. */
+const SHADES = " ░▒▓█";
+
+const clampEighths = (n: number): number => Math.max(0, Math.min(8, Math.round(n)));
+
+/** The glyph filling `n` eighths of a cell from the bottom, clamped to 0 to 8. */
+function lowerEighth(n: number): string {
+  return LOWER_EIGHTHS[clampEighths(n)] ?? " ";
+}
+
+/** The shade glyph for level `n`, clamped to 0 (blank) through 4 (full block). */
+function shade(n: number): string {
+  return SHADES[Math.max(0, Math.min(4, Math.round(n)))] ?? " ";
+}
+
+/** The glyph filling `n` eighths of a cell from the left, clamped to 0 to 8. */
+function leftEighth(n: number): string {
+  return LEFT_EIGHTHS[clampEighths(n)] ?? " ";
 }
 
 // lib/host.ts
@@ -1066,6 +1066,123 @@ function createBraillePlot(cols: number, rows: number): BraillePlot {
   return plot;
 }
 
+// lib/chart-plot.ts
+/** Layout for a chart's glyph look. A glyph look lays out in cells, and a chart that reuses its SVG look's
+ *  pixel math produces cell indices many times too large, so the picture overflows its frame or collapses
+ *  into a corner. `chartCells` reserves the cells a chart's labels and axes need and hands back the
+ *  rectangle that is left, addressed by fraction rather than by pixel. `chartDots` lays a braille plot over
+ *  that rectangle for a chart that needs finer than one cell, such as a scatter, a radar, or a gauge. */
+
+
+
+
+/** Cells to hold back for labels and axes, on each side of the drawing area. */
+interface ChartInset {
+  readonly left?: number;
+  readonly right?: number;
+  readonly top?: number;
+  readonly bottom?: number;
+}
+
+/** The cell rectangle a chart draws into. */
+interface ChartCells {
+  /** Leftmost column of the area. */
+  readonly col: number;
+  /** Topmost row of the area. */
+  readonly row: number;
+  /** Width in cells, at least 1. */
+  readonly cols: number;
+  /** Height in cells, at least 1. */
+  readonly rows: number;
+  /** The column for `fx`, which is 0 at the area's left edge and 1 at its right. */
+  colAt(fx: number): number;
+  /** The row for `fy`, which is 0 at the area's bottom edge and 1 at its top, so a chart reads y up. */
+  rowAt(fy: number): number;
+}
+
+/** The drawing area left inside `grid` once `inset` is held back. */
+function chartCells(grid: Pick<Grid, "cols" | "rows">, inset: ChartInset = {}): ChartCells {
+  const left = Math.max(0, Math.floor(inset.left ?? 0));
+  const right = Math.max(0, Math.floor(inset.right ?? 0));
+  const top = Math.max(0, Math.floor(inset.top ?? 0));
+  const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+  const col = Math.min(left, Math.max(0, grid.cols - 1));
+  const row = Math.min(top, Math.max(0, grid.rows - 1));
+  const cols = Math.max(1, grid.cols - col - right);
+  const rows = Math.max(1, grid.rows - row - bottom);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  return {
+    col,
+    row,
+    cols,
+    rows,
+    colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+    rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1)),
+  };
+}
+
+/** A braille plot covering a `ChartCells` area, addressed by the same fractions. */
+interface ChartDots {
+  /** Dots across the area, which is two per cell. */
+  readonly wide: number;
+  /** Dots down the area, which is four per cell. */
+  readonly tall: number;
+  /** One dot's width over its height, so a chart can keep a circle round. */
+  readonly aspect: number;
+  /** The dot at `fx` across and `fy` up, both 0 to 1 over the area. */
+  dotAt(fx: number, fy: number): readonly [number, number];
+  /** Raises the dot at `fx`, `fy`. */
+  mark(fx: number, fy: number): void;
+  /** Raises the dots along the line between two fractional points. */
+  stroke(fx0: number, fy0: number, fx1: number, fy1: number): void;
+  /** Lowers every dot, so one plot can be reused for a second pass. */
+  clear(): void;
+  /** Writes the inked cells into `grid` in `color`. A blank cell is left as it is, so a track and a fill
+   *  drawn as two plots layer instead of rubbing each other out. */
+  paint(grid: Pick<Grid, "set">, color: string): void;
+}
+
+/** A braille plot over `area`. `cellAspect` is the grid's own `aspect`, a cell's width over its height. */
+function chartDots(area: ChartCells, cellAspect: number): ChartDots {
+  const plot = createBraillePlot(area.cols, area.rows);
+  const blank = braille(0);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const at = (fx: number, fy: number): readonly [number, number] => [
+    Math.round(clamp(fx) * (plot.width - 1)),
+    plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1)),
+  ];
+  return {
+    wide: plot.width,
+    tall: plot.height,
+    // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+    aspect: (cellAspect / 2) / (1 / 4),
+    dotAt: at,
+    mark(fx, fy) {
+      const [x, y] = at(fx, fy);
+      plot.dot(x, y);
+    },
+    stroke(fx0, fy0, fx1, fy1) {
+      const [x0, y0] = at(fx0, fy0);
+      const [x1, y1] = at(fx1, fy1);
+      plot.line(x0, y0, x1, y1);
+    },
+    clear() {
+      plot.clear();
+    },
+    paint(grid, color) {
+      plot.paint(
+        {
+          set: (x, y, glyph) => {
+            if (glyph !== blank) grid.set(x, y, glyph, color);
+          },
+        },
+        area.col,
+        area.row,
+      );
+    },
+  };
+}
+
 // lib/font.ts
 /** The monospace stack glyph components default to. It lives in its own module, so a text component that
  *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
@@ -1239,46 +1356,62 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
     const normalized = (props.value - props.min) / (props.max - props.min);
     const clampedNorm = Math.max(0, Math.min(1, normalized));
 
-    const track = createBraillePlot(cols, rows);
-    const fill = createBraillePlot(cols, rows);
+    // The bottom row holds the min and max labels, so the dial itself sits above them.
+    const inset: ChartInset = { bottom: 1 };
+    const area = chartCells({ cols, rows }, inset);
+    const track = chartDots(area, g.aspect);
+    const fill = chartDots(area, g.aspect);
 
-    const centerX = track.width / 2;
-    const centerY = track.height * 0.7;
-    const arcRadius = Math.min(centerX, centerY) * 0.6;
+    /* A point on the dial at `angleDeg`, in the convention drawSvg uses: 0 is right, 90 is down. The cosine
+     * term is scaled by the dot grid's physical width and the sine term by its physical height, rather than
+     * by one shared radius, which is what keeps the sweep round instead of squashed to the area's shape. */
+    const physicalWidth = track.wide * track.aspect;
+    const physicalHeight = track.tall;
+    // The same proportion drawSvg uses for its own arc radius, so the dial reads at the same size on
+    // both grounds: a modest fraction of the smaller physical dimension, with margin on every side.
+    const radius = Math.min(physicalWidth, physicalHeight) * 0.28;
+    const centerFx = 0.5;
+    // drawSvg centers its arc 60% of the way down from the top; read bottom-up that is 40% up from the floor.
+    const centerFy = 0.4;
+
+    function pointAt(angleDeg: number): readonly [number, number] {
+      const angleRad = (angleDeg * Math.PI) / 180;
+      const fx = centerFx + (radius * Math.cos(angleRad)) / physicalWidth;
+      const fy = centerFy - (radius * Math.sin(angleRad)) / physicalHeight;
+      return [fx, fy];
+    }
 
     /* The track runs the whole sweep and the fill stops where the value sits. Drawing only the track would
      * leave the glyph look showing an empty dial, the same picture for every value it is given. */
     const arcSteps = 48;
-    let prevX = 0;
-    let prevY = 0;
-    for (let i = 0; i <= arcSteps; i++) {
+    let prev = pointAt(ARC_START_ANGLE);
+    for (let i = 1; i <= arcSteps; i++) {
       const t = i / arcSteps;
-      const angleRad = ((ARC_START_ANGLE + ARC_DEGREES * t) * Math.PI) / 180;
-      const x = Math.round(centerX + arcRadius * Math.cos(angleRad));
-      const y = Math.round(centerY + arcRadius * Math.sin(angleRad));
-      if (i > 0) {
-        track.line(prevX, prevY, x, y);
-        if (t <= clampedNorm) fill.line(prevX, prevY, x, y);
-      }
-      prevX = x;
-      prevY = y;
+      const next = pointAt(ARC_START_ANGLE + ARC_DEGREES * t);
+      track.stroke(prev[0], prev[1], next[0], next[1]);
+      if (t <= clampedNorm) fill.stroke(prev[0], prev[1], next[0], next[1]);
+      prev = next;
     }
 
-    // A blank cell from the fill would rub out the track underneath it, so only inked cells are written.
-    const blank = braille(0);
-    track.paint({ set: (col, row, glyph) => g.set(col, row, glyph, colors.muted) }, 0, 0);
-    fill.paint({
-      set: (col, row, glyph) => {
-        if (glyph !== blank) g.set(col, row, glyph, colors.accent);
-      },
-    }, 0, 0);
+    // A blank dot from the fill would rub out the track underneath it, so `paint` leaves it alone.
+    track.paint(g, colors.muted);
+    fill.paint(g, colors.accent);
 
-    // Draw value text in center
-    const textRow = Math.max(2, Math.floor(centerY / 4 - 1));
-    const textCol = Math.max(0, Math.floor(centerX / 2 - Math.floor(valueText.length / 2)));
-    if (textRow >= 0 && textRow < rows && textCol >= 0) {
-      g.write(textCol, textRow, valueText, colors.fg);
-    }
+    // Min and max sit in the reserved row, under the dial's two ends.
+    const labelRow = rows - 1;
+    const minLabel = formatNumber(props.min);
+    const maxLabel = formatNumber(props.max);
+    const [minFx] = pointAt(ARC_START_ANGLE);
+    const [maxFx] = pointAt(ARC_START_ANGLE + ARC_DEGREES);
+    const minCol = Math.max(0, area.colAt(minFx) - Math.floor(minLabel.length / 2));
+    const maxCol = Math.min(cols - maxLabel.length, area.colAt(maxFx) - Math.floor(maxLabel.length / 2));
+    g.write(minCol, labelRow, minLabel, colors.muted);
+    if (maxCol > minCol + minLabel.length) g.write(maxCol, labelRow, maxLabel, colors.muted);
+
+    // The value sits at the dial's own center, the one spot the ring never draws over.
+    const textRow = area.rowAt(centerFy);
+    const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
+    g.write(textCol, textRow, valueText, colors.fg);
 
     g.flush();
     host.dataset.picaReady = "true";
@@ -1427,16 +1560,6 @@ var PicaGaugeChart = (() => {
     host.removeAttribute("aria-hidden");
   }
 
-  // lib/blocks.ts
-  var BRAILLE_BASE = 10240;
-  function brailleDot(row, col) {
-    if (row === 3) return col === 0 ? 64 : 128;
-    return 1 << (col === 0 ? row : row + 3);
-  }
-  function braille(bits) {
-    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
-  }
-
   // lib/chart.ts
   var numberFormats = /* @__PURE__ */ new Map();
   function formatNumber(value, options = {}) {
@@ -1497,6 +1620,16 @@ var PicaGaugeChart = (() => {
     return table;
   }
 
+  // lib/blocks.ts
+  var BRAILLE_BASE = 10240;
+  function brailleDot(row, col) {
+    if (row === 3) return col === 0 ? 64 : 128;
+    return 1 << (col === 0 ? row : row + 3);
+  }
+  function braille(bits) {
+    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
+  }
+
   // lib/braille-plot.ts
   function createBraillePlot(cols, rows) {
     const w = Math.max(1, Math.floor(cols));
@@ -1546,6 +1679,66 @@ var PicaGaugeChart = (() => {
       }
     };
     return plot;
+  }
+
+  // lib/chart-plot.ts
+  function chartCells(grid, inset = {}) {
+    const left = Math.max(0, Math.floor(inset.left ?? 0));
+    const right = Math.max(0, Math.floor(inset.right ?? 0));
+    const top = Math.max(0, Math.floor(inset.top ?? 0));
+    const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+    const col = Math.min(left, Math.max(0, grid.cols - 1));
+    const row = Math.min(top, Math.max(0, grid.rows - 1));
+    const cols = Math.max(1, grid.cols - col - right);
+    const rows = Math.max(1, grid.rows - row - bottom);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    return {
+      col,
+      row,
+      cols,
+      rows,
+      colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+      rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1))
+    };
+  }
+  function chartDots(area, cellAspect) {
+    const plot = createBraillePlot(area.cols, area.rows);
+    const blank = braille(0);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    const at = (fx, fy) => [
+      Math.round(clamp(fx) * (plot.width - 1)),
+      plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1))
+    ];
+    return {
+      wide: plot.width,
+      tall: plot.height,
+      // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+      aspect: cellAspect / 2 / (1 / 4),
+      dotAt: at,
+      mark(fx, fy) {
+        const [x, y] = at(fx, fy);
+        plot.dot(x, y);
+      },
+      stroke(fx0, fy0, fx1, fy1) {
+        const [x0, y0] = at(fx0, fy0);
+        const [x1, y1] = at(fx1, fy1);
+        plot.line(x0, y0, x1, y1);
+      },
+      clear() {
+        plot.clear();
+      },
+      paint(grid, color) {
+        plot.paint(
+          {
+            set: (x, y, glyph) => {
+              if (glyph !== blank) grid.set(x, y, glyph, color);
+            }
+          },
+          area.col,
+          area.row
+        );
+      }
+    };
   }
 
   // lib/font.ts
@@ -1958,38 +2151,44 @@ var PicaGaugeChart = (() => {
       const valueText = `${formatNumber(props.value)}${props.unit}`;
       const normalized = (props.value - props.min) / (props.max - props.min);
       const clampedNorm = Math.max(0, Math.min(1, normalized));
-      const track = createBraillePlot(cols, rows);
-      const fill = createBraillePlot(cols, rows);
-      const centerX = track.width / 2;
-      const centerY = track.height * 0.7;
-      const arcRadius = Math.min(centerX, centerY) * 0.6;
+      const inset = { bottom: 1 };
+      const area = chartCells({ cols, rows }, inset);
+      const track = chartDots(area, g.aspect);
+      const fill = chartDots(area, g.aspect);
+      const physicalWidth = track.wide * track.aspect;
+      const physicalHeight = track.tall;
+      const radius = Math.min(physicalWidth, physicalHeight) * 0.28;
+      const centerFx = 0.5;
+      const centerFy = 0.4;
+      function pointAt(angleDeg) {
+        const angleRad = angleDeg * Math.PI / 180;
+        const fx = centerFx + radius * Math.cos(angleRad) / physicalWidth;
+        const fy = centerFy - radius * Math.sin(angleRad) / physicalHeight;
+        return [fx, fy];
+      }
       const arcSteps = 48;
-      let prevX = 0;
-      let prevY = 0;
-      for (let i = 0; i <= arcSteps; i++) {
+      let prev = pointAt(ARC_START_ANGLE);
+      for (let i = 1; i <= arcSteps; i++) {
         const t = i / arcSteps;
-        const angleRad = (ARC_START_ANGLE + ARC_DEGREES * t) * Math.PI / 180;
-        const x = Math.round(centerX + arcRadius * Math.cos(angleRad));
-        const y = Math.round(centerY + arcRadius * Math.sin(angleRad));
-        if (i > 0) {
-          track.line(prevX, prevY, x, y);
-          if (t <= clampedNorm) fill.line(prevX, prevY, x, y);
-        }
-        prevX = x;
-        prevY = y;
+        const next = pointAt(ARC_START_ANGLE + ARC_DEGREES * t);
+        track.stroke(prev[0], prev[1], next[0], next[1]);
+        if (t <= clampedNorm) fill.stroke(prev[0], prev[1], next[0], next[1]);
+        prev = next;
       }
-      const blank = braille(0);
-      track.paint({ set: (col, row, glyph) => g.set(col, row, glyph, colors.muted) }, 0, 0);
-      fill.paint({
-        set: (col, row, glyph) => {
-          if (glyph !== blank) g.set(col, row, glyph, colors.accent);
-        }
-      }, 0, 0);
-      const textRow = Math.max(2, Math.floor(centerY / 4 - 1));
-      const textCol = Math.max(0, Math.floor(centerX / 2 - Math.floor(valueText.length / 2)));
-      if (textRow >= 0 && textRow < rows && textCol >= 0) {
-        g.write(textCol, textRow, valueText, colors.fg);
-      }
+      track.paint(g, colors.muted);
+      fill.paint(g, colors.accent);
+      const labelRow = rows - 1;
+      const minLabel = formatNumber(props.min);
+      const maxLabel = formatNumber(props.max);
+      const [minFx] = pointAt(ARC_START_ANGLE);
+      const [maxFx] = pointAt(ARC_START_ANGLE + ARC_DEGREES);
+      const minCol = Math.max(0, area.colAt(minFx) - Math.floor(minLabel.length / 2));
+      const maxCol = Math.min(cols - maxLabel.length, area.colAt(maxFx) - Math.floor(maxLabel.length / 2));
+      g.write(minCol, labelRow, minLabel, colors.muted);
+      if (maxCol > minCol + minLabel.length) g.write(maxCol, labelRow, maxLabel, colors.muted);
+      const textRow = area.rowAt(centerFy);
+      const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
+      g.write(textCol, textRow, valueText, colors.fg);
       g.flush();
       host.dataset.picaReady = "true";
     }

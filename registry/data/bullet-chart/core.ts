@@ -1,6 +1,7 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
 import { lowerEighth } from "../../../lib/blocks";
 import { bandScale, dataTable, extent, formatNumber, linearScale, niceTicks, svg } from "../../../lib/chart";
+import { chartCells } from "../../../lib/chart-plot";
 import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type Grid, type GridOptions } from "../../../lib/glyph-grid";
 import { sameJson } from "../../../lib/json";
@@ -224,54 +225,55 @@ export const mount: Mount<BulletChartProps> = (host, initial = {}) => {
       return;
     }
 
-    const labelAreaWidth = 12;
-    const rowHeight = 2;
+    const labelCols = Math.min(12, Math.max(4, Math.floor(cols * 0.3)));
+    const area = chartCells(g, { left: labelCols });
     const [lo, hi] = domainOf(data);
     const span = hi - lo || 1;
-    const chartCols = Math.max(1, cols - labelAreaWidth);
     const best = maxIndex(data);
+    const n = data.length;
 
     data.forEach((d, i) => {
-      const rowStart = labelAreaWidth + i * rowHeight;
-      if (rowStart + rowHeight > rows) return;
+      // Spread each row evenly across the full height of the area, top to bottom.
+      const bandTop = area.row + Math.round((i * area.rows) / n);
+      const bandBottom = area.row + Math.round(((i + 1) * area.rows) / n) - 1;
+      const bandCenter = Math.floor((bandTop + bandBottom) / 2);
+      const rangeRow = bandTop === bandBottom ? bandTop : bandCenter;
+      const barRow = Math.min(bandBottom, rangeRow + 1);
 
       const isHighlighted = props.highlight === -1 ? i === best : i === props.highlight;
       const tint = isHighlighted ? colors.accent : colors.fg;
       const mutedTint = colors.muted;
 
-      // Draw range bands
+      // Draw range bands, scaled to the area's width.
       const rangeCount = Math.min(d.ranges.length - 1, props.ranges);
       for (let r = 0; r < rangeCount; r++) {
         const rMin = d.ranges[r] ?? 0;
         const rMax = d.ranges[r + 1] ?? 0;
         const fracMin = Math.max(0, Math.min(1, (rMin - lo) / span));
         const fracMax = Math.max(0, Math.min(1, (rMax - lo) / span));
-        const colMin = Math.floor(fracMin * chartCols);
-        const colMax = Math.ceil(fracMax * chartCols);
-        for (let c = colMin; c < colMax; c++) {
-          g.set(labelAreaWidth + c, rowStart, "█", mutedTint);
+        const colMin = area.colAt(fracMin);
+        const colMax = area.colAt(fracMax);
+        for (let c = colMin; c <= colMax; c++) {
+          g.set(c, rangeRow, "█", mutedTint);
         }
       }
 
-      // Draw measure bar
+      // Draw measure bar, scaled to the area's width.
       const fracBar = Math.max(0, Math.min(1, (d.value - lo) / span));
-      const colBar = Math.ceil(fracBar * chartCols);
-      for (let c = 0; c < colBar; c++) {
-        g.set(labelAreaWidth + c, rowStart + 1, lowerEighth(8), tint);
+      const colBar = area.colAt(fracBar);
+      for (let c = area.col; c <= colBar; c++) {
+        g.set(c, barRow, lowerEighth(8), tint);
       }
 
-      // Draw target tick if present
+      // Draw target tick if present.
       if (d.target !== undefined) {
         const fracTarget = Math.max(0, Math.min(1, (d.target - lo) / span));
-        const colTarget = Math.round(fracTarget * chartCols);
-        if (colTarget >= 0 && colTarget < chartCols) {
-          g.set(labelAreaWidth + colTarget, rowStart, "│", colors.fg);
-        }
+        g.set(area.colAt(fracTarget), rangeRow, "│", colors.fg);
       }
 
-      // Draw label
-      const text = d.label.slice(0, Math.min(10, labelAreaWidth));
-      g.write(0, rowStart + 1, text, colors.fg);
+      // Draw label in the reserved columns to the left of the area.
+      const text = d.label.slice(0, labelCols);
+      g.write(0, barRow, text, colors.fg);
     });
 
     g.flush();

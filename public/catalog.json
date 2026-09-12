@@ -1688,7 +1688,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5373
+    "gzipBytes": 5573
   },
   {
     "slug": "candlestick-chart",
@@ -2252,7 +2252,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 4778
+    "gzipBytes": 5173
   },
   {
     "slug": "heatmap",
@@ -2474,7 +2474,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5321
+    "gzipBytes": 5464
   },
   {
     "slug": "kanban-board",
@@ -2939,7 +2939,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5188
+    "gzipBytes": 5871
   },
   {
     "slug": "scatter-plot",
@@ -3207,7 +3207,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5702
+    "gzipBytes": 6185
   },
   {
     "slug": "timeline-chart",
@@ -3362,7 +3362,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5512
+    "gzipBytes": 5910
   },
   {
     "slug": "waterfall-chart",
@@ -3493,7 +3493,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5550
+    "gzipBytes": 5725
   },
   {
     "slug": "dither-contours",

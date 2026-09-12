@@ -171,6 +171,27 @@ var PicaBulletChart = (() => {
     return table;
   }
 
+  // lib/chart-plot.ts
+  function chartCells(grid, inset = {}) {
+    const left = Math.max(0, Math.floor(inset.left ?? 0));
+    const right = Math.max(0, Math.floor(inset.right ?? 0));
+    const top = Math.max(0, Math.floor(inset.top ?? 0));
+    const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+    const col = Math.min(left, Math.max(0, grid.cols - 1));
+    const row = Math.min(top, Math.max(0, grid.rows - 1));
+    const cols = Math.max(1, grid.cols - col - right);
+    const rows = Math.max(1, grid.rows - row - bottom);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    return {
+      col,
+      row,
+      cols,
+      rows,
+      colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+      rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1))
+    };
+  }
+
   // lib/font.ts
   var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
 
@@ -653,15 +674,18 @@ var PicaBulletChart = (() => {
         host.dataset.picaReady = "true";
         return;
       }
-      const labelAreaWidth = 12;
-      const rowHeight = 2;
+      const labelCols = Math.min(12, Math.max(4, Math.floor(cols * 0.3)));
+      const area = chartCells(g, { left: labelCols });
       const [lo, hi] = domainOf(data);
       const span = hi - lo || 1;
-      const chartCols = Math.max(1, cols - labelAreaWidth);
       const best = maxIndex(data);
+      const n = data.length;
       data.forEach((d, i) => {
-        const rowStart = labelAreaWidth + i * rowHeight;
-        if (rowStart + rowHeight > rows) return;
+        const bandTop = area.row + Math.round(i * area.rows / n);
+        const bandBottom = area.row + Math.round((i + 1) * area.rows / n) - 1;
+        const bandCenter = Math.floor((bandTop + bandBottom) / 2);
+        const rangeRow = bandTop === bandBottom ? bandTop : bandCenter;
+        const barRow = Math.min(bandBottom, rangeRow + 1);
         const isHighlighted = props.highlight === -1 ? i === best : i === props.highlight;
         const tint = isHighlighted ? colors.accent : colors.fg;
         const mutedTint = colors.muted;
@@ -671,26 +695,23 @@ var PicaBulletChart = (() => {
           const rMax = d.ranges[r + 1] ?? 0;
           const fracMin = Math.max(0, Math.min(1, (rMin - lo) / span));
           const fracMax = Math.max(0, Math.min(1, (rMax - lo) / span));
-          const colMin = Math.floor(fracMin * chartCols);
-          const colMax = Math.ceil(fracMax * chartCols);
-          for (let c = colMin; c < colMax; c++) {
-            g.set(labelAreaWidth + c, rowStart, "█", mutedTint);
+          const colMin = area.colAt(fracMin);
+          const colMax = area.colAt(fracMax);
+          for (let c = colMin; c <= colMax; c++) {
+            g.set(c, rangeRow, "█", mutedTint);
           }
         }
         const fracBar = Math.max(0, Math.min(1, (d.value - lo) / span));
-        const colBar = Math.ceil(fracBar * chartCols);
-        for (let c = 0; c < colBar; c++) {
-          g.set(labelAreaWidth + c, rowStart + 1, lowerEighth(8), tint);
+        const colBar = area.colAt(fracBar);
+        for (let c = area.col; c <= colBar; c++) {
+          g.set(c, barRow, lowerEighth(8), tint);
         }
         if (d.target !== void 0) {
           const fracTarget = Math.max(0, Math.min(1, (d.target - lo) / span));
-          const colTarget = Math.round(fracTarget * chartCols);
-          if (colTarget >= 0 && colTarget < chartCols) {
-            g.set(labelAreaWidth + colTarget, rowStart, "│", colors.fg);
-          }
+          g.set(area.colAt(fracTarget), rangeRow, "│", colors.fg);
         }
-        const text = d.label.slice(0, Math.min(10, labelAreaWidth));
-        g.write(0, rowStart + 1, text, colors.fg);
+        const text = d.label.slice(0, labelCols);
+        g.write(0, barRow, text, colors.fg);
       });
       g.flush();
       host.dataset.picaReady = "true";

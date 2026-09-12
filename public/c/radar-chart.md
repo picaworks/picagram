@@ -2,7 +2,7 @@
 
 > Three to eight axes radiating from a centre with closed polygon series, drawn as SVG or a monospace glyph grid, with a hidden data table.
 
-Category: data. Tags: chart, radar, star plot, svg, glyph grid, data table. Static. Size: 5.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
+Category: data. Tags: chart, radar, star plot, svg, glyph grid, data table. Static. Size: 5.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
@@ -412,208 +412,57 @@ function dataTable(caption: string, head: readonly string[], rows: readonly (rea
   return table;
 }
 
-// lib/font.ts
-/** The monospace stack glyph components default to. It lives in its own module, so a text component that
- *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
-const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+// lib/blocks.ts
+/** Unicode block and braille glyphs for text-mode drawing. Every glyph here is one UTF-16 code unit, so a
+ *  table can be indexed like an array. */
 
-// lib/palette.ts
-/** The four colors every component draws with. They live in CSS custom properties, so they cascade: set
- *  them once on a page or a section and every component follows, including on a theme switch. A wrapper's
- *  palette prop writes the same properties onto one host. This is the only module that reads them.
- *  See STYLE.md and docs/decisions/0005-palette.md. */
+/** The braille pattern with no dots raised. Add dot bits to it. */
+const BRAILLE_BASE = 0x2800;
 
-type Token = "fg" | "bg" | "accent" | "muted";
-
-const TOKENS: readonly Token[] = ["fg", "bg", "accent", "muted"];
-
-/** What each token falls back to when neither the page nor a palette prop sets it. Muted is the ink at 65%,
- *  which keeps 4.5:1 contrast on both the dark and the light ground. */
-const TOKEN_FALLBACK: Readonly<Record<Token, string>> = {
-  fg: "currentColor",
-  bg: "transparent",
-  accent: "#e8a020",
-  muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)",
-};
-
-/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #e8a020). */
-function cssVar(token: Token): string {
-  return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+/** The bit for the braille dot at `row` 0 to 3 and `col` 0 or 1. Rows 0 to 2 are dots 1 to 3 on the left
+ *  and 4 to 6 on the right. Row 3 holds dots 7 and 8, which Unicode added later, so their bits come last. */
+function brailleDot(row: number, col: number): number {
+  if (row === 3) return col === 0 ? 0x40 : 0x80;
+  return 1 << (col === 0 ? row : row + 3);
 }
 
-/** A readable ink for text set on a token's color: black on a light color, white on a dark one. Relative
- *  color syntax does it in CSS alone, so it follows any palette without script. */
-function cssOn(token: Token): string {
-  return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+/** The braille glyph for a set of dot bits. */
+function braille(bits: number): string {
+  return String.fromCharCode(BRAILLE_BASE + (bits & 0xff));
 }
 
-/** Each token's color as the browser computes it, usable as a canvas fill. */
-type Colors = Readonly<Record<Token, string>>;
+/** Quadrant glyphs, indexed by top left 1, top right 2, bottom left 4, and bottom right 8. */
+const QUADRANTS = " ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█";
 
-/** Event types the probe stops, so its transitions never reach the page's own listeners. */
-const PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"] as const;
-
-/** A zero-size probe inside the host whose color properties are the four tokens, so currentColor,
- *  light-dark(), and color-mix() resolve exactly as they do on the page. */
-function createProbe(host: HTMLElement): HTMLElement {
-  const probe = document.createElement("span");
-  probe.setAttribute("data-pica", "");
-  probe.setAttribute("aria-hidden", "true");
-  probe.style.cssText = [
-    "position:absolute",
-    "width:0",
-    "height:0",
-    "overflow:hidden",
-    "visibility:hidden",
-    "pointer-events:none",
-    `color:${cssVar("fg")}`,
-    `background-color:${cssVar("bg")}`,
-    `border-top:0 solid ${cssVar("accent")}`,
-    `outline:0 solid ${cssVar("muted")}`,
-    // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
-    "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms",
-  ].join(";");
-  host.appendChild(probe);
-  return probe;
+/** The glyph that inks the given quadrants of a cell. */
+function quadrant(tl: boolean, tr: boolean, bl: boolean, br: boolean): string {
+  return QUADRANTS[(tl ? 1 : 0) | (tr ? 2 : 0) | (bl ? 4 : 0) | (br ? 8 : 0)] ?? " ";
 }
 
-function probeColors(probe: HTMLElement): Colors {
-  const style = getComputedStyle(probe);
-  return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+/** A cell filled from the bottom by 0 to 8 eighths. */
+const LOWER_EIGHTHS = " ▁▂▃▄▅▆▇█";
+
+/** A cell filled from the left by 0 to 8 eighths. */
+const LEFT_EIGHTHS = " ▏▎▍▌▋▊▉█";
+
+/** Blank, light shade, medium shade, dark shade, and full block. */
+const SHADES = " ░▒▓█";
+
+const clampEighths = (n: number): number => Math.max(0, Math.min(8, Math.round(n)));
+
+/** The glyph filling `n` eighths of a cell from the bottom, clamped to 0 to 8. */
+function lowerEighth(n: number): string {
+  return LOWER_EIGHTHS[clampEighths(n)] ?? " ";
 }
 
-/** Reads the four colors once. A core that needs them every frame keeps a watchPalette handle instead. */
-function readPalette(host: HTMLElement): Colors {
-  const probe = createProbe(host);
-  const colors = probeColors(probe);
-  probe.remove();
-  return colors;
+/** The shade glyph for level `n`, clamped to 0 (blank) through 4 (full block). */
+function shade(n: number): string {
+  return SHADES[Math.max(0, Math.min(4, Math.round(n)))] ?? " ";
 }
 
-interface PaletteWatch {
-  /** The colors as of the last read. */
-  readonly colors: Colors;
-  /** Reads again now, for example in update() or after a resize. Returns true when any color changed. */
-  refresh(): boolean;
-  /** Removes the probe and its listeners. */
-  destroy(): void;
-}
-
-/** Keeps a probe in the host and calls `onChange` whenever a token's color changes, however it changed: a
- *  theme class, a media query, a palette prop, or a React style. Canvas and WebGL components repaint there.
- *  A page that turns every transition off hides these changes, so cores also call refresh() in update(). */
-function watchPalette(host: HTMLElement, onChange: (colors: Colors) => void): PaletteWatch {
-  const probe = createProbe(host);
-  let colors = probeColors(probe);
-
-  function refresh(): boolean {
-    const next = probeColors(probe);
-    const differs = TOKENS.some((token) => next[token] !== colors[token]);
-    colors = next;
-    return differs;
-  }
-
-  const onEvent = (event: Event): void => {
-    event.stopPropagation();
-    if (event.type === "transitionend" && refresh()) onChange(colors);
-  };
-  for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
-
-  return {
-    get colors() {
-      return colors;
-    },
-    refresh,
-    destroy() {
-      for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
-      probe.remove();
-    },
-  };
-}
-
-// lib/chart-marks.ts
-/** The marks every chart repeats: grid lines with their tick labels, a label on its own, and a point on a
- *  circle. They live apart from lib/chart.ts so a chart that draws none of them carries none of them, and
- *  together they keep eight charts drawing one axis rather than eight. Colors come from lib/palette.ts. */
-
-
-
-
-/** The side of the plot a set of grid lines is labelled on. A left or right side runs its lines across the
- *  plot, a top or bottom side runs them down it. */
-type MarkSide = "left" | "right" | "top" | "bottom";
-
-interface MarkLabelOptions {
-  /** Which end of the text sits at x. */
-  anchor?: "start" | "middle" | "end";
-  /** Whether the text is centred on y, rather than sitting on it. */
-  middle?: boolean;
-  /** Glyph size in the SVG's own units. */
-  size?: number;
-  /** Palette token for the fill. A label is secondary, so muted by default. */
-  token?: Token;
-  /** CSS font-family stack. Must be monospace. */
-  font?: string;
-}
-
-/** A label in mono with tabular figures, so digits keep their columns as a value changes. Muted unless a
- *  token says otherwise. */
-function svgLabel(text: string, x: number, y: number, options: MarkLabelOptions = {}): SVGTextElement {
-  const { anchor = "start", middle = false, size = 10, token = "muted", font = GRID_FONT } = options;
-  const node = svg("text", { x, y, "text-anchor": anchor, fill: cssVar(token), "font-family": font, "font-size": size });
-  if (middle) node.setAttribute("dominant-baseline", "middle");
-  node.style.fontVariantNumeric = "tabular-nums";
-  node.textContent = text;
-  return node;
-}
-
-interface GridLineOptions {
-  /** Which side carries the labels, and so which way the lines run. */
-  side: MarkSide;
-  /** The plot rectangle, in the SVG's own units. */
-  plot: { x: number; y: number; width: number; height: number };
-  /** Where a value sits along the axis, usually a scale from lib/chart.ts. */
-  at: (value: number) => number;
-  /** The label for a value. Leave it out, or return an empty string, for a line with no label. */
-  label?: (value: number) => string;
-  /** Label size in the SVG's own units. */
-  size?: number;
-  /** Distance from the plot's edge to its labels. */
-  gap?: number;
-  /** Draw the hairline across the plot. Off leaves the labels alone. */
-  rule?: boolean;
-}
-
-/** Hairlines in muted at the given values, each labelled on one side of the plot. Returns a single group, so
- *  a redraw replaces the whole set with one call. */
-function gridLines(values: readonly number[], options: GridLineOptions): SVGGElement {
-  const { side, plot, at, label, size = 10, gap = size * 0.6, rule = true } = options;
-  const across = side === "left" || side === "right";
-  const group = svg("g");
-  for (const value of values) {
-    const p = at(value);
-    if (rule) {
-      const ends = across
-        ? { x1: plot.x, y1: p, x2: plot.x + plot.width, y2: p }
-        : { x1: p, y1: plot.y, x2: p, y2: plot.y + plot.height };
-      group.appendChild(svg("line", { ...ends, stroke: cssVar("muted"), "stroke-width": 1 }));
-    }
-    const text = label?.(value) ?? "";
-    if (!text) continue;
-    // A left or right label is centred on its line. A top or bottom one sits on its own baseline, clear of
-    // the plot: above the line for a top side, a full glyph below the edge for a bottom one.
-    const x = side === "left" ? plot.x - gap : side === "right" ? plot.x + plot.width + gap : p;
-    const y = across ? p : side === "top" ? plot.y - gap : plot.y + plot.height + gap + size;
-    const anchor = side === "left" ? "end" : side === "right" ? "start" : "middle";
-    group.appendChild(svgLabel(text, x, y, { anchor, middle: across, size }));
-  }
-  return group;
-}
-
-/** The point at radius `r` and `angle` in radians from (cx, cy), measured clockwise from twelve o'clock,
- *  which is the convention arcPath in lib/chart.ts draws its rings on. */
-function polarPoint(cx: number, cy: number, r: number, angle: number): [number, number] {
-  return [cx + r * Math.sin(angle), cy - r * Math.cos(angle)];
+/** The glyph filling `n` eighths of a cell from the left, clamped to 0 to 8. */
+function leftEighth(n: number): string {
+  return LEFT_EIGHTHS[clampEighths(n)] ?? " ";
 }
 
 // lib/host.ts
@@ -739,6 +588,120 @@ function scope(host: HTMLElement): Scope {
     destroy() {
       style.remove();
       host.removeAttribute("data-pica-id");
+    },
+  };
+}
+
+// lib/palette.ts
+/** The four colors every component draws with. They live in CSS custom properties, so they cascade: set
+ *  them once on a page or a section and every component follows, including on a theme switch. A wrapper's
+ *  palette prop writes the same properties onto one host. This is the only module that reads them.
+ *  See STYLE.md and docs/decisions/0005-palette.md. */
+
+type Token = "fg" | "bg" | "accent" | "muted";
+
+const TOKENS: readonly Token[] = ["fg", "bg", "accent", "muted"];
+
+/** What each token falls back to when neither the page nor a palette prop sets it. Muted is the ink at 65%,
+ *  which keeps 4.5:1 contrast on both the dark and the light ground. */
+const TOKEN_FALLBACK: Readonly<Record<Token, string>> = {
+  fg: "currentColor",
+  bg: "transparent",
+  accent: "#e8a020",
+  muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)",
+};
+
+/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #e8a020). */
+function cssVar(token: Token): string {
+  return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+}
+
+/** A readable ink for text set on a token's color: black on a light color, white on a dark one. Relative
+ *  color syntax does it in CSS alone, so it follows any palette without script. */
+function cssOn(token: Token): string {
+  return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+}
+
+/** Each token's color as the browser computes it, usable as a canvas fill. */
+type Colors = Readonly<Record<Token, string>>;
+
+/** Event types the probe stops, so its transitions never reach the page's own listeners. */
+const PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"] as const;
+
+/** A zero-size probe inside the host whose color properties are the four tokens, so currentColor,
+ *  light-dark(), and color-mix() resolve exactly as they do on the page. */
+function createProbe(host: HTMLElement): HTMLElement {
+  const probe = document.createElement("span");
+  probe.setAttribute("data-pica", "");
+  probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText = [
+    "position:absolute",
+    "width:0",
+    "height:0",
+    "overflow:hidden",
+    "visibility:hidden",
+    "pointer-events:none",
+    `color:${cssVar("fg")}`,
+    `background-color:${cssVar("bg")}`,
+    `border-top:0 solid ${cssVar("accent")}`,
+    `outline:0 solid ${cssVar("muted")}`,
+    // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+    "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms",
+  ].join(";");
+  host.appendChild(probe);
+  return probe;
+}
+
+function probeColors(probe: HTMLElement): Colors {
+  const style = getComputedStyle(probe);
+  return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+}
+
+/** Reads the four colors once. A core that needs them every frame keeps a watchPalette handle instead. */
+function readPalette(host: HTMLElement): Colors {
+  const probe = createProbe(host);
+  const colors = probeColors(probe);
+  probe.remove();
+  return colors;
+}
+
+interface PaletteWatch {
+  /** The colors as of the last read. */
+  readonly colors: Colors;
+  /** Reads again now, for example in update() or after a resize. Returns true when any color changed. */
+  refresh(): boolean;
+  /** Removes the probe and its listeners. */
+  destroy(): void;
+}
+
+/** Keeps a probe in the host and calls `onChange` whenever a token's color changes, however it changed: a
+ *  theme class, a media query, a palette prop, or a React style. Canvas and WebGL components repaint there.
+ *  A page that turns every transition off hides these changes, so cores also call refresh() in update(). */
+function watchPalette(host: HTMLElement, onChange: (colors: Colors) => void): PaletteWatch {
+  const probe = createProbe(host);
+  let colors = probeColors(probe);
+
+  function refresh(): boolean {
+    const next = probeColors(probe);
+    const differs = TOKENS.some((token) => next[token] !== colors[token]);
+    colors = next;
+    return differs;
+  }
+
+  const onEvent = (event: Event): void => {
+    event.stopPropagation();
+    if (event.type === "transitionend" && refresh()) onChange(colors);
+  };
+  for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+
+  return {
+    get colors() {
+      return colors;
+    },
+    refresh,
+    destroy() {
+      for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+      probe.remove();
     },
   };
 }
@@ -1025,89 +988,6 @@ function createGrid(host: HTMLElement, options: GridOptions, onLayout: () => voi
   };
 }
 
-// lib/json.ts
-/** Comparing props that hold JSON. React passes fresh arrays and objects on every render, so a core compares
- *  them by content before deciding what to rebuild. */
-
-/** Deep equality for JSON values. */
-function sameJson(a: unknown, b: unknown): boolean {
-  if (a === b) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) || Array.isArray(b)) {
-    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (!sameJson(a[i], b[i])) return false;
-    }
-    return true;
-  }
-  const left = a as Record<string, unknown>;
-  const right = b as Record<string, unknown>;
-  const keys = Object.keys(left);
-  if (keys.length !== Object.keys(right).length) return false;
-  for (const key of keys) {
-    if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
-  }
-  return true;
-}
-
-/** Whether any of `keys` holds a different value in `after` than in `before`, compared as JSON. */
-function changed<P>(before: P, after: P, keys: readonly (keyof P)[]): boolean {
-  return keys.some((key) => !sameJson(before[key], after[key]));
-}
-
-// lib/blocks.ts
-/** Unicode block and braille glyphs for text-mode drawing. Every glyph here is one UTF-16 code unit, so a
- *  table can be indexed like an array. */
-
-/** The braille pattern with no dots raised. Add dot bits to it. */
-const BRAILLE_BASE = 0x2800;
-
-/** The bit for the braille dot at `row` 0 to 3 and `col` 0 or 1. Rows 0 to 2 are dots 1 to 3 on the left
- *  and 4 to 6 on the right. Row 3 holds dots 7 and 8, which Unicode added later, so their bits come last. */
-function brailleDot(row: number, col: number): number {
-  if (row === 3) return col === 0 ? 0x40 : 0x80;
-  return 1 << (col === 0 ? row : row + 3);
-}
-
-/** The braille glyph for a set of dot bits. */
-function braille(bits: number): string {
-  return String.fromCharCode(BRAILLE_BASE + (bits & 0xff));
-}
-
-/** Quadrant glyphs, indexed by top left 1, top right 2, bottom left 4, and bottom right 8. */
-const QUADRANTS = " ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█";
-
-/** The glyph that inks the given quadrants of a cell. */
-function quadrant(tl: boolean, tr: boolean, bl: boolean, br: boolean): string {
-  return QUADRANTS[(tl ? 1 : 0) | (tr ? 2 : 0) | (bl ? 4 : 0) | (br ? 8 : 0)] ?? " ";
-}
-
-/** A cell filled from the bottom by 0 to 8 eighths. */
-const LOWER_EIGHTHS = " ▁▂▃▄▅▆▇█";
-
-/** A cell filled from the left by 0 to 8 eighths. */
-const LEFT_EIGHTHS = " ▏▎▍▌▋▊▉█";
-
-/** Blank, light shade, medium shade, dark shade, and full block. */
-const SHADES = " ░▒▓█";
-
-const clampEighths = (n: number): number => Math.max(0, Math.min(8, Math.round(n)));
-
-/** The glyph filling `n` eighths of a cell from the bottom, clamped to 0 to 8. */
-function lowerEighth(n: number): string {
-  return LOWER_EIGHTHS[clampEighths(n)] ?? " ";
-}
-
-/** The shade glyph for level `n`, clamped to 0 (blank) through 4 (full block). */
-function shade(n: number): string {
-  return SHADES[Math.max(0, Math.min(4, Math.round(n)))] ?? " ";
-}
-
-/** The glyph filling `n` eighths of a cell from the left, clamped to 0 to 8. */
-function leftEighth(n: number): string {
-  return LEFT_EIGHTHS[clampEighths(n)] ?? " ";
-}
-
 // lib/braille-plot.ts
 /** A braille dot canvas. Each cell of a glyph grid holds two dots across and four down, so a plot draws at
  *  eight times a grid's resolution and still reads as text: it is how a scatter, a radar, or a gauge keeps
@@ -1182,6 +1062,243 @@ function createBraillePlot(cols: number, rows: number): BraillePlot {
     },
   };
   return plot;
+}
+
+// lib/chart-plot.ts
+/** Layout for a chart's glyph look. A glyph look lays out in cells, and a chart that reuses its SVG look's
+ *  pixel math produces cell indices many times too large, so the picture overflows its frame or collapses
+ *  into a corner. `chartCells` reserves the cells a chart's labels and axes need and hands back the
+ *  rectangle that is left, addressed by fraction rather than by pixel. `chartDots` lays a braille plot over
+ *  that rectangle for a chart that needs finer than one cell, such as a scatter, a radar, or a gauge. */
+
+
+
+
+/** Cells to hold back for labels and axes, on each side of the drawing area. */
+interface ChartInset {
+  readonly left?: number;
+  readonly right?: number;
+  readonly top?: number;
+  readonly bottom?: number;
+}
+
+/** The cell rectangle a chart draws into. */
+interface ChartCells {
+  /** Leftmost column of the area. */
+  readonly col: number;
+  /** Topmost row of the area. */
+  readonly row: number;
+  /** Width in cells, at least 1. */
+  readonly cols: number;
+  /** Height in cells, at least 1. */
+  readonly rows: number;
+  /** The column for `fx`, which is 0 at the area's left edge and 1 at its right. */
+  colAt(fx: number): number;
+  /** The row for `fy`, which is 0 at the area's bottom edge and 1 at its top, so a chart reads y up. */
+  rowAt(fy: number): number;
+}
+
+/** The drawing area left inside `grid` once `inset` is held back. */
+function chartCells(grid: Pick<Grid, "cols" | "rows">, inset: ChartInset = {}): ChartCells {
+  const left = Math.max(0, Math.floor(inset.left ?? 0));
+  const right = Math.max(0, Math.floor(inset.right ?? 0));
+  const top = Math.max(0, Math.floor(inset.top ?? 0));
+  const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+  const col = Math.min(left, Math.max(0, grid.cols - 1));
+  const row = Math.min(top, Math.max(0, grid.rows - 1));
+  const cols = Math.max(1, grid.cols - col - right);
+  const rows = Math.max(1, grid.rows - row - bottom);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  return {
+    col,
+    row,
+    cols,
+    rows,
+    colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+    rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1)),
+  };
+}
+
+/** A braille plot covering a `ChartCells` area, addressed by the same fractions. */
+interface ChartDots {
+  /** Dots across the area, which is two per cell. */
+  readonly wide: number;
+  /** Dots down the area, which is four per cell. */
+  readonly tall: number;
+  /** One dot's width over its height, so a chart can keep a circle round. */
+  readonly aspect: number;
+  /** The dot at `fx` across and `fy` up, both 0 to 1 over the area. */
+  dotAt(fx: number, fy: number): readonly [number, number];
+  /** Raises the dot at `fx`, `fy`. */
+  mark(fx: number, fy: number): void;
+  /** Raises the dots along the line between two fractional points. */
+  stroke(fx0: number, fy0: number, fx1: number, fy1: number): void;
+  /** Lowers every dot, so one plot can be reused for a second pass. */
+  clear(): void;
+  /** Writes the inked cells into `grid` in `color`. A blank cell is left as it is, so a track and a fill
+   *  drawn as two plots layer instead of rubbing each other out. */
+  paint(grid: Pick<Grid, "set">, color: string): void;
+}
+
+/** A braille plot over `area`. `cellAspect` is the grid's own `aspect`, a cell's width over its height. */
+function chartDots(area: ChartCells, cellAspect: number): ChartDots {
+  const plot = createBraillePlot(area.cols, area.rows);
+  const blank = braille(0);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const at = (fx: number, fy: number): readonly [number, number] => [
+    Math.round(clamp(fx) * (plot.width - 1)),
+    plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1)),
+  ];
+  return {
+    wide: plot.width,
+    tall: plot.height,
+    // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+    aspect: (cellAspect / 2) / (1 / 4),
+    dotAt: at,
+    mark(fx, fy) {
+      const [x, y] = at(fx, fy);
+      plot.dot(x, y);
+    },
+    stroke(fx0, fy0, fx1, fy1) {
+      const [x0, y0] = at(fx0, fy0);
+      const [x1, y1] = at(fx1, fy1);
+      plot.line(x0, y0, x1, y1);
+    },
+    clear() {
+      plot.clear();
+    },
+    paint(grid, color) {
+      plot.paint(
+        {
+          set: (x, y, glyph) => {
+            if (glyph !== blank) grid.set(x, y, glyph, color);
+          },
+        },
+        area.col,
+        area.row,
+      );
+    },
+  };
+}
+
+// lib/font.ts
+/** The monospace stack glyph components default to. It lives in its own module, so a text component that
+ *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
+const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+// lib/chart-marks.ts
+/** The marks every chart repeats: grid lines with their tick labels, a label on its own, and a point on a
+ *  circle. They live apart from lib/chart.ts so a chart that draws none of them carries none of them, and
+ *  together they keep eight charts drawing one axis rather than eight. Colors come from lib/palette.ts. */
+
+
+
+
+/** The side of the plot a set of grid lines is labelled on. A left or right side runs its lines across the
+ *  plot, a top or bottom side runs them down it. */
+type MarkSide = "left" | "right" | "top" | "bottom";
+
+interface MarkLabelOptions {
+  /** Which end of the text sits at x. */
+  anchor?: "start" | "middle" | "end";
+  /** Whether the text is centred on y, rather than sitting on it. */
+  middle?: boolean;
+  /** Glyph size in the SVG's own units. */
+  size?: number;
+  /** Palette token for the fill. A label is secondary, so muted by default. */
+  token?: Token;
+  /** CSS font-family stack. Must be monospace. */
+  font?: string;
+}
+
+/** A label in mono with tabular figures, so digits keep their columns as a value changes. Muted unless a
+ *  token says otherwise. */
+function svgLabel(text: string, x: number, y: number, options: MarkLabelOptions = {}): SVGTextElement {
+  const { anchor = "start", middle = false, size = 10, token = "muted", font = GRID_FONT } = options;
+  const node = svg("text", { x, y, "text-anchor": anchor, fill: cssVar(token), "font-family": font, "font-size": size });
+  if (middle) node.setAttribute("dominant-baseline", "middle");
+  node.style.fontVariantNumeric = "tabular-nums";
+  node.textContent = text;
+  return node;
+}
+
+interface GridLineOptions {
+  /** Which side carries the labels, and so which way the lines run. */
+  side: MarkSide;
+  /** The plot rectangle, in the SVG's own units. */
+  plot: { x: number; y: number; width: number; height: number };
+  /** Where a value sits along the axis, usually a scale from lib/chart.ts. */
+  at: (value: number) => number;
+  /** The label for a value. Leave it out, or return an empty string, for a line with no label. */
+  label?: (value: number) => string;
+  /** Label size in the SVG's own units. */
+  size?: number;
+  /** Distance from the plot's edge to its labels. */
+  gap?: number;
+  /** Draw the hairline across the plot. Off leaves the labels alone. */
+  rule?: boolean;
+}
+
+/** Hairlines in muted at the given values, each labelled on one side of the plot. Returns a single group, so
+ *  a redraw replaces the whole set with one call. */
+function gridLines(values: readonly number[], options: GridLineOptions): SVGGElement {
+  const { side, plot, at, label, size = 10, gap = size * 0.6, rule = true } = options;
+  const across = side === "left" || side === "right";
+  const group = svg("g");
+  for (const value of values) {
+    const p = at(value);
+    if (rule) {
+      const ends = across
+        ? { x1: plot.x, y1: p, x2: plot.x + plot.width, y2: p }
+        : { x1: p, y1: plot.y, x2: p, y2: plot.y + plot.height };
+      group.appendChild(svg("line", { ...ends, stroke: cssVar("muted"), "stroke-width": 1 }));
+    }
+    const text = label?.(value) ?? "";
+    if (!text) continue;
+    // A left or right label is centred on its line. A top or bottom one sits on its own baseline, clear of
+    // the plot: above the line for a top side, a full glyph below the edge for a bottom one.
+    const x = side === "left" ? plot.x - gap : side === "right" ? plot.x + plot.width + gap : p;
+    const y = across ? p : side === "top" ? plot.y - gap : plot.y + plot.height + gap + size;
+    const anchor = side === "left" ? "end" : side === "right" ? "start" : "middle";
+    group.appendChild(svgLabel(text, x, y, { anchor, middle: across, size }));
+  }
+  return group;
+}
+
+/** The point at radius `r` and `angle` in radians from (cx, cy), measured clockwise from twelve o'clock,
+ *  which is the convention arcPath in lib/chart.ts draws its rings on. */
+function polarPoint(cx: number, cy: number, r: number, angle: number): [number, number] {
+  return [cx + r * Math.sin(angle), cy - r * Math.cos(angle)];
+}
+
+// lib/json.ts
+/** Comparing props that hold JSON. React passes fresh arrays and objects on every render, so a core compares
+ *  them by content before deciding what to rebuild. */
+
+/** Deep equality for JSON values. */
+function sameJson(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!sameJson(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  const left = a as Record<string, unknown>;
+  const right = b as Record<string, unknown>;
+  const keys = Object.keys(left);
+  if (keys.length !== Object.keys(right).length) return false;
+  for (const key of keys) {
+    if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+  }
+  return true;
+}
+
+/** Whether any of `keys` holds a different value in `after` than in `before`, compared as JSON. */
+function changed<P>(before: P, after: P, keys: readonly (keyof P)[]): boolean {
+  return keys.some((key) => !sameJson(before[key], after[key]));
 }
 
 // registry/data/radar-chart/core.ts
@@ -1349,6 +1466,7 @@ export const mount: Mount<RadarChartProps> = (host, initial = {}) => {
     if (!g) return;
     g.clear();
     const { cols, rows } = g;
+    const colors = readPalette(host);
 
     const axes = props.data.axes || [];
     const series = props.data.series || [];
@@ -1360,61 +1478,103 @@ export const mount: Mount<RadarChartProps> = (host, initial = {}) => {
       const note = "no data";
       const x = Math.max(0, Math.floor((cols - note.length) / 2));
       const y = Math.floor(rows / 2);
-      const colors = readPalette(host);
       g.write(x, y, note, colors.muted);
       g.flush();
       host.dataset.picaReady = "true";
       return;
     }
 
-    const centerCol = cols / 2;
-    const centerRow = rows / 2;
-    const maxRadiusDots = Math.min(cols - 2, (rows - 2) * 2) / 2;
+    // Hold back rows above and below, and columns to each side, for axis labels around the outside.
+    const maxLabelLen = Math.max(1, ...axes.map((a) => a.label.length));
+    const side = Math.max(3, Math.min(maxLabelLen, Math.max(1, Math.floor(cols / 4))));
+    const inset: ChartInset = { top: 1, bottom: 1, left: side, right: side };
+    const area = chartCells({ cols, rows }, inset);
+    const ringDots = chartDots(area, g.aspect);
+    const seriesDots = chartDots(area, g.aspect);
 
-    // Draw rings with braille
-    const braillePlot = createBraillePlot(cols, rows);
+    // The farthest a value can reach from centre without the star turning into an ellipse: a step in either
+    // direction has to cover the same physical distance, and `dots.aspect` is what one dot's step is worth
+    // in the other direction's dots.
+    const reach = (Math.min(ringDots.wide, ringDots.tall / ringDots.aspect) / 2) * 0.94;
 
+    /** A fractional point on the plot at `angle` (0 is straight up, turning clockwise) and `radiusFraction`
+     *  of `reach`, corrected by the dot aspect so the shape reads as a circle rather than an ellipse. */
+    function point(angle: number, radiusFraction: number): [number, number] {
+      const rx = reach * radiusFraction * Math.sin(angle);
+      const ry = reach * radiusFraction * Math.cos(angle) * ringDots.aspect;
+      return [0.5 + rx / ringDots.wide, 0.5 + ry / ringDots.tall];
+    }
+
+    /** The cell for a fraction pair, unclamped, so a label can sit past the ring in the held-back margin. */
+    function cellAt(fx: number, fy: number): [number, number] {
+      const col = Math.round(area.col + fx * (area.cols - 1));
+      const row = Math.round(area.row + (area.rows - 1) - fy * (area.rows - 1));
+      return [col, row];
+    }
+
+    // Rings, one polygon each so they read as circles rather than the star's own straight edges.
+    const ringSteps = Math.max(axisCount * 6, 24);
     for (let ringIdx = 1; ringIdx <= props.rings; ringIdx++) {
-      const radius = (ringIdx / props.rings) * maxRadiusDots;
-      for (let i = 0; i < axisCount; i++) {
-        const angle = (i / axisCount) * Math.PI * 2;
-        const x = centerCol + radius * Math.sin(angle);
-        const y = centerRow - radius * Math.cos(angle);
-        braillePlot.dot(x, y);
+      const radiusFraction = ringIdx / props.rings;
+      for (let s = 0; s < ringSteps; s++) {
+        const [fx0, fy0] = point((s / ringSteps) * Math.PI * 2, radiusFraction);
+        const [fx1, fy1] = point(((s + 1) / ringSteps) * Math.PI * 2, radiusFraction);
+        ringDots.stroke(fx0, fy0, fx1, fy1);
       }
     }
 
-    // Draw axes
+    // Spokes, one per axis, from the centre out to the outer ring.
     for (let i = 0; i < axisCount; i++) {
-      const angle = (i / axisCount) * Math.PI * 2;
-      const x = centerCol + maxRadiusDots * Math.sin(angle);
-      const y = centerRow - maxRadiusDots * Math.cos(angle);
-      braillePlot.line(centerCol, centerRow, x, y);
+      const [fx, fy] = point((i / axisCount) * Math.PI * 2, 1);
+      ringDots.stroke(0.5, 0.5, fx, fy);
     }
+    ringDots.paint(g, colors.muted);
 
-    // Draw series as polygons
-    series.forEach((s) => {
-      const pointsDots: Array<[number, number]> = [];
+    // Series polygons, the first in the accent and the rest in fg.
+    series.forEach((s, seriesIndex) => {
+      const points: [number, number][] = [];
       for (let i = 0; i < axisCount; i++) {
-        const angle = (i / axisCount) * Math.PI * 2;
         const value = Math.max(0, Math.min(s.values[i] ?? 0, maxValue));
-        const radius = (value / maxValue) * maxRadiusDots;
-        const x = centerCol + radius * Math.sin(angle);
-        const y = centerRow - radius * Math.cos(angle);
-        pointsDots.push([x, y] as [number, number]);
+        points.push(point((i / axisCount) * Math.PI * 2, value / maxValue));
       }
-
-      // Draw polygon edges
-      for (let i = 0; i < pointsDots.length; i++) {
-        const pt0 = pointsDots[i];
-        const pt1 = pointsDots[(i + 1) % pointsDots.length];
-        if (pt0 && pt1) {
-          braillePlot.line(pt0[0], pt0[1], pt1[0], pt1[1]);
-        }
+      for (let i = 0; i < points.length; i++) {
+        const p0 = points[i];
+        const p1 = points[(i + 1) % points.length];
+        if (p0 && p1) seriesDots.stroke(p0[0], p0[1], p1[0], p1[1]);
       }
+      seriesDots.paint(g, seriesIndex === 0 ? colors.accent : colors.fg);
+      seriesDots.clear();
     });
 
-    braillePlot.paint(g, 0, 0);
+    // Axis labels, placed in cell space just past the ring, in the margin held back for them.
+    axes.forEach((axis, i) => {
+      const [fx, fy] = point((i / axisCount) * Math.PI * 2, 1.5);
+      const [col, row] = cellAt(fx, fy);
+      const label = axis.label.slice(0, Math.max(1, side * 2));
+      const startCol = Math.max(0, Math.min(cols - label.length, col - Math.floor(label.length / 2)));
+      g.write(startCol, Math.max(0, Math.min(rows - 1, row)), label, colors.muted);
+    });
+
+    // Series names, placed inside the plot near each series' strongest axis.
+    series.forEach((s, seriesIndex) => {
+      const values = s.values || [];
+      if (values.length === 0) return;
+      let bestIdx = 0;
+      let bestValue = Number.NEGATIVE_INFINITY;
+      values.forEach((v, i) => {
+        if (v > bestValue) {
+          bestValue = v;
+          bestIdx = i;
+        }
+      });
+      const [fx, fy] = point((bestIdx / axisCount) * Math.PI * 2, 0.55);
+      const [col, row] = cellAt(fx, fy);
+      const name = s.name.slice(0, Math.max(1, area.cols));
+      const startCol = Math.max(area.col, Math.min(area.col + area.cols - name.length, col - Math.floor(name.length / 2)));
+      const tintRow = Math.max(area.row, Math.min(area.row + area.rows - 1, row));
+      g.write(startCol, tintRow, name, seriesIndex === 0 ? colors.accent : colors.fg);
+    });
+
     g.flush();
     host.dataset.picaReady = "true";
   }
@@ -1616,6 +1776,127 @@ var PicaRadarChart = (() => {
       });
     }
     return table;
+  }
+
+  // lib/blocks.ts
+  var BRAILLE_BASE = 10240;
+  function brailleDot(row, col) {
+    if (row === 3) return col === 0 ? 64 : 128;
+    return 1 << (col === 0 ? row : row + 3);
+  }
+  function braille(bits) {
+    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
+  }
+
+  // lib/braille-plot.ts
+  function createBraillePlot(cols, rows) {
+    const w = Math.max(1, Math.floor(cols));
+    const h = Math.max(1, Math.floor(rows));
+    const bits = new Uint8Array(w * h);
+    const plot = {
+      width: w * 2,
+      height: h * 4,
+      dot(x, y) {
+        const dx = Math.round(x);
+        const dy = Math.round(y);
+        if (dx < 0 || dy < 0 || dx >= w * 2 || dy >= h * 4) return;
+        const cell = (dy >> 2) * w + (dx >> 1);
+        bits[cell] = (bits[cell] ?? 0) | brailleDot(dy & 3, dx & 1);
+      },
+      line(x0, y0, x1, y1) {
+        let x = Math.round(x0);
+        let y = Math.round(y0);
+        const endX = Math.round(x1);
+        const endY = Math.round(y1);
+        const stepX = x < endX ? 1 : -1;
+        const stepY = y < endY ? 1 : -1;
+        const runX = Math.abs(endX - x);
+        const runY = -Math.abs(endY - y);
+        let error = runX + runY;
+        for (; ; ) {
+          plot.dot(x, y);
+          if (x === endX && y === endY) return;
+          const twice = error * 2;
+          if (twice >= runY) {
+            error += runY;
+            x += stepX;
+          }
+          if (twice <= runX) {
+            error += runX;
+            y += stepY;
+          }
+        }
+      },
+      clear() {
+        bits.fill(0);
+      },
+      paint(grid, col, row) {
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) grid.set(col + x, row + y, braille(bits[y * w + x] ?? 0));
+        }
+      }
+    };
+    return plot;
+  }
+
+  // lib/chart-plot.ts
+  function chartCells(grid, inset = {}) {
+    const left = Math.max(0, Math.floor(inset.left ?? 0));
+    const right = Math.max(0, Math.floor(inset.right ?? 0));
+    const top = Math.max(0, Math.floor(inset.top ?? 0));
+    const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+    const col = Math.min(left, Math.max(0, grid.cols - 1));
+    const row = Math.min(top, Math.max(0, grid.rows - 1));
+    const cols = Math.max(1, grid.cols - col - right);
+    const rows = Math.max(1, grid.rows - row - bottom);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    return {
+      col,
+      row,
+      cols,
+      rows,
+      colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+      rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1))
+    };
+  }
+  function chartDots(area, cellAspect) {
+    const plot = createBraillePlot(area.cols, area.rows);
+    const blank = braille(0);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    const at = (fx, fy) => [
+      Math.round(clamp(fx) * (plot.width - 1)),
+      plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1))
+    ];
+    return {
+      wide: plot.width,
+      tall: plot.height,
+      // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+      aspect: cellAspect / 2 / (1 / 4),
+      dotAt: at,
+      mark(fx, fy) {
+        const [x, y] = at(fx, fy);
+        plot.dot(x, y);
+      },
+      stroke(fx0, fy0, fx1, fy1) {
+        const [x0, y0] = at(fx0, fy0);
+        const [x1, y1] = at(fx1, fy1);
+        plot.line(x0, y0, x1, y1);
+      },
+      clear() {
+        plot.clear();
+      },
+      paint(grid, color) {
+        plot.paint(
+          {
+            set: (x, y, glyph) => {
+              if (glyph !== blank) grid.set(x, y, glyph, color);
+            }
+          },
+          area.col,
+          area.row
+        );
+      }
+    };
   }
 
   // lib/font.ts
@@ -1931,67 +2212,6 @@ var PicaRadarChart = (() => {
     return true;
   }
 
-  // lib/blocks.ts
-  var BRAILLE_BASE = 10240;
-  function brailleDot(row, col) {
-    if (row === 3) return col === 0 ? 64 : 128;
-    return 1 << (col === 0 ? row : row + 3);
-  }
-  function braille(bits) {
-    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
-  }
-
-  // lib/braille-plot.ts
-  function createBraillePlot(cols, rows) {
-    const w = Math.max(1, Math.floor(cols));
-    const h = Math.max(1, Math.floor(rows));
-    const bits = new Uint8Array(w * h);
-    const plot = {
-      width: w * 2,
-      height: h * 4,
-      dot(x, y) {
-        const dx = Math.round(x);
-        const dy = Math.round(y);
-        if (dx < 0 || dy < 0 || dx >= w * 2 || dy >= h * 4) return;
-        const cell = (dy >> 2) * w + (dx >> 1);
-        bits[cell] = (bits[cell] ?? 0) | brailleDot(dy & 3, dx & 1);
-      },
-      line(x0, y0, x1, y1) {
-        let x = Math.round(x0);
-        let y = Math.round(y0);
-        const endX = Math.round(x1);
-        const endY = Math.round(y1);
-        const stepX = x < endX ? 1 : -1;
-        const stepY = y < endY ? 1 : -1;
-        const runX = Math.abs(endX - x);
-        const runY = -Math.abs(endY - y);
-        let error = runX + runY;
-        for (; ; ) {
-          plot.dot(x, y);
-          if (x === endX && y === endY) return;
-          const twice = error * 2;
-          if (twice >= runY) {
-            error += runY;
-            x += stepX;
-          }
-          if (twice <= runX) {
-            error += runX;
-            y += stepY;
-          }
-        }
-      },
-      clear() {
-        bits.fill(0);
-      },
-      paint(grid, col, row) {
-        for (let y = 0; y < h; y++) {
-          for (let x = 0; x < w; x++) grid.set(col + x, row + y, braille(bits[y * w + x] ?? 0));
-        }
-      }
-    };
-    return plot;
-  }
-
   // registry/data/radar-chart/core.ts
   var defaults = {
     data: {
@@ -2117,6 +2337,7 @@ var PicaRadarChart = (() => {
       if (!g) return;
       g.clear();
       const { cols, rows } = g;
+      const colors = readPalette(host);
       const axes = props.data.axes || [];
       const series = props.data.series || [];
       const empty = axes.length === 0 || series.length === 0 || series.some((s) => !s.values || s.values.length === 0);
@@ -2126,50 +2347,81 @@ var PicaRadarChart = (() => {
         const note = "no data";
         const x = Math.max(0, Math.floor((cols - note.length) / 2));
         const y = Math.floor(rows / 2);
-        const colors = readPalette(host);
         g.write(x, y, note, colors.muted);
         g.flush();
         host.dataset.picaReady = "true";
         return;
       }
-      const centerCol = cols / 2;
-      const centerRow = rows / 2;
-      const maxRadiusDots = Math.min(cols - 2, (rows - 2) * 2) / 2;
-      const braillePlot = createBraillePlot(cols, rows);
+      const maxLabelLen = Math.max(1, ...axes.map((a) => a.label.length));
+      const side = Math.max(3, Math.min(maxLabelLen, Math.max(1, Math.floor(cols / 4))));
+      const inset = { top: 1, bottom: 1, left: side, right: side };
+      const area = chartCells({ cols, rows }, inset);
+      const ringDots = chartDots(area, g.aspect);
+      const seriesDots = chartDots(area, g.aspect);
+      const reach = Math.min(ringDots.wide, ringDots.tall / ringDots.aspect) / 2 * 0.94;
+      function point(angle, radiusFraction) {
+        const rx = reach * radiusFraction * Math.sin(angle);
+        const ry = reach * radiusFraction * Math.cos(angle) * ringDots.aspect;
+        return [0.5 + rx / ringDots.wide, 0.5 + ry / ringDots.tall];
+      }
+      function cellAt(fx, fy) {
+        const col = Math.round(area.col + fx * (area.cols - 1));
+        const row = Math.round(area.row + (area.rows - 1) - fy * (area.rows - 1));
+        return [col, row];
+      }
+      const ringSteps = Math.max(axisCount * 6, 24);
       for (let ringIdx = 1; ringIdx <= props.rings; ringIdx++) {
-        const radius = ringIdx / props.rings * maxRadiusDots;
-        for (let i = 0; i < axisCount; i++) {
-          const angle = i / axisCount * Math.PI * 2;
-          const x = centerCol + radius * Math.sin(angle);
-          const y = centerRow - radius * Math.cos(angle);
-          braillePlot.dot(x, y);
+        const radiusFraction = ringIdx / props.rings;
+        for (let s = 0; s < ringSteps; s++) {
+          const [fx0, fy0] = point(s / ringSteps * Math.PI * 2, radiusFraction);
+          const [fx1, fy1] = point((s + 1) / ringSteps * Math.PI * 2, radiusFraction);
+          ringDots.stroke(fx0, fy0, fx1, fy1);
         }
       }
       for (let i = 0; i < axisCount; i++) {
-        const angle = i / axisCount * Math.PI * 2;
-        const x = centerCol + maxRadiusDots * Math.sin(angle);
-        const y = centerRow - maxRadiusDots * Math.cos(angle);
-        braillePlot.line(centerCol, centerRow, x, y);
+        const [fx, fy] = point(i / axisCount * Math.PI * 2, 1);
+        ringDots.stroke(0.5, 0.5, fx, fy);
       }
-      series.forEach((s) => {
-        const pointsDots = [];
+      ringDots.paint(g, colors.muted);
+      series.forEach((s, seriesIndex) => {
+        const points = [];
         for (let i = 0; i < axisCount; i++) {
-          const angle = i / axisCount * Math.PI * 2;
           const value = Math.max(0, Math.min(s.values[i] ?? 0, maxValue));
-          const radius = value / maxValue * maxRadiusDots;
-          const x = centerCol + radius * Math.sin(angle);
-          const y = centerRow - radius * Math.cos(angle);
-          pointsDots.push([x, y]);
+          points.push(point(i / axisCount * Math.PI * 2, value / maxValue));
         }
-        for (let i = 0; i < pointsDots.length; i++) {
-          const pt0 = pointsDots[i];
-          const pt1 = pointsDots[(i + 1) % pointsDots.length];
-          if (pt0 && pt1) {
-            braillePlot.line(pt0[0], pt0[1], pt1[0], pt1[1]);
-          }
+        for (let i = 0; i < points.length; i++) {
+          const p0 = points[i];
+          const p1 = points[(i + 1) % points.length];
+          if (p0 && p1) seriesDots.stroke(p0[0], p0[1], p1[0], p1[1]);
         }
+        seriesDots.paint(g, seriesIndex === 0 ? colors.accent : colors.fg);
+        seriesDots.clear();
       });
-      braillePlot.paint(g, 0, 0);
+      axes.forEach((axis, i) => {
+        const [fx, fy] = point(i / axisCount * Math.PI * 2, 1.5);
+        const [col, row] = cellAt(fx, fy);
+        const label = axis.label.slice(0, Math.max(1, side * 2));
+        const startCol = Math.max(0, Math.min(cols - label.length, col - Math.floor(label.length / 2)));
+        g.write(startCol, Math.max(0, Math.min(rows - 1, row)), label, colors.muted);
+      });
+      series.forEach((s, seriesIndex) => {
+        const values = s.values || [];
+        if (values.length === 0) return;
+        let bestIdx = 0;
+        let bestValue = Number.NEGATIVE_INFINITY;
+        values.forEach((v, i) => {
+          if (v > bestValue) {
+            bestValue = v;
+            bestIdx = i;
+          }
+        });
+        const [fx, fy] = point(bestIdx / axisCount * Math.PI * 2, 0.55);
+        const [col, row] = cellAt(fx, fy);
+        const name = s.name.slice(0, Math.max(1, area.cols));
+        const startCol = Math.max(area.col, Math.min(area.col + area.cols - name.length, col - Math.floor(name.length / 2)));
+        const tintRow = Math.max(area.row, Math.min(area.row + area.rows - 1, row));
+        g.write(startCol, tintRow, name, seriesIndex === 0 ? colors.accent : colors.fg);
+      });
       g.flush();
       host.dataset.picaReady = "true";
     }

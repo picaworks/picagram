@@ -432,11 +432,6 @@ function dataTable(caption: string, head: readonly string[], rows: readonly (rea
   return table;
 }
 
-// lib/font.ts
-/** The monospace stack glyph components default to. It lives in its own module, so a text component that
- *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
-const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
-
 // lib/host.ts
 /** What a core may change on its host, and the nodes it adds, each undone on destroy. A core never writes
  *  to, moves, or removes a node it did not create, and every node it adds carries data-pica.
@@ -960,6 +955,204 @@ function createGrid(host: HTMLElement, options: GridOptions, onLayout: () => voi
   };
 }
 
+// lib/braille-plot.ts
+/** A braille dot canvas. Each cell of a glyph grid holds two dots across and four down, so a plot draws at
+ *  eight times a grid's resolution and still reads as text: it is how a scatter, a radar, or a gauge keeps
+ *  the glyph look. The dot bits come from lib/blocks.ts, so the library keeps one braille table. */
+
+
+
+interface BraillePlot {
+  /** Dots across, which is two per cell. */
+  readonly width: number;
+  /** Dots down, which is four per cell. */
+  readonly height: number;
+  /** Raises the dot nearest (x, y) in dot space. A point outside the plot is dropped. */
+  dot(x: number, y: number): void;
+  /** Raises the dots along the straight line between two points in dot space, by Bresenham, so the line is
+   *  the same one whichever end it is drawn from. */
+  line(x0: number, y0: number, x1: number, y1: number): void;
+  /** Lowers every dot. */
+  clear(): void;
+  /** Writes every cell as a braille glyph into `grid`, the plot's first cell at (col, row). A cell with no
+   *  dots writes the blank braille glyph, which holds a cell's width, so the plot owns its rectangle. */
+  paint(grid: Pick<Grid, "set">, col: number, row: number): void;
+}
+
+/** A plot `cols` cells wide and `rows` cells tall, which is twice that in dots across and four times it
+ *  down. Dot space starts at the plot's top left. */
+function createBraillePlot(cols: number, rows: number): BraillePlot {
+  const w = Math.max(1, Math.floor(cols));
+  const h = Math.max(1, Math.floor(rows));
+  const bits = new Uint8Array(w * h);
+  const plot: BraillePlot = {
+    width: w * 2,
+    height: h * 4,
+    dot(x, y) {
+      const dx = Math.round(x);
+      const dy = Math.round(y);
+      if (dx < 0 || dy < 0 || dx >= w * 2 || dy >= h * 4) return;
+      const cell = (dy >> 2) * w + (dx >> 1);
+      bits[cell] = (bits[cell] ?? 0) | brailleDot(dy & 3, dx & 1);
+    },
+    line(x0, y0, x1, y1) {
+      let x = Math.round(x0);
+      let y = Math.round(y0);
+      const endX = Math.round(x1);
+      const endY = Math.round(y1);
+      const stepX = x < endX ? 1 : -1;
+      const stepY = y < endY ? 1 : -1;
+      const runX = Math.abs(endX - x);
+      const runY = -Math.abs(endY - y);
+      let error = runX + runY;
+      for (;;) {
+        plot.dot(x, y);
+        if (x === endX && y === endY) return;
+        const twice = error * 2;
+        if (twice >= runY) {
+          error += runY;
+          x += stepX;
+        }
+        if (twice <= runX) {
+          error += runX;
+          y += stepY;
+        }
+      }
+    },
+    clear() {
+      bits.fill(0);
+    },
+    paint(grid, col, row) {
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) grid.set(col + x, row + y, braille(bits[y * w + x] ?? 0));
+      }
+    },
+  };
+  return plot;
+}
+
+// lib/chart-plot.ts
+/** Layout for a chart's glyph look. A glyph look lays out in cells, and a chart that reuses its SVG look's
+ *  pixel math produces cell indices many times too large, so the picture overflows its frame or collapses
+ *  into a corner. `chartCells` reserves the cells a chart's labels and axes need and hands back the
+ *  rectangle that is left, addressed by fraction rather than by pixel. `chartDots` lays a braille plot over
+ *  that rectangle for a chart that needs finer than one cell, such as a scatter, a radar, or a gauge. */
+
+
+
+
+/** Cells to hold back for labels and axes, on each side of the drawing area. */
+interface ChartInset {
+  readonly left?: number;
+  readonly right?: number;
+  readonly top?: number;
+  readonly bottom?: number;
+}
+
+/** The cell rectangle a chart draws into. */
+interface ChartCells {
+  /** Leftmost column of the area. */
+  readonly col: number;
+  /** Topmost row of the area. */
+  readonly row: number;
+  /** Width in cells, at least 1. */
+  readonly cols: number;
+  /** Height in cells, at least 1. */
+  readonly rows: number;
+  /** The column for `fx`, which is 0 at the area's left edge and 1 at its right. */
+  colAt(fx: number): number;
+  /** The row for `fy`, which is 0 at the area's bottom edge and 1 at its top, so a chart reads y up. */
+  rowAt(fy: number): number;
+}
+
+/** The drawing area left inside `grid` once `inset` is held back. */
+function chartCells(grid: Pick<Grid, "cols" | "rows">, inset: ChartInset = {}): ChartCells {
+  const left = Math.max(0, Math.floor(inset.left ?? 0));
+  const right = Math.max(0, Math.floor(inset.right ?? 0));
+  const top = Math.max(0, Math.floor(inset.top ?? 0));
+  const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+  const col = Math.min(left, Math.max(0, grid.cols - 1));
+  const row = Math.min(top, Math.max(0, grid.rows - 1));
+  const cols = Math.max(1, grid.cols - col - right);
+  const rows = Math.max(1, grid.rows - row - bottom);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  return {
+    col,
+    row,
+    cols,
+    rows,
+    colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+    rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1)),
+  };
+}
+
+/** A braille plot covering a `ChartCells` area, addressed by the same fractions. */
+interface ChartDots {
+  /** Dots across the area, which is two per cell. */
+  readonly wide: number;
+  /** Dots down the area, which is four per cell. */
+  readonly tall: number;
+  /** One dot's width over its height, so a chart can keep a circle round. */
+  readonly aspect: number;
+  /** The dot at `fx` across and `fy` up, both 0 to 1 over the area. */
+  dotAt(fx: number, fy: number): readonly [number, number];
+  /** Raises the dot at `fx`, `fy`. */
+  mark(fx: number, fy: number): void;
+  /** Raises the dots along the line between two fractional points. */
+  stroke(fx0: number, fy0: number, fx1: number, fy1: number): void;
+  /** Lowers every dot, so one plot can be reused for a second pass. */
+  clear(): void;
+  /** Writes the inked cells into `grid` in `color`. A blank cell is left as it is, so a track and a fill
+   *  drawn as two plots layer instead of rubbing each other out. */
+  paint(grid: Pick<Grid, "set">, color: string): void;
+}
+
+/** A braille plot over `area`. `cellAspect` is the grid's own `aspect`, a cell's width over its height. */
+function chartDots(area: ChartCells, cellAspect: number): ChartDots {
+  const plot = createBraillePlot(area.cols, area.rows);
+  const blank = braille(0);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const at = (fx: number, fy: number): readonly [number, number] => [
+    Math.round(clamp(fx) * (plot.width - 1)),
+    plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1)),
+  ];
+  return {
+    wide: plot.width,
+    tall: plot.height,
+    // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+    aspect: (cellAspect / 2) / (1 / 4),
+    dotAt: at,
+    mark(fx, fy) {
+      const [x, y] = at(fx, fy);
+      plot.dot(x, y);
+    },
+    stroke(fx0, fy0, fx1, fy1) {
+      const [x0, y0] = at(fx0, fy0);
+      const [x1, y1] = at(fx1, fy1);
+      plot.line(x0, y0, x1, y1);
+    },
+    clear() {
+      plot.clear();
+    },
+    paint(grid, color) {
+      plot.paint(
+        {
+          set: (x, y, glyph) => {
+            if (glyph !== blank) grid.set(x, y, glyph, color);
+          },
+        },
+        area.col,
+        area.row,
+      );
+    },
+  };
+}
+
+// lib/font.ts
+/** The monospace stack glyph components default to. It lives in its own module, so a text component that
+ *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
+const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
 // lib/json.ts
 /** Comparing props that hold JSON. React passes fresh arrays and objects on every render, so a core compares
  *  them by content before deciding what to rebuild. */
@@ -1293,7 +1486,11 @@ export const mount: Mount<HeatmapProps> = (host, initial = {}) => {
     const data = props.data;
     const colors = readPalette(host);
 
-    if (!data.rows || !data.columns || !data.values || data.rows.length === 0 || data.columns.length === 0) {
+    const rowLabels = data.rows ?? [];
+    const colLabels = data.columns ?? [];
+    const values = data.values ?? [];
+
+    if (rowLabels.length === 0 || colLabels.length === 0 || values.length === 0) {
       const note = "no data";
       const x = Math.max(0, Math.floor((cols - note.length) / 2));
       const y = Math.floor(rows / 2);
@@ -1304,50 +1501,43 @@ export const mount: Mount<HeatmapProps> = (host, initial = {}) => {
     }
 
     const [, bestR, bestC] = props.highlight ? maxIndex(data) : [-1, -1, -1];
-    const rowCount = data.rows.length;
-    const colCount = data.columns.length;
+    const rowCount = rowLabels.length;
+    const colCount = colLabels.length;
     const [lo, hi] = domainOf(data);
     const span = hi - lo || 1;
 
-    // Reserve space for labels
-    const labelRowTop = 1;
-    const labelColLeft = 4;
-    const cellStartRow = labelRowTop + 1;
-    const cellStartCol = labelColLeft;
-    const cellRows = Math.max(1, rows - cellStartRow - 1);
-    const cellCols = Math.max(1, cols - cellStartCol - 1);
-
-    const cellHeight = Math.floor(cellRows / rowCount);
-    const cellWidth = Math.floor(cellCols / colCount);
-
-    if (cellHeight < 1 || cellWidth < 1) {
-      g.flush();
-      host.dataset.picaReady = "true";
-      return;
-    }
+    // One column of cells per row label, plus a gap, on the left. One row of cells for the column
+    // labels, on top. What is left is the matrix, addressed in whole grid cells.
+    const labelWidth = Math.max(1, ...rowLabels.map((label) => label.length));
+    const area = chartCells(g, { left: labelWidth + 1, top: 1 });
+    const cellWidth = Math.max(1, Math.floor(area.cols / colCount));
+    const cellHeight = Math.max(1, Math.floor(area.rows / rowCount));
+    const usedCols = cellWidth * colCount;
+    const usedRows = cellHeight * rowCount;
+    const originCol = area.col + Math.max(0, Math.floor((area.cols - usedCols) / 2));
+    const originRow = area.row + Math.max(0, Math.floor((area.rows - usedRows) / 2));
 
     // Draw column labels
-    data.columns.forEach((label, c) => {
-      const x = cellStartCol + c * cellWidth + Math.floor(cellWidth / 2) - Math.floor(label.length / 2);
+    colLabels.forEach((label, c) => {
+      const x0 = originCol + c * cellWidth;
       const text = label.slice(0, cellWidth);
-      if (x >= 0 && x < cols) {
-        g.write(x, 0, text, colors.muted);
-      }
+      const pad = Math.max(0, Math.floor((cellWidth - text.length) / 2));
+      g.write(x0 + pad, 0, text, colors.muted);
     });
 
     // Draw row labels
-    data.rows.forEach((label, r) => {
-      const y = cellStartRow + r * cellHeight + Math.floor(cellHeight / 2);
-      const text = label.slice(0, labelColLeft);
-      const pad = Math.max(0, labelColLeft - text.length);
+    rowLabels.forEach((label, r) => {
+      const y = originRow + r * cellHeight + Math.floor(cellHeight / 2);
+      const text = label.slice(0, labelWidth);
+      const pad = Math.max(0, labelWidth - text.length);
       g.write(pad, y, text, colors.muted);
     });
 
     // Draw cells
-    data.values.forEach((row, r) => {
-      const y0 = cellStartRow + r * cellHeight;
+    values.forEach((row, r) => {
+      const y0 = originRow + r * cellHeight;
       row.forEach((v, c) => {
-        const x0 = cellStartCol + c * cellWidth;
+        const x0 = originCol + c * cellWidth;
         const normalizedValue = (v - lo) / span;
         const isHighest = props.highlight && r === bestR && c === bestC;
 
@@ -1355,20 +1545,15 @@ export const mount: Mount<HeatmapProps> = (host, initial = {}) => {
         const glyphLevel = Math.min(8, Math.max(0, Math.round(normalizedValue * 8)));
         const glyph = shade(glyphLevel);
 
-        for (let row = 0; row < cellHeight; row++) {
-          const cy = y0 + row;
-          if (cy < rows) {
-            for (let col = 0; col < cellWidth; col++) {
-              const cx = x0 + col;
-              if (cx < cols) {
-                g.set(cx, cy, glyph, tint);
-              }
-            }
+        for (let ry = 0; ry < cellHeight; ry++) {
+          const cy = y0 + ry;
+          for (let rx = 0; rx < cellWidth; rx++) {
+            g.set(x0 + rx, cy, glyph, tint);
           }
         }
 
         // Label highest cell
-        if (isHighest && cellHeight >= 1 && cellWidth >= 1) {
+        if (isHighest) {
           const valueLabel = formatNumber(v).slice(0, cellWidth);
           const vpad = Math.max(0, Math.floor((cellWidth - valueLabel.length) / 2));
           g.write(x0 + vpad, y0 + Math.floor(cellHeight / 2), valueLabel, colors.accent);

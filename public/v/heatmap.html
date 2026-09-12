@@ -139,6 +139,27 @@ var PicaHeatmap = (() => {
     return table;
   }
 
+  // lib/chart-plot.ts
+  function chartCells(grid, inset = {}) {
+    const left = Math.max(0, Math.floor(inset.left ?? 0));
+    const right = Math.max(0, Math.floor(inset.right ?? 0));
+    const top = Math.max(0, Math.floor(inset.top ?? 0));
+    const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+    const col = Math.min(left, Math.max(0, grid.cols - 1));
+    const row = Math.min(top, Math.max(0, grid.rows - 1));
+    const cols = Math.max(1, grid.cols - col - right);
+    const rows = Math.max(1, grid.rows - row - bottom);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    return {
+      col,
+      row,
+      cols,
+      rows,
+      colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+      rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1))
+    };
+  }
+
   // lib/font.ts
   var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
 
@@ -698,7 +719,10 @@ var PicaHeatmap = (() => {
       const { cols, rows } = g;
       const data = props.data;
       const colors = readPalette(host);
-      if (!data.rows || !data.columns || !data.values || data.rows.length === 0 || data.columns.length === 0) {
+      const rowLabels = data.rows ?? [];
+      const colLabels = data.columns ?? [];
+      const values = data.values ?? [];
+      if (rowLabels.length === 0 || colLabels.length === 0 || values.length === 0) {
         const note = "no data";
         const x = Math.max(0, Math.floor((cols - note.length) / 2));
         const y = Math.floor(rows / 2);
@@ -708,57 +732,46 @@ var PicaHeatmap = (() => {
         return;
       }
       const [, bestR, bestC] = props.highlight ? maxIndex(data) : [-1, -1, -1];
-      const rowCount = data.rows.length;
-      const colCount = data.columns.length;
+      const rowCount = rowLabels.length;
+      const colCount = colLabels.length;
       const [lo, hi] = domainOf(data);
       const span = hi - lo || 1;
-      const labelRowTop = 1;
-      const labelColLeft = 4;
-      const cellStartRow = labelRowTop + 1;
-      const cellStartCol = labelColLeft;
-      const cellRows = Math.max(1, rows - cellStartRow - 1);
-      const cellCols = Math.max(1, cols - cellStartCol - 1);
-      const cellHeight = Math.floor(cellRows / rowCount);
-      const cellWidth = Math.floor(cellCols / colCount);
-      if (cellHeight < 1 || cellWidth < 1) {
-        g.flush();
-        host.dataset.picaReady = "true";
-        return;
-      }
-      data.columns.forEach((label, c) => {
-        const x = cellStartCol + c * cellWidth + Math.floor(cellWidth / 2) - Math.floor(label.length / 2);
+      const labelWidth = Math.max(1, ...rowLabels.map((label) => label.length));
+      const area = chartCells(g, { left: labelWidth + 1, top: 1 });
+      const cellWidth = Math.max(1, Math.floor(area.cols / colCount));
+      const cellHeight = Math.max(1, Math.floor(area.rows / rowCount));
+      const usedCols = cellWidth * colCount;
+      const usedRows = cellHeight * rowCount;
+      const originCol = area.col + Math.max(0, Math.floor((area.cols - usedCols) / 2));
+      const originRow = area.row + Math.max(0, Math.floor((area.rows - usedRows) / 2));
+      colLabels.forEach((label, c) => {
+        const x0 = originCol + c * cellWidth;
         const text = label.slice(0, cellWidth);
-        if (x >= 0 && x < cols) {
-          g.write(x, 0, text, colors.muted);
-        }
+        const pad = Math.max(0, Math.floor((cellWidth - text.length) / 2));
+        g.write(x0 + pad, 0, text, colors.muted);
       });
-      data.rows.forEach((label, r) => {
-        const y = cellStartRow + r * cellHeight + Math.floor(cellHeight / 2);
-        const text = label.slice(0, labelColLeft);
-        const pad = Math.max(0, labelColLeft - text.length);
+      rowLabels.forEach((label, r) => {
+        const y = originRow + r * cellHeight + Math.floor(cellHeight / 2);
+        const text = label.slice(0, labelWidth);
+        const pad = Math.max(0, labelWidth - text.length);
         g.write(pad, y, text, colors.muted);
       });
-      data.values.forEach((row, r) => {
-        const y0 = cellStartRow + r * cellHeight;
+      values.forEach((row, r) => {
+        const y0 = originRow + r * cellHeight;
         row.forEach((v, c) => {
-          const x0 = cellStartCol + c * cellWidth;
+          const x0 = originCol + c * cellWidth;
           const normalizedValue = (v - lo) / span;
           const isHighest = props.highlight && r === bestR && c === bestC;
           const tint = isHighest ? colors.accent : colors.fg;
           const glyphLevel = Math.min(8, Math.max(0, Math.round(normalizedValue * 8)));
           const glyph = shade(glyphLevel);
-          for (let row2 = 0; row2 < cellHeight; row2++) {
-            const cy = y0 + row2;
-            if (cy < rows) {
-              for (let col = 0; col < cellWidth; col++) {
-                const cx = x0 + col;
-                if (cx < cols) {
-                  g.set(cx, cy, glyph, tint);
-                }
-              }
+          for (let ry = 0; ry < cellHeight; ry++) {
+            const cy = y0 + ry;
+            for (let rx = 0; rx < cellWidth; rx++) {
+              g.set(x0 + rx, cy, glyph, tint);
             }
           }
-          if (isHighest && cellHeight >= 1 && cellWidth >= 1) {
+          if (isHighest) {
             const valueLabel = formatNumber(v).slice(0, cellWidth);
             const vpad = Math.max(0, Math.floor((cellWidth - valueLabel.length) / 2));
             g.write(x0 + vpad, y0 + Math.floor(cellHeight / 2), valueLabel, colors.accent);

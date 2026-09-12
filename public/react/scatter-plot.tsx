@@ -1031,6 +1031,123 @@ function createBraillePlot(cols: number, rows: number): BraillePlot {
   return plot;
 }
 
+// lib/chart-plot.ts
+/** Layout for a chart's glyph look. A glyph look lays out in cells, and a chart that reuses its SVG look's
+ *  pixel math produces cell indices many times too large, so the picture overflows its frame or collapses
+ *  into a corner. `chartCells` reserves the cells a chart's labels and axes need and hands back the
+ *  rectangle that is left, addressed by fraction rather than by pixel. `chartDots` lays a braille plot over
+ *  that rectangle for a chart that needs finer than one cell, such as a scatter, a radar, or a gauge. */
+
+
+
+
+/** Cells to hold back for labels and axes, on each side of the drawing area. */
+interface ChartInset {
+  readonly left?: number;
+  readonly right?: number;
+  readonly top?: number;
+  readonly bottom?: number;
+}
+
+/** The cell rectangle a chart draws into. */
+interface ChartCells {
+  /** Leftmost column of the area. */
+  readonly col: number;
+  /** Topmost row of the area. */
+  readonly row: number;
+  /** Width in cells, at least 1. */
+  readonly cols: number;
+  /** Height in cells, at least 1. */
+  readonly rows: number;
+  /** The column for `fx`, which is 0 at the area's left edge and 1 at its right. */
+  colAt(fx: number): number;
+  /** The row for `fy`, which is 0 at the area's bottom edge and 1 at its top, so a chart reads y up. */
+  rowAt(fy: number): number;
+}
+
+/** The drawing area left inside `grid` once `inset` is held back. */
+function chartCells(grid: Pick<Grid, "cols" | "rows">, inset: ChartInset = {}): ChartCells {
+  const left = Math.max(0, Math.floor(inset.left ?? 0));
+  const right = Math.max(0, Math.floor(inset.right ?? 0));
+  const top = Math.max(0, Math.floor(inset.top ?? 0));
+  const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+  const col = Math.min(left, Math.max(0, grid.cols - 1));
+  const row = Math.min(top, Math.max(0, grid.rows - 1));
+  const cols = Math.max(1, grid.cols - col - right);
+  const rows = Math.max(1, grid.rows - row - bottom);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  return {
+    col,
+    row,
+    cols,
+    rows,
+    colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+    rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1)),
+  };
+}
+
+/** A braille plot covering a `ChartCells` area, addressed by the same fractions. */
+interface ChartDots {
+  /** Dots across the area, which is two per cell. */
+  readonly wide: number;
+  /** Dots down the area, which is four per cell. */
+  readonly tall: number;
+  /** One dot's width over its height, so a chart can keep a circle round. */
+  readonly aspect: number;
+  /** The dot at `fx` across and `fy` up, both 0 to 1 over the area. */
+  dotAt(fx: number, fy: number): readonly [number, number];
+  /** Raises the dot at `fx`, `fy`. */
+  mark(fx: number, fy: number): void;
+  /** Raises the dots along the line between two fractional points. */
+  stroke(fx0: number, fy0: number, fx1: number, fy1: number): void;
+  /** Lowers every dot, so one plot can be reused for a second pass. */
+  clear(): void;
+  /** Writes the inked cells into `grid` in `color`. A blank cell is left as it is, so a track and a fill
+   *  drawn as two plots layer instead of rubbing each other out. */
+  paint(grid: Pick<Grid, "set">, color: string): void;
+}
+
+/** A braille plot over `area`. `cellAspect` is the grid's own `aspect`, a cell's width over its height. */
+function chartDots(area: ChartCells, cellAspect: number): ChartDots {
+  const plot = createBraillePlot(area.cols, area.rows);
+  const blank = braille(0);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const at = (fx: number, fy: number): readonly [number, number] => [
+    Math.round(clamp(fx) * (plot.width - 1)),
+    plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1)),
+  ];
+  return {
+    wide: plot.width,
+    tall: plot.height,
+    // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+    aspect: (cellAspect / 2) / (1 / 4),
+    dotAt: at,
+    mark(fx, fy) {
+      const [x, y] = at(fx, fy);
+      plot.dot(x, y);
+    },
+    stroke(fx0, fy0, fx1, fy1) {
+      const [x0, y0] = at(fx0, fy0);
+      const [x1, y1] = at(fx1, fy1);
+      plot.line(x0, y0, x1, y1);
+    },
+    clear() {
+      plot.clear();
+    },
+    paint(grid, color) {
+      plot.paint(
+        {
+          set: (x, y, glyph) => {
+            if (glyph !== blank) grid.set(x, y, glyph, color);
+          },
+        },
+        area.col,
+        area.row,
+      );
+    },
+  };
+}
+
 // lib/font.ts
 /** The monospace stack glyph components default to. It lives in its own module, so a text component that
  *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
@@ -1313,55 +1430,70 @@ function drawGlyph(host: HTMLElement, grid: Grid, props: ScatterPlotProps): void
 
   const [minX, maxX] = extent(data.map((d) => d.x));
   const [minY, maxY] = extent(data.map((d) => d.y));
+  const yTicks = niceTicks(minY, maxY, props.ticks);
+  const xTicks = niceTicks(minX, maxX, props.ticks);
+  const yFirst = yTicks[0] ?? minY;
+  const yLast = yTicks[yTicks.length - 1] ?? maxY;
+  const xFirst = xTicks[0] ?? minX;
+  const xLast = xTicks[xTicks.length - 1] ?? maxX;
+  const ySpan = yLast - yFirst || 1;
+  const xSpan = xLast - xFirst || 1;
 
-  const margin = 1;
-  const plotCols = Math.max(1, cols - 2 * margin);
-  const plotRows = Math.max(1, rows - 2 * margin);
+  // Reserve columns on the left for the widest y tick label plus the axis line, and rows on the
+  // bottom for the axis line plus the x tick labels beneath it.
+  const yLabelWidth = Math.max(1, ...yTicks.map((t) => formatNumber(t).length));
+  const inset: ChartInset = { left: yLabelWidth + 1, bottom: 2 };
+  const area = chartCells({ cols, rows }, inset);
+  const fitDots = chartDots(area, grid.aspect);
+  const pointDots = chartDots(area, grid.aspect);
+  const highlightDots = chartDots(area, grid.aspect);
 
-  const scaleX = linearScale([minX, maxX], [0, plotCols * 2 - 1]);
-  const scaleY = linearScale([minY, maxY], [plotRows * 4 - 1, 0]);
+  // Axis lines: a vertical rule at the plot's left edge, a horizontal rule under it.
+  const axisCol = area.col - 1;
+  const axisRow = area.row + area.rows;
+  for (let r = area.row; r < area.row + area.rows; r++) grid.set(axisCol, r, "│", colors.muted);
+  grid.set(axisCol, axisRow, "└", colors.muted);
+  for (let c = area.col; c < area.col + area.cols; c++) grid.set(c, axisRow, "─", colors.muted);
 
-  const plot = createBraillePlot(plotCols, plotRows);
+  // Y tick labels, right-aligned against the axis.
+  for (const t of yTicks) {
+    const fraction = (t - yFirst) / ySpan;
+    const row = area.rowAt(fraction);
+    const text = formatNumber(t);
+    grid.write(Math.max(0, axisCol - text.length), row, text, colors.muted);
+  }
 
-  // Draw fit line if requested
+  // X tick labels, centered under each tick, on the row below the axis.
+  for (const t of xTicks) {
+    const fraction = (t - xFirst) / xSpan;
+    const col = area.colAt(fraction);
+    const text = formatNumber(t);
+    grid.write(Math.max(0, col - Math.floor(text.length / 2)), rows - 1, text, colors.muted);
+  }
+
+  // Fit line, painted first so the points sit on top of it.
   if (props.fit) {
-    const fit = fitLine(data);
-    if (fit) {
-      const [slope, intercept] = fit;
-      const y1 = slope * minX + intercept;
-      const y2 = slope * maxX + intercept;
-      const x1 = scaleX(minX);
-      const y1p = scaleY(y1);
-      const x2 = scaleX(maxX);
-      const y2p = scaleY(y2);
-      plot.line(x1, y1p, x2, y2p);
+    const line = fitLine(data);
+    if (line) {
+      const [slope, intercept] = line;
+      const y0 = (slope * xFirst + intercept - yFirst) / ySpan;
+      const y1 = (slope * xLast + intercept - yFirst) / ySpan;
+      fitDots.stroke(0, y0, 1, y1);
     }
   }
 
-  // Draw points
+  // Points, split so a highlighted point can be painted last, in the accent.
+  const highlightSet = new Set(props.highlight);
   data.forEach((d) => {
-    const px = scaleX(d.x);
-    const py = scaleY(d.y);
-    plot.dot(px, py);
+    const fx = (d.x - xFirst) / xSpan;
+    const fy = (d.y - yFirst) / ySpan;
+    if (d.label && highlightSet.has(d.label)) highlightDots.mark(fx, fy);
+    else pointDots.mark(fx, fy);
   });
 
-  plot.paint(grid, margin, margin);
-
-  // Draw axis labels and ticks
-  const xLabelRow = margin + plotRows;
-  const yLabelCol = 0;
-
-  // Y-axis label
-  if (props.yLabel.length > 0) {
-    const label = props.yLabel.slice(0, 1);
-    grid.write(yLabelCol, margin, label, colors.muted);
-  }
-
-  // X-axis label
-  if (props.xLabel.length > 0) {
-    const label = props.xLabel.slice(0, 1);
-    grid.write(margin + plotCols, xLabelRow, label, colors.muted);
-  }
+  fitDots.paint(grid, colors.muted);
+  pointDots.paint(grid, colors.fg);
+  highlightDots.paint(grid, colors.accent);
 
   grid.flush();
   host.dataset.picaReady = "true";

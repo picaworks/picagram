@@ -1,5 +1,6 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
 import { dataTable, extent, linearScale, svg } from "../../../lib/chart";
+import { chartCells } from "../../../lib/chart-plot";
 import { formatTime, parseTime, timeTicks } from "../../../lib/chart-time";
 import { GRID_FONT } from "../../../lib/font";
 import { createGrid, measureCell, type Grid, type GridOptions } from "../../../lib/glyph-grid";
@@ -274,21 +275,45 @@ export const mount: Mount<TimelineChartProps> = (host, initial = {}) => {
 
     const [timeMin, timeMax] = timeRange(data);
     const timeSpan = timeMax - timeMin || 1;
-    const labelCols = Math.max(1, Math.floor(cols * 0.25));
-    const plotCols = Math.max(1, cols - labelCols - 1);
-    const rowStep = Math.max(1, Math.floor((rows - 1) / data.length));
+    const { times } = timeTicks(timeMin, timeMax, props.ticks);
+    const maxLabelChars = Math.max(1, ...data.map((d) => d.label.length));
+    const labelCols = Math.max(4, Math.min(maxLabelChars, Math.floor(cols * 0.35)));
+    // One row for the time axis labels at the bottom, a label gutter on the left, and a blank row on
+    // top so the first row's bar does not sit flush against the frame.
+    const area = chartCells({ cols, rows }, { left: labelCols + 1, top: 1, bottom: 1 });
+    const axisRow = rows - 1;
 
-    const x = (time: number) => {
-      const normalized = (time - timeMin) / timeSpan;
-      return Math.round(labelCols + normalized * plotCols);
-    };
+    const x = (time: number) => area.colAt((time - timeMin) / timeSpan);
+
+    // Each row gets two cells of height with a blank cell between rows, when the area has room, so a
+    // span reads as a bar rather than a single line. Falls back to one cell when the area is short.
+    const perRow = area.rows >= data.length * 3 - 1 ? 2 : 1;
+    const rowGap = area.rows >= data.length * (perRow + 1) - 1 ? 1 : 0;
+    const stride = perRow + rowGap;
+    const bodyBottom = Math.min(area.row + area.rows - 1, area.row + data.length * stride - rowGap - 1);
+
+    // Tracks the last written label's end column, so a tick too close to the one before it draws its
+    // gridline but skips its label rather than overlapping the previous one.
+    let labelEnd = -1;
+    times.forEach((t) => {
+      const gx = x(t);
+      for (let r = area.row; r <= bodyBottom; r++) g.set(gx, r, "│", colors.muted);
+      const spacing = times.length > 1 ? Math.floor(area.cols / times.length) : area.cols;
+      const monthLabel = formatTime(t, "month").slice(0, Math.max(3, spacing - 1));
+      const labelStart = Math.max(area.col, Math.min(area.col + area.cols - monthLabel.length, gx));
+      if (labelStart >= labelEnd + 1) {
+        g.write(labelStart, axisRow, monthLabel, colors.muted);
+        labelEnd = labelStart + monthLabel.length;
+      }
+    });
 
     data.forEach((row, rowIdx) => {
-      const rowY = 1 + rowIdx * rowStep;
-      if (rowY >= rows) return;
+      const topRow = area.row + rowIdx * stride;
+      if (topRow > bodyBottom) return;
+      const bottomRow = Math.min(bodyBottom, topRow + perRow - 1);
 
       const label = row.label.slice(0, labelCols).padEnd(labelCols, " ");
-      g.write(0, rowY, label, colors.muted);
+      g.write(0, topRow, label, colors.muted);
 
       const startTime = parseTime(row.start);
       if (Number.isFinite(startTime)) {
@@ -298,8 +323,10 @@ export const mount: Mount<TimelineChartProps> = (host, initial = {}) => {
 
         const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
         const barColor = rowIdx === highlightIdx ? colors.accent : colors.fg;
-        for (let col = x1; col < x2 && col < cols; col++) {
-          g.set(col, rowY, "█", barColor);
+        for (let r = topRow; r <= bottomRow; r++) {
+          for (let col = x1; col < x2 && col < area.col + area.cols; col++) {
+            g.set(col, r, "█", barColor);
+          }
         }
       }
 
@@ -308,12 +335,11 @@ export const mount: Mount<TimelineChartProps> = (host, initial = {}) => {
         const eventTime = parseTime(event.time);
         if (Number.isFinite(eventTime)) {
           const ex = x(eventTime);
-          if (ex >= 0 && ex < cols) {
-            const itemIdx = rowIdx + eventIdx + 1;
-            const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
-            const markColor = itemIdx === highlightIdx ? colors.accent : colors.fg;
-            g.set(ex, rowY, "◆", markColor);
-          }
+          const itemIdx = rowIdx + eventIdx + 1;
+          const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
+          const markColor = itemIdx === highlightIdx ? colors.accent : colors.fg;
+          const markRow = topRow + Math.floor(perRow / 2);
+          g.set(ex, markRow, "◆", markColor);
           eventIdx++;
         }
       });

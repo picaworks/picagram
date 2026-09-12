@@ -379,125 +379,58 @@ function dataTable(caption: string, head: readonly string[], rows: readonly (rea
   return table;
 }
 
-// lib/chart-time.ts
-/** Time on a chart's axis: reading it in, choosing round calendar ticks, and printing those ticks. Every
- *  step of it works in UTC, so the React file and the HTML file put the same labels under the same points on
- *  every machine, whatever zone the reader sits in. */
+// lib/blocks.ts
+/** Unicode block and braille glyphs for text-mode drawing. Every glyph here is one UTF-16 code unit, so a
+ *  table can be indexed like an array. */
 
-/** The size of step a time axis is stepping by, which decides how a tick reads. */
-type TimeUnit = "hour" | "day" | "month" | "year";
+/** The braille pattern with no dots raised. Add dot bits to it. */
+const BRAILLE_BASE = 0x2800;
 
-interface TimeTicks {
-  /** The tick times, in UTC milliseconds. */
-  readonly times: number[];
-  /** The step the ticks landed on, which formatTime prints for. */
-  readonly unit: TimeUnit;
+/** The bit for the braille dot at `row` 0 to 3 and `col` 0 or 1. Rows 0 to 2 are dots 1 to 3 on the left
+ *  and 4 to 6 on the right. Row 3 holds dots 7 and 8, which Unicode added later, so their bits come last. */
+function brailleDot(row: number, col: number): number {
+  if (row === 3) return col === 0 ? 0x40 : 0x80;
+  return 1 << (col === 0 ? row : row + 3);
 }
 
-const TIME_HOUR_MS = 3_600_000;
-const TIME_DAY_MS = 24 * TIME_HOUR_MS;
-/** A month's average length, for comparing a calendar step with a fixed one. */
-const TIME_MONTH_MS = 2_629_800_000;
-
-/** The steps an axis may use, smallest first. A step is milliseconds under the hour and day units, and whole
- *  months under the month and year units, whose length depends on where in the calendar they fall. */
-const TIME_STEPS: readonly (readonly [number, TimeUnit])[] = [
-  [TIME_HOUR_MS, "hour"],
-  [2 * TIME_HOUR_MS, "hour"],
-  [3 * TIME_HOUR_MS, "hour"],
-  [6 * TIME_HOUR_MS, "hour"],
-  [12 * TIME_HOUR_MS, "hour"],
-  [TIME_DAY_MS, "day"],
-  [2 * TIME_DAY_MS, "day"],
-  [7 * TIME_DAY_MS, "day"],
-  [14 * TIME_DAY_MS, "day"],
-  [1, "month"],
-  [3, "month"],
-  [6, "month"],
-  [12, "year"],
-  [24, "year"],
-  [60, "year"],
-  [120, "year"],
-];
-
-/** An ISO date and time carrying no zone, which the language reads as local time and a chart reads as UTC. */
-const TIME_ZONELESS = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/;
-
-/** A time as UTC milliseconds, from an ISO 8601 string or from milliseconds, and NaN from anything else. A
- *  string with no zone is read as UTC rather than as the reader's own zone, so a series lands on the same
- *  points everywhere. Five digits or more with nothing else is milliseconds, where four is the year. */
-function parseTime(value: string | number): number {
-  if (typeof value === "number") return Number.isFinite(value) ? value : Number.NaN;
-  const text = value.trim();
-  if (/^-?\d{5,}$/.test(text)) return Number(text);
-  return Date.parse(TIME_ZONELESS.test(text) ? `${text.replace(" ", "T")}Z` : text);
+/** The braille glyph for a set of dot bits. */
+function braille(bits: number): string {
+  return String.fromCharCode(BRAILLE_BASE + (bits & 0xff));
 }
 
-/** How long a step runs, on average, in milliseconds. */
-function timeStepMs(step: readonly [number, TimeUnit]): number {
-  return step[1] === "hour" || step[1] === "day" ? step[0] : step[0] * TIME_MONTH_MS;
+/** Quadrant glyphs, indexed by top left 1, top right 2, bottom left 4, and bottom right 8. */
+const QUADRANTS = " ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█";
+
+/** The glyph that inks the given quadrants of a cell. */
+function quadrant(tl: boolean, tr: boolean, bl: boolean, br: boolean): string {
+  return QUADRANTS[(tl ? 1 : 0) | (tr ? 2 : 0) | (bl ? 4 : 0) | (br ? 8 : 0)] ?? " ";
 }
 
-/** About `count` ticks across [min, max] in UTC milliseconds, on the roundest calendar step that fits: an
- *  hour, three hours, a day, a fortnight, a month, a year, ten years, and the sizes between them. Ticks sit
- *  on the boundary the step names, so a monthly axis ticks on the first of the month. A range shorter than
- *  an hour ticks by the hour, and one longer than ten years times `count` simply takes more ticks. */
-function timeTicks(min: number, max: number, count = 5): TimeTicks {
-  if (!Number.isFinite(min) || !Number.isFinite(max)) return { times: [], unit: "day" };
-  let lo = Math.min(min, max);
-  let hi = Math.max(min, max);
-  if (lo === hi) {
-    lo -= TIME_HOUR_MS;
-    hi += TIME_HOUR_MS;
-  }
-  let picked: readonly [number, TimeUnit] = [TIME_HOUR_MS, "hour"];
-  for (const candidate of TIME_STEPS) {
-    picked = candidate;
-    if ((hi - lo) / timeStepMs(candidate) <= Math.max(1, count)) break;
-  }
-  const [step, unit] = picked;
-  const times: number[] = [];
-  if (unit === "hour" || unit === "day") {
-    // The epoch is UTC midnight, so a whole number of hours or days from it already lands on the boundary.
-    for (let t = Math.ceil(lo / step) * step; t <= hi; t += step) times.push(t);
-  } else {
-    const from = new Date(lo);
-    const first = Math.floor((from.getUTCFullYear() * 12 + from.getUTCMonth()) / step) * step;
-    // Counting months from a year Date.UTC reads plainly, since it maps years 0 to 99 onto the 1900s.
-    for (let m = first; ; m += step) {
-      const t = Date.UTC(2000, m - 24_000, 1);
-      if (t > hi) break;
-      if (t >= lo) times.push(t);
-    }
-  }
-  return { times, unit };
+/** A cell filled from the bottom by 0 to 8 eighths. */
+const LOWER_EIGHTHS = " ▁▂▃▄▅▆▇█";
+
+/** A cell filled from the left by 0 to 8 eighths. */
+const LEFT_EIGHTHS = " ▏▎▍▌▋▊▉█";
+
+/** Blank, light shade, medium shade, dark shade, and full block. */
+const SHADES = " ░▒▓█";
+
+const clampEighths = (n: number): number => Math.max(0, Math.min(8, Math.round(n)));
+
+/** The glyph filling `n` eighths of a cell from the bottom, clamped to 0 to 8. */
+function lowerEighth(n: number): string {
+  return LOWER_EIGHTHS[clampEighths(n)] ?? " ";
 }
 
-/** Which parts of a date each unit's label shows. */
-const TIME_FIELDS: Readonly<Record<TimeUnit, Intl.DateTimeFormatOptions>> = {
-  hour: { hour: "numeric", minute: "2-digit" },
-  day: { month: "short", day: "numeric" },
-  month: { month: "short", year: "numeric" },
-  year: { year: "numeric" },
-};
-
-const timeFormats = new Map<string, Intl.DateTimeFormat>();
-
-/** A tick time as its label, in the viewer's locale unless one is given, and always read in UTC. */
-function formatTime(time: number, unit: TimeUnit, locale?: string): string {
-  const key = `${locale ?? ""}|${unit}`;
-  let format = timeFormats.get(key);
-  if (!format) {
-    format = new Intl.DateTimeFormat(locale, { ...TIME_FIELDS[unit], timeZone: "UTC" });
-    timeFormats.set(key, format);
-  }
-  return format.format(time);
+/** The shade glyph for level `n`, clamped to 0 (blank) through 4 (full block). */
+function shade(n: number): string {
+  return SHADES[Math.max(0, Math.min(4, Math.round(n)))] ?? " ";
 }
 
-// lib/font.ts
-/** The monospace stack glyph components default to. It lives in its own module, so a text component that
- *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
-const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+/** The glyph filling `n` eighths of a cell from the left, clamped to 0 to 8. */
+function leftEighth(n: number): string {
+  return LEFT_EIGHTHS[clampEighths(n)] ?? " ";
+}
 
 // lib/host.ts
 /** What a core may change on its host, and the nodes it adds, each undone on destroy. A core never writes
@@ -1022,6 +955,319 @@ function createGrid(host: HTMLElement, options: GridOptions, onLayout: () => voi
   };
 }
 
+// lib/braille-plot.ts
+/** A braille dot canvas. Each cell of a glyph grid holds two dots across and four down, so a plot draws at
+ *  eight times a grid's resolution and still reads as text: it is how a scatter, a radar, or a gauge keeps
+ *  the glyph look. The dot bits come from lib/blocks.ts, so the library keeps one braille table. */
+
+
+
+interface BraillePlot {
+  /** Dots across, which is two per cell. */
+  readonly width: number;
+  /** Dots down, which is four per cell. */
+  readonly height: number;
+  /** Raises the dot nearest (x, y) in dot space. A point outside the plot is dropped. */
+  dot(x: number, y: number): void;
+  /** Raises the dots along the straight line between two points in dot space, by Bresenham, so the line is
+   *  the same one whichever end it is drawn from. */
+  line(x0: number, y0: number, x1: number, y1: number): void;
+  /** Lowers every dot. */
+  clear(): void;
+  /** Writes every cell as a braille glyph into `grid`, the plot's first cell at (col, row). A cell with no
+   *  dots writes the blank braille glyph, which holds a cell's width, so the plot owns its rectangle. */
+  paint(grid: Pick<Grid, "set">, col: number, row: number): void;
+}
+
+/** A plot `cols` cells wide and `rows` cells tall, which is twice that in dots across and four times it
+ *  down. Dot space starts at the plot's top left. */
+function createBraillePlot(cols: number, rows: number): BraillePlot {
+  const w = Math.max(1, Math.floor(cols));
+  const h = Math.max(1, Math.floor(rows));
+  const bits = new Uint8Array(w * h);
+  const plot: BraillePlot = {
+    width: w * 2,
+    height: h * 4,
+    dot(x, y) {
+      const dx = Math.round(x);
+      const dy = Math.round(y);
+      if (dx < 0 || dy < 0 || dx >= w * 2 || dy >= h * 4) return;
+      const cell = (dy >> 2) * w + (dx >> 1);
+      bits[cell] = (bits[cell] ?? 0) | brailleDot(dy & 3, dx & 1);
+    },
+    line(x0, y0, x1, y1) {
+      let x = Math.round(x0);
+      let y = Math.round(y0);
+      const endX = Math.round(x1);
+      const endY = Math.round(y1);
+      const stepX = x < endX ? 1 : -1;
+      const stepY = y < endY ? 1 : -1;
+      const runX = Math.abs(endX - x);
+      const runY = -Math.abs(endY - y);
+      let error = runX + runY;
+      for (;;) {
+        plot.dot(x, y);
+        if (x === endX && y === endY) return;
+        const twice = error * 2;
+        if (twice >= runY) {
+          error += runY;
+          x += stepX;
+        }
+        if (twice <= runX) {
+          error += runX;
+          y += stepY;
+        }
+      }
+    },
+    clear() {
+      bits.fill(0);
+    },
+    paint(grid, col, row) {
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) grid.set(col + x, row + y, braille(bits[y * w + x] ?? 0));
+      }
+    },
+  };
+  return plot;
+}
+
+// lib/chart-plot.ts
+/** Layout for a chart's glyph look. A glyph look lays out in cells, and a chart that reuses its SVG look's
+ *  pixel math produces cell indices many times too large, so the picture overflows its frame or collapses
+ *  into a corner. `chartCells` reserves the cells a chart's labels and axes need and hands back the
+ *  rectangle that is left, addressed by fraction rather than by pixel. `chartDots` lays a braille plot over
+ *  that rectangle for a chart that needs finer than one cell, such as a scatter, a radar, or a gauge. */
+
+
+
+
+/** Cells to hold back for labels and axes, on each side of the drawing area. */
+interface ChartInset {
+  readonly left?: number;
+  readonly right?: number;
+  readonly top?: number;
+  readonly bottom?: number;
+}
+
+/** The cell rectangle a chart draws into. */
+interface ChartCells {
+  /** Leftmost column of the area. */
+  readonly col: number;
+  /** Topmost row of the area. */
+  readonly row: number;
+  /** Width in cells, at least 1. */
+  readonly cols: number;
+  /** Height in cells, at least 1. */
+  readonly rows: number;
+  /** The column for `fx`, which is 0 at the area's left edge and 1 at its right. */
+  colAt(fx: number): number;
+  /** The row for `fy`, which is 0 at the area's bottom edge and 1 at its top, so a chart reads y up. */
+  rowAt(fy: number): number;
+}
+
+/** The drawing area left inside `grid` once `inset` is held back. */
+function chartCells(grid: Pick<Grid, "cols" | "rows">, inset: ChartInset = {}): ChartCells {
+  const left = Math.max(0, Math.floor(inset.left ?? 0));
+  const right = Math.max(0, Math.floor(inset.right ?? 0));
+  const top = Math.max(0, Math.floor(inset.top ?? 0));
+  const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+  const col = Math.min(left, Math.max(0, grid.cols - 1));
+  const row = Math.min(top, Math.max(0, grid.rows - 1));
+  const cols = Math.max(1, grid.cols - col - right);
+  const rows = Math.max(1, grid.rows - row - bottom);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  return {
+    col,
+    row,
+    cols,
+    rows,
+    colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+    rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1)),
+  };
+}
+
+/** A braille plot covering a `ChartCells` area, addressed by the same fractions. */
+interface ChartDots {
+  /** Dots across the area, which is two per cell. */
+  readonly wide: number;
+  /** Dots down the area, which is four per cell. */
+  readonly tall: number;
+  /** One dot's width over its height, so a chart can keep a circle round. */
+  readonly aspect: number;
+  /** The dot at `fx` across and `fy` up, both 0 to 1 over the area. */
+  dotAt(fx: number, fy: number): readonly [number, number];
+  /** Raises the dot at `fx`, `fy`. */
+  mark(fx: number, fy: number): void;
+  /** Raises the dots along the line between two fractional points. */
+  stroke(fx0: number, fy0: number, fx1: number, fy1: number): void;
+  /** Lowers every dot, so one plot can be reused for a second pass. */
+  clear(): void;
+  /** Writes the inked cells into `grid` in `color`. A blank cell is left as it is, so a track and a fill
+   *  drawn as two plots layer instead of rubbing each other out. */
+  paint(grid: Pick<Grid, "set">, color: string): void;
+}
+
+/** A braille plot over `area`. `cellAspect` is the grid's own `aspect`, a cell's width over its height. */
+function chartDots(area: ChartCells, cellAspect: number): ChartDots {
+  const plot = createBraillePlot(area.cols, area.rows);
+  const blank = braille(0);
+  const clamp = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const at = (fx: number, fy: number): readonly [number, number] => [
+    Math.round(clamp(fx) * (plot.width - 1)),
+    plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1)),
+  ];
+  return {
+    wide: plot.width,
+    tall: plot.height,
+    // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+    aspect: (cellAspect / 2) / (1 / 4),
+    dotAt: at,
+    mark(fx, fy) {
+      const [x, y] = at(fx, fy);
+      plot.dot(x, y);
+    },
+    stroke(fx0, fy0, fx1, fy1) {
+      const [x0, y0] = at(fx0, fy0);
+      const [x1, y1] = at(fx1, fy1);
+      plot.line(x0, y0, x1, y1);
+    },
+    clear() {
+      plot.clear();
+    },
+    paint(grid, color) {
+      plot.paint(
+        {
+          set: (x, y, glyph) => {
+            if (glyph !== blank) grid.set(x, y, glyph, color);
+          },
+        },
+        area.col,
+        area.row,
+      );
+    },
+  };
+}
+
+// lib/chart-time.ts
+/** Time on a chart's axis: reading it in, choosing round calendar ticks, and printing those ticks. Every
+ *  step of it works in UTC, so the React file and the HTML file put the same labels under the same points on
+ *  every machine, whatever zone the reader sits in. */
+
+/** The size of step a time axis is stepping by, which decides how a tick reads. */
+type TimeUnit = "hour" | "day" | "month" | "year";
+
+interface TimeTicks {
+  /** The tick times, in UTC milliseconds. */
+  readonly times: number[];
+  /** The step the ticks landed on, which formatTime prints for. */
+  readonly unit: TimeUnit;
+}
+
+const TIME_HOUR_MS = 3_600_000;
+const TIME_DAY_MS = 24 * TIME_HOUR_MS;
+/** A month's average length, for comparing a calendar step with a fixed one. */
+const TIME_MONTH_MS = 2_629_800_000;
+
+/** The steps an axis may use, smallest first. A step is milliseconds under the hour and day units, and whole
+ *  months under the month and year units, whose length depends on where in the calendar they fall. */
+const TIME_STEPS: readonly (readonly [number, TimeUnit])[] = [
+  [TIME_HOUR_MS, "hour"],
+  [2 * TIME_HOUR_MS, "hour"],
+  [3 * TIME_HOUR_MS, "hour"],
+  [6 * TIME_HOUR_MS, "hour"],
+  [12 * TIME_HOUR_MS, "hour"],
+  [TIME_DAY_MS, "day"],
+  [2 * TIME_DAY_MS, "day"],
+  [7 * TIME_DAY_MS, "day"],
+  [14 * TIME_DAY_MS, "day"],
+  [1, "month"],
+  [3, "month"],
+  [6, "month"],
+  [12, "year"],
+  [24, "year"],
+  [60, "year"],
+  [120, "year"],
+];
+
+/** An ISO date and time carrying no zone, which the language reads as local time and a chart reads as UTC. */
+const TIME_ZONELESS = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/;
+
+/** A time as UTC milliseconds, from an ISO 8601 string or from milliseconds, and NaN from anything else. A
+ *  string with no zone is read as UTC rather than as the reader's own zone, so a series lands on the same
+ *  points everywhere. Five digits or more with nothing else is milliseconds, where four is the year. */
+function parseTime(value: string | number): number {
+  if (typeof value === "number") return Number.isFinite(value) ? value : Number.NaN;
+  const text = value.trim();
+  if (/^-?\d{5,}$/.test(text)) return Number(text);
+  return Date.parse(TIME_ZONELESS.test(text) ? `${text.replace(" ", "T")}Z` : text);
+}
+
+/** How long a step runs, on average, in milliseconds. */
+function timeStepMs(step: readonly [number, TimeUnit]): number {
+  return step[1] === "hour" || step[1] === "day" ? step[0] : step[0] * TIME_MONTH_MS;
+}
+
+/** About `count` ticks across [min, max] in UTC milliseconds, on the roundest calendar step that fits: an
+ *  hour, three hours, a day, a fortnight, a month, a year, ten years, and the sizes between them. Ticks sit
+ *  on the boundary the step names, so a monthly axis ticks on the first of the month. A range shorter than
+ *  an hour ticks by the hour, and one longer than ten years times `count` simply takes more ticks. */
+function timeTicks(min: number, max: number, count = 5): TimeTicks {
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return { times: [], unit: "day" };
+  let lo = Math.min(min, max);
+  let hi = Math.max(min, max);
+  if (lo === hi) {
+    lo -= TIME_HOUR_MS;
+    hi += TIME_HOUR_MS;
+  }
+  let picked: readonly [number, TimeUnit] = [TIME_HOUR_MS, "hour"];
+  for (const candidate of TIME_STEPS) {
+    picked = candidate;
+    if ((hi - lo) / timeStepMs(candidate) <= Math.max(1, count)) break;
+  }
+  const [step, unit] = picked;
+  const times: number[] = [];
+  if (unit === "hour" || unit === "day") {
+    // The epoch is UTC midnight, so a whole number of hours or days from it already lands on the boundary.
+    for (let t = Math.ceil(lo / step) * step; t <= hi; t += step) times.push(t);
+  } else {
+    const from = new Date(lo);
+    const first = Math.floor((from.getUTCFullYear() * 12 + from.getUTCMonth()) / step) * step;
+    // Counting months from a year Date.UTC reads plainly, since it maps years 0 to 99 onto the 1900s.
+    for (let m = first; ; m += step) {
+      const t = Date.UTC(2000, m - 24_000, 1);
+      if (t > hi) break;
+      if (t >= lo) times.push(t);
+    }
+  }
+  return { times, unit };
+}
+
+/** Which parts of a date each unit's label shows. */
+const TIME_FIELDS: Readonly<Record<TimeUnit, Intl.DateTimeFormatOptions>> = {
+  hour: { hour: "numeric", minute: "2-digit" },
+  day: { month: "short", day: "numeric" },
+  month: { month: "short", year: "numeric" },
+  year: { year: "numeric" },
+};
+
+const timeFormats = new Map<string, Intl.DateTimeFormat>();
+
+/** A tick time as its label, in the viewer's locale unless one is given, and always read in UTC. */
+function formatTime(time: number, unit: TimeUnit, locale?: string): string {
+  const key = `${locale ?? ""}|${unit}`;
+  let format = timeFormats.get(key);
+  if (!format) {
+    format = new Intl.DateTimeFormat(locale, { ...TIME_FIELDS[unit], timeZone: "UTC" });
+    timeFormats.set(key, format);
+  }
+  return format.format(time);
+}
+
+// lib/font.ts
+/** The monospace stack glyph components default to. It lives in its own module, so a text component that
+ *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
+const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
 // lib/json.ts
 /** Comparing props that hold JSON. React passes fresh arrays and objects on every render, so a core compares
  *  them by content before deciding what to rebuild. */
@@ -1320,21 +1566,45 @@ export const mount: Mount<TimelineChartProps> = (host, initial = {}) => {
 
     const [timeMin, timeMax] = timeRange(data);
     const timeSpan = timeMax - timeMin || 1;
-    const labelCols = Math.max(1, Math.floor(cols * 0.25));
-    const plotCols = Math.max(1, cols - labelCols - 1);
-    const rowStep = Math.max(1, Math.floor((rows - 1) / data.length));
+    const { times } = timeTicks(timeMin, timeMax, props.ticks);
+    const maxLabelChars = Math.max(1, ...data.map((d) => d.label.length));
+    const labelCols = Math.max(4, Math.min(maxLabelChars, Math.floor(cols * 0.35)));
+    // One row for the time axis labels at the bottom, a label gutter on the left, and a blank row on
+    // top so the first row's bar does not sit flush against the frame.
+    const area = chartCells({ cols, rows }, { left: labelCols + 1, top: 1, bottom: 1 });
+    const axisRow = rows - 1;
 
-    const x = (time: number) => {
-      const normalized = (time - timeMin) / timeSpan;
-      return Math.round(labelCols + normalized * plotCols);
-    };
+    const x = (time: number) => area.colAt((time - timeMin) / timeSpan);
+
+    // Each row gets two cells of height with a blank cell between rows, when the area has room, so a
+    // span reads as a bar rather than a single line. Falls back to one cell when the area is short.
+    const perRow = area.rows >= data.length * 3 - 1 ? 2 : 1;
+    const rowGap = area.rows >= data.length * (perRow + 1) - 1 ? 1 : 0;
+    const stride = perRow + rowGap;
+    const bodyBottom = Math.min(area.row + area.rows - 1, area.row + data.length * stride - rowGap - 1);
+
+    // Tracks the last written label's end column, so a tick too close to the one before it draws its
+    // gridline but skips its label rather than overlapping the previous one.
+    let labelEnd = -1;
+    times.forEach((t) => {
+      const gx = x(t);
+      for (let r = area.row; r <= bodyBottom; r++) g.set(gx, r, "│", colors.muted);
+      const spacing = times.length > 1 ? Math.floor(area.cols / times.length) : area.cols;
+      const monthLabel = formatTime(t, "month").slice(0, Math.max(3, spacing - 1));
+      const labelStart = Math.max(area.col, Math.min(area.col + area.cols - monthLabel.length, gx));
+      if (labelStart >= labelEnd + 1) {
+        g.write(labelStart, axisRow, monthLabel, colors.muted);
+        labelEnd = labelStart + monthLabel.length;
+      }
+    });
 
     data.forEach((row, rowIdx) => {
-      const rowY = 1 + rowIdx * rowStep;
-      if (rowY >= rows) return;
+      const topRow = area.row + rowIdx * stride;
+      if (topRow > bodyBottom) return;
+      const bottomRow = Math.min(bodyBottom, topRow + perRow - 1);
 
       const label = row.label.slice(0, labelCols).padEnd(labelCols, " ");
-      g.write(0, rowY, label, colors.muted);
+      g.write(0, topRow, label, colors.muted);
 
       const startTime = parseTime(row.start);
       if (Number.isFinite(startTime)) {
@@ -1344,8 +1614,10 @@ export const mount: Mount<TimelineChartProps> = (host, initial = {}) => {
 
         const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
         const barColor = rowIdx === highlightIdx ? colors.accent : colors.fg;
-        for (let col = x1; col < x2 && col < cols; col++) {
-          g.set(col, rowY, "█", barColor);
+        for (let r = topRow; r <= bottomRow; r++) {
+          for (let col = x1; col < x2 && col < area.col + area.cols; col++) {
+            g.set(col, r, "█", barColor);
+          }
         }
       }
 
@@ -1354,12 +1626,11 @@ export const mount: Mount<TimelineChartProps> = (host, initial = {}) => {
         const eventTime = parseTime(event.time);
         if (Number.isFinite(eventTime)) {
           const ex = x(eventTime);
-          if (ex >= 0 && ex < cols) {
-            const itemIdx = rowIdx + eventIdx + 1;
-            const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
-            const markColor = itemIdx === highlightIdx ? colors.accent : colors.fg;
-            g.set(ex, rowY, "◆", markColor);
-          }
+          const itemIdx = rowIdx + eventIdx + 1;
+          const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
+          const markColor = itemIdx === highlightIdx ? colors.accent : colors.fg;
+          const markRow = topRow + Math.floor(perRow / 2);
+          g.set(ex, markRow, "◆", markColor);
           eventIdx++;
         }
       });

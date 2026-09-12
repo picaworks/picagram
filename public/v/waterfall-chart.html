@@ -171,6 +171,27 @@ var PicaWaterfallChart = (() => {
     return table;
   }
 
+  // lib/chart-plot.ts
+  function chartCells(grid, inset = {}) {
+    const left = Math.max(0, Math.floor(inset.left ?? 0));
+    const right = Math.max(0, Math.floor(inset.right ?? 0));
+    const top = Math.max(0, Math.floor(inset.top ?? 0));
+    const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+    const col = Math.min(left, Math.max(0, grid.cols - 1));
+    const row = Math.min(top, Math.max(0, grid.rows - 1));
+    const cols = Math.max(1, grid.cols - col - right);
+    const rows = Math.max(1, grid.rows - row - bottom);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    return {
+      col,
+      row,
+      cols,
+      rows,
+      colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+      rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1))
+    };
+  }
+
   // lib/font.ts
   var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
 
@@ -689,52 +710,60 @@ var PicaWaterfallChart = (() => {
         host.dataset.picaReady = "true";
         return;
       }
-      const reserveTop = props.values ? 1 : 0;
-      const labelRow = rows - 1;
-      const plotBottom = Math.max(reserveTop, labelRow - 1);
-      const plotRows = Math.max(1, plotBottom - reserveTop + 1);
+      const inset = {
+        bottom: 1,
+        top: props.values ? 1 : 0
+      };
+      const area = chartCells({ cols, rows }, inset);
+      const colSpan = Math.max(1, Math.floor(area.cols / bars.length));
       const [lo, hi] = domainOf(bars);
       const span = hi - lo || 1;
-      const gap = bars.length > 1 ? 1 : 0;
-      const barWidth = Math.max(1, Math.floor((cols - gap * (bars.length - 1)) / bars.length));
-      const used = barWidth * bars.length + gap * (bars.length - 1);
-      const offset = Math.max(0, Math.floor((cols - used) / 2));
       const best = maxChangeIndex(bars);
       bars.forEach((bar, i) => {
-        const x0 = offset + i * (barWidth + gap);
+        const colStart = area.col + i * colSpan;
         const tint = (props.highlight === -1 ? i === best : i === props.highlight) ? colors.accent : colors.fg;
-        const topFraction = Math.max(0, Math.min(1, (bar.top - lo) / span));
-        const baseFraction = Math.max(0, Math.min(1, (bar.base - lo) / span));
-        const topEighths = Math.round(topFraction * plotRows * 8);
-        const baseEighths = Math.round(baseFraction * plotRows * 8);
-        const topFullRows = Math.min(plotRows, Math.floor(topEighths / 8));
-        const baseFullRows = Math.min(plotRows, Math.floor(baseEighths / 8));
-        const topPartial = topEighths - topFullRows * 8;
-        const basePartial = baseEighths - baseFullRows * 8;
-        const barBottomRow = plotBottom - baseFullRows;
-        const barTopRow = plotBottom - topFullRows;
-        for (let r = barTopRow; r < barBottomRow; r++) {
-          for (let c = 0; c < barWidth; c++) {
-            g.set(x0 + c, r, lowerEighth(8), tint);
+        const topFraction = (bar.top - lo) / span;
+        const baseFraction = (bar.base - lo) / span;
+        const topRow = area.rowAt(topFraction);
+        const baseRow = area.rowAt(baseFraction);
+        const minRow = Math.min(topRow, baseRow);
+        const maxRow = Math.max(topRow, baseRow);
+        for (let r = minRow; r <= maxRow; r++) {
+          for (let c = 0; c < colSpan && colStart + c < area.col + area.cols; c++) {
+            g.set(colStart + c, r, lowerEighth(8), tint);
           }
         }
-        if (topPartial > 0 && topFullRows < plotRows) {
-          for (let c = 0; c < barWidth; c++) {
-            g.set(x0 + c, barTopRow, lowerEighth(topPartial), tint);
-          }
-        }
-        if (basePartial > 0 && baseFullRows < plotRows) {
-          for (let c = 0; c < barWidth; c++) {
-            g.set(x0 + c, barBottomRow, lowerEighth(basePartial), tint);
-          }
-        }
-        const text = bar.label.slice(0, barWidth);
-        const pad = Math.max(0, Math.floor((barWidth - text.length) / 2));
-        g.write(x0 + pad, labelRow, text, colors.muted);
+        const text = bar.label.slice(0, colSpan);
+        const pad = Math.max(0, Math.floor((colSpan - text.length) / 2));
+        g.write(colStart + pad, rows - 1, text, colors.muted);
         if (props.values) {
-          const vtext = formatNumber(bar.value).slice(0, barWidth);
-          const vpad = Math.max(0, Math.floor((barWidth - vtext.length) / 2));
-          g.write(x0 + vpad, 0, vtext, colors.muted);
+          const vtext = formatNumber(bar.value).slice(0, colSpan);
+          const vpad = Math.max(0, Math.floor((colSpan - vtext.length) / 2));
+          g.write(colStart + vpad, 0, vtext, colors.muted);
+        }
+        if (i < bars.length - 1) {
+          const nextBar = bars[i + 1];
+          if (nextBar) {
+            const nextColStart = area.col + (i + 1) * colSpan;
+            const connectorFraction = (bar.top - lo) / span;
+            const connectorRow = area.rowAt(connectorFraction);
+            const nextBaseFraction = (nextBar.base - lo) / span;
+            const nextBaseRow = area.rowAt(nextBaseFraction);
+            const minConnectorRow = Math.min(connectorRow, nextBaseRow);
+            const maxConnectorRow = Math.max(connectorRow, nextBaseRow);
+            for (let r = minConnectorRow; r <= maxConnectorRow; r++) {
+              const dashCols = Math.max(1, nextColStart - (colStart + colSpan));
+              for (let c = 0; c < dashCols; c++) {
+                const dashCol = colStart + colSpan + c;
+                if (dashCol < area.col + area.cols) {
+                  const isDash = c % 2 === 0;
+                  if (isDash) {
+                    g.set(dashCol, r, "-", colors.muted);
+                  }
+                }
+              }
+            }
+          }
         }
       });
       g.flush();

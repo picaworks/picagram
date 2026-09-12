@@ -219,6 +219,66 @@ var PicaScatterPlot = (() => {
     return plot;
   }
 
+  // lib/chart-plot.ts
+  function chartCells(grid, inset = {}) {
+    const left = Math.max(0, Math.floor(inset.left ?? 0));
+    const right = Math.max(0, Math.floor(inset.right ?? 0));
+    const top = Math.max(0, Math.floor(inset.top ?? 0));
+    const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+    const col = Math.min(left, Math.max(0, grid.cols - 1));
+    const row = Math.min(top, Math.max(0, grid.rows - 1));
+    const cols = Math.max(1, grid.cols - col - right);
+    const rows = Math.max(1, grid.rows - row - bottom);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    return {
+      col,
+      row,
+      cols,
+      rows,
+      colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+      rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1))
+    };
+  }
+  function chartDots(area, cellAspect) {
+    const plot = createBraillePlot(area.cols, area.rows);
+    const blank = braille(0);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    const at = (fx, fy) => [
+      Math.round(clamp(fx) * (plot.width - 1)),
+      plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1))
+    ];
+    return {
+      wide: plot.width,
+      tall: plot.height,
+      // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+      aspect: cellAspect / 2 / (1 / 4),
+      dotAt: at,
+      mark(fx, fy) {
+        const [x, y] = at(fx, fy);
+        plot.dot(x, y);
+      },
+      stroke(fx0, fy0, fx1, fy1) {
+        const [x0, y0] = at(fx0, fy0);
+        const [x1, y1] = at(fx1, fy1);
+        plot.line(x0, y0, x1, y1);
+      },
+      clear() {
+        plot.clear();
+      },
+      paint(grid, color) {
+        plot.paint(
+          {
+            set: (x, y, glyph) => {
+              if (glyph !== blank) grid.set(x, y, glyph, color);
+            }
+          },
+          area.col,
+          area.row
+        );
+      }
+    };
+  }
+
   // lib/font.ts
   var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
 
@@ -719,41 +779,56 @@ var PicaScatterPlot = (() => {
     }
     const [minX, maxX] = extent(data.map((d) => d.x));
     const [minY, maxY] = extent(data.map((d) => d.y));
-    const margin = 1;
-    const plotCols = Math.max(1, cols - 2 * margin);
-    const plotRows = Math.max(1, rows - 2 * margin);
-    const scaleX = linearScale([minX, maxX], [0, plotCols * 2 - 1]);
-    const scaleY = linearScale([minY, maxY], [plotRows * 4 - 1, 0]);
-    const plot = createBraillePlot(plotCols, plotRows);
+    const yTicks = niceTicks(minY, maxY, props.ticks);
+    const xTicks = niceTicks(minX, maxX, props.ticks);
+    const yFirst = yTicks[0] ?? minY;
+    const yLast = yTicks[yTicks.length - 1] ?? maxY;
+    const xFirst = xTicks[0] ?? minX;
+    const xLast = xTicks[xTicks.length - 1] ?? maxX;
+    const ySpan = yLast - yFirst || 1;
+    const xSpan = xLast - xFirst || 1;
+    const yLabelWidth = Math.max(1, ...yTicks.map((t) => formatNumber(t).length));
+    const inset = { left: yLabelWidth + 1, bottom: 2 };
+    const area = chartCells({ cols, rows }, inset);
+    const fitDots = chartDots(area, grid.aspect);
+    const pointDots = chartDots(area, grid.aspect);
+    const highlightDots = chartDots(area, grid.aspect);
+    const axisCol = area.col - 1;
+    const axisRow = area.row + area.rows;
+    for (let r = area.row; r < area.row + area.rows; r++) grid.set(axisCol, r, "│", colors.muted);
+    grid.set(axisCol, axisRow, "└", colors.muted);
+    for (let c = area.col; c < area.col + area.cols; c++) grid.set(c, axisRow, "─", colors.muted);
+    for (const t of yTicks) {
+      const fraction = (t - yFirst) / ySpan;
+      const row = area.rowAt(fraction);
+      const text = formatNumber(t);
+      grid.write(Math.max(0, axisCol - text.length), row, text, colors.muted);
+    }
+    for (const t of xTicks) {
+      const fraction = (t - xFirst) / xSpan;
+      const col = area.colAt(fraction);
+      const text = formatNumber(t);
+      grid.write(Math.max(0, col - Math.floor(text.length / 2)), rows - 1, text, colors.muted);
+    }
     if (props.fit) {
-      const fit = fitLine(data);
-      if (fit) {
-        const [slope, intercept] = fit;
-        const y1 = slope * minX + intercept;
-        const y2 = slope * maxX + intercept;
-        const x1 = scaleX(minX);
-        const y1p = scaleY(y1);
-        const x2 = scaleX(maxX);
-        const y2p = scaleY(y2);
-        plot.line(x1, y1p, x2, y2p);
+      const line = fitLine(data);
+      if (line) {
+        const [slope, intercept] = line;
+        const y0 = (slope * xFirst + intercept - yFirst) / ySpan;
+        const y1 = (slope * xLast + intercept - yFirst) / ySpan;
+        fitDots.stroke(0, y0, 1, y1);
       }
     }
+    const highlightSet = new Set(props.highlight);
     data.forEach((d) => {
-      const px = scaleX(d.x);
-      const py = scaleY(d.y);
-      plot.dot(px, py);
+      const fx = (d.x - xFirst) / xSpan;
+      const fy = (d.y - yFirst) / ySpan;
+      if (d.label && highlightSet.has(d.label)) highlightDots.mark(fx, fy);
+      else pointDots.mark(fx, fy);
     });
-    plot.paint(grid, margin, margin);
-    const xLabelRow = margin + plotRows;
-    const yLabelCol = 0;
-    if (props.yLabel.length > 0) {
-      const label = props.yLabel.slice(0, 1);
-      grid.write(yLabelCol, margin, label, colors.muted);
-    }
-    if (props.xLabel.length > 0) {
-      const label = props.xLabel.slice(0, 1);
-      grid.write(margin + plotCols, xLabelRow, label, colors.muted);
-    }
+    fitDots.paint(grid, colors.muted);
+    pointDots.paint(grid, colors.fg);
+    highlightDots.paint(grid, colors.accent);
     grid.flush();
     host.dataset.picaReady = "true";
   }

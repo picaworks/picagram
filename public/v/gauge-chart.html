@@ -69,16 +69,6 @@ var PicaGaugeChart = (() => {
     host.removeAttribute("aria-hidden");
   }
 
-  // lib/blocks.ts
-  var BRAILLE_BASE = 10240;
-  function brailleDot(row, col) {
-    if (row === 3) return col === 0 ? 64 : 128;
-    return 1 << (col === 0 ? row : row + 3);
-  }
-  function braille(bits) {
-    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
-  }
-
   // lib/chart.ts
   var numberFormats = /* @__PURE__ */ new Map();
   function formatNumber(value, options = {}) {
@@ -139,6 +129,16 @@ var PicaGaugeChart = (() => {
     return table;
   }
 
+  // lib/blocks.ts
+  var BRAILLE_BASE = 10240;
+  function brailleDot(row, col) {
+    if (row === 3) return col === 0 ? 64 : 128;
+    return 1 << (col === 0 ? row : row + 3);
+  }
+  function braille(bits) {
+    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
+  }
+
   // lib/braille-plot.ts
   function createBraillePlot(cols, rows) {
     const w = Math.max(1, Math.floor(cols));
@@ -188,6 +188,66 @@ var PicaGaugeChart = (() => {
       }
     };
     return plot;
+  }
+
+  // lib/chart-plot.ts
+  function chartCells(grid, inset = {}) {
+    const left = Math.max(0, Math.floor(inset.left ?? 0));
+    const right = Math.max(0, Math.floor(inset.right ?? 0));
+    const top = Math.max(0, Math.floor(inset.top ?? 0));
+    const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+    const col = Math.min(left, Math.max(0, grid.cols - 1));
+    const row = Math.min(top, Math.max(0, grid.rows - 1));
+    const cols = Math.max(1, grid.cols - col - right);
+    const rows = Math.max(1, grid.rows - row - bottom);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    return {
+      col,
+      row,
+      cols,
+      rows,
+      colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+      rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1))
+    };
+  }
+  function chartDots(area, cellAspect) {
+    const plot = createBraillePlot(area.cols, area.rows);
+    const blank = braille(0);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    const at = (fx, fy) => [
+      Math.round(clamp(fx) * (plot.width - 1)),
+      plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1))
+    ];
+    return {
+      wide: plot.width,
+      tall: plot.height,
+      // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+      aspect: cellAspect / 2 / (1 / 4),
+      dotAt: at,
+      mark(fx, fy) {
+        const [x, y] = at(fx, fy);
+        plot.dot(x, y);
+      },
+      stroke(fx0, fy0, fx1, fy1) {
+        const [x0, y0] = at(fx0, fy0);
+        const [x1, y1] = at(fx1, fy1);
+        plot.line(x0, y0, x1, y1);
+      },
+      clear() {
+        plot.clear();
+      },
+      paint(grid, color) {
+        plot.paint(
+          {
+            set: (x, y, glyph) => {
+              if (glyph !== blank) grid.set(x, y, glyph, color);
+            }
+          },
+          area.col,
+          area.row
+        );
+      }
+    };
   }
 
   // lib/font.ts
@@ -600,38 +660,44 @@ var PicaGaugeChart = (() => {
       const valueText = `${formatNumber(props.value)}${props.unit}`;
       const normalized = (props.value - props.min) / (props.max - props.min);
       const clampedNorm = Math.max(0, Math.min(1, normalized));
-      const track = createBraillePlot(cols, rows);
-      const fill = createBraillePlot(cols, rows);
-      const centerX = track.width / 2;
-      const centerY = track.height * 0.7;
-      const arcRadius = Math.min(centerX, centerY) * 0.6;
+      const inset = { bottom: 1 };
+      const area = chartCells({ cols, rows }, inset);
+      const track = chartDots(area, g.aspect);
+      const fill = chartDots(area, g.aspect);
+      const physicalWidth = track.wide * track.aspect;
+      const physicalHeight = track.tall;
+      const radius = Math.min(physicalWidth, physicalHeight) * 0.28;
+      const centerFx = 0.5;
+      const centerFy = 0.4;
+      function pointAt(angleDeg) {
+        const angleRad = angleDeg * Math.PI / 180;
+        const fx = centerFx + radius * Math.cos(angleRad) / physicalWidth;
+        const fy = centerFy - radius * Math.sin(angleRad) / physicalHeight;
+        return [fx, fy];
+      }
       const arcSteps = 48;
-      let prevX = 0;
-      let prevY = 0;
-      for (let i = 0; i <= arcSteps; i++) {
+      let prev = pointAt(ARC_START_ANGLE);
+      for (let i = 1; i <= arcSteps; i++) {
         const t = i / arcSteps;
-        const angleRad = (ARC_START_ANGLE + ARC_DEGREES * t) * Math.PI / 180;
-        const x = Math.round(centerX + arcRadius * Math.cos(angleRad));
-        const y = Math.round(centerY + arcRadius * Math.sin(angleRad));
-        if (i > 0) {
-          track.line(prevX, prevY, x, y);
-          if (t <= clampedNorm) fill.line(prevX, prevY, x, y);
-        }
-        prevX = x;
-        prevY = y;
+        const next = pointAt(ARC_START_ANGLE + ARC_DEGREES * t);
+        track.stroke(prev[0], prev[1], next[0], next[1]);
+        if (t <= clampedNorm) fill.stroke(prev[0], prev[1], next[0], next[1]);
+        prev = next;
       }
-      const blank = braille(0);
-      track.paint({ set: (col, row, glyph) => g.set(col, row, glyph, colors.muted) }, 0, 0);
-      fill.paint({
-        set: (col, row, glyph) => {
-          if (glyph !== blank) g.set(col, row, glyph, colors.accent);
-        }
-      }, 0, 0);
-      const textRow = Math.max(2, Math.floor(centerY / 4 - 1));
-      const textCol = Math.max(0, Math.floor(centerX / 2 - Math.floor(valueText.length / 2)));
-      if (textRow >= 0 && textRow < rows && textCol >= 0) {
-        g.write(textCol, textRow, valueText, colors.fg);
-      }
+      track.paint(g, colors.muted);
+      fill.paint(g, colors.accent);
+      const labelRow = rows - 1;
+      const minLabel = formatNumber(props.min);
+      const maxLabel = formatNumber(props.max);
+      const [minFx] = pointAt(ARC_START_ANGLE);
+      const [maxFx] = pointAt(ARC_START_ANGLE + ARC_DEGREES);
+      const minCol = Math.max(0, area.colAt(minFx) - Math.floor(minLabel.length / 2));
+      const maxCol = Math.min(cols - maxLabel.length, area.colAt(maxFx) - Math.floor(maxLabel.length / 2));
+      g.write(minCol, labelRow, minLabel, colors.muted);
+      if (maxCol > minCol + minLabel.length) g.write(maxCol, labelRow, maxLabel, colors.muted);
+      const textRow = area.rowAt(centerFy);
+      const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
+      g.write(textCol, textRow, valueText, colors.fg);
       g.flush();
       host.dataset.picaReady = "true";
     }

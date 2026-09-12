@@ -1,6 +1,7 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
 import { shade } from "../../../lib/blocks";
 import { bandScale, dataTable, extent, formatNumber, svg } from "../../../lib/chart";
+import { chartCells } from "../../../lib/chart-plot";
 import { GRID_FONT } from "../../../lib/font";
 import { createGrid, measureCell, type Grid, type GridOptions } from "../../../lib/glyph-grid";
 import { sameJson } from "../../../lib/json";
@@ -309,7 +310,11 @@ export const mount: Mount<HeatmapProps> = (host, initial = {}) => {
     const data = props.data;
     const colors = readPalette(host);
 
-    if (!data.rows || !data.columns || !data.values || data.rows.length === 0 || data.columns.length === 0) {
+    const rowLabels = data.rows ?? [];
+    const colLabels = data.columns ?? [];
+    const values = data.values ?? [];
+
+    if (rowLabels.length === 0 || colLabels.length === 0 || values.length === 0) {
       const note = "no data";
       const x = Math.max(0, Math.floor((cols - note.length) / 2));
       const y = Math.floor(rows / 2);
@@ -320,50 +325,43 @@ export const mount: Mount<HeatmapProps> = (host, initial = {}) => {
     }
 
     const [, bestR, bestC] = props.highlight ? maxIndex(data) : [-1, -1, -1];
-    const rowCount = data.rows.length;
-    const colCount = data.columns.length;
+    const rowCount = rowLabels.length;
+    const colCount = colLabels.length;
     const [lo, hi] = domainOf(data);
     const span = hi - lo || 1;
 
-    // Reserve space for labels
-    const labelRowTop = 1;
-    const labelColLeft = 4;
-    const cellStartRow = labelRowTop + 1;
-    const cellStartCol = labelColLeft;
-    const cellRows = Math.max(1, rows - cellStartRow - 1);
-    const cellCols = Math.max(1, cols - cellStartCol - 1);
-
-    const cellHeight = Math.floor(cellRows / rowCount);
-    const cellWidth = Math.floor(cellCols / colCount);
-
-    if (cellHeight < 1 || cellWidth < 1) {
-      g.flush();
-      host.dataset.picaReady = "true";
-      return;
-    }
+    // One column of cells per row label, plus a gap, on the left. One row of cells for the column
+    // labels, on top. What is left is the matrix, addressed in whole grid cells.
+    const labelWidth = Math.max(1, ...rowLabels.map((label) => label.length));
+    const area = chartCells(g, { left: labelWidth + 1, top: 1 });
+    const cellWidth = Math.max(1, Math.floor(area.cols / colCount));
+    const cellHeight = Math.max(1, Math.floor(area.rows / rowCount));
+    const usedCols = cellWidth * colCount;
+    const usedRows = cellHeight * rowCount;
+    const originCol = area.col + Math.max(0, Math.floor((area.cols - usedCols) / 2));
+    const originRow = area.row + Math.max(0, Math.floor((area.rows - usedRows) / 2));
 
     // Draw column labels
-    data.columns.forEach((label, c) => {
-      const x = cellStartCol + c * cellWidth + Math.floor(cellWidth / 2) - Math.floor(label.length / 2);
+    colLabels.forEach((label, c) => {
+      const x0 = originCol + c * cellWidth;
       const text = label.slice(0, cellWidth);
-      if (x >= 0 && x < cols) {
-        g.write(x, 0, text, colors.muted);
-      }
+      const pad = Math.max(0, Math.floor((cellWidth - text.length) / 2));
+      g.write(x0 + pad, 0, text, colors.muted);
     });
 
     // Draw row labels
-    data.rows.forEach((label, r) => {
-      const y = cellStartRow + r * cellHeight + Math.floor(cellHeight / 2);
-      const text = label.slice(0, labelColLeft);
-      const pad = Math.max(0, labelColLeft - text.length);
+    rowLabels.forEach((label, r) => {
+      const y = originRow + r * cellHeight + Math.floor(cellHeight / 2);
+      const text = label.slice(0, labelWidth);
+      const pad = Math.max(0, labelWidth - text.length);
       g.write(pad, y, text, colors.muted);
     });
 
     // Draw cells
-    data.values.forEach((row, r) => {
-      const y0 = cellStartRow + r * cellHeight;
+    values.forEach((row, r) => {
+      const y0 = originRow + r * cellHeight;
       row.forEach((v, c) => {
-        const x0 = cellStartCol + c * cellWidth;
+        const x0 = originCol + c * cellWidth;
         const normalizedValue = (v - lo) / span;
         const isHighest = props.highlight && r === bestR && c === bestC;
 
@@ -371,20 +369,15 @@ export const mount: Mount<HeatmapProps> = (host, initial = {}) => {
         const glyphLevel = Math.min(8, Math.max(0, Math.round(normalizedValue * 8)));
         const glyph = shade(glyphLevel);
 
-        for (let row = 0; row < cellHeight; row++) {
-          const cy = y0 + row;
-          if (cy < rows) {
-            for (let col = 0; col < cellWidth; col++) {
-              const cx = x0 + col;
-              if (cx < cols) {
-                g.set(cx, cy, glyph, tint);
-              }
-            }
+        for (let ry = 0; ry < cellHeight; ry++) {
+          const cy = y0 + ry;
+          for (let rx = 0; rx < cellWidth; rx++) {
+            g.set(x0 + rx, cy, glyph, tint);
           }
         }
 
         // Label highest cell
-        if (isHighest && cellHeight >= 1 && cellWidth >= 1) {
+        if (isHighest) {
           const valueLabel = formatNumber(v).slice(0, cellWidth);
           const vpad = Math.max(0, Math.floor((cellWidth - valueLabel.length) / 2));
           g.write(x0 + vpad, y0 + Math.floor(cellHeight / 2), valueLabel, colors.accent);

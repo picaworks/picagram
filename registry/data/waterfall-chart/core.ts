@@ -1,6 +1,7 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
 import { lowerEighth } from "../../../lib/blocks";
 import { bandScale, dataTable, extent, formatNumber, linearScale, niceTicks, svg } from "../../../lib/chart";
+import { chartCells, type ChartInset } from "../../../lib/chart-plot";
 import { GRID_FONT } from "../../../lib/font";
 import { createGrid, measureCell, type Grid, type GridOptions } from "../../../lib/glyph-grid";
 import { sameJson } from "../../../lib/json";
@@ -273,66 +274,67 @@ export const mount: Mount<WaterfallChartProps> = (host, initial = {}) => {
       return;
     }
 
-    const reserveTop = props.values ? 1 : 0;
-    const labelRow = rows - 1;
-    const plotBottom = Math.max(reserveTop, labelRow - 1);
-    const plotRows = Math.max(1, plotBottom - reserveTop + 1);
+    const inset: ChartInset = {
+      bottom: 1,
+      top: props.values ? 1 : 0,
+    };
+    const area = chartCells({ cols, rows }, inset);
+    const colSpan = Math.max(1, Math.floor(area.cols / bars.length));
     const [lo, hi] = domainOf(bars);
     const span = hi - lo || 1;
-    const gap = bars.length > 1 ? 1 : 0;
-    const barWidth = Math.max(1, Math.floor((cols - gap * (bars.length - 1)) / bars.length));
-    const used = barWidth * bars.length + gap * (bars.length - 1);
-    const offset = Math.max(0, Math.floor((cols - used) / 2));
     const best = maxChangeIndex(bars);
 
     bars.forEach((bar, i) => {
-      const x0 = offset + i * (barWidth + gap);
+      const colStart = area.col + i * colSpan;
       const tint = (props.highlight === -1 ? i === best : i === props.highlight) ? colors.accent : colors.fg;
 
-      // Calculate bar height in eighths
-      const topFraction = Math.max(0, Math.min(1, (bar.top - lo) / span));
-      const baseFraction = Math.max(0, Math.min(1, (bar.base - lo) / span));
-      const topEighths = Math.round(topFraction * plotRows * 8);
-      const baseEighths = Math.round(baseFraction * plotRows * 8);
+      const topFraction = (bar.top - lo) / span;
+      const baseFraction = (bar.base - lo) / span;
+      const topRow = area.rowAt(topFraction);
+      const baseRow = area.rowAt(baseFraction);
+      const minRow = Math.min(topRow, baseRow);
+      const maxRow = Math.max(topRow, baseRow);
 
-      const topFullRows = Math.min(plotRows, Math.floor(topEighths / 8));
-      const baseFullRows = Math.min(plotRows, Math.floor(baseEighths / 8));
-      const topPartial = topEighths - topFullRows * 8;
-      const basePartial = baseEighths - baseFullRows * 8;
-
-      const barBottomRow = plotBottom - baseFullRows;
-      const barTopRow = plotBottom - topFullRows;
-
-      // Draw filled rows
-      for (let r = barTopRow; r < barBottomRow; r++) {
-        for (let c = 0; c < barWidth; c++) {
-          g.set(x0 + c, r, lowerEighth(8), tint);
+      for (let r = minRow; r <= maxRow; r++) {
+        for (let c = 0; c < colSpan && colStart + c < area.col + area.cols; c++) {
+          g.set(colStart + c, r, lowerEighth(8), tint);
         }
       }
 
-      // Draw partial rows
-      if (topPartial > 0 && topFullRows < plotRows) {
-        for (let c = 0; c < barWidth; c++) {
-          g.set(x0 + c, barTopRow, lowerEighth(topPartial), tint);
-        }
-      }
+      const text = bar.label.slice(0, colSpan);
+      const pad = Math.max(0, Math.floor((colSpan - text.length) / 2));
+      g.write(colStart + pad, rows - 1, text, colors.muted);
 
-      if (basePartial > 0 && baseFullRows < plotRows) {
-        for (let c = 0; c < barWidth; c++) {
-          g.set(x0 + c, barBottomRow, lowerEighth(basePartial), tint);
-        }
-      }
-
-      // Draw label
-      const text = bar.label.slice(0, barWidth);
-      const pad = Math.max(0, Math.floor((barWidth - text.length) / 2));
-      g.write(x0 + pad, labelRow, text, colors.muted);
-
-      // Draw value label
       if (props.values) {
-        const vtext = formatNumber(bar.value).slice(0, barWidth);
-        const vpad = Math.max(0, Math.floor((barWidth - vtext.length) / 2));
-        g.write(x0 + vpad, 0, vtext, colors.muted);
+        const vtext = formatNumber(bar.value).slice(0, colSpan);
+        const vpad = Math.max(0, Math.floor((colSpan - vtext.length) / 2));
+        g.write(colStart + vpad, 0, vtext, colors.muted);
+      }
+
+      if (i < bars.length - 1) {
+        const nextBar = bars[i + 1];
+        if (nextBar) {
+          const nextColStart = area.col + (i + 1) * colSpan;
+          const connectorFraction = (bar.top - lo) / span;
+          const connectorRow = area.rowAt(connectorFraction);
+          const nextBaseFraction = (nextBar.base - lo) / span;
+          const nextBaseRow = area.rowAt(nextBaseFraction);
+
+          const minConnectorRow = Math.min(connectorRow, nextBaseRow);
+          const maxConnectorRow = Math.max(connectorRow, nextBaseRow);
+          for (let r = minConnectorRow; r <= maxConnectorRow; r++) {
+            const dashCols = Math.max(1, nextColStart - (colStart + colSpan));
+            for (let c = 0; c < dashCols; c++) {
+              const dashCol = colStart + colSpan + c;
+              if (dashCol < area.col + area.cols) {
+                const isDash = c % 2 === 0;
+                if (isDash) {
+                  g.set(dashCol, r, "-", colors.muted);
+                }
+              }
+            }
+          }
+        }
       }
     });
 

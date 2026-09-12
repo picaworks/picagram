@@ -1,7 +1,6 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
-import { braille } from "../../../lib/blocks";
 import { arcPath, dataTable, formatNumber, svg } from "../../../lib/chart";
-import { createBraillePlot } from "../../../lib/braille-plot";
+import { chartCells, chartDots, type ChartInset } from "../../../lib/chart-plot";
 import { GRID_FONT } from "../../../lib/font";
 import { createGrid, type Grid, type GridOptions } from "../../../lib/glyph-grid";
 import { cssVar, readPalette } from "../../../lib/palette";
@@ -174,46 +173,62 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
     const normalized = (props.value - props.min) / (props.max - props.min);
     const clampedNorm = Math.max(0, Math.min(1, normalized));
 
-    const track = createBraillePlot(cols, rows);
-    const fill = createBraillePlot(cols, rows);
+    // The bottom row holds the min and max labels, so the dial itself sits above them.
+    const inset: ChartInset = { bottom: 1 };
+    const area = chartCells({ cols, rows }, inset);
+    const track = chartDots(area, g.aspect);
+    const fill = chartDots(area, g.aspect);
 
-    const centerX = track.width / 2;
-    const centerY = track.height * 0.7;
-    const arcRadius = Math.min(centerX, centerY) * 0.6;
+    /* A point on the dial at `angleDeg`, in the convention drawSvg uses: 0 is right, 90 is down. The cosine
+     * term is scaled by the dot grid's physical width and the sine term by its physical height, rather than
+     * by one shared radius, which is what keeps the sweep round instead of squashed to the area's shape. */
+    const physicalWidth = track.wide * track.aspect;
+    const physicalHeight = track.tall;
+    // The same proportion drawSvg uses for its own arc radius, so the dial reads at the same size on
+    // both grounds: a modest fraction of the smaller physical dimension, with margin on every side.
+    const radius = Math.min(physicalWidth, physicalHeight) * 0.28;
+    const centerFx = 0.5;
+    // drawSvg centers its arc 60% of the way down from the top; read bottom-up that is 40% up from the floor.
+    const centerFy = 0.4;
+
+    function pointAt(angleDeg: number): readonly [number, number] {
+      const angleRad = (angleDeg * Math.PI) / 180;
+      const fx = centerFx + (radius * Math.cos(angleRad)) / physicalWidth;
+      const fy = centerFy - (radius * Math.sin(angleRad)) / physicalHeight;
+      return [fx, fy];
+    }
 
     /* The track runs the whole sweep and the fill stops where the value sits. Drawing only the track would
      * leave the glyph look showing an empty dial, the same picture for every value it is given. */
     const arcSteps = 48;
-    let prevX = 0;
-    let prevY = 0;
-    for (let i = 0; i <= arcSteps; i++) {
+    let prev = pointAt(ARC_START_ANGLE);
+    for (let i = 1; i <= arcSteps; i++) {
       const t = i / arcSteps;
-      const angleRad = ((ARC_START_ANGLE + ARC_DEGREES * t) * Math.PI) / 180;
-      const x = Math.round(centerX + arcRadius * Math.cos(angleRad));
-      const y = Math.round(centerY + arcRadius * Math.sin(angleRad));
-      if (i > 0) {
-        track.line(prevX, prevY, x, y);
-        if (t <= clampedNorm) fill.line(prevX, prevY, x, y);
-      }
-      prevX = x;
-      prevY = y;
+      const next = pointAt(ARC_START_ANGLE + ARC_DEGREES * t);
+      track.stroke(prev[0], prev[1], next[0], next[1]);
+      if (t <= clampedNorm) fill.stroke(prev[0], prev[1], next[0], next[1]);
+      prev = next;
     }
 
-    // A blank cell from the fill would rub out the track underneath it, so only inked cells are written.
-    const blank = braille(0);
-    track.paint({ set: (col, row, glyph) => g.set(col, row, glyph, colors.muted) }, 0, 0);
-    fill.paint({
-      set: (col, row, glyph) => {
-        if (glyph !== blank) g.set(col, row, glyph, colors.accent);
-      },
-    }, 0, 0);
+    // A blank dot from the fill would rub out the track underneath it, so `paint` leaves it alone.
+    track.paint(g, colors.muted);
+    fill.paint(g, colors.accent);
 
-    // Draw value text in center
-    const textRow = Math.max(2, Math.floor(centerY / 4 - 1));
-    const textCol = Math.max(0, Math.floor(centerX / 2 - Math.floor(valueText.length / 2)));
-    if (textRow >= 0 && textRow < rows && textCol >= 0) {
-      g.write(textCol, textRow, valueText, colors.fg);
-    }
+    // Min and max sit in the reserved row, under the dial's two ends.
+    const labelRow = rows - 1;
+    const minLabel = formatNumber(props.min);
+    const maxLabel = formatNumber(props.max);
+    const [minFx] = pointAt(ARC_START_ANGLE);
+    const [maxFx] = pointAt(ARC_START_ANGLE + ARC_DEGREES);
+    const minCol = Math.max(0, area.colAt(minFx) - Math.floor(minLabel.length / 2));
+    const maxCol = Math.min(cols - maxLabel.length, area.colAt(maxFx) - Math.floor(maxLabel.length / 2));
+    g.write(minCol, labelRow, minLabel, colors.muted);
+    if (maxCol > minCol + minLabel.length) g.write(maxCol, labelRow, maxLabel, colors.muted);
+
+    // The value sits at the dial's own center, the one spot the ring never draws over.
+    const textRow = area.rowAt(centerFy);
+    const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
+    g.write(textCol, textRow, valueText, colors.fg);
 
     g.flush();
     host.dataset.picaReady = "true";
