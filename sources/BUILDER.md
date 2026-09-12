@@ -37,7 +37,7 @@ These are restated here because you start without the rest of the conversation.
 - **Where you write.** Only inside `registry/<category>/<your-slug>/`.
   - Do not edit `lib/`, `scripts/`, `test/`, `docs/`, `src/`, `sources/`, config files, or any other component.
   - If `lib/` lacks something you need, write it inside your core and say so in your report.
-- **Commands you do not run.** `npm run build:registry`, `npm test`, `npm install`, and any git command, even a read-only one. They touch or depend on files the other builders share.
+- **Commands you do not run.** `npm run build:registry`, `npm test`, and `npm install`, because they touch or depend on files every builder shares. No git command either: writing one changes state that is not yours, and reading one tells you nothing true, since a dozen builders are changing this tree while you work. What you changed is what you wrote in your own directory.
 - **No interactive browser.** The Browser pane is shared with the other builders, so a message you send there can land in someone else's tab. Check your work only with `npm run verify` and by reading its captures.
 - **Nothing copied.** Write every line yourself.
   - Do not open or copy from any component library, repository, or page. That includes 21st.dev, React Bits, Magic UI, Aceternity, uiverse, CodePen, shadcn/ui, Radix, Headless UI, Paper Shaders, and Shadertoy.

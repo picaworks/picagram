@@ -30,19 +30,34 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 
 ## Dither
 
+- [Dither Contours](https://picagram.dev/c/dither-contours.md): A drifting noise landscape cut into hypsometric bands of flat dither tone with hairline boundaries.
+- [Dither Crosshatch Image](https://picagram.dev/c/dither-crosshatch-image.md): An image drawn in crossing pen strokes, each layer switching on as the tone beneath it darkens.
 - [Dither Gradient](https://picagram.dev/c/dither-gradient.md): A two-tone gradient dithered through a Bayer matrix, drifting slowly like light across a surface.
 - [Dither Image](https://picagram.dev/c/dither-image.md): An image reduced to two tones by ordered or error diffusion dithering, drawn crisp on a canvas.
+- [Dither Noise](https://picagram.dev/c/dither-noise.md): A field of fractal noise screened into flat tone bands, drifting slowly like weather on a printed map.
+- [Dither Poster Image](https://picagram.dev/c/dither-poster-image.md): An image posterized into flat tone bands whose step edges dither into narrow stippled transitions.
+- [Dither Reveal](https://picagram.dev/c/dither-reveal.md): A photograph that dissolves in and out as a halftone that thickens in blue noise order.
+- [Dither Stipple Image](https://picagram.dev/c/dither-stipple-image.md): An image redrawn as round stippled dots, spaced by a blue noise mask so tone reads as density, not rows.
+- [Dither Temporal](https://picagram.dev/c/dither-temporal.md): A still lit sphere or gradient whose blue noise or cluster screen renews its grain every frame while the tone holds.
+- [Dither Waves](https://picagram.dev/c/dither-waves.md): Wave trains crossing at different angles, their interference screened by an ordered mask into a moire lattice.
 - [Halftone Image](https://picagram.dev/c/halftone-image.md): An image screened into halftone dots, squares, or lines, their area set by darkness like a page of newsprint.
 
 ## Effects
 
+- [Block Glitch Image](https://picagram.dev/c/block-glitch-image.md): A photograph that sits still, then briefly shows rectangular blocks copied in from the wrong place.
+- [Channel Shift Image](https://picagram.dev/c/channel-shift-image.md): An image split into a dark layer and a light layer, each posterized flat and slid apart along one axis.
 - [Duotone Image](https://picagram.dev/c/duotone-image.md): An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.
+- [Edge Trace Image](https://picagram.dev/c/edge-trace-image.md): A photograph reduced to its outlines: crisp one-pixel Sobel edges kept by Canny's two-threshold rule.
 - [Glitch Text](https://picagram.dev/c/glitch-text.md): Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.
 - [Grain Overlay](https://picagram.dev/c/grain-overlay.md): An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.
 - [Halftone CSS](https://picagram.dev/c/halftone-css.md): A halftone dot pattern made entirely of layered CSS gradients, for use as a background.
+- [Photocopy Image](https://picagram.dev/c/photocopy-image.md): An image pushed through an adaptive threshold into pure ink and ground, with seeded toner specks and short streaks off its strong edges.
+- [Pixel Displace Image](https://picagram.dev/c/pixel-displace-image.md): A photograph sheared into horizontal bands that slide sideways on a slow noise field, like a printout pulled crooked.
 - [Pixel Sort](https://picagram.dev/c/pixel-sort.md): An image whose pixel rows or columns are sorted by brightness within threshold bands, smearing tone into streaks.
+- [Risograph Image](https://picagram.dev/c/risograph-image.md): An image printed as two risograph passes, fg for the shadows and accent for the midtones, each screened and offset so their edges fringe.
 - [Scan Reveal Image](https://picagram.dev/c/scan-reveal-image.md): An image a scan bar reveals as it sweeps down, sparse dither ahead of the bar and the finished picture behind it.
 - [Scanlines](https://picagram.dev/c/scanlines.md): A CRT scanline overlay in the ink color, with an optional soft band that rolls slowly down the screen.
+- [Slit Scan Image](https://picagram.dev/c/slit-scan-image.md): An image rebuilt column by column from a slit sweeping across it, streaking whatever falls behind.
 
 ## Shaders
 

@@ -420,6 +420,69 @@
       }
     },
     {
+      "name": "dither-contours",
+      "type": "registry:component",
+      "title": "Dither Contours",
+      "description": "A drifting noise landscape cut into hypsometric bands of flat dither tone with hairline boundaries.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-contours.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Cartographic Relief Presentation",
+            "author": "Eduard Imhof",
+            "url": "https://doi.org/10.1515/9783110844016",
+            "license": "Book"
+          },
+          {
+            "relation": "technique",
+            "title": "Hypsometric tints",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Hypsometric_tints",
+            "license": "Reference, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "dither-crosshatch-image",
+      "type": "registry:component",
+      "title": "Dither Crosshatch Image",
+      "description": "An image drawn in crossing pen strokes, each layer switching on as the tone beneath it darkens.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-crosshatch-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Real-time hatching",
+            "author": "Emil Praun, Hugues Hoppe, Matthew Webb, Adam Finkelstein",
+            "url": "https://doi.org/10.1145/383259.383328",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
       "name": "dither-gradient",
       "type": "registry:component",
       "title": "Dither Gradient",
@@ -490,6 +553,209 @@
       }
     },
     {
+      "name": "dither-noise",
+      "type": "registry:component",
+      "title": "Dither Noise",
+      "description": "A field of fractal noise screened into flat tone bands, drifting slowly like weather on a printed map.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-noise.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Simplex noise",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Simplex_noise",
+            "license": "Algorithm, no code"
+          },
+          {
+            "relation": "technique",
+            "title": "Digital Halftoning",
+            "author": "Robert Ulichney",
+            "url": "https://doi.org/10.7551/mitpress/2421.001.0001",
+            "license": "Book"
+          }
+        ]
+      }
+    },
+    {
+      "name": "dither-poster-image",
+      "type": "registry:component",
+      "title": "Dither Poster Image",
+      "description": "An image posterized into flat tone bands whose step edges dither into narrow stippled transitions.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-poster-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Digital Halftoning",
+            "author": "Robert Ulichney",
+            "url": "https://doi.org/10.7551/mitpress/2421.001.0001",
+            "license": "Book"
+          },
+          {
+            "relation": "technique",
+            "title": "Ordered dithering",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "dither-reveal",
+      "type": "registry:component",
+      "title": "Dither Reveal",
+      "description": "A photograph that dissolves in and out as a halftone that thickens in blue noise order.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-reveal.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Void-and-cluster method for dither array generation",
+            "author": "Robert A. Ulichney",
+            "url": "https://doi.org/10.1117/12.152707",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Ordered dithering",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "dither-stipple-image",
+      "type": "registry:component",
+      "title": "Dither Stipple Image",
+      "description": "An image redrawn as round stippled dots, spaced by a blue noise mask so tone reads as density, not rows.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-stipple-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Weighted Voronoi stippling",
+            "author": "Adrian Secord",
+            "url": "https://doi.org/10.1145/508530.508537",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
+      "name": "dither-temporal",
+      "type": "registry:component",
+      "title": "Dither Temporal",
+      "description": "A still lit sphere or gradient whose blue noise or cluster screen renews its grain every frame while the tone holds.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-temporal.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Void-and-cluster method for dither array generation",
+            "author": "Robert A. Ulichney",
+            "url": "https://doi.org/10.1117/12.152707",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Spatiotemporal Blue Noise Masks",
+            "author": "Alan Wolfe, Nathan Morrical, Tomas Akenine-Möller, Ravi Ramamoorthi",
+            "url": "https://doi.org/10.2312/sr.20221161",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
+      "name": "dither-waves",
+      "type": "registry:component",
+      "title": "Dither Waves",
+      "description": "Wave trains crossing at different angles, their interference screened by an ordered mask into a moire lattice.",
+      "categories": [
+        "dither"
+      ],
+      "files": [
+        {
+          "path": "public/react/dither-waves.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "The Theory of the Moire Phenomenon: Volume I, Periodic Layers",
+            "author": "Isaac Amidror",
+            "url": "https://doi.org/10.1007/978-1-84882-181-1",
+            "license": "Book"
+          },
+          {
+            "relation": "technique",
+            "title": "Ordered dithering",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
       "name": "halftone-image",
       "type": "registry:component",
       "title": "Halftone Image",
@@ -518,6 +784,69 @@
       }
     },
     {
+      "name": "block-glitch-image",
+      "type": "registry:component",
+      "title": "Block Glitch Image",
+      "description": "A photograph that sits still, then briefly shows rectangular blocks copied in from the wrong place.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/block-glitch-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "The Glitch Moment(um)",
+            "author": "Rosa Menkman",
+            "url": "https://networkcultures.org/blog/publication/no-04-the-glitch-momentum-rosa-menkman/",
+            "license": "Book"
+          },
+          {
+            "relation": "technique",
+            "title": "Compression artifact",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Compression_artifact",
+            "license": "Reference, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-shift-image",
+      "type": "registry:component",
+      "title": "Channel Shift Image",
+      "description": "An image split into a dark layer and a light layer, each posterized flat and slid apart along one axis.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/channel-shift-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Printing registration",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Printing_registration",
+            "license": "Reference, no code"
+          }
+        ]
+      }
+    },
+    {
       "name": "duotone-image",
       "type": "registry:component",
       "title": "Duotone Image",
@@ -535,6 +864,41 @@
         "license": "MIT + Commons Clause",
         "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
         "credits": []
+      }
+    },
+    {
+      "name": "edge-trace-image",
+      "type": "registry:component",
+      "title": "Edge Trace Image",
+      "description": "A photograph reduced to its outlines: crisp one-pixel Sobel edges kept by Canny's two-threshold rule.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/edge-trace-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "A Computational Approach to Edge Detection",
+            "author": "John Canny",
+            "url": "https://doi.org/10.1109/TPAMI.1986.4767851",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Sobel operator",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Sobel_operator",
+            "license": "Algorithm, no code"
+          }
+        ]
       }
     },
     {
@@ -614,6 +978,69 @@
       }
     },
     {
+      "name": "photocopy-image",
+      "type": "registry:component",
+      "title": "Photocopy Image",
+      "description": "An image pushed through an adaptive threshold into pure ink and ground, with seeded toner specks and short streaks off its strong edges.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/photocopy-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Adaptive Thresholding using the Integral Image",
+            "author": "Derek Bradley, Gerhard Roth",
+            "url": "https://doi.org/10.1080/2151237X.2007.10129236",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Summed-area tables for texture mapping",
+            "author": "Franklin C. Crow",
+            "url": "https://doi.org/10.1145/800031.808600",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
+      "name": "pixel-displace-image",
+      "type": "registry:component",
+      "title": "Pixel Displace Image",
+      "description": "A photograph sheared into horizontal bands that slide sideways on a slow noise field, like a printout pulled crooked.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-displace-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Simplex noise",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Simplex_noise",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
       "name": "pixel-sort",
       "type": "registry:component",
       "title": "Pixel Sort",
@@ -637,6 +1064,48 @@
             "author": "Kim Asendorf",
             "url": "https://github.com/kimasendorf/ASDFPixelSort",
             "license": "Technique, no code read"
+          }
+        ]
+      }
+    },
+    {
+      "name": "risograph-image",
+      "type": "registry:component",
+      "title": "Risograph Image",
+      "description": "An image printed as two risograph passes, fg for the shadows and accent for the midtones, each screened and offset so their edges fringe.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/risograph-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Digital Duplicator",
+            "author": "RISO Kagaku Corporation",
+            "url": "https://www.riso.co.jp/english/product/digital_dup/",
+            "license": "Reference, no code"
+          },
+          {
+            "relation": "technique",
+            "title": "Risograph",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Risograph",
+            "license": "Reference, no code"
+          },
+          {
+            "relation": "technique",
+            "title": "Void-and-cluster method for dither array generation",
+            "author": "Robert A. Ulichney",
+            "url": "https://doi.org/10.1117/12.152707",
+            "license": "Paper"
           }
         ]
       }
@@ -687,6 +1156,34 @@
         "license": "MIT + Commons Clause",
         "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
         "credits": []
+      }
+    },
+    {
+      "name": "slit-scan-image",
+      "type": "registry:component",
+      "title": "Slit Scan Image",
+      "description": "An image rebuilt column by column from a slit sweeping across it, streaking whatever falls behind.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/slit-scan-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "An Informal Catalogue of Slit-Scan Video Artworks and Research",
+            "author": "Golan Levin",
+            "url": "https://www.flong.com/archive/texts/lists/slit_scan/index.html",
+            "license": "Article"
+          }
+        ]
       }
     },
     {

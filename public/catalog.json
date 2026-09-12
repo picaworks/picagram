@@ -1977,6 +1977,300 @@
     "gzipBytes": 5817
   },
   {
+    "slug": "dither-contours",
+    "title": "Dither Contours",
+    "category": "dither",
+    "description": "A drifting noise landscape cut into hypsometric bands of flat dither tone with hairline boundaries.",
+    "tags": [
+      "contours",
+      "hypsometric",
+      "relief map",
+      "terrain"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "controls": {
+      "bands": {
+        "type": "number",
+        "min": 3,
+        "max": 12,
+        "step": 1
+      },
+      "scale": {
+        "type": "number",
+        "min": 0.5,
+        "max": 6,
+        "step": 0.1
+      },
+      "octaves": {
+        "type": "number",
+        "min": 1,
+        "max": 5,
+        "step": 1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "lineWeight": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.1,
+        "label": "Line weight"
+      },
+      "index": {
+        "type": "number",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "label": "Index every"
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Pixel scale"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Cartographic Relief Presentation",
+        "author": "Eduard Imhof",
+        "url": "https://doi.org/10.1515/9783110844016",
+        "license": "Book"
+      },
+      {
+        "relation": "technique",
+        "title": "Hypsometric tints",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Hypsometric_tints",
+        "license": "Reference, no code"
+      }
+    ],
+    "exportName": "DitherContours",
+    "defaults": {
+      "bands": 6,
+      "scale": 1.6,
+      "octaves": 4,
+      "speed": 0.1,
+      "lineWeight": 1,
+      "index": 5,
+      "pixel": 2,
+      "fps": 15,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "bands": "Number of elevation bands the height field is cut into.",
+      "scale": "Noise frequency. Higher values pack the bands closer together.",
+      "octaves": "Octaves of noise summed into the height field. More octaves add finer detail.",
+      "speed": "How fast the height field drifts, in noise units per second. Zero holds it still.",
+      "lineWeight": "Boundary line thickness, in CSS pixels.",
+      "index": "How often a boundary is drawn as an index contour in the accent color, counted in bands. Zero draws none.",
+      "pixel": "CSS pixels each computed pixel covers, for the dither fill.",
+      "fps": "Frames per second ceiling for the drift."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "bands": "number",
+      "scale": "number",
+      "octaves": "number",
+      "speed": "number",
+      "lineWeight": "number",
+      "index": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4602
+  },
+  {
+    "slug": "dither-crosshatch-image",
+    "title": "Dither Crosshatch Image",
+    "category": "dither",
+    "description": "An image drawn in crossing pen strokes, each layer switching on as the tone beneath it darkens.",
+    "tags": [
+      "image",
+      "static",
+      "crosshatch",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "layers": {
+        "type": "number",
+        "min": 1,
+        "max": 4,
+        "step": 1
+      },
+      "spacing": {
+        "type": "number",
+        "min": 3,
+        "max": 16,
+        "step": 1
+      },
+      "angles": {
+        "type": "json"
+      },
+      "weight": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.1
+      },
+      "jitter": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Real-time hatching",
+        "author": "Emil Praun, Hugues Hoppe, Matthew Webb, Adam Finkelstein",
+        "url": "https://doi.org/10.1145/383259.383328",
+        "license": "Paper"
+      }
+    ],
+    "exportName": "DitherCrosshatchImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "layers": 3,
+      "spacing": 6,
+      "angles": [
+        45,
+        135,
+        0,
+        90
+      ],
+      "weight": 1,
+      "jitter": 0.3,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for the jitter, so the same seed always draws the same picture.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" hatches the bright pixels; \"dark-on-light\" hatches the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "layers": "How many hatch layers can switch on, from a single wash to a dense mesh.",
+      "spacing": "Distance between the strokes of one layer, in CSS pixels.",
+      "angles": "Angle of each layer's strokes, in degrees, one entry per layer.",
+      "weight": "Stroke thickness in CSS pixels.",
+      "jitter": "How far a stroke wanders from a straight line, 0 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "layers": "number",
+      "spacing": "number",
+      "angles": "readonly number[]",
+      "weight": "number",
+      "jitter": "number"
+    },
+    "events": {},
+    "gzipBytes": 4017
+  },
+  {
     "slug": "dither-gradient",
     "title": "Dither Gradient",
     "category": "dither",
@@ -2212,6 +2506,896 @@
     "gzipBytes": 3882
   },
   {
+    "slug": "dither-noise",
+    "title": "Dither Noise",
+    "category": "dither",
+    "description": "A field of fractal noise screened into flat tone bands, drifting slowly like weather on a printed map.",
+    "tags": [
+      "noise",
+      "fractal noise",
+      "halftone",
+      "background",
+      "cloud"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "scale": {
+        "type": "number",
+        "min": 0.5,
+        "max": 6,
+        "step": 0.1
+      },
+      "octaves": {
+        "type": "number",
+        "min": 1,
+        "max": 5,
+        "step": 1
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1
+      },
+      "mask": {
+        "type": "select",
+        "options": [
+          "blue",
+          "cluster"
+        ]
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "angle": {
+        "type": "number",
+        "min": 0,
+        "max": 360,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "label": "Pixel scale"
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Simplex noise",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Simplex_noise",
+        "license": "Algorithm, no code"
+      },
+      {
+        "relation": "technique",
+        "title": "Digital Halftoning",
+        "author": "Robert Ulichney",
+        "url": "https://doi.org/10.7551/mitpress/2421.001.0001",
+        "license": "Book"
+      }
+    ],
+    "exportName": "DitherNoise",
+    "defaults": {
+      "scale": 2,
+      "octaves": 3,
+      "levels": 3,
+      "mask": "blue",
+      "speed": 0.15,
+      "angle": 20,
+      "pixel": 3,
+      "contrast": 1,
+      "fps": 15,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "scale": "Noise cycles across the field's longer side. Higher values give smaller, more numerous clouds.",
+      "octaves": "Fractal noise layers summed into the field, each finer than the last.",
+      "levels": "Flat tone bands the field is screened into, from the ground up to full ink.",
+      "mask": "\"blue\" scatters ink for a photographic grain. \"cluster\" grows round dots for a newsprint screen.",
+      "speed": "How fast the field drifts. 0 holds it still.",
+      "angle": "Direction the field drifts toward, in degrees. 0 drifts rightward, 90 drifts downward.",
+      "pixel": "CSS pixels each screened cell covers before the canvas is scaled up.",
+      "contrast": "Contrast around mid grey, applied before the field is screened into bands. 1 leaves it as it is.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "scale": "number",
+      "octaves": "number",
+      "levels": "number",
+      "mask": "\"blue\" | \"cluster\"",
+      "speed": "number",
+      "angle": "number",
+      "pixel": "number",
+      "contrast": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5061
+  },
+  {
+    "slug": "dither-poster-image",
+    "title": "Dither Poster Image",
+    "category": "dither",
+    "description": "An image posterized into flat tone bands whose step edges dither into narrow stippled transitions.",
+    "tags": [
+      "image",
+      "static",
+      "poster",
+      "dither",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1
+      },
+      "band": {
+        "type": "number",
+        "min": 0,
+        "max": 0.5,
+        "step": 0.01
+      },
+      "mask": {
+        "type": "select",
+        "options": [
+          "bayer",
+          "blue"
+        ]
+      },
+      "scale": {
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Digital Halftoning",
+        "author": "Robert Ulichney",
+        "url": "https://doi.org/10.7551/mitpress/2421.001.0001",
+        "license": "Book"
+      },
+      {
+        "relation": "technique",
+        "title": "Ordered dithering",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "palette": [
+      "fg"
+    ],
+    "exportName": "DitherPosterImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "levels": 4,
+      "band": 0.12,
+      "mask": "bayer",
+      "scale": 2
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "levels": "Flat tone bands the image posterizes into.",
+      "band": "Width of the dithered transition at each step, as a share of the tone range. 0 is a hard edge.",
+      "mask": "The ordered mask that screens a transition: a Bayer matrix, or a blue noise pattern.",
+      "scale": "CSS pixels per posterized pixel. Higher values give a coarser, more graphic result."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "levels": "number",
+      "band": "number",
+      "mask": "\"bayer\" | \"blue\"",
+      "scale": "number"
+    },
+    "events": {},
+    "gzipBytes": 4557
+  },
+  {
+    "slug": "dither-reveal",
+    "title": "Dither Reveal",
+    "category": "dither",
+    "description": "A photograph that dissolves in and out as a halftone that thickens in blue noise order.",
+    "tags": [
+      "image",
+      "reveal",
+      "dither",
+      "canvas",
+      "halftone"
+    ],
+    "facets": [
+      "animated",
+      "image",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": false,
+    "palette": [
+      "fg"
+    ],
+    "capture": 5000,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "mask": {
+        "type": "select",
+        "options": [
+          "blue",
+          "bayer"
+        ]
+      },
+      "scale": {
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "step": 1
+      },
+      "reveal": {
+        "type": "number",
+        "min": 400,
+        "max": 6000,
+        "step": 100
+      },
+      "hold": {
+        "type": "number",
+        "min": 0,
+        "max": 8000,
+        "step": 100
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Void-and-cluster method for dither array generation",
+        "author": "Robert A. Ulichney",
+        "url": "https://doi.org/10.1117/12.152707",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Ordered dithering",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "DitherReveal",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "mask": "blue",
+      "scale": 3,
+      "reveal": 1800,
+      "hold": 3600,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "mask": "\"blue\" reveals in an even grain from a void-and-cluster mask. \"bayer\" reveals in a visible crosshatch.",
+      "scale": "CSS pixels per dithered dot. Higher values give a coarser, more graphic result.",
+      "reveal": "Milliseconds the picture takes to dissolve fully in, and again to dissolve fully out.",
+      "hold": "Milliseconds the finished picture holds before it dissolves out again.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "mask": "\"blue\" | \"bayer\"",
+      "scale": "number",
+      "reveal": "number",
+      "hold": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5254
+  },
+  {
+    "slug": "dither-stipple-image",
+    "title": "Dither Stipple Image",
+    "category": "dither",
+    "description": "An image redrawn as round stippled dots, spaced by a blue noise mask so tone reads as density, not rows.",
+    "tags": [
+      "image",
+      "static",
+      "dither",
+      "canvas",
+      "stipple"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "dotSize": {
+        "type": "number",
+        "min": 0.5,
+        "max": 4,
+        "step": 0.1,
+        "label": "Dot size"
+      },
+      "density": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1.5,
+        "step": 0.05
+      },
+      "gamma": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "maskSize": {
+        "type": "select",
+        "options": [
+          "16",
+          "32",
+          "64"
+        ],
+        "label": "Mask size"
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Weighted Voronoi stippling",
+        "author": "Adrian Secord",
+        "url": "https://doi.org/10.1145/508530.508537",
+        "license": "Paper"
+      }
+    ],
+    "exportName": "DitherStippleImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "dotSize": 2,
+      "density": 1.2,
+      "gamma": 1,
+      "maskSize": 64
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "dotSize": "Diameter of one dot, in CSS pixels. Every dot is the same size.",
+      "density": "Overall dot spacing. Above 1 packs dots closer together; below 1 spreads them further apart.",
+      "gamma": "Gamma applied to tone before it meets the mask. Above 1 pulls dots toward the darkest areas; below 1 spreads them into midtones.",
+      "maskSize": "Side of the blue noise tile the mask reads from. A larger tile repeats less often, at more one-time setup cost."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "dotSize": "number",
+      "density": "number",
+      "gamma": "number",
+      "maskSize": "16 | 32 | 64"
+    },
+    "events": {},
+    "gzipBytes": 4430
+  },
+  {
+    "slug": "dither-temporal",
+    "title": "Dither Temporal",
+    "category": "dither",
+    "description": "A still lit sphere or gradient whose blue noise or cluster screen renews its grain every frame while the tone holds.",
+    "tags": [
+      "sphere",
+      "gradient",
+      "blue noise",
+      "void and cluster",
+      "temporal dither",
+      "background"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "subject": {
+        "type": "select",
+        "options": [
+          "sphere",
+          "gradient"
+        ]
+      },
+      "scale": {
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "label": "Pixel scale"
+      },
+      "mask": {
+        "type": "select",
+        "options": [
+          "blue",
+          "cluster"
+        ]
+      },
+      "maskSize": {
+        "type": "select",
+        "options": [
+          "16",
+          "32",
+          "64"
+        ],
+        "label": "Mask size"
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "drift": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Void-and-cluster method for dither array generation",
+        "author": "Robert A. Ulichney",
+        "url": "https://doi.org/10.1117/12.152707",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Spatiotemporal Blue Noise Masks",
+        "author": "Alan Wolfe, Nathan Morrical, Tomas Akenine-Möller, Ravi Ramamoorthi",
+        "url": "https://doi.org/10.2312/sr.20221161",
+        "license": "Paper"
+      }
+    ],
+    "exportName": "DitherTemporal",
+    "defaults": {
+      "subject": "sphere",
+      "scale": 3,
+      "mask": "blue",
+      "maskSize": 32,
+      "levels": 2,
+      "contrast": 1,
+      "drift": 0.5,
+      "fps": 8,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "subject": "What the screen dithers: the built-in lit sphere, or a plain gradient brightest at the upper left.",
+      "scale": "CSS pixels each dithered pixel covers before the canvas is scaled up, unsmoothed.",
+      "mask": "Which threshold mask supplies the screen. Blue noise scatters ink so evenly no structure shows; cluster grows dots the way a printed halftone does.",
+      "maskSize": "Side length of the tiled mask, in cells: 16, 32, or 64. A cluster screen keeps to its own coarser 4 or 8 cell sizes, so this rounds to the nearest one it has.",
+      "levels": "Visible steps of ink density the screen can show, from 2 to 4. 2 draws a plain two-tone screen.",
+      "contrast": "Contrast around mid grey, applied before the screen cuts ink from ground. 1 leaves the subject as it is.",
+      "drift": "How far the mask's threshold turns between frames, from 0 to 1. 0 holds one mask still; higher values crawl faster.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "subject": "\"sphere\" | \"gradient\"",
+      "scale": "number",
+      "mask": "\"blue\" | \"cluster\"",
+      "maskSize": "number",
+      "levels": "number",
+      "contrast": "number",
+      "drift": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4977
+  },
+  {
+    "slug": "dither-waves",
+    "title": "Dither Waves",
+    "category": "dither",
+    "description": "Wave trains crossing at different angles, their interference screened by an ordered mask into a moire lattice.",
+    "tags": [
+      "moire",
+      "interference",
+      "ordered dither",
+      "background"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "trains": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1
+      },
+      "period": {
+        "type": "number",
+        "min": 8,
+        "max": 120,
+        "step": 1,
+        "label": "Period"
+      },
+      "spread": {
+        "type": "number",
+        "min": 0,
+        "max": 45,
+        "step": 1,
+        "label": "Spread (deg)"
+      },
+      "angle": {
+        "type": "number",
+        "min": 0,
+        "max": 180,
+        "step": 1,
+        "label": "Angle (deg)"
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1
+      },
+      "mask": {
+        "type": "select",
+        "options": [
+          "blue",
+          "cluster"
+        ]
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Pixel size"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "The Theory of the Moire Phenomenon: Volume I, Periodic Layers",
+        "author": "Isaac Amidror",
+        "url": "https://doi.org/10.1007/978-1-84882-181-1",
+        "license": "Book"
+      },
+      {
+        "relation": "technique",
+        "title": "Ordered dithering",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "DitherWaves",
+    "defaults": {
+      "trains": 3,
+      "period": 34,
+      "spread": 27,
+      "angle": 0,
+      "levels": 2,
+      "mask": "cluster",
+      "pixel": 2,
+      "speed": 0.12,
+      "fps": 15,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "trains": "Number of overlapping wave trains, from two to four.",
+      "period": "Wavelength of each wave train, in computed pixels.",
+      "spread": "Degrees of angle from one wave train to the next.",
+      "angle": "Angle of the first wave train, in degrees.",
+      "levels": "Ink levels the interference is screened into, from two to four.",
+      "mask": "Ordered mask that screens the interference: an even blue noise scatter, or a clustered dot screen.",
+      "pixel": "CSS pixels each computed pixel covers.",
+      "speed": "How fast the wave trains drift. 0 holds them still.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "trains": "number",
+      "period": "number",
+      "spread": "number",
+      "angle": "number",
+      "levels": "number",
+      "mask": "\"blue\" | \"cluster\"",
+      "pixel": "number",
+      "speed": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4133
+  },
+  {
     "slug": "halftone-image",
     "title": "Halftone Image",
     "category": "dither",
@@ -2332,6 +3516,311 @@
     "gzipBytes": 3837
   },
   {
+    "slug": "block-glitch-image",
+    "title": "Block Glitch Image",
+    "category": "effects",
+    "description": "A photograph that sits still, then briefly shows rectangular blocks copied in from the wrong place.",
+    "tags": [
+      "image",
+      "glitch",
+      "compression",
+      "blocks",
+      "canvas"
+    ],
+    "facets": [
+      "animated",
+      "image",
+      "canvas"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": false,
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "block": {
+        "type": "number",
+        "min": 8,
+        "max": 64,
+        "step": 1,
+        "label": "Block size"
+      },
+      "blocks": {
+        "type": "number",
+        "min": 1,
+        "max": 40,
+        "step": 1,
+        "label": "Blocks per burst"
+      },
+      "shift": {
+        "type": "number",
+        "min": 0,
+        "max": 0.5,
+        "step": 0.01,
+        "label": "Shift"
+      },
+      "burst": {
+        "type": "number",
+        "min": 60,
+        "max": 800,
+        "step": 10,
+        "label": "Burst length"
+      },
+      "rest": {
+        "type": "number",
+        "min": 200,
+        "max": 6000,
+        "step": 100,
+        "label": "Rest length"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "The Glitch Moment(um)",
+        "author": "Rosa Menkman",
+        "url": "https://networkcultures.org/blog/publication/no-04-the-glitch-momentum-rosa-menkman/",
+        "license": "Book"
+      },
+      {
+        "relation": "technique",
+        "title": "Compression artifact",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Compression_artifact",
+        "license": "Reference, no code"
+      }
+    ],
+    "exportName": "BlockGlitchImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "block": 24,
+      "blocks": 12,
+      "shift": 0.12,
+      "burst": 220,
+      "rest": 1400,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "block": "The fixed grid's cell size, in prepared-picture pixels. A displaced block is one cell, or smaller at an edge.",
+      "blocks": "How many cells move in one burst.",
+      "shift": "How far a moved cell's content can be sourced from, as a share of the picture's width.",
+      "burst": "Milliseconds one burst lasts.",
+      "rest": "Milliseconds of quiet between one burst and the next.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "block": "number",
+      "blocks": "number",
+      "shift": "number",
+      "burst": "number",
+      "rest": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4922
+  },
+  {
+    "slug": "channel-shift-image",
+    "title": "Channel Shift Image",
+    "category": "effects",
+    "description": "An image split into a dark layer and a light layer, each posterized flat and slid apart along one axis.",
+    "tags": [
+      "image",
+      "static",
+      "posterize",
+      "canvas",
+      "registration"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "offset": {
+        "type": "number",
+        "min": 0,
+        "max": 40,
+        "step": 1
+      },
+      "angle": {
+        "type": "number",
+        "min": 0,
+        "max": 360,
+        "step": 1
+      },
+      "split": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "accent": {
+        "type": "boolean"
+      },
+      "overlap": {
+        "type": "select",
+        "options": [
+          "darken",
+          "over"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Printing registration",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Printing_registration",
+        "license": "Reference, no code"
+      }
+    ],
+    "exportName": "ChannelShiftImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "offset": 8,
+      "angle": 0,
+      "split": 0.5,
+      "accent": true,
+      "overlap": "darken"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "offset": "How far the light layer slides from the dark one, in CSS pixels.",
+      "angle": "Degrees clockwise from horizontal that the light layer slides in: 0 moves it right, 90 moves it down.",
+      "split": "The ink value that splits the dark layer from the light one, 0 to 1.",
+      "accent": "Draws the light layer in --pica-accent. Off draws both layers in the host's ink color, at two opacities.",
+      "overlap": "How the layers land where they overlap: \"darken\" lets their ink accumulate into a third, darker area; \"over\" lets the light layer simply cover the dark one."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "offset": "number",
+      "angle": "number",
+      "split": "number",
+      "accent": "boolean",
+      "overlap": "\"darken\" | \"over\""
+    },
+    "events": {},
+    "gzipBytes": 3915
+  },
+  {
     "slug": "duotone-image",
     "title": "Duotone Image",
     "category": "effects",
@@ -2428,6 +3917,137 @@
     },
     "events": {},
     "gzipBytes": 3371
+  },
+  {
+    "slug": "edge-trace-image",
+    "title": "Edge Trace Image",
+    "category": "effects",
+    "description": "A photograph reduced to its outlines: crisp one-pixel Sobel edges kept by Canny's two-threshold rule.",
+    "tags": [
+      "image",
+      "static",
+      "canvas",
+      "edges"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "low": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "high": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "smooth": {
+        "type": "number",
+        "min": 0,
+        "max": 3,
+        "step": 1
+      },
+      "weight": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.1
+      },
+      "invert": {
+        "type": "boolean"
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "A Computational Approach to Edge Detection",
+        "author": "John Canny",
+        "url": "https://doi.org/10.1109/TPAMI.1986.4767851",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Sobel operator",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Sobel_operator",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "EdgeTraceImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "contrast": 1.1,
+      "low": 0.08,
+      "high": 0.2,
+      "smooth": 1,
+      "weight": 1,
+      "invert": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "contrast": "Contrast around mid grey before the gradient runs. 1 leaves the image as it is.",
+      "low": "Lower threshold, 0 to 1. A thinned pixel under it is dropped unless it touches one that clears the upper threshold.",
+      "high": "Upper threshold, 0 to 1. A thinned pixel that clears it is kept on its own.",
+      "smooth": "Mean smoothing radius in pixels, run before the gradient so single-pixel noise stays out of it.",
+      "weight": "Traced line thickness in pixels, drawn as coverage rather than a wider mask.",
+      "invert": "Inks the ground and leaves the traced lines bare, instead of the other way around."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "contrast": "number",
+      "low": "number",
+      "high": "number",
+      "smooth": "number",
+      "weight": "number",
+      "invert": "boolean"
+    },
+    "events": {},
+    "gzipBytes": 4108
   },
   {
     "slug": "glitch-text",
@@ -2721,6 +4341,318 @@
     "gzipBytes": 1427
   },
   {
+    "slug": "photocopy-image",
+    "title": "Photocopy Image",
+    "category": "effects",
+    "description": "An image pushed through an adaptive threshold into pure ink and ground, with seeded toner specks and short streaks off its strong edges.",
+    "tags": [
+      "image",
+      "static",
+      "photocopy",
+      "threshold",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "window": {
+        "type": "number",
+        "min": 8,
+        "max": 80,
+        "step": 1,
+        "label": "Window"
+      },
+      "bias": {
+        "type": "number",
+        "min": 0,
+        "max": 0.2,
+        "step": 0.01
+      },
+      "speckle": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "streaks": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "invert": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Adaptive Thresholding using the Integral Image",
+        "author": "Derek Bradley, Gerhard Roth",
+        "url": "https://doi.org/10.1080/2151237X.2007.10129236",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Summed-area tables for texture mapping",
+        "author": "Franklin C. Crow",
+        "url": "https://doi.org/10.1145/800031.808600",
+        "license": "Paper"
+      }
+    ],
+    "exportName": "PhotocopyImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "window": 24,
+      "bias": 0.06,
+      "speckle": 0.25,
+      "streaks": 0.35,
+      "invert": false,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every speck and streak, so the same seed always prints the same copy.",
+      "src": "Image URL or data URI. Empty draws the built-in lit sphere, so it renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey before the threshold sees it. 1 leaves the image as it is.",
+      "window": "Side of the square window the local mean is measured over, in pixels. A small window keeps shadow detail; a window as large as the picture reads as one plain threshold.",
+      "bias": "How far above the local mean a pixel must sit to become ink. Zero lets a flat area fill with speckle from noise alone.",
+      "speckle": "Share of the ground dusted with toner specks, drawn from the seed.",
+      "streaks": "Share of the strong edges that trail a short streak into the ground below them, drawn from the seed.",
+      "invert": "Swaps ink and ground."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "window": "number",
+      "bias": "number",
+      "speckle": "number",
+      "streaks": "number",
+      "invert": "boolean"
+    },
+    "events": {},
+    "gzipBytes": 4430
+  },
+  {
+    "slug": "pixel-displace-image",
+    "title": "Pixel Displace Image",
+    "category": "effects",
+    "description": "A photograph sheared into horizontal bands that slide sideways on a slow noise field, like a printout pulled crooked.",
+    "tags": [
+      "image",
+      "displace",
+      "shear",
+      "noise",
+      "canvas"
+    ],
+    "facets": [
+      "animated",
+      "image",
+      "canvas"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": false,
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "strips": {
+        "type": "number",
+        "min": 20,
+        "max": 200,
+        "step": 1
+      },
+      "amount": {
+        "type": "number",
+        "min": 0,
+        "max": 0.3,
+        "step": 0.01
+      },
+      "scale": {
+        "type": "number",
+        "min": 0.2,
+        "max": 4,
+        "step": 0.1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "settle": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Simplex noise",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Simplex_noise",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "PixelDisplaceImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "strips": 90,
+      "amount": 0.06,
+      "scale": 1,
+      "speed": 0.2,
+      "settle": 0.5,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "strips": "Horizontal bands the picture is cut into.",
+      "amount": "Sideways reach of the widest shear, as a share of the picture's width.",
+      "scale": "How quickly the noise field varies down the picture. Higher reads as more, smaller waves.",
+      "speed": "How fast the shear breathes through its cycle. 0 holds the picture at rest.",
+      "settle": "Share of every cycle the picture spends at rest, with no shear at all.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "strips": "number",
+      "amount": "number",
+      "scale": "number",
+      "speed": "number",
+      "settle": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5271
+  },
+  {
     "slug": "pixel-sort",
     "title": "Pixel Sort",
     "category": "effects",
@@ -2835,6 +4767,171 @@
     },
     "events": {},
     "gzipBytes": 3559
+  },
+  {
+    "slug": "risograph-image",
+    "title": "Risograph Image",
+    "category": "effects",
+    "description": "An image printed as two risograph passes, fg for the shadows and accent for the midtones, each screened and offset so their edges fringe.",
+    "tags": [
+      "image",
+      "static",
+      "risograph",
+      "halftone",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "offset": {
+        "type": "number",
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "label": "Offset (px)"
+      },
+      "angle": {
+        "type": "number",
+        "min": 0,
+        "max": 360,
+        "step": 1,
+        "label": "Angle"
+      },
+      "grain": {
+        "type": "number",
+        "min": 2,
+        "max": 12,
+        "step": 1,
+        "label": "Grain (px)"
+      },
+      "split": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "coverage": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Digital Duplicator",
+        "author": "RISO Kagaku Corporation",
+        "url": "https://www.riso.co.jp/english/product/digital_dup/",
+        "license": "Reference, no code"
+      },
+      {
+        "relation": "technique",
+        "title": "Risograph",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Risograph",
+        "license": "Reference, no code"
+      },
+      {
+        "relation": "technique",
+        "title": "Void-and-cluster method for dither array generation",
+        "author": "Robert A. Ulichney",
+        "url": "https://doi.org/10.1117/12.152707",
+        "license": "Paper"
+      }
+    ],
+    "exportName": "RisographImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "offset": 2,
+      "angle": 200,
+      "grain": 4,
+      "split": 0.45,
+      "coverage": 0.85,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for the screen's placement. The same seed always draws the same grain.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "offset": "Pixels the accent pass shifts from the fg pass, the misregistration a second drum leaves on the sheet.",
+      "angle": "Degrees clockwise from three o'clock, the direction the accent pass shifts away from the fg pass.",
+      "grain": "Pixels per screen cell, at the plate's own resolution. Coarser reads as a bigger dot at arm's length.",
+      "split": "The tone that divides the two passes. Darker than this prints in fg; lighter prints in accent.",
+      "coverage": "Ink a pass lays down at its fullest tone, short of solid so the paper always shows through."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "offset": "number",
+      "angle": "number",
+      "grain": "number",
+      "split": "number",
+      "coverage": "number"
+    },
+    "events": {},
+    "gzipBytes": 4564
   },
   {
     "slug": "scan-reveal-image",
@@ -3085,6 +5182,160 @@
     },
     "events": {},
     "gzipBytes": 2063
+  },
+  {
+    "slug": "slit-scan-image",
+    "title": "Slit Scan Image",
+    "category": "effects",
+    "description": "An image rebuilt column by column from a slit sweeping across it, streaking whatever falls behind.",
+    "tags": [
+      "image",
+      "slit-scan",
+      "streak",
+      "canvas"
+    ],
+    "facets": [
+      "animated",
+      "image",
+      "canvas"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": false,
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05
+      },
+      "axis": {
+        "type": "select",
+        "options": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      "width": {
+        "type": "number",
+        "min": 1,
+        "max": 64,
+        "step": 1,
+        "label": "Slit width"
+      },
+      "amount": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "label": "Lag amount"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "wrap": {
+        "type": "boolean"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "An Informal Catalogue of Slit-Scan Video Artworks and Research",
+        "author": "Golan Levin",
+        "url": "https://www.flong.com/archive/texts/lists/slit_scan/index.html",
+        "license": "Article"
+      }
+    ],
+    "exportName": "SlitScanImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "axis": "horizontal",
+      "width": 8,
+      "amount": 0.5,
+      "speed": 0.25,
+      "wrap": true,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "axis": "The sweep's direction: across a horizontal frame, or down a vertical one.",
+      "width": "The slit's width in pixels, and how far behind it a column still keeps its own place before it lags.",
+      "amount": "How far the sampled column lags the drawn one once it falls behind the slit: 0 for none, 1 for the most.",
+      "speed": "How fast the slit sweeps across the frame, 0 for nearly still and 1 for fastest.",
+      "wrap": "Wraps the sweep back to the start instead of reversing direction.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "axis": "\"horizontal\" | \"vertical\"",
+      "width": "number",
+      "amount": "number",
+      "speed": "number",
+      "wrap": "boolean",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4541
   },
   {
     "slug": "globe",

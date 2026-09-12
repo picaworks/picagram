@@ -1,0 +1,646 @@
+<!doctype html>
+<!--
+  Pica · Edge Trace Image · edge-trace-image
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Edge Trace Image · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaEdgeTraceImage = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/effects/edge-trace-image/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/filter.ts
+  var SOBEL_PEAK = Math.SQRT2 * 4;
+  function sobelEdges(values, width, height) {
+    const out = new Float32Array(width * height);
+    const at = (x, y) => values[Math.min(height - 1, Math.max(0, y)) * width + Math.min(width - 1, Math.max(0, x))] ?? 0;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const tl = at(x - 1, y - 1);
+        const tr = at(x + 1, y - 1);
+        const bl = at(x - 1, y + 1);
+        const br = at(x + 1, y + 1);
+        const gx = tr + 2 * at(x + 1, y) + br - tl - 2 * at(x - 1, y) - bl;
+        const gy = bl + 2 * at(x, y + 1) + br - tl - 2 * at(x, y - 1) - tr;
+        out[y * width + x] = Math.min(1, Math.sqrt(gx * gx + gy * gy) / SOBEL_PEAK);
+      }
+    }
+    return out;
+  }
+  function boxMean(values, width, height, radius) {
+    const r = Math.max(0, Math.floor(radius));
+    const stride = width + 1;
+    const sums = new Float64Array(stride * (height + 1));
+    for (let y = 0; y < height; y++) {
+      let row = 0;
+      for (let x = 0; x < width; x++) {
+        row += values[y * width + x] ?? 0;
+        sums[(y + 1) * stride + x + 1] = (sums[y * stride + x + 1] ?? 0) + row;
+      }
+    }
+    const out = new Float32Array(width * height);
+    for (let y = 0; y < height; y++) {
+      const y0 = Math.max(0, y - r);
+      const y1 = Math.min(height, y + r + 1);
+      for (let x = 0; x < width; x++) {
+        const x0 = Math.max(0, x - r);
+        const x1 = Math.min(width, x + r + 1);
+        const total = (sums[y1 * stride + x1] ?? 0) - (sums[y0 * stride + x1] ?? 0) - (sums[y1 * stride + x0] ?? 0) + (sums[y0 * stride + x0] ?? 0);
+        out[y * width + x] = total / ((y1 - y0) * (x1 - x0));
+      }
+    }
+    return out;
+  }
+
+  // lib/pixels.ts
+  function inkPixels(values, width, height, color, out) {
+    const image = out ?? new ImageData(width, height);
+    const [r, g, b, a] = color;
+    const data = image.data;
+    for (let i = 0; i < width * height; i++) {
+      const j = i * 4;
+      const v = values[i] ?? 0;
+      data[j] = r;
+      data[j + 1] = g;
+      data[j + 2] = b;
+      data[j + 3] = v <= 0 ? 0 : v >= 1 ? a : Math.round(a * v);
+    }
+    return image;
+  }
+  function createPlate() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    return {
+      canvas,
+      put(image) {
+        if (canvas.width !== image.width) canvas.width = image.width;
+        if (canvas.height !== image.height) canvas.height = image.height;
+        ctx?.putImageData(image, 0, 0);
+      }
+    };
+  }
+
+  // lib/sample.ts
+  function fitRect(sourceW, sourceH, boxW, boxH, fit, alignX = 0.5, alignY = 0.5) {
+    const scale = fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+    const w = sourceW * scale;
+    const h = sourceH * scale;
+    return { x: (boxW - w) * alignX, y: (boxH - h) * alignY, w, h };
+  }
+
+  // lib/subject.ts
+  function litSphere(size = 256, lightX = 0.36, lightY = 0.34) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const light = ctx.createRadialGradient(size * lightX, size * lightY, size * 0.02, size * 0.5, size * 0.5, size * 0.46);
+      light.addColorStop(0, "#ffffff");
+      light.addColorStop(0.55, "#8a8a8a");
+      light.addColorStop(1, "#141414");
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return canvas;
+  }
+
+  // lib/source.ts
+  function loadSource(src, ready, fail) {
+    if (!src) {
+      const sphere = litSphere();
+      ready({ image: sphere, width: sphere.width, height: sphere.height, builtIn: true });
+      return () => void 0;
+    }
+    let live = true;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "async";
+    img.onload = () => {
+      if (live) ready({ image: img, width: img.naturalWidth, height: img.naturalHeight, builtIn: false });
+    };
+    img.onerror = () => {
+      if (live) fail();
+    };
+    img.src = src;
+    return () => {
+      live = false;
+    };
+  }
+  function fitFor(source, fit) {
+    return source.builtIn ? "contain" : fit;
+  }
+  function fitHostAspect(host, width, height) {
+    if (host.clientHeight >= 2 || width <= 0 || height <= 0) return () => void 0;
+    return styleHost(host, { "aspect-ratio": `${width} / ${height}` });
+  }
+  function showNote(host, text) {
+    const note = document.createElement("span");
+    note.setAttribute("data-pica", "");
+    note.setAttribute("aria-hidden", "true");
+    note.textContent = text;
+    note.style.cssText = [
+      "position:absolute",
+      "inset:0",
+      "display:flex",
+      "align-items:center",
+      "justify-content:center",
+      "pointer-events:none",
+      `color:${cssVar("muted")}`
+    ].join(";");
+    const restore = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    host.appendChild(note);
+    return () => {
+      note.remove();
+      restore();
+    };
+  }
+
+  // registry/effects/edge-trace-image/core.ts
+  var defaults = {
+    src: "",
+    alt: "",
+    fit: "cover",
+    contrast: 1.1,
+    low: 0.08,
+    high: 0.2,
+    smooth: 1,
+    weight: 1,
+    invert: false
+  };
+  var WORK_MAX = 480;
+  function contrastField(raw, width, height, contrast) {
+    const out = new Float32Array(width * height);
+    for (let p = 0; p < out.length; p++) {
+      const o = p * 4;
+      const a = (raw[o + 3] ?? 0) / 255;
+      const luma = (0.2126 * (raw[o] ?? 0) + 0.7152 * (raw[o + 1] ?? 0) + 0.0722 * (raw[o + 2] ?? 0)) / 255;
+      const linear = Math.min(1, Math.max(0, (luma - 0.5) * contrast + 0.5)) ** 2.2;
+      out[p] = a * linear + (1 - a) * 0.5;
+    }
+    return out;
+  }
+  function directionOffset(bin) {
+    if (bin === 1) return [1, 1];
+    if (bin === 2) return [0, 1];
+    if (bin === 3) return [1, -1];
+    return [1, 0];
+  }
+  function edgeDirections(values, width, height) {
+    const bins = new Uint8Array(width * height);
+    const at = (x, y) => values[Math.min(height - 1, Math.max(0, y)) * width + Math.min(width - 1, Math.max(0, x))] ?? 0;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const tl = at(x - 1, y - 1);
+        const tr = at(x + 1, y - 1);
+        const bl = at(x - 1, y + 1);
+        const br = at(x + 1, y + 1);
+        const gx = tr + 2 * at(x + 1, y) + br - tl - 2 * at(x - 1, y) - bl;
+        const gy = bl + 2 * at(x, y + 1) + br - tl - 2 * at(x, y - 1) - tr;
+        let angle = Math.atan2(gy, gx);
+        if (angle < 0) angle += Math.PI;
+        bins[y * width + x] = Math.round(angle / (Math.PI / 4)) % 4;
+      }
+    }
+    return bins;
+  }
+  function thinRidges(mag, dirs, width, height) {
+    const thin = new Uint8Array(width * height);
+    const at = (x, y) => mag[Math.min(height - 1, Math.max(0, y)) * width + Math.min(width - 1, Math.max(0, x))] ?? 0;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const i = y * width + x;
+        const [dx, dy] = directionOffset(dirs[i] ?? 0);
+        const m = mag[i] ?? 0;
+        thin[i] = m >= at(x - dx, y - dy) && m >= at(x + dx, y + dy) ? 1 : 0;
+      }
+    }
+    return thin;
+  }
+  function keepEdges(mag, thin, width, height, low, high) {
+    const kept = new Uint8Array(width * height);
+    const stack = [];
+    for (let i = 0; i < thin.length; i++) {
+      if (thin[i] && (mag[i] ?? 0) >= high) {
+        kept[i] = 1;
+        stack.push(i);
+      }
+    }
+    while (stack.length > 0) {
+      const i = stack.pop();
+      if (i === void 0) break;
+      const x = i % width;
+      const y = Math.floor(i / width);
+      for (let oy = -1; oy <= 1; oy++) {
+        const ny = y + oy;
+        if (ny < 0 || ny >= height) continue;
+        for (let ox = -1; ox <= 1; ox++) {
+          if (ox === 0 && oy === 0) continue;
+          const nx = x + ox;
+          if (nx < 0 || nx >= width) continue;
+          const j = ny * width + nx;
+          if (!kept[j] && thin[j] && (mag[j] ?? 0) >= low) {
+            kept[j] = 1;
+            stack.push(j);
+          }
+        }
+      }
+    }
+    return kept;
+  }
+  function strokeCoverage(kept, width, height, weight) {
+    const half = weight / 2;
+    const axis = (d) => Math.min(1, Math.max(0, half - Math.abs(d) + 0.5));
+    const coverage = new Float32Array(width * height);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        let v = 0;
+        for (let oy = -1; oy <= 1; oy++) {
+          const ny = y + oy;
+          if (ny < 0 || ny >= height) continue;
+          const cy = axis(oy);
+          if (cy <= 0) continue;
+          for (let ox = -1; ox <= 1; ox++) {
+            const nx = x + ox;
+            if (nx < 0 || nx >= width || !kept[ny * width + nx]) continue;
+            const cx = axis(ox);
+            if (cx > 0) v = Math.max(v, cx * cy);
+          }
+        }
+        coverage[y * width + x] = v;
+      }
+    }
+    return coverage;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let source = null;
+    let failed = false;
+    let plateW = 0;
+    let plateH = 0;
+    let cancel = () => void 0;
+    let undoAspect = () => void 0;
+    let removeNote = null;
+    const work = document.createElement("canvas");
+    const workCtx = work.getContext("2d", { willReadFrequently: true });
+    const plate = createPlate();
+    const surface = createCanvas(host, { onResize: () => resized() });
+    const canvas = surface.canvas;
+    const ctx = canvas.getContext("2d");
+    const palette = watchPalette(host, () => prepare());
+    function load() {
+      cancel();
+      failed = false;
+      cancel = loadSource(props.src, use, () => {
+        source = null;
+        failed = true;
+        prepare();
+      });
+    }
+    function use(next) {
+      source = next;
+      undoAspect();
+      undoAspect = fitHostAspect(host, next.width, next.height);
+      prepare();
+    }
+    function setNote(on) {
+      if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+      if (!on && removeNote) {
+        removeNote();
+        removeNote = null;
+      }
+    }
+    function plateSize() {
+      const w = Math.max(1, surface.cssWidth);
+      const h = Math.max(1, surface.cssHeight);
+      const cap = source ? Math.min(WORK_MAX, Math.max(source.width, source.height)) : WORK_MAX;
+      const scale = Math.min(1, cap / Math.max(w, h));
+      return [Math.max(1, Math.round(w * scale)), Math.max(1, Math.round(h * scale))];
+    }
+    function prepare() {
+      const [w, h] = plateSize();
+      plateW = w;
+      plateH = h;
+      if (workCtx && source && !failed) {
+        work.width = w;
+        work.height = h;
+        workCtx.imageSmoothingEnabled = false;
+        workCtx.clearRect(0, 0, w, h);
+        const box = fitRect(source.width, source.height, w, h, fitFor(source, props.fit));
+        workCtx.drawImage(source.image, box.x, box.y, box.w, box.h);
+        const field = contrastField(workCtx.getImageData(0, 0, w, h).data, w, h, props.contrast);
+        const smoothed = boxMean(field, w, h, props.smooth);
+        const mag = sobelEdges(smoothed, w, h);
+        const dirs = edgeDirections(smoothed, w, h);
+        const thin = thinRidges(mag, dirs, w, h);
+        const lo = Math.min(props.low, props.high);
+        const hi = Math.max(props.low, props.high);
+        const kept = keepEdges(mag, thin, w, h, lo, hi);
+        const coverage = strokeCoverage(kept, w, h, props.weight);
+        if (props.invert) for (let i = 0; i < coverage.length; i++) coverage[i] = 1 - (coverage[i] ?? 0);
+        const fg = parseColor(palette.colors.fg);
+        plate.put(inkPixels(coverage, w, h, fg));
+      }
+      paint();
+    }
+    function resized() {
+      const [w, h] = plateSize();
+      if (w !== plateW || h !== plateH) prepare();
+      else paint();
+    }
+    function paint() {
+      const w = Math.max(1, surface.cssWidth);
+      const h = Math.max(1, surface.cssHeight);
+      setNote(failed);
+      if (ctx) {
+        ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        if (source && !failed) {
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(plate.canvas, 0, 0, w, h);
+        }
+      }
+      if (source || failed) host.dataset.picaReady = "true";
+    }
+    labelHost(host, props.alt);
+    load();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        const recolored = palette.refresh();
+        labelHost(host, props.alt);
+        if (props.src !== before.src) {
+          load();
+        } else if (recolored || props.fit !== before.fit || props.contrast !== before.contrast || props.smooth !== before.smooth || props.low !== before.low || props.high !== before.high || props.weight !== before.weight || props.invert !== before.invert) {
+          prepare();
+        } else {
+          paint();
+        }
+      },
+      destroy() {
+        cancel();
+        setNote(false);
+        surface.destroy();
+        undoAspect();
+        palette.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaEdgeTraceImage.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>
