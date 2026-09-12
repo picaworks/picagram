@@ -1,12 +1,12 @@
 /** The catalog the site browses: public/catalog.json, written by scripts/build.ts. Never hand-edit that file. */
-import { CATEGORIES, CATEGORY_TITLES, type Category, type Control, type Meta } from "../../lib/meta";
+import { CATEGORIES, CATEGORY_TITLES, FACETS, type Category, type Control, type Facet, type Meta } from "../../lib/meta";
 import { TOKENS, type Token } from "../../lib/palette";
 import type { Json } from "../../lib/types";
 import type { PaletteProp } from "../../lib/use-pica";
 import generated from "../../public/catalog.json";
 
-export type { Category, Control, PaletteProp, Token };
-export { CATEGORIES, CATEGORY_TITLES, TOKENS };
+export type { Category, Control, Facet, PaletteProp, Token };
+export { CATEGORIES, CATEGORY_TITLES, FACETS, TOKENS };
 
 /** A prop value. Props are plain data by contract, so the inspector can set every one of them, including a
  *  textarea's string, a numbers control's array, or a json control's array or object. */
@@ -42,6 +42,7 @@ const FIXTURE: CatalogItem = {
   category: "effects",
   description: "A synthetic item scripts/check-site.ts uses to exercise every control type.",
   tags: [],
+  facets: ["static", "interactive"],
   wave: 0,
   animated: false,
   decorative: true,
@@ -94,18 +95,22 @@ export function groupByCategory(list: readonly CatalogItem[]): Group[] {
   })).filter((group) => group.items.length > 0);
 }
 
-/** Every tag in use, most common first, then alphabetical. */
-export function allTags(list: readonly CatalogItem[]): string[] {
-  const counts = new Map<string, number>();
-  for (const item of list) for (const tag of item.tags) counts.set(tag, (counts.get(tag) ?? 0) + 1);
-  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([tag]) => tag);
+/** How many items carry each facet. Counted over the whole catalog, so the chips read the same however the
+ *  list is filtered and never reflow while someone types. */
+export function facetCounts(list: readonly CatalogItem[]): Readonly<Record<Facet, number>> {
+  const counts = Object.fromEntries(FACETS.map((facet) => [facet, 0])) as Record<Facet, number>;
+  for (const item of list) for (const facet of item.facets) counts[facet] += 1;
+  return counts;
 }
 
-/** Whether an item survives the search box and the active tag chips. Every active tag must be present. */
-export function matches(item: CatalogItem, query: string, tags: readonly string[]): boolean {
-  if (!tags.every((tag) => item.tags.includes(tag))) return false;
+/** Whether an item survives the search box and the active facet chips. Every active facet must be present, and
+ *  the search reads an item's tags and facets as well as its words. */
+export function matches(item: CatalogItem, query: string, facets: readonly Facet[]): boolean {
+  if (!facets.every((facet) => item.facets.includes(facet))) return false;
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const haystack = [item.title, item.slug, item.description, item.category, ...item.tags].join(" ").toLowerCase();
+  const haystack = [item.title, item.slug, item.description, item.category, ...item.tags, ...item.facets]
+    .join(" ")
+    .toLowerCase();
   return q.split(/\s+/).every((word) => haystack.includes(word));
 }

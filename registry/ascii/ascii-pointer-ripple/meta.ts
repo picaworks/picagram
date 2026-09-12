@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "A glyph field of low-density noise that sends rippling rings outward from the pointer, as if the grid were water.",
   tags: ["pointer", "ripple", "noise", "interactive"],
+  facets: ["animated", "background", "interactive"],
   wave: 1,
   animated: true,
   decorative: true,

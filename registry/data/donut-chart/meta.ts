@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "data",
   description: "Parts of a whole drawn as a ring, either as SVG segments or a monospace glyph grid, with a hidden data table.",
   tags: ["chart", "donut", "svg", "glyph grid", "data table"],
+  facets: ["static", "chart"],
   wave: 3,
   animated: false,
   decorative: false,

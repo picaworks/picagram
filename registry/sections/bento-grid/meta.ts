@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "sections",
   description: "A CSS grid section that sizes its children by position into a feature, mosaic, or equal column pattern.",
   tags: ["grid", "layout", "bento", "section", "css"],
+  facets: ["static"],
   wave: 3,
   animated: false,
   decorative: false,

@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "shaders",
   description: "A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.",
   tags: ["gradient", "shader", "webgl", "background", "dither"],
+  facets: ["animated", "background", "shader", "webgl", "dither"],
   wave: 3,
   animated: true,
   decorative: true,

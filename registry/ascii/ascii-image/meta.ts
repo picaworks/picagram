@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.",
   tags: ["image", "static", "measured ramp", "shape matching"],
+  facets: ["static", "image"],
   wave: 1,
   animated: false,
   decorative: false,

@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "text-mode",
   description: "A text-mode loading indicator: a braille dot orbit, a progress bar, a shade pulse, or animated dots.",
   tags: ["loader", "spinner", "progress", "inline"],
+  facets: ["animated"],
   wave: 1,
   animated: true,
   decorative: false,

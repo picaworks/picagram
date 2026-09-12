@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "data",
   description: "Columns of cards that move between columns by keyboard or by pointer drag.",
   tags: ["kanban", "board", "cards", "drag", "listbox"],
+  facets: ["static", "interactive"],
   wave: 3,
   animated: false,
   decorative: false,

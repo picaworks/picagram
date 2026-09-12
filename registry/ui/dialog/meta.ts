@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ui",
   description: "A modal dialog on the native dialog element, with focus containment, Escape, and the top layer handled by the browser.",
   tags: ["dialog", "modal", "overlay", "ui"],
+  facets: ["static", "overlay", "interactive"],
   wave: 3,
   animated: false,
   decorative: false,

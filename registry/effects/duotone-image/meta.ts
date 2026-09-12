@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "effects",
   description: "An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.",
   tags: ["image", "static", "duotone", "canvas"],
+  facets: ["static", "image", "canvas"],
   wave: 2,
   animated: false,
   decorative: false,

@@ -14,6 +14,11 @@ export const BASE_PATH = new URL(SITE_URL).pathname.replace(/\/$/, "");
 /** Where `npx shadcn add` fetches registry items: the site's own /r, so it follows SITE_URL to the domain. */
 export const REGISTRY_BASE = `${SITE_URL}/r`;
 
+/** What a component with no credits reads as, in the markdown twins, the inspector, and the review sheet.
+ *  `scripts/review.mjs` is plain JavaScript and cannot import this, so it carries the words themselves and
+ *  test/license.test.ts checks the three agree. */
+export const ORIGINAL_LABEL = "Original to Picagram.";
+
 /** The most a component's vanilla bundle may weigh, minified and gzipped, shared runtime included. Sections
  *  inline the components they compose, and interactive and GPU components carry more runtime, so the budget
  *  depends on the category. Cited in AGENTS.md. See docs/decisions/0007. */

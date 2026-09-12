@@ -1,12 +1,41 @@
 /** Every component's meta agrees with its directory, its core, and its wrapper. See docs/testing/invariants.md. */
 import { readFile } from "node:fs/promises";
-import { basename, dirname } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { FACETS } from "../lib/meta";
 import { TOKENS } from "../lib/palette";
-import { loadAll } from "../scripts/catalog";
+import { loadAll, REGISTRY, takesImage } from "../scripts/catalog";
+import { CODE_HOSTS } from "./helpers";
 
 const entries = await loadAll();
 const MOTION = ["paused", "time", "seed"];
+/** Helpers from lib/chart.ts that actually plot. formatNumber alone labels a figure and makes no chart. */
+const PLOTTERS = ["dataTable", "linePath", "areaPath", "arcPath", "bandScale", "linearScale", "niceTicks"];
+
+function libsIn(source: string): string[] {
+  const out: string[] = [];
+  for (const match of source.matchAll(/from "(?:\.\.\/)+lib\/([\w-]+)"/g)) if (match[1]) out.push(match[1]);
+  return out;
+}
+
+/** What each component's code reaches. `own` is its own core's imports, which say how it draws. `deep` also
+ *  follows the cores a section composes, one level, because a section that mounts a shader ships that
+ *  shader's WebGL inside its own file. */
+const reach = new Map<string, { own: Set<string>; deep: Set<string>; plots: boolean }>();
+for (const entry of entries) {
+  const source = await readFile(entry.core, "utf8");
+  const sources = [source];
+  for (const match of source.matchAll(/from "\.\.\/\.\.\/([a-z-]+)\/([a-z0-9-]+)\/core"/g)) {
+    sources.push(await readFile(join(REGISTRY, String(match[1]), String(match[2]), "core.ts"), "utf8"));
+  }
+  const named = /import \{([^}]+)\} from "(?:\.\.\/)+lib\/chart"/.exec(source)?.[1] ?? "";
+  reach.set(entry.meta.slug, {
+    own: new Set(libsIn(source)),
+    deep: new Set(sources.flatMap(libsIn)),
+    plots: PLOTTERS.some((helper) => named.includes(helper)),
+  });
+}
+const reachOf = (slug: string) => reach.get(slug) ?? { own: new Set<string>(), deep: new Set<string>(), plots: false };
 
 describe.each(entries.map((e) => [e.meta.slug, e] as const))("%s", (_slug, entry) => {
   const { meta, defaults, docs } = entry;
@@ -82,5 +111,46 @@ describe.each(entries.map((e) => [e.meta.slug, e] as const))("%s", (_slug, entry
   it("has a one-sentence description", () => {
     expect(meta.description).toMatch(/^[A-Z][^.]*\.$/);
     expect(meta.description.length).toBeLessThanOrEqual(160);
+  });
+
+  // The catalog filters by these twelve and by nothing else, so each one has to keep meaning the same thing
+  // across 92 components. Every facet a machine can decide is decided here, from the component itself.
+  it("declares facets that match what it is", () => {
+    const facets = new Set(meta.facets);
+    expect(facets.size, "the same facet is listed twice").toBe(meta.facets.length);
+    for (const facet of meta.facets) expect(FACETS, `unknown facet "${facet}"`).toContain(facet);
+    const { own, deep } = reachOf(meta.slug);
+    expect(facets.has("animated"), "animated follows meta.animated").toBe(meta.animated);
+    expect(facets.has("static"), "static is the other half of animated").toBe(!meta.animated);
+    expect(facets.has("image"), "image means verify hands it a photograph").toBe(takesImage(entry));
+    expect(facets.has("webgl"), "webgl means lib/gl.ts ships in its file").toBe(deep.has("gl"));
+    expect(facets.has("shader"), "shader is the shaders category").toBe(meta.category === "shaders");
+    expect(facets.has("canvas"), "canvas means its own core draws on a 2D canvas").toBe(own.has("canvas") && !deep.has("gl"));
+  });
+
+  // These three say "at least". A component may carry one for a reason no machine can see, such as a
+  // sparkline that plots without lib/chart.ts, but it may never lack one its own code implies.
+  it("carries the facets its code implies", () => {
+    const facets = new Set(meta.facets);
+    const { own, plots } = reachOf(meta.slug);
+    const operated =
+      Object.keys(entry.events).length > 0 ||
+      (meta.interactions?.length ?? 0) > 0 ||
+      Object.keys(meta.controlled ?? {}).length > 0;
+    if (operated) expect(facets.has("interactive"), "it reports events or runs scripted interactions").toBe(true);
+    if (plots) expect(facets.has("chart"), "it plots with lib/chart.ts").toBe(true);
+    if (meta.category === "dither" || own.has("dither")) expect(facets.has("dither"), "it dithers").toBe(true);
+  });
+
+  // A technique is cited from a paper or a standard, and a look from the shot it was re-implemented from, so
+  // neither needs a page that shows code. Four credits in waves 1 and 2 predate the rule and stay as they are.
+  it("from wave 4 on, cites nothing that shows code", () => {
+    if (meta.wave < 4) return;
+    for (const credit of meta.credits) {
+      if (credit.relation === "port-of") continue; // Ported code names the repository its license travels from.
+      const host = new URL(credit.url).hostname.replace(/^www\./, "");
+      const named = CODE_HOSTS.find((code) => host === code || host.endsWith(`.${code}`));
+      expect(named, `${credit.relation} "${credit.title}" points at ${host}`).toBeUndefined();
+    }
   });
 });

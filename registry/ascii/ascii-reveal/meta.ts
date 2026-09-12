@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "Text that resolves from scrambled glyphs into its final characters, left to right.",
   tags: ["text", "reveal", "scramble", "decode"],
+  facets: ["animated", "text"],
   wave: 1,
   animated: true,
   decorative: false,

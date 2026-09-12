@@ -25,3 +25,5 @@
 - A component that keeps moving under prefers-reduced-motion.
 - Tailwind classes or `cn()` in a component.
 - A prop without a JSDoc line, or a component without credits.
+- A component whose `facets` do not match what it is, or a new tag used as a filter. The catalog filters by the twelve facets in `lib/meta.ts`, and tags stay free text.
+- A reference's image saved into the repository, or a shortlist row holding anything but text. Only the maintainer captures a reference.

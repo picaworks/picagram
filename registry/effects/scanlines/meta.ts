@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "effects",
   description: "A CRT scanline overlay in the ink color, with an optional soft band that rolls slowly down the screen.",
   tags: ["overlay", "crt", "scanlines", "css"],
+  facets: ["animated", "overlay"],
   wave: 2,
   animated: true,
   decorative: true,

@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "dither",
   description: "A two-tone gradient dithered through a Bayer matrix, drifting slowly like light across a surface.",
   tags: ["gradient", "ordered dither", "bayer matrix", "background"],
+  facets: ["animated", "background", "canvas", "dither"],
   wave: 2,
   animated: true,
   decorative: true,

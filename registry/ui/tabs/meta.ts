@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ui",
   description: "A tabbed view for switching between panels, with the active tab following keyboard focus.",
   tags: ["tabs", "navigation", "panels", "ui"],
+  facets: ["static", "interactive"],
   wave: 3,
   animated: false,
   decorative: false,

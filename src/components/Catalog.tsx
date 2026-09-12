@@ -1,9 +1,10 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { matches, type CatalogItem, type PaletteProp, type PropValue, type Props, type Token } from "@/lib/catalog";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { matches, type CatalogItem, type Facet, type PaletteProp, type PropValue, type Props, type Token } from "@/lib/catalog";
 import type { Ground } from "@/lib/ground";
 import { useHashSlug } from "@/lib/hash";
 import { diffProps } from "@/lib/props";
+import { markTheme, saveTheme, THEME_GROUND, THEME_KEY, type Theme } from "@/lib/theme";
 import { Canvas, type Reveal } from "./Canvas";
 import type { FrameWidth } from "./Frame";
 import { Inspector, type EventEntry } from "./Inspector";
@@ -27,7 +28,7 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
   const slugs = useMemo(() => new Set(items.map((item) => item.slug)), [items]);
   const [selected, setSelected, external] = useHashSlug(slugs);
   const [query, setQuery] = useState("");
-  const [activeTags, setActiveTags] = useState<readonly string[]>([]);
+  const [activeFacets, setActiveFacets] = useState<readonly Facet[]>([]);
   /** Per slug, the props the user changed from the demo state, so switching frames and back keeps the tuning. */
   const [overrides, setOverrides] = useState<Readonly<Record<string, Props>>>({});
   /** Per slug, the palette tokens the user set. */
@@ -38,7 +39,15 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
   const [ground, setGround] = useState<Ground>("ink");
   const [frameWidth, setFrameWidth] = useState<FrameWidth>(1280);
   const [reveal, setReveal] = useState<Reveal | null>(null);
+  /** Null until the client settles it, because the server cannot know which theme this reader gets. */
+  const [theme, setTheme] = useState<Theme | null>(null);
+  /** The inspector opens with the page. The choice is this visit's, not a saved one. */
+  const [inspectorOpen, setInspectorOpen] = useState(true);
   const searchRef = useRef<HTMLInputElement>(null);
+  const collapseRef = useRef<HTMLButtonElement>(null);
+  const showInspectorRef = useRef<HTMLButtonElement>(null);
+  /** Set by a press on either collapse button, so focus follows the pane but a first render does not move it. */
+  const moveFocus = useRef(false);
   const handled = useRef(0);
 
   const item = useMemo(() => items.find((i) => i.slug === selected) ?? null, [items, selected]);
@@ -54,9 +63,25 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
    *  code tabs, so both always match what the controls show, however that state was reached. */
   const codeOverrides = useMemo(() => (item ? diffProps(item.defaults, values) : NONE), [item, values]);
   const visible = useMemo(
-    () => new Set(items.filter((i) => matches(i, query, activeTags)).map((i) => i.slug)),
-    [items, query, activeTags],
+    () => new Set(items.filter((i) => matches(i, query, activeFacets)).map((i) => i.slug)),
+    [items, query, activeFacets],
   );
+
+  // The theme, settled before the first paint. The head script has already set the attribute; reading it here
+  // tells React which button is pressed, and puts the attribute back after the development remount, which
+  // clears everything on the document element that React does not render itself.
+  useLayoutEffect(() => {
+    const current = markTheme(THEME_KEY);
+    setTheme(current);
+    setGround(THEME_GROUND[current]);
+  }, []);
+
+  // Focus follows the pane: the button that just disappeared hands it to the one that took its place.
+  useEffect(() => {
+    if (!moveFocus.current) return;
+    moveFocus.current = false;
+    (inspectorOpen ? collapseRef : showInspectorRef).current?.focus();
+  }, [inspectorOpen]);
 
   // A slug that arrived through the URL is brought into view once. Selections made on the canvas stay put.
   useEffect(() => {
@@ -148,13 +173,30 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
 
   const clearEvents = useCallback(() => setEvents([]), []);
 
-  const toggleTag = useCallback(
-    (tag: string) => setActiveTags((tags) => (tags.includes(tag) ? tags.filter((t) => t !== tag) : [...tags, tag])),
+  const toggleFacet = useCallback(
+    (facet: Facet) =>
+      setActiveFacets((list) => (list.includes(facet) ? list.filter((f) => f !== facet) : [...list, facet])),
     [],
   );
 
+  /** A tag is free text, so it goes to the search box rather than becoming a filter of its own. */
+  const searchTag = useCallback((tag: string) => setQuery(tag), []);
+
+  /** Every press applies the theme's ground again, the one showing included, so it is the way back after the
+   *  Ground control has moved on. */
+  const chooseTheme = useCallback((next: Theme) => {
+    saveTheme(next);
+    setTheme(next);
+    setGround(THEME_GROUND[next]);
+  }, []);
+
+  const toggleInspector = useCallback(() => {
+    moveFocus.current = true;
+    setInspectorOpen((open) => !open);
+  }, []);
+
   return (
-    <main className="app">
+    <main className="app" data-inspector={inspectorOpen ? "open" : "collapsed"}>
       <Layers
         items={items}
         visible={visible}
@@ -162,8 +204,10 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
         onSelect={selectInLayers}
         query={query}
         onQuery={setQuery}
-        activeTags={activeTags}
-        onToggleTag={toggleTag}
+        activeFacets={activeFacets}
+        onToggleFacet={toggleFacet}
+        theme={theme}
+        onTheme={chooseTheme}
         searchRef={searchRef}
       />
       <Canvas
@@ -179,6 +223,9 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
         liveDefaults={item?.defaults ?? null}
         liveOverrides={codeOverrides}
         livePalette={itemPalette}
+        inspectorOpen={inspectorOpen}
+        onShowInspector={toggleInspector}
+        showInspectorRef={showInspectorRef}
       />
       <Inspector
         item={item}
@@ -187,9 +234,13 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
         codeOverrides={codeOverrides}
         onChange={setProp}
         onReset={reset}
-        activeTags={activeTags}
-        onToggleTag={toggleTag}
+        activeFacets={activeFacets}
+        onToggleFacet={toggleFacet}
+        onSearchTag={searchTag}
         total={items.length}
+        open={inspectorOpen}
+        onCollapse={toggleInspector}
+        collapseRef={collapseRef}
         palette={itemPalette}
         onPaletteChange={setPaletteToken}
         onPaletteReset={resetPaletteToken}

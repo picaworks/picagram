@@ -50,3 +50,28 @@ export async function files(dir: string, suffixes: readonly string[]): Promise<s
 export function rel(file: string): string {
   return relative(ROOT, file).split(sep).join("/");
 }
+
+/** Hosts that show component or shader code, which a clean room may not read. A reference reaches Picagram as
+ *  metadata and then as a capture Rish takes himself, so neither a shortlist nor a credit may point at one.
+ *  cdn.dribbble.com is here for the other half of the same rule: it serves the artwork itself.
+ *  See docs/decisions/0009-metadata-shortlists.md. */
+export const CODE_HOSTS = [
+  "cdn.dribbble.com",
+  "github.com",
+  "gist.github.com",
+  "raw.githubusercontent.com",
+  "gitlab.com",
+  "codepen.io",
+  "codesandbox.io",
+  "stackblitz.com",
+  "shadertoy.com",
+  "npmjs.com",
+  "unpkg.com",
+  "jsdelivr.net",
+  "figma.com",
+  "21st.dev",
+  "reactbits.dev",
+  "aceternity.com",
+  "magicui.design",
+  "uiverse.io",
+] as const;

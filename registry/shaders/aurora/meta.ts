@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "shaders",
   description: "Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.",
   tags: ["aurora", "shader", "webgl", "background", "dither"],
+  facets: ["animated", "background", "shader", "webgl", "dither"],
   wave: 3,
   animated: true,
   decorative: true,

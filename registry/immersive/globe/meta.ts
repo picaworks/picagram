@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "immersive",
   description: "A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.",
   tags: ["3d", "rotation", "map", "canvas"],
+  facets: ["animated", "canvas"],
   wave: 3,
   animated: true,
   decorative: false,

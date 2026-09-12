@@ -14,6 +14,7 @@ import { readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, type Frame, type Page } from "@playwright/test";
+import { FACETS } from "../lib/meta";
 import { BASE_PATH } from "./config";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -146,6 +147,29 @@ async function select(page: Page, title: string): Promise<void> {
   await page.locator(".layers-row", { hasText: title }).first().click();
 }
 
+/** The element that has focus, as a short description a failure message can name. */
+async function focused(page: Page): Promise<string> {
+  return page.evaluate(() => {
+    const el = document.activeElement;
+    return el instanceof HTMLElement ? `${el.tagName.toLowerCase()}:${(el.textContent ?? "").trim()}` : "nothing";
+  });
+}
+
+/** Whether an element draws the page's focus ring right now. */
+async function focusRing(page: Page): Promise<string> {
+  return page.evaluate(() => {
+    const el = document.activeElement;
+    if (!(el instanceof HTMLElement)) return "nothing has focus";
+    const style = getComputedStyle(el);
+    return `${el.matches(":focus-visible") ? "focus-visible" : "focus"} ${style.outlineStyle} ${style.outlineWidth}`;
+  });
+}
+
+/** The name of the pressed button in a group of them, such as Theme or Ground. */
+async function pressed(page: Page, group: string): Promise<string> {
+  return (await page.getByRole("group", { name: group }).locator('[aria-pressed="true"]').first().textContent()) ?? "";
+}
+
 async function main(): Promise<void> {
   const built = spawnSync(join(ROOT, "node_modules", ".bin", "next"), ["build"], {
     cwd: ROOT,
@@ -158,14 +182,33 @@ async function main(): Promise<void> {
     return;
   }
 
-  const catalog = JSON.parse(await readFile(join(ROOT, "public", "catalog.json"), "utf8")) as { title: string; slug: string }[];
+  const catalog = JSON.parse(await readFile(join(ROOT, "public", "catalog.json"), "utf8")) as {
+    title: string;
+    slug: string;
+    facets: string[];
+    tags: string[];
+  }[];
   const site = await serve();
+  const home = `${site.url}${BASE_PATH}/`;
   const browser = await chromium.launch();
   const checks: Check[] = [];
   const consoleErrors: string[] = [];
+  /** Every URL any page asked for, so the whole run can be checked for a request that leaves the site. */
+  const requested: string[] = [];
 
-  try {
-    const page = await browser.newPage();
+  /** A fresh browser context, watched the same way as every other, loaded and hydrated. Playwright defaults to
+   *  a light system, so every page says which one it wants rather than inheriting a surprise. */
+  async function open(options: {
+    colorScheme?: "dark" | "light";
+    viewport?: { width: number; height: number };
+    /** Holds every script request until this resolves, which is how a page is read before it hydrates. */
+    holdScripts?: Promise<void>;
+  } = {}): Promise<Page> {
+    const context = await browser.newContext({
+      colorScheme: options.colorScheme ?? "dark",
+      ...(options.viewport ? { viewport: options.viewport } : {}),
+    });
+    const page = await context.newPage();
     page.on("console", (message) => {
       if (message.type() === "error") consoleErrors.push(message.text());
     });
@@ -173,8 +216,25 @@ async function main(): Promise<void> {
     page.on("response", (response) => {
       if (response.status() >= 400) consoleErrors.push(`${response.status()} for ${response.url()}`);
     });
-    await page.goto(`${site.url}${BASE_PATH}/`);
+    page.on("request", (request) => requested.push(request.url()));
+    const hold = options.holdScripts;
+    if (hold) await page.route(/\.js($|\?)/, async (route) => {
+      await hold;
+      await route.continue();
+    });
+    await page.goto(home, hold ? { waitUntil: "commit" } : {});
+    if (!hold) await hydrated(page);
+    return page;
+  }
+
+  /** The page has hydrated once the theme control reports which button is pressed, which only the client knows. */
+  async function hydrated(page: Page): Promise<void> {
     await page.waitForSelector(".layers-list");
+    await page.waitForSelector('[aria-label="Theme"] [aria-pressed="true"]');
+  }
+
+  try {
+    const page = await open({ colorScheme: "dark" });
 
     // Every catalog item is listed.
     const titles = await page.locator(".layers-row .layers-title").allTextContents();
@@ -280,13 +340,274 @@ async function main(): Promise<void> {
     }
     checks.push({ name: "select's valueChange reaches the events panel", ok: valueChangeShown, detail: valueChangeShown ? "a valueChange row naming dither appeared" : "no matching row" });
 
+    // The theme, before the page has hydrated: the head script has set the attribute, the stylesheet has
+    // painted the light ground, and no button reports itself pressed yet, so the rule keyed on the attribute
+    // is what makes the light button look pressed.
+    let release = () => {};
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const early = await open({ colorScheme: "light", holdScripts: held });
+    await early.waitForSelector(".layers-facets");
+    const before = await early.evaluate(() => {
+      const button = document.querySelector('[aria-label="Theme"] [data-theme="light"]');
+      return {
+        theme: document.documentElement.dataset.theme ?? "none",
+        ground: getComputedStyle(document.body).backgroundColor,
+        reported: document.querySelectorAll('[aria-label="Theme"] [aria-pressed="true"]').length,
+        lit: button ? getComputedStyle(button).backgroundColor : "no button",
+      };
+    });
+    release();
+    await hydrated(early);
+    const earlyOk =
+      before.theme === "light" && before.ground === "rgb(241, 241, 239)" && before.reported === 0 && before.lit === "rgb(10, 10, 10)";
+    checks.push({
+      name: "the theme is set before hydration",
+      ok: earlyOk,
+      detail: `data-theme ${before.theme}, body ${before.ground}, ${before.reported} buttons pressed, light button ${before.lit}`,
+    });
+
+    // The theme follows the system, and a light page opens on the light captures.
+    const dark = await open({ colorScheme: "dark" });
+    const darkTheme = await dark.evaluate(() => document.documentElement.dataset.theme);
+    const light = await open({ colorScheme: "light" });
+    const lightTheme = await light.evaluate(() => document.documentElement.dataset.theme);
+    checks.push({
+      name: "the theme follows the system",
+      ok: darkTheme === "dark" && lightTheme === "light",
+      detail: `a dark system gets ${darkTheme}, a light one gets ${lightTheme}`,
+    });
+
+    // Watched from the first request this time, because the board is held back until it has been fitted
+    // exactly so that no capture for the other ground is ever asked for.
+    const lightRequests: string[] = [];
+    light.on("request", (request) => lightRequests.push(request.url()));
+    await light.reload();
+    await hydrated(light);
+    const thumbs = await light.locator(".frame-thumb").evaluateAll((els) => els.map((el) => el.getAttribute("src") ?? ""));
+    const allLight = thumbs.length > 0 && thumbs.every((src) => src.endsWith("-light.jpg"));
+    const darkThumb = lightRequests.find((url) => /\/thumbs\/[^/]+\.jpg$/.test(url) && !url.endsWith("-light.jpg"));
+    checks.push({
+      name: "a light theme shows the light captures",
+      ok: allLight && darkThumb === undefined,
+      detail: allLight
+        ? darkThumb === undefined
+          ? `${thumbs.length} frames on ${thumbs[0]}, and no dark capture was asked for`
+          : `asked for ${darkThumb}`
+        : `${thumbs.find((src) => !src.endsWith("-light.jpg")) ?? "no frames"}`,
+    });
+
+    // A chosen theme outlives the page it was chosen on.
+    await light.getByRole("group", { name: "Theme" }).getByRole("button", { name: "dark" }).click();
+    const stored = await light.evaluate(() => localStorage.getItem("picagram-theme"));
+    await light.reload();
+    await hydrated(light);
+    const afterReload = await light.evaluate(() => document.documentElement.dataset.theme);
+    const reloadPressed = await pressed(light, "Theme");
+    checks.push({
+      name: "a chosen theme survives a reload",
+      ok: stored === "dark" && afterReload === "dark" && reloadPressed.trim() === "dark",
+      detail: `storage holds ${stored}, the reloaded page is ${afterReload} with ${reloadPressed.trim()} pressed`,
+    });
+
+    // Choosing a theme sets the ground; the Ground control can then move away from it, and the next press on
+    // the theme, the one already showing included, brings it back.
+    await light.getByRole("group", { name: "Theme" }).getByRole("button", { name: "light" }).click();
+    const groundFromTheme = (await pressed(light, "Ground")).trim();
+    await light.getByRole("group", { name: "Ground" }).getByRole("button", { name: "ink" }).click();
+    const groundAlone = (await pressed(light, "Ground")).trim();
+    const themeHeld = await light.evaluate(() => document.documentElement.dataset.theme);
+    await light.getByRole("group", { name: "Theme" }).getByRole("button", { name: "light" }).click();
+    const groundBack = (await pressed(light, "Ground")).trim();
+    checks.push({
+      name: "a theme sets the ground, which then diverges",
+      ok: groundFromTheme === "paper" && groundAlone === "ink" && themeHeld === "light" && groundBack === "paper",
+      detail: `light gives ${groundFromTheme}, the control moves it to ${groundAlone} with the theme still ${themeHeld}, and pressing light again gives ${groundBack}`,
+    });
+
+    // The filter is the twelve facets, in the order lib/meta.ts lists them, and the Tags fold is gone.
+    const chips = (await dark.locator(".layers-facets .chip").allTextContents()).map((text) => text.replace(/\s+\d+$/, "").trim());
+    const tagsFold = await dark.locator(".layers").getByText("Tags", { exact: true }).count();
+    checks.push({
+      name: "the filter is the twelve facets",
+      ok: chips.join(",") === FACETS.join(",") && tagsFold === 0,
+      detail: chips.join(",") === FACETS.join(",") ? `${chips.length} chips in order, no Tags fold` : chips.join(","),
+    });
+
+    // A facet narrows the list, and a tag, which is not a facet, is still found by the search box.
+    const facet = "chart";
+    const facetCount = catalog.filter((item) => item.facets.includes(facet)).length;
+    await dark.locator(".layers-facets .chip", { hasText: new RegExp(`^${facet} `) }).click();
+    const filtered = await dark.locator(".layers-row").count();
+    const counter = ((await dark.locator(".layers-brand .label").first().textContent()) ?? "").trim();
+    checks.push({
+      name: "a facet filters the list",
+      ok: filtered === facetCount && counter.startsWith(`${facetCount} of `),
+      detail: `${facet} leaves ${filtered} of the ${facetCount} it counts, and the header reads ${counter}`,
+    });
+    await dark.locator(".layers-facets .chip", { hasText: new RegExp(`^${facet} `) }).click();
+
+    const haystack = (item: (typeof catalog)[number]) =>
+      [item.title, item.slug, ...item.tags, ...item.facets].join(" ").toLowerCase();
+    let owner = catalog[0];
+    let uniqueTag = "";
+    for (const item of catalog) {
+      const only = item.tags.find((tag) => catalog.filter((other) => haystack(other).includes(tag.toLowerCase())).length === 1);
+      if (only) {
+        owner = item;
+        uniqueTag = only;
+        break;
+      }
+    }
+    await dark.getByRole("searchbox", { name: "Search components" }).fill(uniqueTag);
+    const found = await dark.locator(".layers-row .layers-title").allTextContents();
+    checks.push({
+      name: "a tag search finds its component",
+      ok: found.length === 1 && found[0] === owner?.title,
+      detail: `${JSON.stringify(uniqueTag)} finds ${found.join(", ") || "nothing"}`,
+    });
+
+    // A tag in the inspector is not a filter: it fills the search box.
+    await dark.getByRole("searchbox", { name: "Search components" }).fill("");
+    await select(dark, owner?.title ?? "");
+    const tagGroup = dark.getByRole("group", { name: "Tags, each searches the catalog" });
+    const firstTag = ((await tagGroup.getByRole("button").first().textContent()) ?? "").trim();
+    await tagGroup.getByRole("button").first().click();
+    const searchValue = await dark.getByRole("searchbox", { name: "Search components" }).inputValue();
+    checks.push({
+      name: "an inspector tag fills the search box",
+      ok: searchValue === firstTag && firstTag.length > 0,
+      detail: `pressing ${JSON.stringify(firstTag)} put ${JSON.stringify(searchValue)} in the box`,
+    });
+
+    // The wordmark stands on the search field's gutter, at three screen pixels per pixel of the mark.
+    const mark = await dark.locator(".layers-brand svg").boundingBox();
+    const field = await dark.getByRole("searchbox", { name: "Search components" }).boundingBox();
+    const aligned = mark && field ? Math.abs(mark.x - field.x) <= 0.5 : false;
+    checks.push({
+      name: "the wordmark is 39px and on the field's gutter",
+      ok: mark?.height === 39 && aligned,
+      detail: `${mark?.height ?? 0}px tall, ${mark?.width ?? 0}px wide, left edge ${mark?.x ?? 0} against the field's ${field?.x ?? 0}`,
+    });
+
+    // Collapsing the inspector, and coming back.
+    const canvasOpen = (await dark.locator(".canvas").boundingBox())?.width ?? 0;
+    const paneWidth = (await dark.locator("#inspector").boundingBox())?.width ?? 0;
+    await dark.getByRole("button", { name: "collapse inspector" }).click();
+    await dark.waitForSelector('.app[data-inspector="collapsed"]');
+    const canvasWide = (await dark.locator(".canvas").boundingBox())?.width ?? 0;
+    const wentTo = await focused(dark);
+    checks.push({
+      name: "collapsing widens the canvas",
+      ok: Math.abs(canvasWide - canvasOpen - paneWidth) < 1 && wentTo === "button:show inspector",
+      detail: `the canvas went from ${canvasOpen} to ${canvasWide} as the ${paneWidth}px pane closed, and focus went to ${wentTo}`,
+    });
+
+    await select(dark, "ASCII Rain");
+    const stillCollapsed = await dark.locator(".app").getAttribute("data-inspector");
+    checks.push({
+      name: "selecting a component leaves it collapsed",
+      ok: stillCollapsed === "collapsed" && !(await dark.locator("#inspector").isVisible()),
+      detail: `the pane is ${stillCollapsed} after a pick from the list`,
+    });
+
+    await dark.getByRole("button", { name: "show inspector" }).click();
+    const cameBack = await dark.locator("#inspector").isVisible();
+    const wentBack = await focused(dark);
+    checks.push({
+      name: "restoring moves focus back",
+      ok: cameBack && wentBack === "button:collapse inspector",
+      detail: `the pane is ${cameBack ? "open" : "still closed"} and focus is on ${wentBack}`,
+    });
+
+    // Both new controls, from the keyboard only. The theme buttons are the first tab stop on the page.
+    const keys = await open({ colorScheme: "dark" });
+    await keys.keyboard.press("Tab");
+    const firstStop = await focused(keys);
+    const themeRing = await focusRing(keys);
+    await keys.keyboard.press("Tab");
+    await keys.keyboard.press("Enter");
+    const keyedTheme = await keys.evaluate(() => document.documentElement.dataset.theme);
+    await keys.getByRole("button", { name: "collapse inspector" }).press("Enter");
+    const collapsedRing = await focusRing(keys);
+    const onRestore = await focused(keys);
+    await keys.keyboard.press("Enter");
+    const restoredRing = await focusRing(keys);
+    const onCollapse = await focused(keys);
+    const ringOk = [themeRing, collapsedRing, restoredRing].every((ring) => ring === "focus-visible solid 2px");
+    checks.push({
+      name: "the new controls work from the keyboard",
+      ok:
+        firstStop === "button:dark" &&
+        keyedTheme === "light" &&
+        onRestore === "button:show inspector" &&
+        onCollapse === "button:collapse inspector" &&
+        ringOk,
+      detail: `first stop ${firstStop}, Enter gives ${keyedTheme}, then ${onRestore} and ${onCollapse}, each ${themeRing}`,
+    });
+
+    // The stacked layout, where the inspector is simply hidden rather than a column of zero width.
+    const small = await open({ colorScheme: "dark", viewport: { width: 390, height: 844 } });
+    const stacked = await small.evaluate(() => {
+      const canvas = document.querySelector(".canvas")?.getBoundingClientRect();
+      const layers = document.querySelector(".layers")?.getBoundingClientRect();
+      const root = document.documentElement;
+      return {
+        sameColumn: canvas && layers ? Math.abs(canvas.left - layers.left) < 1 : false,
+        canvasFirst: canvas && layers ? canvas.top < layers.top : false,
+        overflow: root.scrollWidth - root.clientWidth,
+      };
+    });
+    await small.getByRole("button", { name: "collapse inspector" }).click();
+    const smallCollapsed = !(await small.locator("#inspector").isVisible());
+    const overflowCollapsed = await small.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    await small.getByRole("button", { name: "show inspector" }).click();
+    const smallRestored = await small.locator("#inspector").isVisible();
+    checks.push({
+      name: "390 by 844 stacks and collapses",
+      ok:
+        stacked.sameColumn &&
+        stacked.canvasFirst &&
+        stacked.overflow <= 0 &&
+        overflowCollapsed <= 0 &&
+        smallCollapsed &&
+        smallRestored,
+      detail: `canvas above layers in one column, ${stacked.overflow}px of sideways overflow and ${overflowCollapsed}px while collapsed, collapse ${smallCollapsed ? "hides" : "keeps"} the pane and it comes back ${smallRestored ? "open" : "closed"}`,
+    });
+
+    // The footer closes with the copyright, against the right edge.
+    const footer = await dark.evaluate(() => {
+      const bar = document.querySelector(".status");
+      const last = bar?.lastElementChild;
+      if (!bar || !(last instanceof HTMLElement)) return null;
+      return {
+        text: (last.textContent ?? "").trim(),
+        gap: bar.getBoundingClientRect().right - parseFloat(getComputedStyle(bar).paddingRight) - last.getBoundingClientRect().right,
+      };
+    });
+    const year = new Date().getUTCFullYear();
+    checks.push({
+      name: "the footer ends with the copyright",
+      ok: footer !== null && footer.text === `© ${year} Picagram` && Math.abs(footer.gap) < 1,
+      detail: footer ? `${JSON.stringify(footer.text)}, ${footer.gap.toFixed(1)}px from the right edge` : "no footer",
+    });
+
+    // Nothing the site draws comes from anywhere else.
+    const foreign = [...new Set(requested)].filter((url) => /^https?:/.test(url) && !url.startsWith(site.url));
+    checks.push({
+      name: "every request stays on the site",
+      ok: foreign.length === 0,
+      detail: foreign[0] ?? `${new Set(requested).size} URLs, all on ${site.url}`,
+    });
+
     checks.push({ name: "no console errors", ok: consoleErrors.length === 0, detail: consoleErrors[0] ?? "none" });
   } finally {
     await browser.close();
     await site.close();
   }
 
-  for (const c of checks) console.log(`${c.ok ? "pass" : "FAIL"}  ${c.name.padEnd(40)} ${c.detail}`);
+  for (const c of checks) console.log(`${c.ok ? "pass" : "FAIL"}  ${c.name.padEnd(46)} ${c.detail}`);
   const failed = checks.filter((c) => !c.ok).length;
   console.log(`\n${checks.length - failed} of ${checks.length} passed`);
   if (failed > 0) process.exitCode = 1;

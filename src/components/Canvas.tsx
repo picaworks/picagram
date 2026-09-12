@@ -9,6 +9,7 @@ import {
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
 } from "react";
 import { groupByCategory, type CatalogItem, type PaletteProp, type Props } from "@/lib/catalog";
 import { GROUNDS, type Ground } from "@/lib/ground";
@@ -109,6 +110,10 @@ interface CanvasProps {
   liveDefaults: Props | null;
   liveOverrides: Props;
   livePalette: PaletteProp;
+  /** While the inspector is collapsed, the bar carries the button that brings it back. */
+  inspectorOpen: boolean;
+  onShowInspector: () => void;
+  showInspectorRef: RefObject<HTMLButtonElement | null>;
 }
 
 /** The center pane: a board of frames on a surface that pans and zooms. */
@@ -120,10 +125,15 @@ export function Canvas(p: CanvasProps) {
   viewRef.current = view;
   /** The page's one gesture: a button or a reveal eases to its zoom. Wheel, drag, and pinch never do. */
   const [eased, setEased] = useState(false);
+  /** The board stays out of the document until it has been fitted once, so nothing is drawn at the opening
+   *  guess and no thumbnail is fetched for a ground the page is about to leave. */
+  const [fitted, setFitted] = useState(false);
   const [dragging, setDragging] = useState(false);
   /** While Cmd, Ctrl, or Space is held, the live iframe stops taking pointer events, so wheel and drag reach the board. */
   const [passthrough, setPassthrough] = useState(false);
   const touched = useRef(false);
+  /** The viewport's last measured size, so a resize can hold a touched board's centre. */
+  const measured = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
   const drag = useRef<Drag | null>(null);
   const pointers = useRef(new Map<number, Point>());
   const pinch = useRef<Pinch | null>(null);
@@ -177,6 +187,7 @@ export function Canvas(p: CanvasProps) {
     const k = clamp(Math.min(1, (w - 2 * PAD) / board.width));
     setEased(false);
     setView({ k, x: (w - board.width * k) / 2, y: PAD });
+    setFitted(true);
   }, [board, size]);
 
   useLayoutEffect(() => {
@@ -187,13 +198,26 @@ export function Canvas(p: CanvasProps) {
     if (p.reveal) revealFrame(p.reveal.slug);
   }, [p.reveal, revealFrame]);
 
+  // The viewport, not the window, says when to refit, so collapsing the inspector is handled like any other
+  // change of size. An untouched board refits; a board that has been panned or zoomed keeps its centre.
   useEffect(() => {
-    const onResize = () => {
-      if (!touched.current) fitStart();
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [fitStart]);
+    const el = viewportRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(() => {
+      const { w, h } = size();
+      const last = measured.current;
+      measured.current = { w, h };
+      if (!w || !h) return;
+      if (!touched.current) {
+        fitStart();
+        return;
+      }
+      if (!last.w || !last.h) return;
+      setView((v) => ({ ...v, x: v.x + (w - last.w) / 2, y: v.y + (h - last.h) / 2 }));
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [fitStart, size]);
 
   useEffect(() => {
     const held = new Set<string>();
@@ -395,6 +419,19 @@ export function Canvas(p: CanvasProps) {
               </button>
             ))}
           </div>
+          {/* This button exists only while the pane is collapsed, so its name and its aria-expanded never change. */}
+          {!p.inspectorOpen && (
+            <button
+              ref={p.showInspectorRef}
+              type="button"
+              className="btn"
+              aria-controls="inspector"
+              aria-expanded={false}
+              onClick={p.onShowInspector}
+            >
+              show inspector
+            </button>
+          )}
         </div>
       </div>
       <div
@@ -409,7 +446,13 @@ export function Canvas(p: CanvasProps) {
         onPointerCancel={endPointer}
         onKeyDown={onKeyDown}
       >
-        <div className="canvas-surface" data-eased={eased || undefined} data-labels={labels} style={surfaceStyle}>
+        <div
+          className="canvas-surface"
+          data-eased={eased || undefined}
+          data-labels={labels}
+          style={surfaceStyle}
+          hidden={!fitted}
+        >
           {board.sections.map((s) => (
             <div key={s.title} className="canvas-section label" style={{ top: sectionBottom(s.y) }} aria-hidden="true">
               {s.title} <span>{s.count}</span>

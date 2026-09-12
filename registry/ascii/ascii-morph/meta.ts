@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.",
   tags: ["text", "animated", "measured ramp", "morph", "transition"],
+  facets: ["animated", "text"],
   wave: 2,
   animated: true,
   decorative: true,

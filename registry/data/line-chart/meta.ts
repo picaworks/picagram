@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "data",
   description: "One or more series plotted as lines over a shared set of labels, in an svg or braille glyph look.",
   tags: ["chart", "line", "svg", "braille", "data"],
+  facets: ["static", "chart"],
   wave: 3,
   animated: false,
   decorative: false,

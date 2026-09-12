@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ui",
   description: "A single-choice select with a keyboard-driven listbox, styled after the WAI-ARIA select-only combobox pattern.",
   tags: ["select", "combobox", "dropdown", "listbox", "form"],
+  facets: ["static", "interactive"],
   wave: 3,
   animated: false,
   decorative: false,

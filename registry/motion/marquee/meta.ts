@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "motion",
   description: "Scrolls its children sideways in an endless loop, like a ticker.",
   tags: ["ticker", "scroll", "loop", "css"],
+  facets: ["animated"],
   wave: 3,
   animated: true,
   decorative: false,

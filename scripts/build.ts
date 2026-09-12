@@ -8,7 +8,7 @@ import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { CATEGORY_TITLES, type Category, type Meta } from "../lib/meta";
 import { loadAll, ROOT, type Entry } from "./catalog";
-import { BUDGETS, HOMEPAGE, LICENSE_LABEL, LICENSE_URL, REGISTRY_BASE, SITE_URL } from "./config";
+import { BUDGETS, HOMEPAGE, LICENSE_LABEL, LICENSE_URL, ORIGINAL_LABEL, REGISTRY_BASE, SITE_URL } from "./config";
 import { reactSingleFile, vanillaBundle, vanillaHtml, vanillaParts } from "./single-file";
 
 const run = promisify(execFile);
@@ -68,7 +68,7 @@ function propType(entry: Entry, name: string): string {
 }
 
 function creditLines(meta: Meta): string[] {
-  if (meta.original && meta.credits.length === 0) return ["Original to Picagram."];
+  if (meta.original && meta.credits.length === 0) return [ORIGINAL_LABEL];
   const verb = { "port-of": "Port of", "inspired-by": "Inspired by", technique: "Technique from" } as const;
   return meta.credits.map((c) => `- ${verb[c.relation]} [${c.title}](${c.url}) by ${c.author} (${c.license}).`);
 }

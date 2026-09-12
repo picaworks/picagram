@@ -4,14 +4,18 @@
 }
 
 :root {
-  /* The six tokens. --line draws hairlines and never carries text. --muted-2 measures 4.47:1 on ink, under the
-     4.5:1 floor, so it carries no text either: it paints the slider track. */
+  /* Two jobs, two sets of tokens. --ink and --paper are the grounds a component is captured on, so a frame
+     shows the same two colors whichever theme the page wears. The rest are the chrome's own: --bg and --fg
+     swap with the theme, --line draws hairlines and never carries text, and --muted-2 clears 3:1 on either
+     ground but not the 4.5:1 floor, so it carries no text either: it paints the slider track. */
   --ink: #0a0a0a;
   --paper: #f1f1ef;
+  --bg: #0a0a0a;
+  --fg: #f1f1ef;
   --line: #2c2c2c;
   --muted: #8d8d8a;
   --muted-2: #787874;
-  --amber: #e8a020;
+  --accent: #e8a020;
   --font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --layers: 260px;
   --inspector: 340px;
@@ -20,13 +24,24 @@
   color-scheme: dark;
 }
 
+/* The light theme. src/lib/theme.ts sets data-theme before the first paint, so the page never flashes dark.
+   Only the chrome's tokens move; the two grounds do not. */
+:root[data-theme="light"] {
+  --bg: #f1f1ef;
+  --fg: #0a0a0a;
+  --line: #cfcfcb;
+  --muted: #6a6a66;
+  --accent: #975c00;
+  color-scheme: light;
+}
+
 /* Reset */
 * { box-sizing: border-box; border-radius: 0; }
 html, body { height: 100%; }
 body {
   margin: 0;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--bg);
+  color: var(--fg);
   font: 13px/1.5 var(--font-mono);
   -webkit-font-smoothing: antialiased;
 }
@@ -35,7 +50,7 @@ button, input, select { font: inherit; color: inherit; background: none; border:
 button { cursor: pointer; text-align: left; }
 button:disabled { cursor: default; }
 :focus { outline: none; }
-:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 pre, code, kbd, output { font: inherit; }
 pre { margin: 0; white-space: pre; }
 img { display: block; }
@@ -62,12 +77,12 @@ h1, h2 { font-weight: 500; }
   line-height: 16px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--paper);
+  color: var(--fg);
   white-space: nowrap;
 }
 .btn:hover:not(:disabled) { border-color: var(--muted); }
 .btn:disabled { color: var(--muted); }
-.btn[data-state="copied"] { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+.btn[data-state="copied"] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
 .chip {
   display: inline-flex;
   align-items: center;
@@ -81,8 +96,8 @@ h1, h2 { font-weight: 500; }
   color: var(--muted);
   white-space: nowrap;
 }
-.chip:hover { color: var(--paper); }
-.chip[aria-pressed="true"] { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+.chip:hover { color: var(--fg); }
+.chip[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
 .seg { display: inline-flex; border: 1px solid var(--line); }
 .seg-item {
   height: 22px;
@@ -94,15 +109,19 @@ h1, h2 { font-weight: 500; }
   color: var(--muted);
 }
 .seg-item + .seg-item { border-left: 1px solid var(--line); }
-.seg-item:hover { color: var(--paper); }
-.seg-item[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+.seg-item:hover { color: var(--fg); }
+.seg-item[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
 .seg-item:focus-visible { outline-offset: -2px; }
+/* The theme buttons, before hydration: no button reports itself pressed yet, so the root's own attribute,
+   which the head script set, paints the one in force. */
+:root[data-theme="dark"] .seg-item[data-theme="dark"],
+:root[data-theme="light"] .seg-item[data-theme="light"] { background: var(--fg); color: var(--bg); }
 .field {
   width: 100%;
   height: 26px;
   padding: 0;
   border-bottom: 1px solid var(--line);
-  color: var(--paper);
+  color: var(--fg);
 }
 .field::placeholder { color: var(--muted); opacity: 1; }
 .field:focus-visible { outline-offset: 2px; }
@@ -125,6 +144,9 @@ kbd {
   height: calc(100dvh - var(--bar));
   min-height: 0;
 }
+/* A collapsed inspector gives its column to the canvas. The aside itself is hidden, which is all the stacked
+   layout under 900px needs. */
+.app[data-inspector="collapsed"] { --inspector: 0px; }
 .layers {
   grid-area: layers;
   display: flex;
@@ -162,19 +184,22 @@ kbd {
   overflow-x: auto;
 }
 .status a { text-decoration: none; }
-.status a:hover { color: var(--paper); }
+.status a:hover { color: var(--fg); }
+/* The copyright closes the row, so it sits against the right edge whatever else the bar carries. */
+.status-copy { margin-left: auto; }
 
-/* Layers */
+/* Layers. The wordmark stands on its own row, on the same gutter as the search field below it, so its ink
+   starts exactly where the field's left edge is. */
 .layers-brand {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 12px;
   flex: none;
-  height: 40px;
-  padding: 0 var(--gutter);
+  padding: 14px var(--gutter) 12px;
   border-bottom: 1px solid var(--line);
 }
-.layers-brand svg { flex: none; }
+.layers-brand svg { display: block; flex: none; }
+.layers-brand-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .layers-search {
   position: relative;
   display: flex;
@@ -185,7 +210,8 @@ kbd {
 }
 .layers-search .field { padding-right: 56px; }
 .layers-search kbd { position: absolute; right: var(--gutter); }
-.layers-tags {
+/* The twelve facets, always open, so the filter is one glance rather than a fold. */
+.layers-facets {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -193,8 +219,8 @@ kbd {
   padding: 10px var(--gutter);
   border-bottom: 1px solid var(--line);
 }
-.layers-tags[hidden] { display: none; }
-.layers-filter { flex: none; }
+/* The count follows a real space, so a chip reads as two words to a screen reader as well as to an eye. */
+.chip-count { margin-left: 2px; }
 .layers-list { flex: 1; }
 .layers-head {
   display: flex;
@@ -216,14 +242,14 @@ kbd {
   height: 28px;
   padding: 0 var(--gutter);
   color: var(--muted);
-  border-top: 1px solid var(--ink);
-  border-bottom: 1px solid var(--ink);
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
 }
-.layers-row:hover { color: var(--paper); }
+.layers-row:hover { color: var(--fg); }
 .layers-row:focus-visible { outline-offset: -2px; }
-.layers-row[aria-current="true"] { color: var(--paper); border-color: var(--line); }
+.layers-row[aria-current="true"] { color: var(--fg); border-color: var(--line); }
 .layers-marker { flex: none; width: 6px; height: 6px; }
-.layers-row[aria-current="true"] .layers-marker { background: var(--amber); }
+.layers-row[aria-current="true"] .layers-marker { background: var(--accent); }
 .layers-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .layers-note { margin-left: auto; font-size: 11px; color: var(--muted); }
 .layers-empty { padding: 12px var(--gutter); color: var(--muted); }
@@ -244,7 +270,7 @@ kbd {
   min-width: 4ch;
   margin-left: 6px;
   text-align: right;
-  color: var(--paper);
+  color: var(--fg);
   font-variant-numeric: tabular-nums;
 }
 .canvas-hint { margin-left: auto; white-space: nowrap; }
@@ -255,6 +281,7 @@ kbd {
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  background: var(--bg);
   touch-action: none;
   cursor: grab;
   user-select: none;
@@ -287,8 +314,8 @@ kbd {
   position: absolute;
   outline: calc(1px * var(--k)) solid var(--line);
 }
-.frame[data-selected] { outline-color: var(--amber); }
-.frame:focus-visible { outline: calc(2px * var(--k)) solid var(--amber); outline-offset: 0; }
+.frame[data-selected] { outline-color: var(--accent); }
+.frame:focus-visible { outline: calc(2px * var(--k)) solid var(--accent); outline-offset: 0; }
 .frame[data-dimmed] .frame-thumb,
 .frame[data-dimmed] .frame-missing { opacity: 0.3; }
 .frame[data-dimmed] .frame-title { color: var(--muted); }
@@ -306,7 +333,7 @@ kbd {
   white-space: nowrap;
 }
 .frame-title, .frame-slug { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.frame-title { flex: 0 1 auto; color: var(--paper); }
+.frame-title { flex: 0 1 auto; color: var(--fg); }
 .frame-slug { flex: 0 4 auto; color: var(--muted); }
 .frame-thumb { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 .frame-missing {
@@ -319,6 +346,7 @@ kbd {
   text-transform: uppercase;
   color: var(--muted);
 }
+/* A stage carries a ground, not the chrome's surface, so it reads the two grounds whatever the theme is. */
 .frame-stage {
   display: flex;
   justify-content: center;
@@ -332,6 +360,19 @@ kbd {
 .canvas-viewport[data-passthrough] .frame-live { pointer-events: none; }
 
 /* Inspector */
+.inspector-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 40px;
+  padding: 0 var(--gutter);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
 .inspector-empty {
   display: flex;
   flex-direction: column;
@@ -339,7 +380,7 @@ kbd {
   padding: 14px var(--gutter);
   color: var(--muted);
 }
-.inspector-empty .label + p { color: var(--paper); }
+.inspector-empty .label + p { color: var(--fg); }
 .inspector-head {
   display: flex;
   flex-direction: column;
@@ -399,12 +440,12 @@ input[type="range"]::-webkit-slider-thumb {
   width: 8px;
   height: 14px;
   margin-top: -6.5px;
-  background: var(--paper);
+  background: var(--fg);
   border: 0;
 }
-input[type="range"]::-moz-range-thumb { width: 8px; height: 14px; background: var(--paper); border: 0; }
+input[type="range"]::-moz-range-thumb { width: 8px; height: 14px; background: var(--fg); border: 0; }
 .control-check { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.control-check .label { color: var(--paper); }
+.control-check .label { color: var(--fg); }
 input[type="checkbox"] {
   -webkit-appearance: none;
   appearance: none;
@@ -413,7 +454,7 @@ input[type="checkbox"] {
   height: 12px;
   border: 1px solid var(--muted);
 }
-input[type="checkbox"]:checked { background: var(--paper); border-color: var(--paper); }
+input[type="checkbox"]:checked { background: var(--fg); border-color: var(--fg); }
 .control-select { position: relative; }
 .control-select select {
   -webkit-appearance: none;
@@ -422,10 +463,10 @@ input[type="checkbox"]:checked { background: var(--paper); border-color: var(--p
   height: 26px;
   padding-right: 20px;
   border-bottom: 1px solid var(--line);
-  color: var(--paper);
+  color: var(--fg);
   cursor: pointer;
 }
-.control-select select option { background: var(--ink); color: var(--paper); }
+.control-select select option { background: var(--bg); color: var(--fg); }
 .control-select::after {
   content: "▾";
   position: absolute;
@@ -442,8 +483,8 @@ input[type="checkbox"]:checked { background: var(--paper); border-color: var(--p
   resize: vertical;
 }
 .control-json { display: flex; flex-direction: column; gap: 4px; }
-.control-error { font-size: 11px; line-height: 15px; color: var(--amber); }
-.field[aria-invalid="true"] { border-color: var(--amber); }
+.control-error { font-size: 11px; line-height: 15px; color: var(--accent); }
+.field[aria-invalid="true"] { border-color: var(--accent); }
 .control-color { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; align-items: center; }
 input[type="color"] {
   -webkit-appearance: none;
@@ -470,9 +511,9 @@ input[type="color"]::-moz-color-swatch { border: 0; }
   letter-spacing: 0.04em;
   color: var(--muted);
 }
-.tablist [role="tab"]:hover { color: var(--paper); }
+.tablist [role="tab"]:hover { color: var(--fg); }
 .tablist [role="tab"]:focus-visible { outline-offset: -2px; }
-.tablist [role="tab"][aria-selected="true"] { color: var(--paper); }
+.tablist [role="tab"][aria-selected="true"] { color: var(--fg); }
 .tablist [role="tab"][aria-selected="true"]::after {
   content: "";
   position: absolute;
@@ -480,7 +521,7 @@ input[type="color"]::-moz-color-swatch { border: 0; }
   right: 0;
   bottom: -1px;
   height: 1px;
-  background: var(--paper);
+  background: var(--fg);
 }
 .tabpanel { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; }
 .code-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 24px; }
@@ -498,7 +539,7 @@ input[type="color"]::-moz-color-swatch { border: 0; }
 .tabs-note { font-size: 12px; color: var(--muted); }
 .tabs-links { display: flex; flex-direction: column; gap: 6px; }
 .tabs-links li { display: flex; flex-direction: column; gap: 2px; }
-.tabs-links a { color: var(--paper); }
+.tabs-links a { color: var(--fg); }
 .tabs-links span { font-size: 12px; color: var(--muted); }
 .credits { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
 .credits li { display: flex; flex-direction: column; gap: 2px; }
@@ -521,11 +562,11 @@ input[type="color"]::-moz-color-swatch { border: 0; }
   gap: 10px;
   align-items: baseline;
   padding: 5px 0;
-  border-top: 1px solid var(--ink);
+  border-top: 1px solid transparent;
   font-size: 12px;
 }
 .events-row:first-child { border-top: 0; }
-.events-name { color: var(--paper); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.events-name { color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .events-detail {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -543,7 +584,11 @@ input[type="color"]::-moz-color-swatch { border: 0; }
   }
   .canvas { height: 60vh; min-height: 360px; border-bottom: 1px solid var(--line); }
   .canvas-bar { flex-wrap: wrap; height: auto; min-height: 40px; padding: 8px var(--gutter); gap: 8px var(--gutter); overflow: visible; }
+  /* The restore button joins this row when the inspector closes, which is more than one line holds here. */
+  .canvas-live { flex-wrap: wrap; }
   .canvas-hint { display: none; }
   .layers { overflow: visible; border-right: 0; border-bottom: 1px solid var(--line); }
   .inspector { overflow: visible; border-left: 0; }
+  /* The footer wraps here rather than scrolling sideways, so nothing hides off the right edge. */
+  .status { flex-wrap: wrap; gap: 8px 16px; height: auto; min-height: var(--bar); padding: 8px var(--gutter); overflow-x: visible; }
 }

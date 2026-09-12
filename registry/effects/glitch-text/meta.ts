@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "effects",
   description: "Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.",
   tags: ["text", "glitch", "burst", "distortion"],
+  facets: ["animated", "text"],
   wave: 2,
   animated: true,
   decorative: false,

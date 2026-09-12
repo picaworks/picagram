@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "A headline rastered from a display face, then redrawn as a grid of glyphs chosen by measured ink and shape.",
   tags: ["text", "headline", "static", "measured ramp", "shape matching"],
+  facets: ["static", "text"],
   wave: 1,
   animated: false,
   decorative: false,

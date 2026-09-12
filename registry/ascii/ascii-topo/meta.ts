@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "Contour lines of a slowly drifting noise height field, drawn like a topographic survey in text.",
   tags: ["noise", "contours", "marching squares", "topography"],
+  facets: ["animated", "background"],
   wave: 2,
   animated: true,
   decorative: true,

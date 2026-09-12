@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "sections",
   description: "A page hero that adds calls to action and a composed background behind a headline and copy.",
   tags: ["hero", "landing", "section", "cta", "background"],
+  facets: ["animated", "interactive", "webgl"],
   wave: 3,
   animated: true,
   decorative: false,
