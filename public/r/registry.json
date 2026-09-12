@@ -344,6 +344,69 @@
       }
     },
     {
+      "name": "bullet-chart",
+      "type": "registry:component",
+      "title": "Bullet Chart",
+      "description": "Rows showing measures as bars over muted bands that give qualitative ranges, with targets marked as ticks.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/bullet-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Bullet Graph Design Specification",
+            "author": "Stephen Few",
+            "url": "https://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf",
+            "license": "Specification, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "candlestick-chart",
+      "type": "registry:component",
+      "title": "Candlestick Chart",
+      "description": "Price series drawn as hollow or filled candles, with high and low wicks, from RFC 3339 timestamps and OHLC data.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/candlestick-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Japanese Candlestick Charting Techniques",
+            "author": "Steve Nison",
+            "url": "https://lccn.loc.gov/90022736",
+            "license": "Book"
+          },
+          {
+            "relation": "technique",
+            "title": "Date and Time on the Internet: Timestamps (RFC 3339)",
+            "author": "G. Klyne and C. Newman",
+            "url": "https://www.rfc-editor.org/rfc/rfc3339",
+            "license": "IETF standard"
+          }
+        ]
+      }
+    },
+    {
       "name": "donut-chart",
       "type": "registry:component",
       "title": "Donut Chart",
@@ -361,6 +424,62 @@
         "license": "MIT + Commons Clause",
         "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
         "credits": []
+      }
+    },
+    {
+      "name": "gauge-chart",
+      "type": "registry:component",
+      "title": "Gauge Chart",
+      "description": "One number against its range, drawn as an arc with threshold ticks and the value in the middle.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/gauge-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Dashboard Design for Real-Time Situation Awareness",
+            "author": "Stephen Few",
+            "url": "https://www.perceptualedge.com/articles/Whitepapers/Dashboard_Design.pdf",
+            "license": "Article"
+          }
+        ]
+      }
+    },
+    {
+      "name": "heatmap",
+      "type": "registry:component",
+      "title": "Heatmap",
+      "description": "A matrix of values displayed as tone-stepped cells with row and column labels and a stepped key.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/heatmap.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "The History of the Cluster Heat Map",
+            "author": "Leland Wilkinson and Michael Friendly",
+            "url": "https://doi.org/10.1198/tas.2009.0033",
+            "license": "Paper"
+          }
+        ]
       }
     },
     {
@@ -415,6 +534,139 @@
             "author": "Paul Heckbert, Graphics Gems",
             "url": "https://dl.acm.org/doi/10.5555/90767.90846",
             "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "radar-chart",
+      "type": "registry:component",
+      "title": "Radar Chart",
+      "description": "Three to eight axes radiating from a centre with closed polygon series, drawn as SVG or a monospace glyph grid, with a hidden data table.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/radar-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Graphical Methods for Data Analysis",
+            "author": "John M. Chambers, William S. Cleveland, Beat Kleiner and Paul A. Tukey",
+            "url": "https://doi.org/10.1201/9781351072304",
+            "license": "Book"
+          },
+          {
+            "relation": "technique",
+            "title": "Star Plot",
+            "author": "NIST/SEMATECH e-Handbook of Statistical Methods",
+            "url": "https://www.itl.nist.gov/div898/handbook/eda/section3/starplot.htm",
+            "license": "Public domain"
+          }
+        ]
+      }
+    },
+    {
+      "name": "scatter-plot",
+      "type": "registry:component",
+      "title": "Scatter Plot",
+      "description": "Points from JSON on two linear axes, with highlighted points labeled directly beside them and an optional fit line.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/scatter-plot.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods",
+            "author": "William S. Cleveland and Robert McGill",
+            "url": "https://doi.org/10.1080/01621459.1984.10478080",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Nice Numbers for Graph Labels",
+            "author": "Paul Heckbert",
+            "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "timeline-chart",
+      "type": "registry:component",
+      "title": "Timeline Chart",
+      "description": "Rows of labeled spans and point events over one shared time axis, for a project plan or a chronology.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/timeline-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Joseph Priestley and the Graphic Invention of Modern Time",
+            "author": "Daniel Rosenberg",
+            "url": "https://doi.org/10.1353/sec.2007.0013",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Timelines Revisited: A Design Space and Considerations for Expressive Storytelling",
+            "author": "Brehmer, Lee, Bach, Henry Riche and Munzner",
+            "url": "https://doi.org/10.1109/TVCG.2016.2614803",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
+      "name": "waterfall-chart",
+      "type": "registry:component",
+      "title": "Waterfall Chart",
+      "description": "A start value, signed changes floating between running totals, and an end total, with hairline connectors.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/waterfall-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Horizontal waterfall chart",
+            "author": "IBCS, International Business Communication Standards",
+            "url": "https://www.ibcs.com/resource/horizontal-waterfall-chart/",
+            "license": "Standard, no code"
           }
         ]
       }

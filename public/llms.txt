@@ -72,9 +72,17 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 ## Data
 
 - [Bar Chart](https://picagram.dev/c/bar-chart.md): Vertical bars from labeled values, drawn as SVG or a monospace glyph grid, with a hidden data table.
+- [Bullet Chart](https://picagram.dev/c/bullet-chart.md): Rows showing measures as bars over muted bands that give qualitative ranges, with targets marked as ticks.
+- [Candlestick Chart](https://picagram.dev/c/candlestick-chart.md): Price series drawn as hollow or filled candles, with high and low wicks, from RFC 3339 timestamps and OHLC data.
 - [Donut Chart](https://picagram.dev/c/donut-chart.md): Parts of a whole drawn as a ring, either as SVG segments or a monospace glyph grid, with a hidden data table.
+- [Gauge Chart](https://picagram.dev/c/gauge-chart.md): One number against its range, drawn as an arc with threshold ticks and the value in the middle.
+- [Heatmap](https://picagram.dev/c/heatmap.md): A matrix of values displayed as tone-stepped cells with row and column labels and a stepped key.
 - [Kanban Board](https://picagram.dev/c/kanban-board.md): Columns of cards that move between columns by keyboard or by pointer drag.
 - [Line Chart](https://picagram.dev/c/line-chart.md): One or more series plotted as lines over a shared set of labels, in an svg or braille glyph look.
+- [Radar Chart](https://picagram.dev/c/radar-chart.md): Three to eight axes radiating from a centre with closed polygon series, drawn as SVG or a monospace glyph grid, with a hidden data table.
+- [Scatter Plot](https://picagram.dev/c/scatter-plot.md): Points from JSON on two linear axes, with highlighted points labeled directly beside them and an optional fit line.
+- [Timeline Chart](https://picagram.dev/c/timeline-chart.md): Rows of labeled spans and point events over one shared time axis, for a project plan or a chronology.
+- [Waterfall Chart](https://picagram.dev/c/waterfall-chart.md): A start value, signed changes floating between running totals, and an end total, with hairline connectors.
 
 ## UI
 

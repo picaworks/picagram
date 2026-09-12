@@ -1,0 +1,886 @@
+<!doctype html>
+<!--
+  Pica · Timeline Chart · timeline-chart
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Timeline Chart · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaTimelineChart = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/data/timeline-chart/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/chart.ts
+  function linearScale(domain, range) {
+    const [d0, d1] = domain;
+    const [r0, r1] = range;
+    const k = d1 === d0 ? 0 : (r1 - r0) / (d1 - d0);
+    return Object.assign((value) => r0 + (value - d0) * k, { domain, range });
+  }
+  function extent(values) {
+    let min = Number.POSITIVE_INFINITY;
+    let max = Number.NEGATIVE_INFINITY;
+    for (const value of values) {
+      if (!Number.isFinite(value)) continue;
+      if (value < min) min = value;
+      if (value > max) max = value;
+    }
+    return min <= max ? [min, max] : [0, 0];
+  }
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, String(value));
+    return el;
+  }
+  function dataTable(caption, head, rows) {
+    const table = document.createElement("table");
+    table.setAttribute("data-pica", "");
+    table.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    table.createCaption().textContent = caption;
+    const headRow = table.createTHead().insertRow();
+    for (const label of head) {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = label;
+      headRow.appendChild(th);
+    }
+    const body = table.createTBody();
+    for (const row of rows) {
+      const tr = body.insertRow();
+      row.forEach((cell, i) => {
+        if (i === 0) {
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = String(cell);
+          tr.appendChild(th);
+        } else {
+          tr.insertCell().textContent = String(cell);
+        }
+      });
+    }
+    return table;
+  }
+
+  // lib/chart-plot.ts
+  function chartCells(grid, inset = {}) {
+    const left = Math.max(0, Math.floor(inset.left ?? 0));
+    const right = Math.max(0, Math.floor(inset.right ?? 0));
+    const top = Math.max(0, Math.floor(inset.top ?? 0));
+    const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+    const col = Math.min(left, Math.max(0, grid.cols - 1));
+    const row = Math.min(top, Math.max(0, grid.rows - 1));
+    const cols = Math.max(1, grid.cols - col - right);
+    const rows = Math.max(1, grid.rows - row - bottom);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    return {
+      col,
+      row,
+      cols,
+      rows,
+      colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+      rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1))
+    };
+  }
+
+  // lib/chart-time.ts
+  var TIME_HOUR_MS = 36e5;
+  var TIME_DAY_MS = 24 * TIME_HOUR_MS;
+  var TIME_MONTH_MS = 26298e5;
+  var TIME_STEPS = [
+    [TIME_HOUR_MS, "hour"],
+    [2 * TIME_HOUR_MS, "hour"],
+    [3 * TIME_HOUR_MS, "hour"],
+    [6 * TIME_HOUR_MS, "hour"],
+    [12 * TIME_HOUR_MS, "hour"],
+    [TIME_DAY_MS, "day"],
+    [2 * TIME_DAY_MS, "day"],
+    [7 * TIME_DAY_MS, "day"],
+    [14 * TIME_DAY_MS, "day"],
+    [1, "month"],
+    [3, "month"],
+    [6, "month"],
+    [12, "year"],
+    [24, "year"],
+    [60, "year"],
+    [120, "year"]
+  ];
+  var TIME_ZONELESS = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/;
+  function parseTime(value) {
+    if (typeof value === "number") return Number.isFinite(value) ? value : Number.NaN;
+    const text = value.trim();
+    if (/^-?\d{5,}$/.test(text)) return Number(text);
+    return Date.parse(TIME_ZONELESS.test(text) ? `${text.replace(" ", "T")}Z` : text);
+  }
+  function timeStepMs(step) {
+    return step[1] === "hour" || step[1] === "day" ? step[0] : step[0] * TIME_MONTH_MS;
+  }
+  function timeTicks(min, max, count = 5) {
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return { times: [], unit: "day" };
+    let lo = Math.min(min, max);
+    let hi = Math.max(min, max);
+    if (lo === hi) {
+      lo -= TIME_HOUR_MS;
+      hi += TIME_HOUR_MS;
+    }
+    let picked = [TIME_HOUR_MS, "hour"];
+    for (const candidate of TIME_STEPS) {
+      picked = candidate;
+      if ((hi - lo) / timeStepMs(candidate) <= Math.max(1, count)) break;
+    }
+    const [step, unit] = picked;
+    const times = [];
+    if (unit === "hour" || unit === "day") {
+      for (let t = Math.ceil(lo / step) * step; t <= hi; t += step) times.push(t);
+    } else {
+      const from = new Date(lo);
+      const first = Math.floor((from.getUTCFullYear() * 12 + from.getUTCMonth()) / step) * step;
+      for (let m = first; ; m += step) {
+        const t = Date.UTC(2e3, m - 24e3, 1);
+        if (t > hi) break;
+        if (t >= lo) times.push(t);
+      }
+    }
+    return { times, unit };
+  }
+  var TIME_FIELDS = {
+    hour: { hour: "numeric", minute: "2-digit" },
+    day: { month: "short", day: "numeric" },
+    month: { month: "short", year: "numeric" },
+    year: { year: "numeric" }
+  };
+  var timeFormats = /* @__PURE__ */ new Map();
+  function formatTime(time, unit, locale) {
+    const key = `${locale ?? ""}|${unit}`;
+    let format = timeFormats.get(key);
+    if (!format) {
+      format = new Intl.DateTimeFormat(locale, { ...TIME_FIELDS[unit], timeZone: "UTC" });
+      timeFormats.set(key, format);
+    }
+    return format.format(time);
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function measureCell(fontFamily, fontSize, lineHeight) {
+    return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // registry/data/timeline-chart/core.ts
+  var defaults = {
+    data: [
+      {
+        label: "Research",
+        start: "2025-09-01",
+        end: "2025-10-15"
+      },
+      {
+        label: "Runtime",
+        start: "2025-10-01",
+        end: "2025-12-31",
+        events: [{ time: "2025-11-15", label: "v1" }]
+      },
+      {
+        label: "Wave 4",
+        start: "2025-10-15",
+        end: "2026-03-31",
+        events: [{ time: "2025-12-15", label: "build" }]
+      },
+      {
+        label: "Review",
+        start: "2026-03-15",
+        end: "2026-06-30"
+      },
+      {
+        label: "Launch",
+        start: "2026-06-01",
+        events: [{ time: "2026-09-15", label: "ship" }]
+      }
+    ],
+    label: "Project timeline",
+    highlight: -1,
+    look: "svg",
+    ticks: 6,
+    rowHeight: 24,
+    fontFamily: GRID_FONT
+  };
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let root = null;
+    let grid = null;
+    let resizeObserver = null;
+    let table = null;
+    function timeRange(data) {
+      const times = [];
+      data.forEach((row) => {
+        const start = parseTime(row.start);
+        if (Number.isFinite(start)) times.push(start);
+        if (row.end) {
+          const end = parseTime(row.end);
+          if (Number.isFinite(end)) times.push(end);
+        }
+        row.events?.forEach((event) => {
+          const t = parseTime(event.time);
+          if (Number.isFinite(t)) times.push(t);
+        });
+      });
+      if (times.length === 0) return [Number.NaN, Number.NaN];
+      const [lo, hi] = extent(times);
+      if (lo === hi) {
+        return [lo - 864e5, lo + 864e5];
+      }
+      const padding = (hi - lo) * 0.05;
+      return [lo - padding, hi + padding];
+    }
+    function gridOptions(p) {
+      const cols = Math.max(20, Math.floor(host.clientWidth / 6));
+      return { fontFamily: p.fontFamily, fontSize: 12, columns: cols, lineHeight: 1, renderer: "canvas", color: "" };
+    }
+    function renderTable() {
+      table?.remove();
+      const rows = [];
+      props.data.forEach((row) => {
+        const start = formatTime(parseTime(row.start), "day");
+        const end = row.end ? formatTime(parseTime(row.end), "day") : "";
+        rows.push([row.label, start, end]);
+      });
+      table = dataTable(props.label || "Timeline", ["Row", "Start", "End"], rows);
+      host.appendChild(table);
+    }
+    function drawSvg() {
+      const view = root;
+      if (!view) return;
+      while (view.firstChild) view.firstChild.remove();
+      const w = Math.max(1, host.clientWidth);
+      const h = Math.max(1, host.clientHeight);
+      const fontSize = 11;
+      view.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      view.setAttribute("font-family", props.fontFamily);
+      view.setAttribute("font-size", String(fontSize));
+      const data = props.data;
+      const empty = data.length === 0;
+      const [timeMin, timeMax] = empty ? [0, 864e5] : timeRange(data);
+      const { times } = empty ? { times: [] } : timeTicks(timeMin, timeMax, props.ticks);
+      const first = times[0] ?? timeMin;
+      const last = times[times.length - 1] ?? timeMax;
+      const cell = measureCell(props.fontFamily, fontSize, 1);
+      const maxLabelChars = Math.max(1, ...data.map((d) => d.label.length), 10);
+      const left = 12 + maxLabelChars * cell.w;
+      const right = 8;
+      const top = 8;
+      const bottom = fontSize + 14;
+      const chartLeft = left;
+      const chartRight = Math.max(chartLeft + 1, w - right);
+      const chartTop = top;
+      const chartBottom = Math.max(chartTop + 1, h - bottom);
+      const x = linearScale([first, last], [chartLeft, chartRight]);
+      const rowHeight = Math.max(8, (chartBottom - chartTop) / Math.max(1, data.length));
+      for (const t of times) {
+        const tx = x(t);
+        view.appendChild(
+          svg("line", { x1: tx, y1: chartTop, x2: tx, y2: chartBottom, stroke: cssVar("muted"), "stroke-width": 1 })
+        );
+        const tickLabel = svg("text", {
+          x: tx,
+          y: chartBottom + fontSize + 4,
+          "text-anchor": "middle",
+          fill: cssVar("muted")
+        });
+        tickLabel.textContent = formatTime(t, "month");
+        view.appendChild(tickLabel);
+      }
+      view.appendChild(
+        svg("line", { x1: chartLeft, y1: chartTop, x2: chartLeft, y2: chartBottom, stroke: cssVar("muted"), "stroke-width": 1 })
+      );
+      if (empty) {
+        const note = svg("text", {
+          x: (chartLeft + chartRight) / 2,
+          y: (chartTop + chartBottom) / 2,
+          "text-anchor": "middle",
+          "dominant-baseline": "middle",
+          fill: cssVar("muted")
+        });
+        note.textContent = "no data";
+        view.appendChild(note);
+      } else {
+        let itemIndex = 0;
+        data.forEach((row, rowIdx) => {
+          const rowY = chartTop + rowIdx * rowHeight + rowHeight / 2;
+          const rowCenterY = rowY;
+          const startTime = parseTime(row.start);
+          const endTime = row.end ? parseTime(row.end) : startTime;
+          if (Number.isFinite(startTime)) {
+            const x1 = x(startTime);
+            const x2 = x(Math.max(startTime, endTime));
+            const barWidth = Math.max(2, x2 - x1);
+            const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
+            const isHighlighted = itemIndex === highlightIdx;
+            const barColor = isHighlighted ? cssVar("accent") : cssVar("fg");
+            const barHeight = Math.max(3, rowHeight * 0.4);
+            view.appendChild(
+              svg("rect", {
+                x: x1,
+                y: rowCenterY - barHeight / 2,
+                width: barWidth,
+                height: barHeight,
+                fill: barColor
+              })
+            );
+            const label = svg("text", {
+              x: chartLeft - 6,
+              y: rowCenterY,
+              "text-anchor": "end",
+              "dominant-baseline": "middle",
+              fill: cssVar("muted")
+            });
+            label.textContent = row.label;
+            view.appendChild(label);
+          }
+          itemIndex++;
+          if (row.events) {
+            row.events.forEach((event) => {
+              const eventTime = parseTime(event.time);
+              if (Number.isFinite(eventTime)) {
+                const ex = x(eventTime);
+                const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
+                const isHighlighted = itemIndex === highlightIdx;
+                const eventColor = isHighlighted ? cssVar("accent") : cssVar("fg");
+                view.appendChild(svg("circle", { cx: ex, cy: rowCenterY, r: 2, fill: eventColor }));
+                if (event.label) {
+                  const eventLabel = svg("text", {
+                    x: ex,
+                    y: rowCenterY - 8,
+                    "text-anchor": "middle",
+                    fill: cssVar("muted")
+                  });
+                  eventLabel.textContent = event.label;
+                  view.appendChild(eventLabel);
+                }
+                itemIndex++;
+              }
+            });
+          }
+        });
+      }
+      host.dataset.picaReady = "true";
+    }
+    function drawGlyph() {
+      const g = grid;
+      if (!g) return;
+      g.clear();
+      const { cols, rows } = g;
+      const data = props.data;
+      const colors = readPalette(host);
+      if (data.length === 0) {
+        const note = "no data";
+        const x2 = Math.max(0, Math.floor((cols - note.length) / 2));
+        const y = Math.floor(rows / 2);
+        g.write(x2, y, note, colors.muted);
+        g.flush();
+        host.dataset.picaReady = "true";
+        return;
+      }
+      const [timeMin, timeMax] = timeRange(data);
+      const timeSpan = timeMax - timeMin || 1;
+      const { times } = timeTicks(timeMin, timeMax, props.ticks);
+      const maxLabelChars = Math.max(1, ...data.map((d) => d.label.length));
+      const labelCols = Math.max(4, Math.min(maxLabelChars, Math.floor(cols * 0.35)));
+      const area = chartCells({ cols, rows }, { left: labelCols + 1, top: 1, bottom: 1 });
+      const axisRow = rows - 1;
+      const x = (time) => area.colAt((time - timeMin) / timeSpan);
+      const perRow = area.rows >= data.length * 3 - 1 ? 2 : 1;
+      const rowGap = area.rows >= data.length * (perRow + 1) - 1 ? 1 : 0;
+      const stride = perRow + rowGap;
+      const bodyBottom = Math.min(area.row + area.rows - 1, area.row + data.length * stride - rowGap - 1);
+      let labelEnd = -1;
+      times.forEach((t) => {
+        const gx = x(t);
+        for (let r = area.row; r <= bodyBottom; r++) g.set(gx, r, "│", colors.muted);
+        const spacing = times.length > 1 ? Math.floor(area.cols / times.length) : area.cols;
+        const monthLabel = formatTime(t, "month").slice(0, Math.max(3, spacing - 1));
+        const labelStart = Math.max(area.col, Math.min(area.col + area.cols - monthLabel.length, gx));
+        if (labelStart >= labelEnd + 1) {
+          g.write(labelStart, axisRow, monthLabel, colors.muted);
+          labelEnd = labelStart + monthLabel.length;
+        }
+      });
+      data.forEach((row, rowIdx) => {
+        const topRow = area.row + rowIdx * stride;
+        if (topRow > bodyBottom) return;
+        const bottomRow = Math.min(bodyBottom, topRow + perRow - 1);
+        const label = row.label.slice(0, labelCols).padEnd(labelCols, " ");
+        g.write(0, topRow, label, colors.muted);
+        const startTime = parseTime(row.start);
+        if (Number.isFinite(startTime)) {
+          const endTime = row.end ? parseTime(row.end) : startTime;
+          const x1 = x(startTime);
+          const x2 = Math.max(x1 + 1, x(endTime));
+          const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
+          const barColor = rowIdx === highlightIdx ? colors.accent : colors.fg;
+          for (let r = topRow; r <= bottomRow; r++) {
+            for (let col = x1; col < x2 && col < area.col + area.cols; col++) {
+              g.set(col, r, "█", barColor);
+            }
+          }
+        }
+        let eventIdx = 0;
+        row.events?.forEach((event) => {
+          const eventTime = parseTime(event.time);
+          if (Number.isFinite(eventTime)) {
+            const ex = x(eventTime);
+            const itemIdx = rowIdx + eventIdx + 1;
+            const highlightIdx = props.highlight === -1 ? 0 : props.highlight;
+            const markColor = itemIdx === highlightIdx ? colors.accent : colors.fg;
+            const markRow = topRow + Math.floor(perRow / 2);
+            g.set(ex, markRow, "◆", markColor);
+            eventIdx++;
+          }
+        });
+      });
+      g.flush();
+      host.dataset.picaReady = "true";
+    }
+    function draw() {
+      if (grid) drawGlyph();
+      else drawSvg();
+    }
+    function mountView() {
+      if (props.look === "glyph") {
+        grid = createGrid(host, gridOptions(props), drawGlyph);
+      } else {
+        root = svg("svg", { "data-pica": "", "aria-hidden": "true" });
+        root.style.cssText = "display:block;width:100%;height:100%";
+        host.appendChild(root);
+        resizeObserver = new ResizeObserver(drawSvg);
+        resizeObserver.observe(host);
+      }
+    }
+    function unmountView() {
+      resizeObserver?.disconnect();
+      resizeObserver = null;
+      root?.remove();
+      root = null;
+      grid?.destroy();
+      grid = null;
+    }
+    labelHost(host, props.label, "figure");
+    renderTable();
+    mountView();
+    draw();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.label !== before.label) labelHost(host, props.label, "figure");
+        if (props.label !== before.label || !sameJson(props.data, before.data)) renderTable();
+        if (props.look !== before.look) {
+          unmountView();
+          mountView();
+        } else if (grid && props.fontFamily !== before.fontFamily) {
+          grid.update(gridOptions(props));
+        }
+        draw();
+      },
+      destroy() {
+        unmountView();
+        table?.remove();
+        table = null;
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaTimelineChart.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

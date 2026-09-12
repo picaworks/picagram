@@ -1,0 +1,786 @@
+<!doctype html>
+<!--
+  Pica · Gauge Chart · gauge-chart
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Gauge Chart · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaGaugeChart = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/data/gauge-chart/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/chart.ts
+  var numberFormats = /* @__PURE__ */ new Map();
+  function formatNumber(value, options = {}) {
+    const { compact = true, decimals = 1, locale } = options;
+    const short = compact && Math.abs(value) >= 1e4;
+    const key = `${locale ?? ""}|${short ? "c" : "n"}|${decimals}`;
+    let format = numberFormats.get(key);
+    if (!format) {
+      format = new Intl.NumberFormat(locale, short ? { notation: "compact", maximumFractionDigits: decimals } : { maximumFractionDigits: decimals });
+      numberFormats.set(key, format);
+    }
+    return format.format(value);
+  }
+  var coord = (value) => String(Math.round(value * 100) / 100);
+  function arcPath(cx, cy, inner, outer, start, end) {
+    if (end - start >= Math.PI * 2 - 1e-9) {
+      const middle = start + Math.PI;
+      return arcPath(cx, cy, inner, outer, start, middle) + arcPath(cx, cy, inner, outer, middle, start + Math.PI * 2);
+    }
+    const large = end - start > Math.PI ? 1 : 0;
+    const at = (r, a) => `${coord(cx + r * Math.sin(a))} ${coord(cy - r * Math.cos(a))}`;
+    const outerArc = `A${coord(outer)} ${coord(outer)} 0 ${large} 1 ${at(outer, end)}`;
+    if (inner <= 0) return `M${coord(cx)} ${coord(cy)}L${at(outer, start)}${outerArc}Z`;
+    return `M${at(outer, start)}${outerArc}L${at(inner, end)}A${coord(inner)} ${coord(inner)} 0 ${large} 0 ${at(inner, start)}Z`;
+  }
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, String(value));
+    return el;
+  }
+  function dataTable(caption, head, rows) {
+    const table = document.createElement("table");
+    table.setAttribute("data-pica", "");
+    table.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    table.createCaption().textContent = caption;
+    const headRow = table.createTHead().insertRow();
+    for (const label of head) {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = label;
+      headRow.appendChild(th);
+    }
+    const body = table.createTBody();
+    for (const row of rows) {
+      const tr = body.insertRow();
+      row.forEach((cell, i) => {
+        if (i === 0) {
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = String(cell);
+          tr.appendChild(th);
+        } else {
+          tr.insertCell().textContent = String(cell);
+        }
+      });
+    }
+    return table;
+  }
+
+  // lib/blocks.ts
+  var BRAILLE_BASE = 10240;
+  function brailleDot(row, col) {
+    if (row === 3) return col === 0 ? 64 : 128;
+    return 1 << (col === 0 ? row : row + 3);
+  }
+  function braille(bits) {
+    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
+  }
+
+  // lib/braille-plot.ts
+  function createBraillePlot(cols, rows) {
+    const w = Math.max(1, Math.floor(cols));
+    const h = Math.max(1, Math.floor(rows));
+    const bits = new Uint8Array(w * h);
+    const plot = {
+      width: w * 2,
+      height: h * 4,
+      dot(x, y) {
+        const dx = Math.round(x);
+        const dy = Math.round(y);
+        if (dx < 0 || dy < 0 || dx >= w * 2 || dy >= h * 4) return;
+        const cell = (dy >> 2) * w + (dx >> 1);
+        bits[cell] = (bits[cell] ?? 0) | brailleDot(dy & 3, dx & 1);
+      },
+      line(x0, y0, x1, y1) {
+        let x = Math.round(x0);
+        let y = Math.round(y0);
+        const endX = Math.round(x1);
+        const endY = Math.round(y1);
+        const stepX = x < endX ? 1 : -1;
+        const stepY = y < endY ? 1 : -1;
+        const runX = Math.abs(endX - x);
+        const runY = -Math.abs(endY - y);
+        let error = runX + runY;
+        for (; ; ) {
+          plot.dot(x, y);
+          if (x === endX && y === endY) return;
+          const twice = error * 2;
+          if (twice >= runY) {
+            error += runY;
+            x += stepX;
+          }
+          if (twice <= runX) {
+            error += runX;
+            y += stepY;
+          }
+        }
+      },
+      clear() {
+        bits.fill(0);
+      },
+      paint(grid, col, row) {
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) grid.set(col + x, row + y, braille(bits[y * w + x] ?? 0));
+        }
+      }
+    };
+    return plot;
+  }
+
+  // lib/chart-plot.ts
+  function chartCells(grid, inset = {}) {
+    const left = Math.max(0, Math.floor(inset.left ?? 0));
+    const right = Math.max(0, Math.floor(inset.right ?? 0));
+    const top = Math.max(0, Math.floor(inset.top ?? 0));
+    const bottom = Math.max(0, Math.floor(inset.bottom ?? 0));
+    const col = Math.min(left, Math.max(0, grid.cols - 1));
+    const row = Math.min(top, Math.max(0, grid.rows - 1));
+    const cols = Math.max(1, grid.cols - col - right);
+    const rows = Math.max(1, grid.rows - row - bottom);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    return {
+      col,
+      row,
+      cols,
+      rows,
+      colAt: (fx) => col + Math.round(clamp(fx) * (cols - 1)),
+      rowAt: (fy) => row + rows - 1 - Math.round(clamp(fy) * (rows - 1))
+    };
+  }
+  function chartDots(area, cellAspect) {
+    const plot = createBraillePlot(area.cols, area.rows);
+    const blank = braille(0);
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    const at = (fx, fy) => [
+      Math.round(clamp(fx) * (plot.width - 1)),
+      plot.height - 1 - Math.round(clamp(fy) * (plot.height - 1))
+    ];
+    return {
+      wide: plot.width,
+      tall: plot.height,
+      // A cell holds two dots across and four down, so a dot is half a cell wide and a quarter of one tall.
+      aspect: cellAspect / 2 / (1 / 4),
+      dotAt: at,
+      mark(fx, fy) {
+        const [x, y] = at(fx, fy);
+        plot.dot(x, y);
+      },
+      stroke(fx0, fy0, fx1, fy1) {
+        const [x0, y0] = at(fx0, fy0);
+        const [x1, y1] = at(fx1, fy1);
+        plot.line(x0, y0, x1, y1);
+      },
+      clear() {
+        plot.clear();
+      },
+      paint(grid, color) {
+        plot.paint(
+          {
+            set: (x, y, glyph) => {
+              if (glyph !== blank) grid.set(x, y, glyph, color);
+            }
+          },
+          area.col,
+          area.row
+        );
+      }
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // registry/data/gauge-chart/core.ts
+  var defaults = {
+    value: 68,
+    min: 0,
+    max: 100,
+    label: "Cache hit rate",
+    unit: "%",
+    thresholds: [50, 90],
+    thickness: 0.16,
+    look: "svg",
+    fontFamily: GRID_FONT
+  };
+  var ARC_DEGREES = 240;
+  var ARC_START_ANGLE = 150;
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let root = null;
+    let grid = null;
+    let resizeObserver = null;
+    let table = null;
+    function renderTable() {
+      table?.remove();
+      table = dataTable(props.label || "Gauge chart", ["Value"], [[props.value]]);
+      host.appendChild(table);
+    }
+    function drawSvg() {
+      const view = root;
+      if (!view) return;
+      while (view.firstChild) view.firstChild.remove();
+      const w = Math.max(1, host.clientWidth);
+      const h = Math.max(1, host.clientHeight);
+      const fontSize = 11;
+      view.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      view.setAttribute("font-family", props.fontFamily);
+      view.setAttribute("font-size", String(fontSize));
+      const radius = Math.min(w, h) * 0.35;
+      const centerX = w / 2;
+      const centerY = h * 0.6;
+      const arcRadius = radius * 0.8;
+      const valueText = `${formatNumber(props.value)}${props.unit}`;
+      const valueTextSize = Math.min(24, Math.max(14, Math.floor(h * 0.15)));
+      const startAngleRad = ARC_START_ANGLE * Math.PI / 180;
+      const endAngleRad = (ARC_START_ANGLE + ARC_DEGREES) * Math.PI / 180;
+      const bgArc = svg("path", {
+        d: arcPath(centerX, centerY, arcRadius, arcRadius, startAngleRad, endAngleRad),
+        fill: "none",
+        stroke: cssVar("muted"),
+        "stroke-width": Math.max(1, arcRadius * props.thickness * 0.3),
+        opacity: "0.3"
+      });
+      view.appendChild(bgArc);
+      const normalized = (props.value - props.min) / (props.max - props.min);
+      const clampedNorm = Math.max(0, Math.min(1, normalized));
+      const valueAngleRad = startAngleRad + (endAngleRad - startAngleRad) * clampedNorm;
+      const valueArc = svg("path", {
+        d: arcPath(centerX, centerY, arcRadius, arcRadius, startAngleRad, valueAngleRad),
+        fill: "none",
+        stroke: cssVar("accent"),
+        "stroke-width": arcRadius * props.thickness,
+        "stroke-linecap": "round"
+      });
+      view.appendChild(valueArc);
+      const allTicks = [props.min, props.max, ...props.thresholds];
+      const uniqueTicks = Array.from(new Set(allTicks)).sort((a, b) => a - b);
+      for (const tick of uniqueTicks) {
+        const tickNorm = (tick - props.min) / (props.max - props.min);
+        if (tickNorm < 0 || tickNorm > 1) continue;
+        const tickAngleRad = startAngleRad + (endAngleRad - startAngleRad) * tickNorm;
+        const tickInnerRadius = arcRadius * 0.85;
+        const tickOuterRadius = arcRadius * 1.1;
+        const tickX1 = centerX + tickInnerRadius * Math.cos(tickAngleRad);
+        const tickY1 = centerY + tickInnerRadius * Math.sin(tickAngleRad);
+        const tickX2 = centerX + tickOuterRadius * Math.cos(tickAngleRad);
+        const tickY2 = centerY + tickOuterRadius * Math.sin(tickAngleRad);
+        view.appendChild(
+          svg("line", {
+            x1: tickX1,
+            y1: tickY1,
+            x2: tickX2,
+            y2: tickY2,
+            stroke: cssVar("muted"),
+            "stroke-width": 1
+          })
+        );
+        if (tick === props.min || tick === props.max) {
+          const labelRadius = arcRadius * 1.25;
+          const labelX = centerX + labelRadius * Math.cos(tickAngleRad);
+          const labelY = centerY + labelRadius * Math.sin(tickAngleRad);
+          const label = svg("text", {
+            x: labelX,
+            y: labelY,
+            "text-anchor": "middle",
+            "dominant-baseline": "middle",
+            fill: cssVar("muted"),
+            "font-size": Math.max(9, fontSize - 2)
+          });
+          label.textContent = formatNumber(tick);
+          view.appendChild(label);
+        }
+      }
+      const valueLabel = svg("text", {
+        x: centerX,
+        y: centerY - radius * 0.15,
+        "text-anchor": "middle",
+        "dominant-baseline": "middle",
+        fill: cssVar("fg"),
+        "font-size": valueTextSize,
+        "font-weight": "bold",
+        "font-family": props.fontFamily
+      });
+      valueLabel.textContent = valueText;
+      view.appendChild(valueLabel);
+      host.dataset.picaReady = "true";
+    }
+    function drawGlyph() {
+      const g = grid;
+      if (!g) return;
+      g.clear();
+      const { cols, rows } = g;
+      const colors = readPalette(host);
+      const valueText = `${formatNumber(props.value)}${props.unit}`;
+      const normalized = (props.value - props.min) / (props.max - props.min);
+      const clampedNorm = Math.max(0, Math.min(1, normalized));
+      const inset = { bottom: 1 };
+      const area = chartCells({ cols, rows }, inset);
+      const track = chartDots(area, g.aspect);
+      const fill = chartDots(area, g.aspect);
+      const physicalWidth = track.wide * track.aspect;
+      const physicalHeight = track.tall;
+      const radius = Math.min(physicalWidth, physicalHeight) * 0.28;
+      const centerFx = 0.5;
+      const centerFy = 0.4;
+      function pointAt(angleDeg) {
+        const angleRad = angleDeg * Math.PI / 180;
+        const fx = centerFx + radius * Math.cos(angleRad) / physicalWidth;
+        const fy = centerFy - radius * Math.sin(angleRad) / physicalHeight;
+        return [fx, fy];
+      }
+      const arcSteps = 48;
+      let prev = pointAt(ARC_START_ANGLE);
+      for (let i = 1; i <= arcSteps; i++) {
+        const t = i / arcSteps;
+        const next = pointAt(ARC_START_ANGLE + ARC_DEGREES * t);
+        track.stroke(prev[0], prev[1], next[0], next[1]);
+        if (t <= clampedNorm) fill.stroke(prev[0], prev[1], next[0], next[1]);
+        prev = next;
+      }
+      track.paint(g, colors.muted);
+      fill.paint(g, colors.accent);
+      const labelRow = rows - 1;
+      const minLabel = formatNumber(props.min);
+      const maxLabel = formatNumber(props.max);
+      const [minFx] = pointAt(ARC_START_ANGLE);
+      const [maxFx] = pointAt(ARC_START_ANGLE + ARC_DEGREES);
+      const minCol = Math.max(0, area.colAt(minFx) - Math.floor(minLabel.length / 2));
+      const maxCol = Math.min(cols - maxLabel.length, area.colAt(maxFx) - Math.floor(maxLabel.length / 2));
+      g.write(minCol, labelRow, minLabel, colors.muted);
+      if (maxCol > minCol + minLabel.length) g.write(maxCol, labelRow, maxLabel, colors.muted);
+      const textRow = area.rowAt(centerFy);
+      const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
+      g.write(textCol, textRow, valueText, colors.fg);
+      g.flush();
+      host.dataset.picaReady = "true";
+    }
+    function draw() {
+      if (grid) drawGlyph();
+      else drawSvg();
+    }
+    function gridOptions() {
+      return { fontFamily: props.fontFamily, fontSize: 12, columns: 0, lineHeight: 1, renderer: "canvas", color: "" };
+    }
+    function mountView() {
+      if (props.look === "glyph") {
+        grid = createGrid(host, gridOptions(), drawGlyph);
+      } else {
+        root = svg("svg", { "data-pica": "", "aria-hidden": "true" });
+        root.style.cssText = "display:block;width:100%;height:100%";
+        host.appendChild(root);
+        resizeObserver = new ResizeObserver(drawSvg);
+        resizeObserver.observe(host);
+      }
+    }
+    function unmountView() {
+      resizeObserver?.disconnect();
+      resizeObserver = null;
+      root?.remove();
+      root = null;
+      grid?.destroy();
+      grid = null;
+    }
+    labelHost(host, props.label, "figure");
+    renderTable();
+    mountView();
+    draw();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.label !== before.label) labelHost(host, props.label, "figure");
+        if (props.label !== before.label || props.value !== before.value) renderTable();
+        if (props.look !== before.look) {
+          unmountView();
+          mountView();
+        } else if (grid && props.fontFamily !== before.fontFamily) {
+          grid.update(gridOptions());
+        }
+        draw();
+      },
+      destroy() {
+        unmountView();
+        table?.remove();
+        table = null;
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaGaugeChart.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

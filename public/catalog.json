@@ -1541,6 +1541,471 @@
     "gzipBytes": 5169
   },
   {
+    "slug": "bullet-chart",
+    "title": "Bullet Chart",
+    "category": "data",
+    "description": "Rows showing measures as bars over muted bands that give qualitative ranges, with targets marked as ticks.",
+    "tags": [
+      "chart",
+      "bullet",
+      "bars",
+      "bands",
+      "targets",
+      "svg",
+      "glyph grid",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "data": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "highlight": {
+        "type": "number",
+        "min": -1,
+        "max": 30,
+        "step": 1
+      },
+      "ranges": {
+        "type": "number",
+        "min": 2,
+        "max": 5,
+        "step": 1
+      },
+      "ticks": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 1
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Bullet Graph Design Specification",
+        "author": "Stephen Few",
+        "url": "https://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf",
+        "license": "Specification, no code"
+      }
+    ],
+    "exportName": "BulletChart",
+    "defaults": {
+      "data": [
+        {
+          "label": "Revenue",
+          "value": 270,
+          "target": 250,
+          "ranges": [
+            0,
+            150,
+            225,
+            300
+          ]
+        },
+        {
+          "label": "Signups",
+          "value": 220,
+          "target": 200,
+          "ranges": [
+            0,
+            100,
+            200,
+            300
+          ]
+        },
+        {
+          "label": "Uptime",
+          "value": 95,
+          "ranges": [
+            0,
+            80,
+            95,
+            100
+          ]
+        },
+        {
+          "label": "Latency",
+          "value": 45,
+          "target": 40,
+          "ranges": [
+            0,
+            50,
+            100,
+            150
+          ]
+        }
+      ],
+      "label": "Quarter against plan",
+      "highlight": -1,
+      "ranges": 3,
+      "ticks": 5,
+      "look": "svg",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Rows to plot, each with a label, value, optional target, and range bounds. Empty draws axes and a muted \"no data\" note.",
+      "label": "Name for the chart, read by assistive technology and used as the hidden data table's caption.",
+      "highlight": "Index of the row drawn in the accent. -1 draws all rows in fg.",
+      "ranges": "Number of range bands (muted at different opacities), 2 to 5.",
+      "ticks": "About this many rounded ticks on the value axis, in the svg look.",
+      "look": "\"svg\" draws hairline ranges and rectangles. \"glyph\" draws the same bars in a monospace grid.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "{ label: string; value: number; target?: number; ranges: number[] }[]",
+      "label": "string",
+      "highlight": "number",
+      "ranges": "number",
+      "ticks": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 5573
+  },
+  {
+    "slug": "candlestick-chart",
+    "title": "Candlestick Chart",
+    "category": "data",
+    "description": "Price series drawn as hollow or filled candles, with high and low wicks, from RFC 3339 timestamps and OHLC data.",
+    "tags": [
+      "chart",
+      "candlestick",
+      "price",
+      "ohlc",
+      "financial",
+      "svg",
+      "glyph grid",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "data": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "ticks": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 1
+      },
+      "width": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.9,
+        "step": 0.1
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Japanese Candlestick Charting Techniques",
+        "author": "Steve Nison",
+        "url": "https://lccn.loc.gov/90022736",
+        "license": "Book"
+      },
+      {
+        "relation": "technique",
+        "title": "Date and Time on the Internet: Timestamps (RFC 3339)",
+        "author": "G. Klyne and C. Newman",
+        "url": "https://www.rfc-editor.org/rfc/rfc3339",
+        "license": "IETF standard"
+      }
+    ],
+    "exportName": "CandlestickChart",
+    "defaults": {
+      "data": [
+        {
+          "t": "2026-01-01T00:00:00.000Z",
+          "o": 4905.46875,
+          "h": 4923.046875,
+          "l": 4885.546875,
+          "c": 4910.15625
+        },
+        {
+          "t": "2026-01-02T00:00:00.000Z",
+          "o": 5271.516994374947,
+          "h": 5448.079494374947,
+          "l": 5074.641994374947,
+          "c": 5321.516994374947
+        },
+        {
+          "t": "2026-01-03T00:00:00.000Z",
+          "o": 5607.316502292473,
+          "h": 5847.550877292473,
+          "l": 5428.800877292473,
+          "c": 5502.629002292473
+        },
+        {
+          "t": "2026-01-04T00:00:00.000Z",
+          "o": 5885.579494374948,
+          "h": 5939.485744374948,
+          "l": 5575.423244374948,
+          "c": 5826.204494374948
+        },
+        {
+          "t": "2026-01-05T00:00:00.000Z",
+          "o": 5884.650266295153,
+          "h": 6052.228391295153,
+          "l": 5742.853391295153,
+          "c": 5870.587766295153
+        },
+        {
+          "t": "2026-01-06T00:00:00.000Z",
+          "o": 5990.625,
+          "h": 6303.125,
+          "l": 5985.9375,
+          "c": 6021.875
+        },
+        {
+          "t": "2026-01-07T00:00:00.000Z",
+          "o": 5998.712766295153,
+          "h": 6093.634641295153,
+          "l": 5693.634641295153,
+          "c": 5875.275266295153
+        },
+        {
+          "t": "2026-01-08T00:00:00.000Z",
+          "o": 5713.704494374948,
+          "h": 6044.173244374948,
+          "l": 5655.110744374948,
+          "c": 5835.579494374948
+        },
+        {
+          "t": "2026-01-09T00:00:00.000Z",
+          "o": 5549.504002292473,
+          "h": 5571.769627292473,
+          "l": 5281.144627292473,
+          "c": 5516.691502292473
+        },
+        {
+          "t": "2026-01-10T00:00:00.000Z",
+          "o": 5327.766994374948,
+          "h": 5476.204494374948,
+          "l": 5215.266994374948,
+          "c": 5340.266994374948
+        },
+        {
+          "t": "2026-01-11T00:00:00.000Z",
+          "o": 5075.78125,
+          "h": 5325.390625,
+          "l": 4644.140625,
+          "c": 4933.59375
+        },
+        {
+          "t": "2026-01-12T00:00:00.000Z",
+          "o": 4623.795505625053,
+          "h": 4790.201755625053,
+          "l": 4457.389255625053,
+          "c": 4726.920505625053
+        },
+        {
+          "t": "2026-01-13T00:00:00.000Z",
+          "o": 4402.058497707527,
+          "h": 4579.011622707527,
+          "l": 4307.136622707527,
+          "c": 4350.495997707527
+        },
+        {
+          "t": "2026-01-14T00:00:00.000Z",
+          "o": 4237.858005625053,
+          "h": 4528.483005625053,
+          "l": 4011.295505625053,
+          "c": 4231.608005625053
+        },
+        {
+          "t": "2026-01-15T00:00:00.000Z",
+          "o": 3952.8497337048466,
+          "h": 4096.209108704847,
+          "l": 3855.5841087048466,
+          "c": 3991.9122337048466
+        },
+        {
+          "t": "2026-01-16T00:00:00.000Z",
+          "o": 3960.9375,
+          "h": 4263.28125,
+          "l": 3686.71875,
+          "c": 4045.3125
+        },
+        {
+          "t": "2026-01-17T00:00:00.000Z",
+          "o": 4066.9122337048466,
+          "h": 4098.552858704847,
+          "l": 3845.4278587048466,
+          "c": 3996.5997337048466
+        },
+        {
+          "t": "2026-01-18T00:00:00.000Z",
+          "o": 4265.983005625052,
+          "h": 4411.295505625052,
+          "l": 4212.858005625052,
+          "c": 4240.983005625052
+        },
+        {
+          "t": "2026-01-19T00:00:00.000Z",
+          "o": 4344.245997707527,
+          "h": 4623.542872707527,
+          "l": 4139.167872707527,
+          "c": 4364.558497707527
+        },
+        {
+          "t": "2026-01-20T00:00:00.000Z",
+          "o": 4680.045505625052,
+          "h": 4818.326755625052,
+          "l": 4598.014255625052,
+          "c": 4745.670505625052
+        },
+        {
+          "t": "2026-01-21T00:00:00.000Z",
+          "o": 5046.09375,
+          "h": 5232.421875,
+          "l": 4698.046875,
+          "c": 4957.03125
+        },
+        {
+          "t": "2026-01-22T00:00:00.000Z",
+          "o": 5212.141994374947,
+          "h": 5368.391994374947,
+          "l": 5076.204494374947,
+          "c": 5368.391994374947
+        },
+        {
+          "t": "2026-01-23T00:00:00.000Z",
+          "o": 5547.941502292472,
+          "h": 5663.175877292472,
+          "l": 5535.050877292472,
+          "c": 5549.504002292472
+        },
+        {
+          "t": "2026-01-24T00:00:00.000Z",
+          "o": 5826.204494374948,
+          "h": 6100.423244374948,
+          "l": 5636.360744374948,
+          "c": 5873.079494374948
+        },
+        {
+          "t": "2026-01-25T00:00:00.000Z",
+          "o": 6025.275266295153,
+          "h": 6066.290891295153,
+          "l": 5850.665891295153,
+          "c": 5917.462766295153
+        },
+        {
+          "t": "2026-01-26T00:00:00.000Z",
+          "o": 5931.25,
+          "h": 6223.4375,
+          "l": 5687.5,
+          "c": 6068.75
+        },
+        {
+          "t": "2026-01-27T00:00:00.000Z",
+          "o": 5939.337766295153,
+          "h": 6207.697141295153,
+          "l": 5801.447141295153,
+          "c": 5922.150266295153
+        },
+        {
+          "t": "2026-01-28T00:00:00.000Z",
+          "o": 5854.329494374948,
+          "h": 5964.485744374948,
+          "l": 5556.673244374948,
+          "c": 5882.454494374948
+        },
+        {
+          "t": "2026-01-29T00:00:00.000Z",
+          "o": 5490.129002292473,
+          "h": 5759.269627292473,
+          "l": 5315.519627292473,
+          "c": 5563.566502292473
+        },
+        {
+          "t": "2026-01-30T00:00:00.000Z",
+          "o": 5268.391994374948,
+          "h": 5396.516994374948,
+          "l": 5216.829494374948,
+          "c": 5387.141994374948
+        }
+      ],
+      "label": "Daily price, thirty sessions",
+      "look": "svg",
+      "ticks": 5,
+      "width": 0.6,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Candles with timestamps and OHLC data. Empty draws the axes and a muted \"no data\" note.",
+      "label": "Name for the chart, read by assistive technology and used as the hidden data table's caption.",
+      "look": "\"svg\" draws hairline axes and rectangles. \"glyph\" draws the same candles in a monospace grid.",
+      "ticks": "About this many rounded ticks on the time axis, in the svg look.",
+      "width": "Width of candle body as a fraction of the candle spacing, 0.2 to 0.9.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "{ t: string; o: number; h: number; l: number; c: number }[]",
+      "label": "string",
+      "look": "\"svg\" | \"glyph\"",
+      "ticks": "number",
+      "width": "number",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 5866
+  },
+  {
     "slug": "donut-chart",
     "title": "Donut Chart",
     "category": "data",
@@ -1666,6 +2131,350 @@
     },
     "events": {},
     "gzipBytes": 5241
+  },
+  {
+    "slug": "gauge-chart",
+    "title": "Gauge Chart",
+    "category": "data",
+    "description": "One number against its range, drawn as an arc with threshold ticks and the value in the middle.",
+    "tags": [
+      "chart",
+      "gauge",
+      "arc",
+      "svg",
+      "glyph grid",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "value": {
+        "type": "number",
+        "min": 0,
+        "max": 200,
+        "step": 1
+      },
+      "min": {
+        "type": "number",
+        "min": -100,
+        "max": 100,
+        "step": 1
+      },
+      "max": {
+        "type": "number",
+        "min": 0,
+        "max": 200,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      },
+      "unit": {
+        "type": "string"
+      },
+      "thresholds": {
+        "type": "json"
+      },
+      "thickness": {
+        "type": "number",
+        "min": 0.05,
+        "max": 0.4,
+        "step": 0.01
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Dashboard Design for Real-Time Situation Awareness",
+        "author": "Stephen Few",
+        "url": "https://www.perceptualedge.com/articles/Whitepapers/Dashboard_Design.pdf",
+        "license": "Article"
+      }
+    ],
+    "exportName": "GaugeChart",
+    "defaults": {
+      "value": 68,
+      "min": 0,
+      "max": 100,
+      "label": "Cache hit rate",
+      "unit": "%",
+      "thresholds": [
+        50,
+        90
+      ],
+      "thickness": 0.16,
+      "look": "svg",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "The current value to display.",
+      "min": "The minimum value of the range.",
+      "max": "The maximum value of the range.",
+      "label": "Name for the gauge, read by assistive technology and used as the hidden data table's caption.",
+      "unit": "Unit to display after the value (e.g., \"%\", \"°C\").",
+      "thresholds": "Threshold values to mark on the arc as ticks.",
+      "thickness": "Thickness of the arc as a fraction of the radius (0.05 to 0.4).",
+      "look": "\"svg\" draws an SVG arc with labels. \"glyph\" draws the same arc in a braille grid.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "number",
+      "min": "number",
+      "max": "number",
+      "label": "string",
+      "unit": "string",
+      "thresholds": "number[]",
+      "thickness": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 5173
+  },
+  {
+    "slug": "heatmap",
+    "title": "Heatmap",
+    "category": "data",
+    "description": "A matrix of values displayed as tone-stepped cells with row and column labels and a stepped key.",
+    "tags": [
+      "chart",
+      "matrix",
+      "heatmap",
+      "svg",
+      "glyph grid",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "data": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "steps": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1
+      },
+      "highlight": {
+        "type": "boolean"
+      },
+      "legend": {
+        "type": "boolean"
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "The History of the Cluster Heat Map",
+        "author": "Leland Wilkinson and Michael Friendly",
+        "url": "https://doi.org/10.1198/tas.2009.0033",
+        "license": "Paper"
+      }
+    ],
+    "exportName": "Heatmap",
+    "defaults": {
+      "data": {
+        "rows": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun"
+        ],
+        "columns": [
+          "08",
+          "09",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19"
+        ],
+        "values": [
+          [
+            2,
+            4,
+            6,
+            8,
+            9,
+            8,
+            6,
+            4,
+            2,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            3,
+            5,
+            7,
+            9,
+            10,
+            8,
+            6,
+            4,
+            2,
+            1,
+            0
+          ],
+          [
+            1,
+            2,
+            4,
+            6,
+            8,
+            9,
+            7,
+            5,
+            3,
+            2,
+            1,
+            0
+          ],
+          [
+            2,
+            5,
+            8,
+            11,
+            13,
+            14,
+            12,
+            9,
+            6,
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            6,
+            10,
+            14,
+            16,
+            17,
+            15,
+            11,
+            7,
+            4,
+            2,
+            1
+          ],
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            4,
+            3,
+            2,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            2,
+            3,
+            4,
+            3,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "label": "Commits by hour",
+      "steps": 5,
+      "highlight": true,
+      "legend": true,
+      "look": "svg",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Matrix data with rows, columns, and 2D values array.",
+      "label": "Name for the chart, read by assistive technology and used as the hidden data table's caption.",
+      "steps": "Number of distinct tone levels to display, from 2 to 8.",
+      "highlight": "Whether to highlight and label the highest value cell in accent.",
+      "legend": "Whether to show the stepped legend below the chart.",
+      "look": "\"svg\" draws hairline axes and filled rectangles. \"glyph\" draws cells in a monospace grid.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "{ rows: string[]; columns: string[]; values: number[][] }",
+      "label": "string",
+      "steps": "number",
+      "highlight": "boolean",
+      "legend": "boolean",
+      "look": "\"svg\" | \"glyph\"",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 5464
   },
   {
     "slug": "kanban-board",
@@ -1975,6 +2784,716 @@
     },
     "events": {},
     "gzipBytes": 5817
+  },
+  {
+    "slug": "radar-chart",
+    "title": "Radar Chart",
+    "category": "data",
+    "description": "Three to eight axes radiating from a centre with closed polygon series, drawn as SVG or a monospace glyph grid, with a hidden data table.",
+    "tags": [
+      "chart",
+      "radar",
+      "star plot",
+      "svg",
+      "glyph grid",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "data": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "max": {
+        "type": "number",
+        "min": 0,
+        "max": 1000,
+        "step": 10
+      },
+      "rings": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1
+      },
+      "fill": {
+        "type": "number",
+        "min": 0,
+        "max": 0.4,
+        "step": 0.02
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Graphical Methods for Data Analysis",
+        "author": "John M. Chambers, William S. Cleveland, Beat Kleiner and Paul A. Tukey",
+        "url": "https://doi.org/10.1201/9781351072304",
+        "license": "Book"
+      },
+      {
+        "relation": "technique",
+        "title": "Star Plot",
+        "author": "NIST/SEMATECH e-Handbook of Statistical Methods",
+        "url": "https://www.itl.nist.gov/div898/handbook/eda/section3/starplot.htm",
+        "license": "Public domain"
+      }
+    ],
+    "exportName": "RadarChart",
+    "defaults": {
+      "data": {
+        "axes": [
+          {
+            "label": "Speed"
+          },
+          {
+            "label": "Size"
+          },
+          {
+            "label": "Setup"
+          },
+          {
+            "label": "Accessibility"
+          },
+          {
+            "label": "Docs"
+          },
+          {
+            "label": "Themes"
+          }
+        ],
+        "series": [
+          {
+            "name": "React",
+            "values": [
+              80,
+              60,
+              90,
+              85,
+              70,
+              95
+            ]
+          },
+          {
+            "name": "Vue",
+            "values": [
+              70,
+              85,
+              75,
+              80,
+              95,
+              65
+            ]
+          }
+        ]
+      },
+      "label": "Two libraries compared",
+      "max": 100,
+      "rings": 3,
+      "fill": 0.12,
+      "look": "svg",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Chart data with axes and series. Each series has a name and values matching the axis count.",
+      "label": "Name for the chart, read by assistive technology and used as the hidden data table's caption.",
+      "max": "Maximum value on the scale.",
+      "rings": "Number of concentric rings.",
+      "fill": "Opacity of the first series' fill, from 0 to 0.4.",
+      "look": "\"svg\" draws hairline axes and rings. \"glyph\" draws the same in a monospace grid.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "{ axes: { label: string }[]; series: { name: string; values: number[] }[] }",
+      "label": "string",
+      "max": "number",
+      "rings": "number",
+      "fill": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 5871
+  },
+  {
+    "slug": "scatter-plot",
+    "title": "Scatter Plot",
+    "category": "data",
+    "description": "Points from JSON on two linear axes, with highlighted points labeled directly beside them and an optional fit line.",
+    "tags": [
+      "chart",
+      "scatter",
+      "svg",
+      "glyph grid",
+      "data table",
+      "regression"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "data": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "highlight": {
+        "type": "json"
+      },
+      "fit": {
+        "type": "boolean"
+      },
+      "xLabel": {
+        "type": "string"
+      },
+      "yLabel": {
+        "type": "string"
+      },
+      "dotSize": {
+        "type": "number",
+        "min": 0.5,
+        "max": 4,
+        "step": 0.5
+      },
+      "ticks": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 1
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods",
+        "author": "William S. Cleveland and Robert McGill",
+        "url": "https://doi.org/10.1080/01621459.1984.10478080",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Nice Numbers for Graph Labels",
+        "author": "Paul Heckbert",
+        "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "ScatterPlot",
+    "defaults": {
+      "data": [
+        {
+          "x": 0,
+          "y": 10,
+          "label": "Zero"
+        },
+        {
+          "x": 1,
+          "y": 12
+        },
+        {
+          "x": 2,
+          "y": 15
+        },
+        {
+          "x": 3,
+          "y": 18
+        },
+        {
+          "x": 4,
+          "y": 20,
+          "label": "Four"
+        },
+        {
+          "x": 5,
+          "y": 22
+        },
+        {
+          "x": 6,
+          "y": 25
+        },
+        {
+          "x": 7,
+          "y": 28
+        },
+        {
+          "x": 8,
+          "y": 30
+        },
+        {
+          "x": 9,
+          "y": 32
+        },
+        {
+          "x": 1.5,
+          "y": 14
+        },
+        {
+          "x": 2.5,
+          "y": 16
+        },
+        {
+          "x": 3.5,
+          "y": 19
+        },
+        {
+          "x": 4.5,
+          "y": 21
+        },
+        {
+          "x": 5.5,
+          "y": 23
+        },
+        {
+          "x": 6.5,
+          "y": 26
+        },
+        {
+          "x": 7.5,
+          "y": 29
+        },
+        {
+          "x": 8.5,
+          "y": 31
+        },
+        {
+          "x": 0.5,
+          "y": 11
+        },
+        {
+          "x": 1.8,
+          "y": 13
+        },
+        {
+          "x": 3.2,
+          "y": 17
+        },
+        {
+          "x": 4.8,
+          "y": 21
+        },
+        {
+          "x": 6.2,
+          "y": 24
+        },
+        {
+          "x": 7.2,
+          "y": 27
+        },
+        {
+          "x": 8.2,
+          "y": 31
+        },
+        {
+          "x": 9.2,
+          "y": 33
+        },
+        {
+          "x": 2.2,
+          "y": 15
+        },
+        {
+          "x": 5.2,
+          "y": 23
+        },
+        {
+          "x": 6.8,
+          "y": 26
+        },
+        {
+          "x": 8.8,
+          "y": 32
+        },
+        {
+          "x": 0.8,
+          "y": 12
+        },
+        {
+          "x": 3.8,
+          "y": 19
+        },
+        {
+          "x": 7.8,
+          "y": 29
+        },
+        {
+          "x": 9.8,
+          "y": 33
+        }
+      ],
+      "label": "Score against hours studied",
+      "highlight": [
+        "Zero",
+        "Four"
+      ],
+      "fit": false,
+      "xLabel": "Hours",
+      "yLabel": "Score",
+      "dotSize": 2,
+      "ticks": 5,
+      "look": "svg",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Points to plot, each with x, y, and optional label. Empty draws the axes and a muted \"no data\" note.",
+      "label": "Name for the chart, read by assistive technology and used as the hidden data table's caption.",
+      "highlight": "Labels of points to highlight and label directly.",
+      "fit": "Draws a least-squares fit line through the data.",
+      "xLabel": "Label for the x-axis.",
+      "yLabel": "Label for the y-axis.",
+      "dotSize": "Radius of each point in CSS pixels.",
+      "ticks": "About this many rounded ticks on each axis, in the svg look.",
+      "look": "\"svg\" draws hairline axes and circles. \"glyph\" draws the same points in a monospace grid.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "{ x: number; y: number; label?: string }[]",
+      "label": "string",
+      "highlight": "string[]",
+      "fit": "boolean",
+      "xLabel": "string",
+      "yLabel": "string",
+      "dotSize": "number",
+      "ticks": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 6185
+  },
+  {
+    "slug": "timeline-chart",
+    "title": "Timeline Chart",
+    "category": "data",
+    "description": "Rows of labeled spans and point events over one shared time axis, for a project plan or a chronology.",
+    "tags": [
+      "chart",
+      "timeline",
+      "spans",
+      "events",
+      "svg",
+      "glyph",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "data": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "highlight": {
+        "type": "number",
+        "min": -1,
+        "max": 30,
+        "step": 1
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      },
+      "ticks": {
+        "type": "number",
+        "min": 2,
+        "max": 12,
+        "step": 1
+      },
+      "rowHeight": {
+        "type": "number",
+        "min": 16,
+        "max": 48,
+        "step": 1
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Joseph Priestley and the Graphic Invention of Modern Time",
+        "author": "Daniel Rosenberg",
+        "url": "https://doi.org/10.1353/sec.2007.0013",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Timelines Revisited: A Design Space and Considerations for Expressive Storytelling",
+        "author": "Brehmer, Lee, Bach, Henry Riche and Munzner",
+        "url": "https://doi.org/10.1109/TVCG.2016.2614803",
+        "license": "Paper"
+      }
+    ],
+    "exportName": "TimelineChart",
+    "defaults": {
+      "data": [
+        {
+          "label": "Research",
+          "start": "2025-09-01",
+          "end": "2025-10-15"
+        },
+        {
+          "label": "Runtime",
+          "start": "2025-10-01",
+          "end": "2025-12-31",
+          "events": [
+            {
+              "time": "2025-11-15",
+              "label": "v1"
+            }
+          ]
+        },
+        {
+          "label": "Wave 4",
+          "start": "2025-10-15",
+          "end": "2026-03-31",
+          "events": [
+            {
+              "time": "2025-12-15",
+              "label": "build"
+            }
+          ]
+        },
+        {
+          "label": "Review",
+          "start": "2026-03-15",
+          "end": "2026-06-30"
+        },
+        {
+          "label": "Launch",
+          "start": "2026-06-01",
+          "events": [
+            {
+              "time": "2026-09-15",
+              "label": "ship"
+            }
+          ]
+        }
+      ],
+      "label": "Project timeline",
+      "highlight": -1,
+      "look": "svg",
+      "ticks": 6,
+      "rowHeight": 24,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Rows of spans and events over time. Empty draws the axes and a muted \"no data\" note.",
+      "label": "Name for the chart, read by assistive technology and used as the hidden data table's caption.",
+      "highlight": "Index of the span or event highlighted in the accent. -1 highlights nothing.",
+      "look": "\"svg\" draws hairline axes and rectangles. \"glyph\" draws in a monospace grid.",
+      "ticks": "About this many rounded ticks on the time axis.",
+      "rowHeight": "Height of each row in CSS pixels.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "TimelineRow[]",
+      "label": "string",
+      "highlight": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "ticks": "number",
+      "rowHeight": "number",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 5910
+  },
+  {
+    "slug": "waterfall-chart",
+    "title": "Waterfall Chart",
+    "category": "data",
+    "description": "A start value, signed changes floating between running totals, and an end total, with hairline connectors.",
+    "tags": [
+      "chart",
+      "waterfall",
+      "bridge",
+      "flow",
+      "svg",
+      "glyph grid",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "data": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "highlight": {
+        "type": "number",
+        "min": -1,
+        "max": 30,
+        "step": 1
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      },
+      "values": {
+        "type": "boolean"
+      },
+      "ticks": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 1
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Horizontal waterfall chart",
+        "author": "IBCS, International Business Communication Standards",
+        "url": "https://www.ibcs.com/resource/horizontal-waterfall-chart/",
+        "license": "Standard, no code"
+      }
+    ],
+    "exportName": "WaterfallChart",
+    "defaults": {
+      "data": [
+        {
+          "label": "Start",
+          "value": 120
+        },
+        {
+          "label": "New",
+          "value": 48
+        },
+        {
+          "label": "Expansion",
+          "value": 22
+        },
+        {
+          "label": "Churn",
+          "value": -19
+        },
+        {
+          "label": "Downgrade",
+          "value": -8
+        },
+        {
+          "label": "Recovery",
+          "value": 11
+        },
+        {
+          "label": "Total",
+          "value": 174
+        }
+      ],
+      "label": "Revenue bridge",
+      "highlight": -1,
+      "look": "svg",
+      "values": true,
+      "ticks": 5,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Data with a start value, changes, and an ending total. Each item has a label and a signed value.",
+      "label": "Name for the chart, read by assistive technology and used as the hidden data table's caption.",
+      "highlight": "Index of the bar drawn in the accent. -1 highlights the bar with the largest change by absolute value.",
+      "look": "\"svg\" draws hairline axes and rectangles. \"glyph\" draws the same bars in a monospace grid.",
+      "values": "Shows each bar's value in mono figures.",
+      "ticks": "About this many rounded ticks on the value axis, in the svg look.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "{ label: string; value: number }[]",
+      "label": "string",
+      "highlight": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "values": "boolean",
+      "ticks": "number",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 5725
   },
   {
     "slug": "dither-contours",
