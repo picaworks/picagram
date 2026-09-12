@@ -66,6 +66,15 @@ Original to Picagram.
 
 - Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
 
+## Dither Contours (`dither-contours`)
+
+- Technique from [Cartographic Relief Presentation](https://doi.org/10.1515/9783110844016) by Eduard Imhof (Book).
+- Technique from [Hypsometric tints](https://en.wikipedia.org/wiki/Hypsometric_tints) by Wikipedia (Reference, no code).
+
+## Dither Crosshatch Image (`dither-crosshatch-image`)
+
+- Technique from [Real-time hatching](https://doi.org/10.1145/383259.383328) by Emil Praun, Hugues Hoppe, Matthew Webb, Adam Finkelstein (Paper).
+
 ## Dither Gradient (`dither-gradient`)
 
 - Technique from [Ditherpunk](https://surma.dev/things/ditherpunk/) by Surma (Article).
@@ -76,13 +85,56 @@ Original to Picagram.
 - Technique from [Ditherpunk](https://surma.dev/things/ditherpunk/) by Surma (Article).
 - Technique from [Atkinson dithering](https://en.wikipedia.org/wiki/Atkinson_dithering) by Wikipedia (Algorithm, no code).
 
+## Dither Noise (`dither-noise`)
+
+- Technique from [Simplex noise](https://en.wikipedia.org/wiki/Simplex_noise) by Wikipedia (Algorithm, no code).
+- Technique from [Digital Halftoning](https://doi.org/10.7551/mitpress/2421.001.0001) by Robert Ulichney (Book).
+
+## Dither Poster Image (`dither-poster-image`)
+
+- Technique from [Digital Halftoning](https://doi.org/10.7551/mitpress/2421.001.0001) by Robert Ulichney (Book).
+- Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
+
+## Dither Reveal (`dither-reveal`)
+
+- Technique from [Void-and-cluster method for dither array generation](https://doi.org/10.1117/12.152707) by Robert A. Ulichney (Paper).
+- Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
+
+## Dither Stipple Image (`dither-stipple-image`)
+
+- Technique from [Weighted Voronoi stippling](https://doi.org/10.1145/508530.508537) by Adrian Secord (Paper).
+
+## Dither Temporal (`dither-temporal`)
+
+- Technique from [Void-and-cluster method for dither array generation](https://doi.org/10.1117/12.152707) by Robert A. Ulichney (Paper).
+- Technique from [Spatiotemporal Blue Noise Masks](https://doi.org/10.2312/sr.20221161) by Alan Wolfe, Nathan Morrical, Tomas Akenine-Möller, Ravi Ramamoorthi (Paper).
+
+## Dither Waves (`dither-waves`)
+
+- Technique from [The Theory of the Moire Phenomenon: Volume I, Periodic Layers](https://doi.org/10.1007/978-1-84882-181-1) by Isaac Amidror (Book).
+- Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
+
 ## Halftone Image (`halftone-image`)
 
 - Technique from [Halftone](https://en.wikipedia.org/wiki/Halftone) by Wikipedia (Reference, no code).
 
+## Block Glitch Image (`block-glitch-image`)
+
+- Technique from [The Glitch Moment(um)](https://networkcultures.org/blog/publication/no-04-the-glitch-momentum-rosa-menkman/) by Rosa Menkman (Book).
+- Technique from [Compression artifact](https://en.wikipedia.org/wiki/Compression_artifact) by Wikipedia (Reference, no code).
+
+## Channel Shift Image (`channel-shift-image`)
+
+- Technique from [Printing registration](https://en.wikipedia.org/wiki/Printing_registration) by Wikipedia (Reference, no code).
+
 ## Duotone Image (`duotone-image`)
 
 Original to Picagram.
+
+## Edge Trace Image (`edge-trace-image`)
+
+- Technique from [A Computational Approach to Edge Detection](https://doi.org/10.1109/TPAMI.1986.4767851) by John Canny (Paper).
+- Technique from [Sobel operator](https://en.wikipedia.org/wiki/Sobel_operator) by Wikipedia (Algorithm, no code).
 
 ## Glitch Text (`glitch-text`)
 
@@ -96,9 +148,24 @@ Original to Picagram.
 
 - Technique from [CSS halftone patterns](https://css-irl.info/css-halftone-patterns/) by Michelle Barker, CSS { In Real Life } (Article).
 
+## Photocopy Image (`photocopy-image`)
+
+- Technique from [Adaptive Thresholding using the Integral Image](https://doi.org/10.1080/2151237X.2007.10129236) by Derek Bradley, Gerhard Roth (Paper).
+- Technique from [Summed-area tables for texture mapping](https://doi.org/10.1145/800031.808600) by Franklin C. Crow (Paper).
+
+## Pixel Displace Image (`pixel-displace-image`)
+
+- Technique from [Simplex noise](https://en.wikipedia.org/wiki/Simplex_noise) by Wikipedia (Algorithm, no code).
+
 ## Pixel Sort (`pixel-sort`)
 
 - Technique from [ASDF pixel sorting](https://github.com/kimasendorf/ASDFPixelSort) by Kim Asendorf (Technique, no code read).
+
+## Risograph Image (`risograph-image`)
+
+- Technique from [Digital Duplicator](https://www.riso.co.jp/english/product/digital_dup/) by RISO Kagaku Corporation (Reference, no code).
+- Technique from [Risograph](https://en.wikipedia.org/wiki/Risograph) by Wikipedia (Reference, no code).
+- Technique from [Void-and-cluster method for dither array generation](https://doi.org/10.1117/12.152707) by Robert A. Ulichney (Paper).
 
 ## Scan Reveal Image (`scan-reveal-image`)
 
@@ -107,6 +174,10 @@ Original to Picagram.
 ## Scanlines (`scanlines`)
 
 Original to Picagram.
+
+## Slit Scan Image (`slit-scan-image`)
+
+- Technique from [An Informal Catalogue of Slit-Scan Video Artworks and Research](https://www.flong.com/archive/texts/lists/slit_scan/index.html) by Golan Levin (Article).
 
 ## Globe (`globe`)
 
