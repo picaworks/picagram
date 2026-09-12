@@ -25,6 +25,7 @@ Pick the first kind that can do the job.
 | Control | decorates a real element, reports events, and holds children, for buttons, selects, and dialogs | `registry/ui/button/` |
 | Chart | builds SVG with `lib/chart.ts` and carries a hidden data table, with a glyph look beside the SVG one | `registry/data/bar-chart/` |
 | Shader | draws with `createShader` on WebGL2, for gradients and fields a canvas cannot keep up with | `registry/shaders/mesh-gradient/` |
+| Immersive | draws a world on a canvas: a globe, a map, a horizon, or a field seen in perspective | `registry/immersive/globe/` |
 | Section | composes other components' cores into a page section | `registry/sections/hero/` |
 
 Not accepted:

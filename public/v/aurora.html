@@ -16,6 +16,7 @@ html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
 #pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
 .pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
 .pica-stage #pica { width: auto; height: auto; }
 .pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
@@ -417,6 +418,16 @@ float pica_fbm(vec2 p, int octaves) {
   return sum;
 }
 `;
+  var TONE = `
+vec4 pica_tone(float tone, vec4 ink, float levels) {
+  float steps = max(1.0, levels);
+  float q = floor(clamp(tone, 0.0, 1.0) * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
+  float amount = clamp(q, 0.0, 1.0) * ink.a;
+  float onto = u_bg.a * (1.0 - amount);
+  float alpha = amount + onto;
+  return vec4((ink.rgb * amount + u_bg.rgb * onto) / max(alpha, 0.0001), alpha);
+}
+`;
   var DITHER = `
 float pica_bayer8(ivec2 p) {
   int x = p.x & 7;
@@ -508,9 +519,13 @@ float pica_bayer8(ivec2 p) {
   // registry/shaders/aurora/core.ts
   var defaults = {
     speed: 0.15,
-    curtains: 4,
+    curtains: 3,
+    arc: 0.35,
     height: 0.7,
+    horizon: 0.85,
     sway: 0.5,
+    folds: 0.5,
+    rays: 0.6,
     intensity: 0.8,
     levels: 6,
     pixel: 2,
@@ -520,46 +535,82 @@ float pica_bayer8(ivec2 p) {
     seed: 1
   };
   var STILL = 1200;
-  var FRAGMENT = `${NOISE}${DITHER}
-uniform float u_speed;
-uniform float u_curtains;
-uniform float u_height;
-uniform float u_sway;
-uniform float u_intensity;
-uniform float u_levels;
-void main() {
-  vec2 uv = gl_FragCoord.xy / u_resolution;
-  float vy = 1.0 - uv.y;
-  float t = u_time * u_speed;
-  float envelope = 1.0 - smoothstep(u_height * 0.33, u_height, vy);
-  int n = int(u_curtains + 0.5);
-  float nf = float(n);
-  float field = 0.0;
-  float fold = 0.0;
-  for (int i = 0; i < 8; i++) {
-    if (i >= n) break;
-    float fi = float(i);
-    float baseX = (fi + 0.5) / nf + (pica_random(vec2(fi, 4.0)) - 0.5) * 0.12;
-    float phaseA = pica_random(vec2(fi, 9.0)) * 40.0;
-    float phaseB = pica_random(vec2(fi, 17.0)) * 40.0;
-    float wander = u_sway * 0.16 * pica_noise(vec2(vy * 1.7 + phaseA, t * 0.5 + phaseB));
-    float dx = abs(uv.x - baseX - wander);
-    float presence = (1.0 - smoothstep(0.026, 0.07, dx)) * envelope;
-    float ripple = 0.5 + 0.5 * pica_noise(vec2(vy * 4.5 + phaseB, t * 0.8 + phaseA));
-    field = max(field, presence * mix(0.65, 1.0, ripple));
-    fold = max(fold, presence * ripple);
+  var FRAGMENT = `${NOISE}${DITHER}${TONE}
+  uniform float u_speed;
+  uniform float u_curtains;
+  uniform float u_arc;
+  uniform float u_height;
+  uniform float u_horizon;
+  uniform float u_sway;
+  uniform float u_folds;
+  uniform float u_rays;
+  uniform float u_intensity;
+  uniform float u_levels;
+  void main() {
+    vec2 uv = gl_FragCoord.xy / u_resolution;
+    float vy = 1.0 - uv.y;
+    float t = u_time * u_speed;
+    float cell = 1.0 / u_resolution.y;
+    float wide = u_resolution.x / u_resolution.y;
+    // A narrow window shows less of the arc's thousand-kilometre run, so its bow and its folds cover less
+    // sky. Without this a phone reads the same curve as a row of peaks.
+    float persp = clamp(0.45 + 0.35 * wide, 0.45, 1.0);
+    int n = int(u_curtains + 0.5);
+    float span = max(1.0, float(n) - 1.0);
+    float sheet = 0.0;
+    float hem = 0.0;
+    for (int i = 0; i < 8; i++) {
+      if (i >= n) break;
+      float fi = float(i);
+      float far = fi / span;
+      float pa = pica_random(vec2(fi, 3.0)) * 24.0;
+      float pb = pica_random(vec2(fi, 11.0)) * 24.0;
+      float pc = pica_random(vec2(fi, 19.0));
+      float drift = pica_noise(vec2(uv.x * 0.8 + pa, t * 0.3));
+      float wave = pica_noise(vec2(uv.x * 3.4 + pb, t * 0.5 + pa));
+      float xf = uv.x + u_sway * 0.2 * drift + u_folds * 0.07 * wave;
+      float foot = u_horizon * mix(0.50, 0.94, sqrt(far));
+      float depth = u_horizon * mix(0.26, 0.10, far) * persp;
+      float bow = clamp(2.0 * (xf - 0.5 - (pc - 0.5) * 0.6), -1.6, 1.6);
+      float curl = pica_fbm(vec2(xf * wide * mix(20.0, 34.0, far) + pb, pa), 2);
+      float border = min(u_horizon, foot + u_arc * depth * bow * bow - depth * u_folds * (0.34 * wave + 0.05 * curl));
+      float d = border - vy;
+      float ray = smoothstep(0.1, 0.9, 0.5 + 0.75 * curl);
+      float tall = max(0.04, u_height * mix(1.0, 0.32, far) * mix(1.0, 0.35 + 1.4 * ray, u_rays));
+      float up = max(d, 0.0) / tall;
+      float body = smoothstep(-cell, cell * 1.5, d) * (0.78 * exp(-up * 10.0) + 0.34 * exp(-up * 5.0) + 0.09 * ray * exp(-up * 1.2));
+      float lit = body * mix(1.0, 0.25 + 0.85 * ray, u_rays);
+      float steep = u_folds * smoothstep(2.5, 6.5, abs(dFdx(wave)) * u_resolution.x);
+      float dim = mix(1.0, 0.36, far);
+      sheet = max(sheet, dim * lit * (1.0 + 0.8 * steep));
+      float rim = exp(-max(d, 0.0) / max(cell * 3.0, u_height * 0.03)) * mix(1.0, 0.55 + 0.55 * ray, u_rays);
+      hem = max(hem, dim * max(rim * body, steep * lit * 1.3));
+    }
+    float tone = clamp(sheet * u_intensity, 0.0, 1.0);
+    float mark = smoothstep(0.38, 0.88, hem);
+    vec4 ink = vec4(mix(u_accent.rgb, u_fg.rgb, mark), mix(u_accent.a, u_fg.a, mark));
+    pica_color = pica_tone(tone, ink, u_levels - 1.0);
   }
-  float steps = max(1.0, u_levels - 1.0);
-  float tone = clamp(field * u_intensity, 0.0, 1.0);
-  tone = floor(tone * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
-  vec3 ink = mix(u_accent.rgb, u_fg.rgb, smoothstep(0.6, 0.82, fold));
-  float ground = step(0.001, u_bg.a);
-  pica_color = vec4(mix(ink, mix(u_bg.rgb, ink, tone), ground), max(tone * u_accent.a, u_bg.a));
-}
 `;
-  var FALLBACK = `linear-gradient(to bottom, color-mix(in srgb, ${cssVar("accent")} 35%, transparent), transparent 70%)`;
+  var ARCS = [
+    `radial-gradient(88% 50% at 46% -6%, transparent 52%, color-mix(in srgb, ${cssVar("accent")} 20%, transparent) 74%, color-mix(in srgb, ${cssVar("accent")} 72%, transparent) 88%, ${cssVar("fg")} 92%, transparent 93%)`,
+    `radial-gradient(122% 78% at 57% -4%, transparent 68%, color-mix(in srgb, ${cssVar("accent")} 12%, transparent) 83%, color-mix(in srgb, ${cssVar("accent")} 42%, transparent) 93%, ${cssVar("fg")} 96%, transparent 97%)`
+  ];
+  var FALLBACK = ARCS.join(", ");
   function uniforms(p) {
-    return { u_seed: p.seed, u_speed: p.speed, u_curtains: p.curtains, u_height: p.height, u_sway: p.sway, u_intensity: p.intensity, u_levels: p.levels };
+    return {
+      u_seed: p.seed,
+      u_speed: p.speed,
+      u_curtains: p.curtains,
+      u_arc: p.arc,
+      u_height: p.height,
+      u_horizon: p.horizon,
+      u_sway: p.sway,
+      u_folds: p.folds,
+      u_rays: p.rays,
+      u_intensity: p.intensity,
+      u_levels: p.levels
+    };
   }
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };

@@ -11,6 +11,7 @@ export const meta: Meta = {
   animated: true,
   decorative: false,
   wraps: "content",
+  stage: "flow",
   palette: ["fg", "accent"],
   demo: {
     children: "<h1>Components drawn in text.</h1><p>ASCII-first components for React and plain HTML.</p>",

@@ -116,8 +116,10 @@ export interface Meta {
   controlled?: Readonly<Record<string, string>>;
   /** Scripted interactions verify runs in both shapes. Each list of steps starts from a fresh mount. */
   interactions?: readonly (readonly Step[])[];
-  /** "inline" marks a text run, which the demo page centers and enlarges. Defaults to "fill". */
-  stage?: "fill" | "inline";
+  /** How the demo page and the catalog frame give the component room. "inline" marks a text run, which is
+   *  centered and enlarged. "flow" lets a component take its own height above a floor of the frame, the way a
+   *  section sits in a real page, so a hero is never clipped on a phone. Defaults to "fill". */
+  stage?: "fill" | "inline" | "flow";
   /** The host element, when it is not a div (or a span for an inline stage). A button mounts on a real
    *  button, so the browser's own keyboard and form behavior come for free. The React wrapper renders the
    *  same element. */

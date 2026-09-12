@@ -652,8 +652,9 @@ type Uniform = number | readonly number[];
 interface ShaderOptions {
   /** GLSL ES 3.00 that follows the prelude. It declares any extra uniforms, defines main(), and writes
    *  pica_color, with straight (not premultiplied) alpha. The prelude declares u_resolution in device
-   *  pixels, u_time in seconds (wrapping every hour), u_seed, u_pointer (0 to 1 across the host, or -1 when
-   *  outside), the palette as u_fg, u_bg, u_accent, and u_muted (RGBA, 0 to 1), and two helpers:
+   *  pixels, u_time in seconds (wrapping every hour), u_seed, u_pointer (0 to 1 across the host with y
+   *  running up, the same way as gl_FragCoord, or -1 when outside: set it with pointerUv), the palette as
+   *  u_fg, u_bg, u_accent, and u_muted (RGBA, 0 to 1), and two helpers:
    *  pica_hash(uvec2), an integer hash, and pica_random(vec2), a seeded value in [0, 1) per cell. */
   fragment: string;
   /** A CSS background shown instead when WebGL2 is unavailable or the shader cannot build. Build it from
@@ -741,6 +742,17 @@ function compileStage(gl: WebGL2RenderingContext, type: number, source: string):
   if (!gl.isContextLost()) console.error(`Pica shader did not compile: ${gl.getShaderInfoLog(shader) ?? ""}`);
   gl.deleteShader(shader);
   return null;
+}
+
+/** A pointer event as u_pointer wants it: 0 to 1 across the host, with y running up like gl_FragCoord, and
+ *  [-1, -1] when the pointer is outside. Reading the DOM's own top-down y straight into the uniform is the
+ *  mistake this exists to stop, because it mirrors every pointer effect vertically. */
+function pointerUv(host: HTMLElement, event: { clientX: number; clientY: number }): [number, number] {
+  const rect = host.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return [-1, -1];
+  const x = (event.clientX - rect.left) / rect.width;
+  const y = 1 - (event.clientY - rect.top) / rect.height;
+  return x < 0 || x > 1 || y < 0 || y > 1 ? [-1, -1] : [x, y];
 }
 
 function createShader(host: HTMLElement, options: ShaderOptions): Shader {
@@ -890,6 +902,24 @@ float pica_fbm(vec2 p, int octaves) {
     amp *= 0.5;
   }
   return sum;
+}
+`;
+
+/** The tail every shader repeats: take a tone from 0 to 1, quantize it through the Bayer matrix into a
+ *  number of steps, and composite that much ink over the ground. Needs DITHER before it.
+ *
+ *  The result is straight alpha, which is what lib/gl.ts asks the context for. Mixing toward u_bg instead
+ *  would be premultiplied whenever the ground is transparent, which is the default, and the browser would
+ *  then multiply by alpha a second time: every mid-tone would come out squared, so six even levels would
+ *  land near 7, 19, 38, 65 and 100 percent instead of 20 through 100. */
+const TONE = `
+vec4 pica_tone(float tone, vec4 ink, float levels) {
+  float steps = max(1.0, levels);
+  float q = floor(clamp(tone, 0.0, 1.0) * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
+  float amount = clamp(q, 0.0, 1.0) * ink.a;
+  float onto = u_bg.a * (1.0 - amount);
+  float alpha = amount + onto;
+  return vec4((ink.rgb * amount + u_bg.rgb * onto) / max(alpha, 0.0001), alpha);
 }
 `;
 
@@ -1149,9 +1179,8 @@ export const mount: Mount<ShaderFlowProps> = (host, initial = {}) => {
 
   function onPointerMove(e: PointerEvent): void {
     if (!live()) return;
-    const rect = host.getBoundingClientRect();
-    if (rect.width <= 0 || rect.height <= 0) return;
-    shader.set("u_pointer", [(e.clientX - rect.left) / rect.width, (e.clientY - rect.top) / rect.height]);
+    // pointerUv flips y, so the bend follows the pointer instead of mirroring it across the middle.
+    shader.set("u_pointer", pointerUv(host, e));
     loop.redraw();
   }
 
@@ -1222,6 +1251,7 @@ html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
 #pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
 .pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
 .pica-stage #pica { width: auto; height: auto; }
 .pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
@@ -1486,6 +1516,13 @@ float pica_random(vec2 cell) {
     if (!gl.isContextLost()) console.error(`Pica shader did not compile: ${gl.getShaderInfoLog(shader) ?? ""}`);
     gl.deleteShader(shader);
     return null;
+  }
+  function pointerUv(host, event) {
+    const rect = host.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return [-1, -1];
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = 1 - (event.clientY - rect.top) / rect.height;
+    return x < 0 || x > 1 || y < 0 || y > 1 ? [-1, -1] : [x, y];
   }
   function createShader(host, options) {
     const { fragment, fallback, onInvalidate } = options;
@@ -1791,9 +1828,7 @@ void main() {
     }
     function onPointerMove(e) {
       if (!live()) return;
-      const rect = host.getBoundingClientRect();
-      if (rect.width <= 0 || rect.height <= 0) return;
-      shader.set("u_pointer", [(e.clientX - rect.left) / rect.width, (e.clientY - rect.top) / rect.height]);
+      shader.set("u_pointer", pointerUv(host, e));
       loop.redraw();
     }
     function onPointerLeave() {

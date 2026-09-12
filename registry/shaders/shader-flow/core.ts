@@ -1,5 +1,5 @@
 import { labelHost, unlabelHost } from "../../../lib/a11y";
-import { createShader, type Shader } from "../../../lib/gl";
+import { createShader, pointerUv, type Shader } from "../../../lib/gl";
 import { DITHER, NOISE } from "../../../lib/glsl";
 import { createLoop } from "../../../lib/loop";
 import { cssVar } from "../../../lib/palette";
@@ -124,9 +124,8 @@ export const mount: Mount<ShaderFlowProps> = (host, initial = {}) => {
 
   function onPointerMove(e: PointerEvent): void {
     if (!live()) return;
-    const rect = host.getBoundingClientRect();
-    if (rect.width <= 0 || rect.height <= 0) return;
-    shader.set("u_pointer", [(e.clientX - rect.left) / rect.width, (e.clientY - rect.top) / rect.height]);
+    // pointerUv flips y, so the bend follows the pointer instead of mirroring it across the middle.
+    shader.set("u_pointer", pointerUv(host, e));
     loop.redraw();
   }
 

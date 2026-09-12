@@ -21,8 +21,9 @@ What each browser group checks:
 | palette | four ways of setting colors agree |
 | gpu | the software renderer, a lost context, and the fallback without WebGL2 |
 | interaction | scripted steps, events, and controlled echo |
+| section | at 390: overflow, content on top, clipping, the page's font, and what can take focus |
 | fixture | a real PNG, and a fake camera |
 
-`--quick` checks one viewport and skips the long-task check, for iterating on a busy machine.
+`--quick` checks one viewport and skips the long-task check, for iterating on a busy machine. `PICA_VERIFY_SLOTS` caps how many browsers run at once, at 6 by default and uncapped on CI, so a wave of builders verifying together does not make the timing checks flake.
 
 `manual-checklist.md` lists what neither a test nor verify can see.

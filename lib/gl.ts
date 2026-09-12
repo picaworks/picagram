@@ -11,8 +11,9 @@ export type Uniform = number | readonly number[];
 export interface ShaderOptions {
   /** GLSL ES 3.00 that follows the prelude. It declares any extra uniforms, defines main(), and writes
    *  pica_color, with straight (not premultiplied) alpha. The prelude declares u_resolution in device
-   *  pixels, u_time in seconds (wrapping every hour), u_seed, u_pointer (0 to 1 across the host, or -1 when
-   *  outside), the palette as u_fg, u_bg, u_accent, and u_muted (RGBA, 0 to 1), and two helpers:
+   *  pixels, u_time in seconds (wrapping every hour), u_seed, u_pointer (0 to 1 across the host with y
+   *  running up, the same way as gl_FragCoord, or -1 when outside: set it with pointerUv), the palette as
+   *  u_fg, u_bg, u_accent, and u_muted (RGBA, 0 to 1), and two helpers:
    *  pica_hash(uvec2), an integer hash, and pica_random(vec2), a seeded value in [0, 1) per cell. */
   fragment: string;
   /** A CSS background shown instead when WebGL2 is unavailable or the shader cannot build. Build it from
@@ -100,6 +101,17 @@ function compileStage(gl: WebGL2RenderingContext, type: number, source: string):
   if (!gl.isContextLost()) console.error(`Pica shader did not compile: ${gl.getShaderInfoLog(shader) ?? ""}`);
   gl.deleteShader(shader);
   return null;
+}
+
+/** A pointer event as u_pointer wants it: 0 to 1 across the host, with y running up like gl_FragCoord, and
+ *  [-1, -1] when the pointer is outside. Reading the DOM's own top-down y straight into the uniform is the
+ *  mistake this exists to stop, because it mirrors every pointer effect vertically. */
+export function pointerUv(host: HTMLElement, event: { clientX: number; clientY: number }): [number, number] {
+  const rect = host.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return [-1, -1];
+  const x = (event.clientX - rect.left) / rect.width;
+  const y = 1 - (event.clientY - rect.top) / rect.height;
+  return x < 0 || x > 1 || y < 0 || y > 1 ? [-1, -1] : [x, y];
 }
 
 export function createShader(host: HTMLElement, options: ShaderOptions): Shader {

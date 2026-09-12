@@ -1,8 +1,8 @@
 # Aurora
 
-> Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.
+> Layered curtains of accent light standing on bowed lower borders, striated by vertical rays and dithered between a few tone steps on the GPU.
 
-Category: shaders. Tags: aurora, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
+Category: shaders. Tags: aurora, shader, webgl, background, dither. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.6 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
@@ -16,10 +16,14 @@ Or paste one of the two files below. The React file imports only `react`. The HT
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `speed` | number | `0.15` | How fast the curtains drift and ripple. 0 holds them still. |
-| `curtains` | number | `4` | Number of vertical light curtains. |
-| `height` | number | `0.7` | How far down the host the curtains reach before they fade out, as a fraction of its height. |
+| `speed` | number | `0.15` | How fast the curtains drift and fold. 0 holds them still. |
+| `curtains` | number | `3` | Curtain layers, drawn from near to far. |
+| `arc` | number | `0.35` | How far each lower border bows toward the horizon at its ends, from 0 (level) to 1 (all the way down). |
+| `height` | number | `0.7` | How far the rays stand above the lower border, as a fraction of the host's height. |
+| `horizon` | number | `0.85` | Where the horizon sits, measured down from the top. Nothing draws below it. |
 | `sway` | number | `0.5` | How far the curtains wander side to side, from 0 (straight) to 1 (a wide drift). |
+| `folds` | number | `0.5` | How deep the pleats along a curtain run, from 0 (a plain arc) to 1 (deep folds). |
+| `rays` | number | `0.6` | How strongly the vertical striations show, from 0 (a smooth sheet) to 1 (a rayed arc). |
 | `intensity` | number | `0.8` | How strongly the curtains show over the ground, from 0 to 1. |
 | `levels` | number | `6` | Tone steps the curtains are dithered between: 2 is one-bit, 16 reads as nearly smooth. |
 | `pixel` | number | `2` | Size of one dither cell, in CSS pixels. |
@@ -651,8 +655,9 @@ type Uniform = number | readonly number[];
 interface ShaderOptions {
   /** GLSL ES 3.00 that follows the prelude. It declares any extra uniforms, defines main(), and writes
    *  pica_color, with straight (not premultiplied) alpha. The prelude declares u_resolution in device
-   *  pixels, u_time in seconds (wrapping every hour), u_seed, u_pointer (0 to 1 across the host, or -1 when
-   *  outside), the palette as u_fg, u_bg, u_accent, and u_muted (RGBA, 0 to 1), and two helpers:
+   *  pixels, u_time in seconds (wrapping every hour), u_seed, u_pointer (0 to 1 across the host with y
+   *  running up, the same way as gl_FragCoord, or -1 when outside: set it with pointerUv), the palette as
+   *  u_fg, u_bg, u_accent, and u_muted (RGBA, 0 to 1), and two helpers:
    *  pica_hash(uvec2), an integer hash, and pica_random(vec2), a seeded value in [0, 1) per cell. */
   fragment: string;
   /** A CSS background shown instead when WebGL2 is unavailable or the shader cannot build. Build it from
@@ -740,6 +745,17 @@ function compileStage(gl: WebGL2RenderingContext, type: number, source: string):
   if (!gl.isContextLost()) console.error(`Pica shader did not compile: ${gl.getShaderInfoLog(shader) ?? ""}`);
   gl.deleteShader(shader);
   return null;
+}
+
+/** A pointer event as u_pointer wants it: 0 to 1 across the host, with y running up like gl_FragCoord, and
+ *  [-1, -1] when the pointer is outside. Reading the DOM's own top-down y straight into the uniform is the
+ *  mistake this exists to stop, because it mirrors every pointer effect vertically. */
+function pointerUv(host: HTMLElement, event: { clientX: number; clientY: number }): [number, number] {
+  const rect = host.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return [-1, -1];
+  const x = (event.clientX - rect.left) / rect.width;
+  const y = 1 - (event.clientY - rect.top) / rect.height;
+  return x < 0 || x > 1 || y < 0 || y > 1 ? [-1, -1] : [x, y];
 }
 
 function createShader(host: HTMLElement, options: ShaderOptions): Shader {
@@ -892,6 +908,24 @@ float pica_fbm(vec2 p, int octaves) {
 }
 `;
 
+/** The tail every shader repeats: take a tone from 0 to 1, quantize it through the Bayer matrix into a
+ *  number of steps, and composite that much ink over the ground. Needs DITHER before it.
+ *
+ *  The result is straight alpha, which is what lib/gl.ts asks the context for. Mixing toward u_bg instead
+ *  would be premultiplied whenever the ground is transparent, which is the default, and the browser would
+ *  then multiply by alpha a second time: every mid-tone would come out squared, so six even levels would
+ *  land near 7, 19, 38, 65 and 100 percent instead of 20 through 100. */
+const TONE = `
+vec4 pica_tone(float tone, vec4 ink, float levels) {
+  float steps = max(1.0, levels);
+  float q = floor(clamp(tone, 0.0, 1.0) * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
+  float amount = clamp(q, 0.0, 1.0) * ink.a;
+  float onto = u_bg.a * (1.0 - amount);
+  float alpha = amount + onto;
+  return vec4((ink.rgb * amount + u_bg.rgb * onto) / max(alpha, 0.0001), alpha);
+}
+`;
+
 /** The 8 by 8 Bayer threshold at a pixel, in (0, 1), for ordered dithering:
  *  step(pica_bayer8(ivec2(gl_FragCoord.xy)), tone). The same matrix as bayerMatrix(8) in lib/dither.ts. */
 const DITHER = `
@@ -1030,14 +1064,22 @@ function createLoop(options: LoopOptions): Loop {
 
 // registry/shaders/aurora/core.ts
 export interface AuroraProps extends MotionProps {
-  /** How fast the curtains drift and ripple. 0 holds them still. */
+  /** How fast the curtains drift and fold. 0 holds them still. */
   speed: number;
-  /** Number of vertical light curtains. */
+  /** Curtain layers, drawn from near to far. */
   curtains: number;
-  /** How far down the host the curtains reach before they fade out, as a fraction of its height. */
+  /** How far each lower border bows toward the horizon at its ends, from 0 (level) to 1 (all the way down). */
+  arc: number;
+  /** How far the rays stand above the lower border, as a fraction of the host's height. */
   height: number;
+  /** Where the horizon sits, measured down from the top. Nothing draws below it. */
+  horizon: number;
   /** How far the curtains wander side to side, from 0 (straight) to 1 (a wide drift). */
   sway: number;
+  /** How deep the pleats along a curtain run, from 0 (a plain arc) to 1 (deep folds). */
+  folds: number;
+  /** How strongly the vertical striations show, from 0 (a smooth sheet) to 1 (a rayed arc). */
+  rays: number;
   /** How strongly the curtains show over the ground, from 0 to 1. */
   intensity: number;
   /** Tone steps the curtains are dithered between: 2 is one-bit, 16 reads as nearly smooth. */
@@ -1050,9 +1092,13 @@ export interface AuroraProps extends MotionProps {
 
 export const defaults: AuroraProps = {
   speed: 0.15,
-  curtains: 4,
+  curtains: 3,
+  arc: 0.35,
   height: 0.7,
+  horizon: 0.85,
   sway: 0.5,
+  folds: 0.5,
+  rays: 0.6,
   intensity: 0.8,
   levels: 6,
   pixel: 2,
@@ -1065,55 +1111,110 @@ export const defaults: AuroraProps = {
 /** The frame held under reduced motion. */
 const STILL = 1200;
 
-/** Each curtain is a fixed vertical band, solid from the top so it reads as hanging rather than floating,
- *  whose centerline bends with low-frequency noise along its height. A separate, stricter noise picks out
- *  its brightest folds. The tallest curtain at each point on screen wins, so bands read as separate rather
- *  than adding into a bloom, and a fixed envelope fades every curtain out by `height`. The combined field is
- *  dithered between a few tone steps with the 8 by 8 Bayer matrix, so the softness is a printed grain rather
- *  than a blur, and the ink only reaches fg at those folds, the second tone. */
-const FRAGMENT = `${NOISE}${DITHER}
-uniform float u_speed;
-uniform float u_curtains;
-uniform float u_height;
-uniform float u_sway;
-uniform float u_intensity;
-uniform float u_levels;
-void main() {
-  vec2 uv = gl_FragCoord.xy / u_resolution;
-  float vy = 1.0 - uv.y;
-  float t = u_time * u_speed;
-  float envelope = 1.0 - smoothstep(u_height * 0.33, u_height, vy);
-  int n = int(u_curtains + 0.5);
-  float nf = float(n);
-  float field = 0.0;
-  float fold = 0.0;
-  for (int i = 0; i < 8; i++) {
-    if (i >= n) break;
-    float fi = float(i);
-    float baseX = (fi + 0.5) / nf + (pica_random(vec2(fi, 4.0)) - 0.5) * 0.12;
-    float phaseA = pica_random(vec2(fi, 9.0)) * 40.0;
-    float phaseB = pica_random(vec2(fi, 17.0)) * 40.0;
-    float wander = u_sway * 0.16 * pica_noise(vec2(vy * 1.7 + phaseA, t * 0.5 + phaseB));
-    float dx = abs(uv.x - baseX - wander);
-    float presence = (1.0 - smoothstep(0.026, 0.07, dx)) * envelope;
-    float ripple = 0.5 + 0.5 * pica_noise(vec2(vy * 4.5 + phaseB, t * 0.8 + phaseA));
-    field = max(field, presence * mix(0.65, 1.0, ripple));
-    fold = max(fold, presence * ripple);
+/** A discrete aurora, the kind that reads as curtains rather than as a fuzzy patch, drawn the way the
+ *  measurements describe it.
+ *
+ *  Each layer is a sheet standing on the ground, and the layers run from near to far: a farther one stands
+ *  nearer the horizon, reaches less high, draws dimmer, and carries finer rays. Its lower border is a
+ *  parabola that bows toward the horizon at the ends, because an arc runs over a thousand kilometres
+ *  horizontally while standing twenty or thirty tall, so the bow is perspective rather than curvature. One
+ *  slow noise, read across the host and never down it, both slides the sheet sideways and lifts or drops its
+ *  foot, which is what a pleat does when it swings toward the viewer or away.
+ *
+ *  Emission stops where the precipitating electrons stop, and the air thickens steeply downward, so the
+ *  lower border falls to a tenth of its peak within a couple of dither cells and the fade above it is long
+ *  and asymmetric. Rays are field aligned, so the striations come from noise in the folded horizontal
+ *  coordinate alone: they stay vertical, they travel with the fold, and the brightest of them reach highest.
+ *  The same field serrates the border, which is the curl, the smallest of the distortions. The sheet is
+ *  optically thin, so brightness is the emission gathered along the line of sight; where the fold steepens
+ *  the sheet is turning edge on, the path lengthens, and it reads as a bright vertical streak. That gain
+ *  reads the fold's own slope rather than the whole border's, because the perspective bow is distance, not a
+ *  fold. Layers combine with max, so overlapping light never blooms, and nothing draws below the horizon.
+ *
+ *  Two tones only: the accent carries the sheet, and fg reaches only the lower border and the edge-on folds.
+ *  pica_tone quantizes through the 8 by 8 Bayer matrix, so the softness is a printed grain, not a blur, and
+ *  it hands back straight alpha over whatever ground the page has. */
+const FRAGMENT = `${NOISE}${DITHER}${TONE}
+  uniform float u_speed;
+  uniform float u_curtains;
+  uniform float u_arc;
+  uniform float u_height;
+  uniform float u_horizon;
+  uniform float u_sway;
+  uniform float u_folds;
+  uniform float u_rays;
+  uniform float u_intensity;
+  uniform float u_levels;
+  void main() {
+    vec2 uv = gl_FragCoord.xy / u_resolution;
+    float vy = 1.0 - uv.y;
+    float t = u_time * u_speed;
+    float cell = 1.0 / u_resolution.y;
+    float wide = u_resolution.x / u_resolution.y;
+    // A narrow window shows less of the arc's thousand-kilometre run, so its bow and its folds cover less
+    // sky. Without this a phone reads the same curve as a row of peaks.
+    float persp = clamp(0.45 + 0.35 * wide, 0.45, 1.0);
+    int n = int(u_curtains + 0.5);
+    float span = max(1.0, float(n) - 1.0);
+    float sheet = 0.0;
+    float hem = 0.0;
+    for (int i = 0; i < 8; i++) {
+      if (i >= n) break;
+      float fi = float(i);
+      float far = fi / span;
+      float pa = pica_random(vec2(fi, 3.0)) * 24.0;
+      float pb = pica_random(vec2(fi, 11.0)) * 24.0;
+      float pc = pica_random(vec2(fi, 19.0));
+      float drift = pica_noise(vec2(uv.x * 0.8 + pa, t * 0.3));
+      float wave = pica_noise(vec2(uv.x * 3.4 + pb, t * 0.5 + pa));
+      float xf = uv.x + u_sway * 0.2 * drift + u_folds * 0.07 * wave;
+      float foot = u_horizon * mix(0.50, 0.94, sqrt(far));
+      float depth = u_horizon * mix(0.26, 0.10, far) * persp;
+      float bow = clamp(2.0 * (xf - 0.5 - (pc - 0.5) * 0.6), -1.6, 1.6);
+      float curl = pica_fbm(vec2(xf * wide * mix(20.0, 34.0, far) + pb, pa), 2);
+      float border = min(u_horizon, foot + u_arc * depth * bow * bow - depth * u_folds * (0.34 * wave + 0.05 * curl));
+      float d = border - vy;
+      float ray = smoothstep(0.1, 0.9, 0.5 + 0.75 * curl);
+      float tall = max(0.04, u_height * mix(1.0, 0.32, far) * mix(1.0, 0.35 + 1.4 * ray, u_rays));
+      float up = max(d, 0.0) / tall;
+      float body = smoothstep(-cell, cell * 1.5, d) * (0.78 * exp(-up * 10.0) + 0.34 * exp(-up * 5.0) + 0.09 * ray * exp(-up * 1.2));
+      float lit = body * mix(1.0, 0.25 + 0.85 * ray, u_rays);
+      float steep = u_folds * smoothstep(2.5, 6.5, abs(dFdx(wave)) * u_resolution.x);
+      float dim = mix(1.0, 0.36, far);
+      sheet = max(sheet, dim * lit * (1.0 + 0.8 * steep));
+      float rim = exp(-max(d, 0.0) / max(cell * 3.0, u_height * 0.03)) * mix(1.0, 0.55 + 0.55 * ray, u_rays);
+      hem = max(hem, dim * max(rim * body, steep * lit * 1.3));
+    }
+    float tone = clamp(sheet * u_intensity, 0.0, 1.0);
+    float mark = smoothstep(0.38, 0.88, hem);
+    vec4 ink = vec4(mix(u_accent.rgb, u_fg.rgb, mark), mix(u_accent.a, u_fg.a, mark));
+    pica_color = pica_tone(tone, ink, u_levels - 1.0);
   }
-  float steps = max(1.0, u_levels - 1.0);
-  float tone = clamp(field * u_intensity, 0.0, 1.0);
-  tone = floor(tone * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
-  vec3 ink = mix(u_accent.rgb, u_fg.rgb, smoothstep(0.6, 0.82, fold));
-  float ground = step(0.001, u_bg.a);
-  pica_color = vec4(mix(ink, mix(u_bg.rgb, ink, tone), ground), max(tone * u_accent.a, u_bg.a));
-}
 `;
 
-/** What shows without WebGL2: the same top-down fade, still in the palette's own accent. */
-const FALLBACK = `linear-gradient(to bottom, color-mix(in srgb, ${cssVar("accent")} 35%, transparent), transparent 70%)`;
+/** What shows without WebGL2: two still arcs in the palette's own colors, the near one above the far one,
+ *  each filled with accent that gathers toward a bright lower border and bows away at its ends. */
+const ARCS: readonly string[] = [
+  `radial-gradient(88% 50% at 46% -6%, transparent 52%, color-mix(in srgb, ${cssVar("accent")} 20%, transparent) 74%, color-mix(in srgb, ${cssVar("accent")} 72%, transparent) 88%, ${cssVar("fg")} 92%, transparent 93%)`,
+  `radial-gradient(122% 78% at 57% -4%, transparent 68%, color-mix(in srgb, ${cssVar("accent")} 12%, transparent) 83%, color-mix(in srgb, ${cssVar("accent")} 42%, transparent) 93%, ${cssVar("fg")} 96%, transparent 97%)`,
+];
+
+const FALLBACK = ARCS.join(", ");
 
 function uniforms(p: AuroraProps): Record<string, number> {
-  return { u_seed: p.seed, u_speed: p.speed, u_curtains: p.curtains, u_height: p.height, u_sway: p.sway, u_intensity: p.intensity, u_levels: p.levels };
+  return {
+    u_seed: p.seed,
+    u_speed: p.speed,
+    u_curtains: p.curtains,
+    u_arc: p.arc,
+    u_height: p.height,
+    u_horizon: p.horizon,
+    u_sway: p.sway,
+    u_folds: p.folds,
+    u_rays: p.rays,
+    u_intensity: p.intensity,
+    u_levels: p.levels,
+  };
 }
 
 export const mount: Mount<AuroraProps> = (host, initial = {}) => {
@@ -1167,7 +1268,7 @@ export const mount: Mount<AuroraProps> = (host, initial = {}) => {
 // registry/shaders/aurora/index.tsx
 export type AuroraComponentProps = Partial<AuroraProps> & WrapperProps;
 
-/** Slow curtains of accent light drifting down from the top of the host, dithered on the GPU. */
+/** Layered curtains of accent light standing on bowed lower borders, striated by vertical rays. */
 export function Aurora({ className, style, palette, ...props }: AuroraComponentProps) {
   const ref = usePica(mount, props);
   return <div ref={ref} className={className} style={{ width: "100%", height: "100%", ...paletteStyle(palette), ...style }} />;
@@ -1195,6 +1296,7 @@ html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
 #pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
 .pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
 .pica-stage #pica { width: auto; height: auto; }
 .pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
@@ -1596,6 +1698,16 @@ float pica_fbm(vec2 p, int octaves) {
   return sum;
 }
 `;
+  var TONE = `
+vec4 pica_tone(float tone, vec4 ink, float levels) {
+  float steps = max(1.0, levels);
+  float q = floor(clamp(tone, 0.0, 1.0) * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
+  float amount = clamp(q, 0.0, 1.0) * ink.a;
+  float onto = u_bg.a * (1.0 - amount);
+  float alpha = amount + onto;
+  return vec4((ink.rgb * amount + u_bg.rgb * onto) / max(alpha, 0.0001), alpha);
+}
+`;
   var DITHER = `
 float pica_bayer8(ivec2 p) {
   int x = p.x & 7;
@@ -1687,9 +1799,13 @@ float pica_bayer8(ivec2 p) {
   // registry/shaders/aurora/core.ts
   var defaults = {
     speed: 0.15,
-    curtains: 4,
+    curtains: 3,
+    arc: 0.35,
     height: 0.7,
+    horizon: 0.85,
     sway: 0.5,
+    folds: 0.5,
+    rays: 0.6,
     intensity: 0.8,
     levels: 6,
     pixel: 2,
@@ -1699,46 +1815,82 @@ float pica_bayer8(ivec2 p) {
     seed: 1
   };
   var STILL = 1200;
-  var FRAGMENT = `${NOISE}${DITHER}
-uniform float u_speed;
-uniform float u_curtains;
-uniform float u_height;
-uniform float u_sway;
-uniform float u_intensity;
-uniform float u_levels;
-void main() {
-  vec2 uv = gl_FragCoord.xy / u_resolution;
-  float vy = 1.0 - uv.y;
-  float t = u_time * u_speed;
-  float envelope = 1.0 - smoothstep(u_height * 0.33, u_height, vy);
-  int n = int(u_curtains + 0.5);
-  float nf = float(n);
-  float field = 0.0;
-  float fold = 0.0;
-  for (int i = 0; i < 8; i++) {
-    if (i >= n) break;
-    float fi = float(i);
-    float baseX = (fi + 0.5) / nf + (pica_random(vec2(fi, 4.0)) - 0.5) * 0.12;
-    float phaseA = pica_random(vec2(fi, 9.0)) * 40.0;
-    float phaseB = pica_random(vec2(fi, 17.0)) * 40.0;
-    float wander = u_sway * 0.16 * pica_noise(vec2(vy * 1.7 + phaseA, t * 0.5 + phaseB));
-    float dx = abs(uv.x - baseX - wander);
-    float presence = (1.0 - smoothstep(0.026, 0.07, dx)) * envelope;
-    float ripple = 0.5 + 0.5 * pica_noise(vec2(vy * 4.5 + phaseB, t * 0.8 + phaseA));
-    field = max(field, presence * mix(0.65, 1.0, ripple));
-    fold = max(fold, presence * ripple);
+  var FRAGMENT = `${NOISE}${DITHER}${TONE}
+  uniform float u_speed;
+  uniform float u_curtains;
+  uniform float u_arc;
+  uniform float u_height;
+  uniform float u_horizon;
+  uniform float u_sway;
+  uniform float u_folds;
+  uniform float u_rays;
+  uniform float u_intensity;
+  uniform float u_levels;
+  void main() {
+    vec2 uv = gl_FragCoord.xy / u_resolution;
+    float vy = 1.0 - uv.y;
+    float t = u_time * u_speed;
+    float cell = 1.0 / u_resolution.y;
+    float wide = u_resolution.x / u_resolution.y;
+    // A narrow window shows less of the arc's thousand-kilometre run, so its bow and its folds cover less
+    // sky. Without this a phone reads the same curve as a row of peaks.
+    float persp = clamp(0.45 + 0.35 * wide, 0.45, 1.0);
+    int n = int(u_curtains + 0.5);
+    float span = max(1.0, float(n) - 1.0);
+    float sheet = 0.0;
+    float hem = 0.0;
+    for (int i = 0; i < 8; i++) {
+      if (i >= n) break;
+      float fi = float(i);
+      float far = fi / span;
+      float pa = pica_random(vec2(fi, 3.0)) * 24.0;
+      float pb = pica_random(vec2(fi, 11.0)) * 24.0;
+      float pc = pica_random(vec2(fi, 19.0));
+      float drift = pica_noise(vec2(uv.x * 0.8 + pa, t * 0.3));
+      float wave = pica_noise(vec2(uv.x * 3.4 + pb, t * 0.5 + pa));
+      float xf = uv.x + u_sway * 0.2 * drift + u_folds * 0.07 * wave;
+      float foot = u_horizon * mix(0.50, 0.94, sqrt(far));
+      float depth = u_horizon * mix(0.26, 0.10, far) * persp;
+      float bow = clamp(2.0 * (xf - 0.5 - (pc - 0.5) * 0.6), -1.6, 1.6);
+      float curl = pica_fbm(vec2(xf * wide * mix(20.0, 34.0, far) + pb, pa), 2);
+      float border = min(u_horizon, foot + u_arc * depth * bow * bow - depth * u_folds * (0.34 * wave + 0.05 * curl));
+      float d = border - vy;
+      float ray = smoothstep(0.1, 0.9, 0.5 + 0.75 * curl);
+      float tall = max(0.04, u_height * mix(1.0, 0.32, far) * mix(1.0, 0.35 + 1.4 * ray, u_rays));
+      float up = max(d, 0.0) / tall;
+      float body = smoothstep(-cell, cell * 1.5, d) * (0.78 * exp(-up * 10.0) + 0.34 * exp(-up * 5.0) + 0.09 * ray * exp(-up * 1.2));
+      float lit = body * mix(1.0, 0.25 + 0.85 * ray, u_rays);
+      float steep = u_folds * smoothstep(2.5, 6.5, abs(dFdx(wave)) * u_resolution.x);
+      float dim = mix(1.0, 0.36, far);
+      sheet = max(sheet, dim * lit * (1.0 + 0.8 * steep));
+      float rim = exp(-max(d, 0.0) / max(cell * 3.0, u_height * 0.03)) * mix(1.0, 0.55 + 0.55 * ray, u_rays);
+      hem = max(hem, dim * max(rim * body, steep * lit * 1.3));
+    }
+    float tone = clamp(sheet * u_intensity, 0.0, 1.0);
+    float mark = smoothstep(0.38, 0.88, hem);
+    vec4 ink = vec4(mix(u_accent.rgb, u_fg.rgb, mark), mix(u_accent.a, u_fg.a, mark));
+    pica_color = pica_tone(tone, ink, u_levels - 1.0);
   }
-  float steps = max(1.0, u_levels - 1.0);
-  float tone = clamp(field * u_intensity, 0.0, 1.0);
-  tone = floor(tone * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
-  vec3 ink = mix(u_accent.rgb, u_fg.rgb, smoothstep(0.6, 0.82, fold));
-  float ground = step(0.001, u_bg.a);
-  pica_color = vec4(mix(ink, mix(u_bg.rgb, ink, tone), ground), max(tone * u_accent.a, u_bg.a));
-}
 `;
-  var FALLBACK = `linear-gradient(to bottom, color-mix(in srgb, ${cssVar("accent")} 35%, transparent), transparent 70%)`;
+  var ARCS = [
+    `radial-gradient(88% 50% at 46% -6%, transparent 52%, color-mix(in srgb, ${cssVar("accent")} 20%, transparent) 74%, color-mix(in srgb, ${cssVar("accent")} 72%, transparent) 88%, ${cssVar("fg")} 92%, transparent 93%)`,
+    `radial-gradient(122% 78% at 57% -4%, transparent 68%, color-mix(in srgb, ${cssVar("accent")} 12%, transparent) 83%, color-mix(in srgb, ${cssVar("accent")} 42%, transparent) 93%, ${cssVar("fg")} 96%, transparent 97%)`
+  ];
+  var FALLBACK = ARCS.join(", ");
   function uniforms(p) {
-    return { u_seed: p.seed, u_speed: p.speed, u_curtains: p.curtains, u_height: p.height, u_sway: p.sway, u_intensity: p.intensity, u_levels: p.levels };
+    return {
+      u_seed: p.seed,
+      u_speed: p.speed,
+      u_curtains: p.curtains,
+      u_arc: p.arc,
+      u_height: p.height,
+      u_horizon: p.horizon,
+      u_sway: p.sway,
+      u_folds: p.folds,
+      u_rays: p.rays,
+      u_intensity: p.intensity,
+      u_levels: p.levels
+    };
   }
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
@@ -1816,5 +1968,10 @@ void main() {
 
 ## Credits
 
+- Technique from [Simulating the aurora](https://doi.org/10.1002/vis.304) by Gladimir V. G. Baranoski et al. (Paper).
+- Technique from [Interactive Volume Rendering Aurora on the GPU](https://hdl.handle.net/11025/1242) by Orion Sky Lawlor and Jon Genetti (Paper).
+- Technique from [Small-scale auroral arc distortions](https://doi.org/10.1016/0032-0633(70)90007-3) by Thomas J. Hallinan and T. Neil Davis (Paper).
+- Technique from [The development of the auroral substorm](https://doi.org/10.1016/0032-0633(64)90151-5) by Syun-Ichi Akasofu (Paper).
+- Technique from [Like an Outdoor Nightclub: Q&A on Pulsating Auroras](https://science.nasa.gov/blogs/the-sun-spot/2022/04/05/like-an-outdoor-nightclub-qa-on-pulsating-auroras/) by NASA Science (Public domain).
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).

@@ -1,5 +1,5 @@
-/** Both shapes render and match: at each viewport on the dark ground, and at the first on paper. Writes the
- *  captures and the catalog's two thumbnails, and checks the byte budget. */
+/** Both shapes render and match, at each viewport on ink and again on paper. Writes the captures and the
+ *  catalog's two thumbnails, and checks the byte budget. */
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { BrowserContext, Page } from "@playwright/test";
@@ -49,11 +49,15 @@ export async function render(ctx: Ctx): Promise<void> {
       await context.close();
     }
   }
-  const light = await ctx.context({ colorScheme: "light" });
-  try {
-    const { page } = await compare(ctx, light, { props: ctx.base }, "on paper", `${VIEWPORTS[0].width}-light`);
-    await writeFile(join(THUMBS, `${entry.meta.slug}-light.jpg`), await page.screenshot({ type: "jpeg", quality: 72 }));
-  } finally {
-    await light.close();
+  // Paper follows the same viewports as ink. A reviewer judging a section on a phone needs the narrow one,
+  // and a component that only breaks on the light ground breaks there at both widths.
+  for (const [index, viewport] of viewports.entries()) {
+    const light = await ctx.context({ viewport, colorScheme: "light" });
+    try {
+      const { page } = await compare(ctx, light, { props: ctx.base }, `on paper at ${viewport.width}`, `${viewport.width}-light`);
+      if (index === 0) await writeFile(join(THUMBS, `${entry.meta.slug}-light.jpg`), await page.screenshot({ type: "jpeg", quality: 72 }));
+    } finally {
+      await light.close();
+    }
   }
 }

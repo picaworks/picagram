@@ -100,6 +100,10 @@ Original to Picagram.
 
 - Technique from [ASDF pixel sorting](https://github.com/kimasendorf/ASDFPixelSort) by Kim Asendorf (Technique, no code read).
 
+## Scan Reveal Image (`scan-reveal-image`)
+
+- Technique from [ITU-T Recommendation T.4: Standardization of Group 3 facsimile terminals for document transmission](https://www.itu.int/rec/T-REC-T.4/en) by ITU-T (ITU-T Recommendation).
+
 ## Scanlines (`scanlines`)
 
 Original to Picagram.
@@ -134,6 +138,11 @@ Original to Picagram.
 
 ## Aurora (`aurora`)
 
+- Technique from [Simulating the aurora](https://doi.org/10.1002/vis.304) by Gladimir V. G. Baranoski et al. (Paper).
+- Technique from [Interactive Volume Rendering Aurora on the GPU](https://hdl.handle.net/11025/1242) by Orion Sky Lawlor and Jon Genetti (Paper).
+- Technique from [Small-scale auroral arc distortions](https://doi.org/10.1016/0032-0633(70)90007-3) by Thomas J. Hallinan and T. Neil Davis (Paper).
+- Technique from [The development of the auroral substorm](https://doi.org/10.1016/0032-0633(64)90151-5) by Syun-Ichi Akasofu (Paper).
+- Technique from [Like an Outdoor Nightclub: Q&A on Pulsating Auroras](https://science.nasa.gov/blogs/the-sun-spot/2022/04/05/like-an-outdoor-nightclub-qa-on-pulsating-auroras/) by NASA Science (Public domain).
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
 
