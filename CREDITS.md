@@ -54,9 +54,26 @@ Original to Picagram.
 
 - Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
 
+## Bullet Chart (`bullet-chart`)
+
+- Technique from [Bullet Graph Design Specification](https://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf) by Stephen Few (Specification, no code).
+
+## Candlestick Chart (`candlestick-chart`)
+
+- Technique from [Japanese Candlestick Charting Techniques](https://lccn.loc.gov/90022736) by Steve Nison (Book).
+- Technique from [Date and Time on the Internet: Timestamps (RFC 3339)](https://www.rfc-editor.org/rfc/rfc3339) by G. Klyne and C. Newman (IETF standard).
+
 ## Donut Chart (`donut-chart`)
 
 Original to Picagram.
+
+## Gauge Chart (`gauge-chart`)
+
+- Technique from [Dashboard Design for Real-Time Situation Awareness](https://www.perceptualedge.com/articles/Whitepapers/Dashboard_Design.pdf) by Stephen Few (Article).
+
+## Heatmap (`heatmap`)
+
+- Technique from [The History of the Cluster Heat Map](https://doi.org/10.1198/tas.2009.0033) by Leland Wilkinson and Michael Friendly (Paper).
 
 ## Kanban Board (`kanban-board`)
 
@@ -65,6 +82,25 @@ Original to Picagram.
 ## Line Chart (`line-chart`)
 
 - Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
+
+## Radar Chart (`radar-chart`)
+
+- Technique from [Graphical Methods for Data Analysis](https://doi.org/10.1201/9781351072304) by John M. Chambers, William S. Cleveland, Beat Kleiner and Paul A. Tukey (Book).
+- Technique from [Star Plot](https://www.itl.nist.gov/div898/handbook/eda/section3/starplot.htm) by NIST/SEMATECH e-Handbook of Statistical Methods (Public domain).
+
+## Scatter Plot (`scatter-plot`)
+
+- Technique from [Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods](https://doi.org/10.1080/01621459.1984.10478080) by William S. Cleveland and Robert McGill (Paper).
+- Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert (Algorithm, no code).
+
+## Timeline Chart (`timeline-chart`)
+
+- Technique from [Joseph Priestley and the Graphic Invention of Modern Time](https://doi.org/10.1353/sec.2007.0013) by Daniel Rosenberg (Paper).
+- Technique from [Timelines Revisited: A Design Space and Considerations for Expressive Storytelling](https://doi.org/10.1109/TVCG.2016.2614803) by Brehmer, Lee, Bach, Henry Riche and Munzner (Paper).
+
+## Waterfall Chart (`waterfall-chart`)
+
+- Technique from [Horizontal waterfall chart](https://www.ibcs.com/resource/horizontal-waterfall-chart/) by IBCS, International Business Communication Standards (Standard, no code).
 
 ## Dither Contours (`dither-contours`)
 
