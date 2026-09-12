@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "sections",
   description: "A row of key numbers in mono figures, each with a delta glyph and an inline trend sparkline.",
   tags: ["stats", "kpi", "metrics", "dashboard", "section"],
+  facets: ["animated", "chart"],
   wave: 3,
   animated: true,
   decorative: false,

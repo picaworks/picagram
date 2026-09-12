@@ -1,30 +1,33 @@
 "use client";
 import { useState, type RefObject } from "react";
-import { allTags, groupByCategory, type CatalogItem, type Category } from "@/lib/catalog";
+import { FACETS, facetCounts, groupByCategory, type CatalogItem, type Category, type Facet } from "@/lib/catalog";
 import { useMetaKey } from "@/lib/platform";
+import { THEMES, type Theme } from "@/lib/theme";
 import { Logo } from "./Logo";
 
 interface LayersProps {
   items: readonly CatalogItem[];
-  /** Slugs that survive the search box and the tag chips. */
+  /** Slugs that survive the search box and the facet chips. */
   visible: ReadonlySet<string>;
   selected: string | null;
   onSelect: (slug: string) => void;
   query: string;
   onQuery: (query: string) => void;
-  activeTags: readonly string[];
-  onToggleTag: (tag: string) => void;
+  activeFacets: readonly Facet[];
+  onToggleFacet: (facet: Facet) => void;
+  /** Null until the client knows which theme is in force. Until then the head script's attribute paints the
+   *  pressed button, so the control looks right before hydration. */
+  theme: Theme | null;
+  onTheme: (theme: Theme) => void;
   searchRef: RefObject<HTMLInputElement | null>;
 }
 
-/** The left pane: search, tag chips behind a toggle, and the component list grouped by category. */
+/** The left pane: the wordmark and the theme, search, the facet filter, and the component list by category. */
 export function Layers(p: LayersProps) {
   const [collapsed, setCollapsed] = useState<readonly Category[]>([]);
-  /** The tag chips start folded away, so the component list comes straight after the search. */
-  const [tagsOpen, setTagsOpen] = useState(false);
   const meta = useMetaKey();
   const groups = groupByCategory(p.items.filter((item) => p.visible.has(item.slug)));
-  const tags = allTags(p.items);
+  const counts = facetCounts(p.items);
 
   const toggle = (category: Category) =>
     setCollapsed((list) => (list.includes(category) ? list.filter((c) => c !== category) : [...list, category]));
@@ -33,9 +36,25 @@ export function Layers(p: LayersProps) {
     <aside className="layers" aria-label="Layers">
       <div className="layers-brand">
         <Logo />
-        <span className="label">
-          {p.visible.size} of {p.items.length}
-        </span>
+        <div className="layers-brand-row">
+          <span className="label">
+            {p.visible.size} of {p.items.length}
+          </span>
+          <div className="seg" role="group" aria-label="Theme">
+            {THEMES.map((theme) => (
+              <button
+                key={theme}
+                type="button"
+                className="seg-item"
+                data-theme={theme}
+                aria-pressed={p.theme === theme}
+                onClick={() => p.onTheme(theme)}
+              >
+                {theme}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
       <div className="layers-search">
         <input
@@ -58,36 +77,19 @@ export function Layers(p: LayersProps) {
         />
         <kbd aria-hidden="true">{meta} K</kbd>
       </div>
-      {tags.length > 0 && (
-        <div className="layers-filter">
+      <div className="layers-facets" role="group" aria-label="Filter by facet">
+        {FACETS.map((facet) => (
           <button
+            key={facet}
             type="button"
-            className="layers-head"
-            aria-expanded={tagsOpen}
-            aria-controls="layers-tags"
-            onClick={() => setTagsOpen((open) => !open)}
+            className="chip"
+            aria-pressed={p.activeFacets.includes(facet)}
+            onClick={() => p.onToggleFacet(facet)}
           >
-            <span className="layers-twist" aria-hidden="true">
-              {tagsOpen ? "−" : "+"}
-            </span>
-            <span className="label">Tags</span>
-            <span className="layers-count">{p.activeTags.length > 0 ? `${p.activeTags.length} on` : tags.length}</span>
+            {facet} <span className="chip-count">{counts[facet]}</span>
           </button>
-          <div id="layers-tags" className="layers-tags" role="group" aria-label="Filter by tag" hidden={!tagsOpen}>
-            {tags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                className="chip"
-                aria-pressed={p.activeTags.includes(tag)}
-                onClick={() => p.onToggleTag(tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+        ))}
+      </div>
       <nav className="layers-list" aria-label="Components">
         {groups.map((group) => {
           const open = !collapsed.includes(group.category);
@@ -129,7 +131,7 @@ export function Layers(p: LayersProps) {
             </section>
           );
         })}
-        {p.visible.size === 0 && <p className="layers-empty">No component matches. Clear the search or a tag.</p>}
+        {p.visible.size === 0 && <p className="layers-empty">No component matches. Clear the search or a facet.</p>}
       </nav>
     </aside>
   );

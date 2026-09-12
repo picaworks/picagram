@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "data",
   description: "Vertical bars from labeled values, drawn as SVG or a monospace glyph grid, with a hidden data table.",
   tags: ["chart", "bars", "svg", "glyph grid", "data table"],
+  facets: ["static", "chart"],
   wave: 3,
   animated: false,
   decorative: false,

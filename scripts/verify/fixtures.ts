@@ -1,6 +1,7 @@
 /** Real inputs as well as the built-in subject: an image component draws a PNG, and the video component draws
  *  Chromium's fake camera. */
 import { PNG } from "pngjs";
+import { takesImage } from "../catalog";
 import { inkRatio, message, open, percent } from "./page";
 import type { Ctx } from "./types";
 
@@ -39,7 +40,7 @@ async function attempt(ctx: Ctx, name: string, props: Record<string, unknown>): 
 }
 
 export async function fixtures(ctx: Ctx): Promise<void> {
-  const { defaults, docs } = ctx.entry;
-  if (typeof defaults.src === "string" && /image/i.test(docs.src ?? "")) await attempt(ctx, "renders a real image", { ...ctx.base, src: image() });
+  const { defaults } = ctx.entry;
+  if (takesImage(ctx.entry)) await attempt(ctx, "renders a real image", { ...ctx.base, src: image() });
   if (typeof defaults.webcam === "boolean") await attempt(ctx, "renders the camera", { ...ctx.base, webcam: true });
 }

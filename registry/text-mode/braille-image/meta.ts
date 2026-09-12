@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "text-mode",
   description: "An image drawn with braille characters, each cell's eight dots giving twice the horizontal and four times the vertical resolution of plain ASCII.",
   tags: ["image", "static", "braille", "dither"],
+  facets: ["static", "image", "dither"],
   wave: 2,
   animated: false,
   decorative: false,

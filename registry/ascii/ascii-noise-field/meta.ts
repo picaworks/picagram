@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.",
   tags: ["background", "noise", "animated", "decorative"],
+  facets: ["animated", "background"],
   wave: 1,
   animated: true,
   decorative: true,

@@ -12,3 +12,4 @@ Short, dated records of choices that constrain the code. One file per decision. 
 | 0006 | Shaders run on WebGL2 through `lib/gl.ts`, verified on the SwiftShader software renderer; vgpu is not the default runtime. |
 | 0007 | Only sections compose other components, each composed core is scoped in the React file, and byte budgets are set per category. |
 | 0008 | The public name is Picagram, and the code keeps its short prefix, pica. |
+| 0009 | Research agents may shortlist references by URL, title, author, and one line of direction, while every capture stays Rish's own. It narrows 0003. |

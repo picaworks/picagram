@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ui",
   description: "A button in four looks, solid, outline, ghost, and monospace brackets, with a braille spinner while it loads.",
   tags: ["button", "action", "form", "ui"],
+  facets: ["static", "interactive"],
   wave: 3,
   animated: false,
   decorative: false,

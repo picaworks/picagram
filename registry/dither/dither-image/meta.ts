@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "dither",
   description: "An image reduced to two tones by ordered or error diffusion dithering, drawn crisp on a canvas.",
   tags: ["image", "static", "dither", "canvas"],
+  facets: ["static", "image", "canvas", "dither"],
   wave: 2,
   animated: false,
   decorative: false,

@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "sections",
   description: "Pricing tiers with a monthly and yearly switch, each plan a card with its own call to action.",
   tags: ["pricing", "tiers", "billing", "radio group", "section"],
+  facets: ["static", "interactive"],
   wave: 3,
   animated: false,
   decorative: false,

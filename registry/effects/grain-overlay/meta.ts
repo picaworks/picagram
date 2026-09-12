@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "effects",
   description: "An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.",
   tags: ["overlay", "grain", "texture", "blend mode"],
+  facets: ["animated", "overlay"],
   wave: 2,
   animated: true,
   decorative: true,

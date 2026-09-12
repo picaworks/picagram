@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "text-mode",
   description: "Large block letters drawn in text from an original five row pixel font, sized to fit the host's width.",
   tags: ["text", "logotype", "static", "pixel font"],
+  facets: ["static", "text"],
   wave: 2,
   animated: false,
   decorative: false,

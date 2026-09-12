@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ui",
   description: "A trigger button that shows a tooltip on hover and focus, or toggles a popover panel on click, built on the Popover API.",
   tags: ["tooltip", "popover", "disclosure", "overlay"],
+  facets: ["static", "overlay", "interactive"],
   wave: 3,
   animated: false,
   decorative: false,

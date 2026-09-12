@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "sections",
   description: "Quotes shown as a grid of cards, or as one quote at a time that resolves from scrambled glyphs.",
   tags: ["testimonials", "quotes", "carousel", "section", "social proof"],
+  facets: ["animated", "interactive"],
   wave: 3,
   animated: true,
   decorative: false,

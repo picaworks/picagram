@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.",
   tags: ["interference", "waves", "animated", "background"],
+  facets: ["animated", "background"],
   wave: 1,
   animated: true,
   decorative: true,

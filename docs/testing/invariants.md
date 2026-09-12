@@ -17,7 +17,11 @@ Properties that must hold for every input, and where each is checked.
 | No file in `registry/` contains a color literal | `test/invariants.test.ts` (colors); ESLint `no-restricted-syntax` |
 | Every component directory has `core.ts`, `index.tsx`, and `meta.ts`. Cores export `mount` and `defaults`. Wrappers export one component and start with `"use client"`. | `test/invariants.test.ts` (component shape) |
 | `sources/inbox/` is gitignored, no image or video lives under `registry/` or `specs/`, and specs contain no code blocks | `test/invariants.test.ts` (clean room) |
-| A component credited as inspired by a 21st.dev or Dribbble reference names a spec that exists | `test/invariants.test.ts` (clean room) |
+| An `inspired-by` credit and a `meta.spec` each require the other, the spec exists and is approved, and its credit line matches the credit | `test/invariants.test.ts` (clean room) |
+| A spec carries the template headings in order, and no code, color literal, image, or link outside its credit line | `test/invariants.test.ts` (clean room) |
+| No tracked file is an image or a video, apart from the brand files and the review photographs | `test/invariants.test.ts` (clean room) |
+| A shortlist holds only its table, whose links are Dribbble shots, with no media, markup, code fence, or code host | `test/sources.test.ts` (shortlists) |
+| Wave briefs are well formed, slugs are unique across waves, and a brief built from a spec adds nothing to it | `test/sources.test.ts` (briefs) |
 
 ## Meta
 
@@ -35,6 +39,8 @@ Properties that must hold for every input, and where each is checked.
 | A wrapper renders `{children}` exactly when `meta.wraps` is set | `test/meta.test.ts` |
 | A wrapper extends `Handlers` exactly when its core declares events | `test/meta.test.ts` |
 | A wrapper renders the host element that the demo page mounts on | `test/meta.test.ts` |
+| Facets say what the component is: exactly one of animated and static, and image, webgl, shader, canvas, interactive, chart, and dither follow what the core imports and declares | `test/meta.test.ts` |
+| From wave 4 on, no `technique` or `inspired-by` credit points at a code host or a component collection | `test/meta.test.ts` |
 
 ## Build
 
@@ -47,6 +53,9 @@ Properties that must hold for every input, and where each is checked.
 | Every generated React file typechecks with only `react` installed and `erasableSyntaxOnly` on | `test/generated.test.ts` |
 | No single React file declares a top-level name twice | `scripts/single-file.ts` (checkCollisions) |
 | A composed core is scoped in its section's React file, which still typechecks alone | `test/compose.test.ts` |
+| A section composes at most three cores, each from a wave earlier than its own, or a reference built before that wave's builders started | `test/compose.test.ts` (sections) |
+| The original-work label reads the same in the build, the inspector, and the review sheet | `test/license.test.ts` |
+| A committed review file decides every component in its wave, and leaves none to revise | `test/review.test.ts` |
 
 ## Browser
 
@@ -75,4 +84,11 @@ Properties that must hold for every input, and where each is checked.
 |---|---|
 | The site links to its own files with relative paths, so it works under any base path | `test/site.test.ts` |
 | `llms.txt` links with absolute URLs on `SITE_URL` | `test/site.test.ts` |
+| Every chrome text tone clears 4.5:1 on its own ground in both themes, and the focus ring and the slider track clear 3:1 | `test/site.test.ts` |
+| The theme script prefers a saved choice, then the browser's preference, and survives storage that throws | `test/site.test.ts` |
 | A production build works end to end under `BASE_PATH`, the way GitHub Pages serves it: every component listed, a live frame, every control type, the palette, the snippets, and events from a fixture and from select | `scripts/check-site.ts` |
+| The theme is set before hydration, survives a reload, and sets the canvas ground, which may then diverge | `scripts/check-site.ts` |
+| The filter offers exactly the twelve facets, every tag still searches, and an inspector tag fills the search box | `scripts/check-site.ts` |
+| The wordmark is 39 px and aligned with the search field, and the footer ends with the build year | `scripts/check-site.ts` |
+| The inspector collapses and restores, from the keyboard, with focus moving to the other control, and selection leaves it collapsed | `scripts/check-site.ts` |
+| At 390 by 844 the page stacks, nothing overflows sideways, and collapse and restore still work | `scripts/check-site.ts` |

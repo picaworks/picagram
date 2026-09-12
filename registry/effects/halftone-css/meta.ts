@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "effects",
   description: "A halftone dot pattern made entirely of layered CSS gradients, for use as a background.",
   tags: ["background", "pattern", "halftone", "css"],
+  facets: ["static", "background"],
   wave: 2,
   animated: false,
   decorative: true,

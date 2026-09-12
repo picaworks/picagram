@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "A video or webcam feed drawn as a live grid of glyphs, chosen each frame by the ink they put down in the font in use.",
   tags: ["video", "webcam", "animated", "measured ramp"],
+  facets: ["animated"],
   wave: 1,
   animated: true,
   decorative: false,

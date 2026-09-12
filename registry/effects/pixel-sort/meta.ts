@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "effects",
   description: "An image whose pixel rows or columns are sorted by brightness within threshold bands, smearing tone into streaks.",
   tags: ["image", "static", "canvas", "glitch"],
+  facets: ["static", "image", "canvas"],
   wave: 2,
   animated: false,
   decorative: false,

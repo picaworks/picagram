@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "A torus, sphere, or cube rotated in three dimensions and shaded with the measured ramp.",
   tags: ["3d", "rotation", "measured ramp", "depth buffer"],
+  facets: ["animated"],
   wave: 1,
   animated: true,
   decorative: true,

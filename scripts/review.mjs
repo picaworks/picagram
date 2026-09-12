@@ -40,7 +40,11 @@ function card({ meta, verify }, decision) {
   const passed = verify ? verify.checks.filter((c) => c.ok).length : 0;
   const total = verify ? verify.checks.length : 0;
   const failing = verify ? verify.checks.filter((c) => !c.ok).map((c) => c.name).join(", ") : "not verified";
-  const credits = meta.original ? "Original to Pica" : meta.credits.map((c) => `${c.relation} ${c.title} (${c.author})`).join("; ");
+  // The same words as ORIGINAL_LABEL in scripts/config.ts, which this plain script cannot import.
+  const credits =
+    meta.original && meta.credits.length === 0
+      ? "Original to Picagram."
+      : meta.credits.map((c) => `${c.relation} ${c.title} (${c.author})`).join("; ");
   const chosen = decision?.decision ?? "";
   return `<article tabindex="0" data-slug="${escapeHtml(meta.slug)}" data-decision="${chosen}">
   <img class="shot" src="/capture/${escapeHtml(meta.slug)}/vanilla-1280.png" data-dark="/capture/${escapeHtml(meta.slug)}/vanilla-1280.png" data-light="/capture/${escapeHtml(meta.slug)}/vanilla-1280-light.png" alt="" loading="lazy">

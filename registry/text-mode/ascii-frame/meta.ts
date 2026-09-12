@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "text-mode",
   description: "A container framed in box-drawing characters, with an optional title set into the top rule.",
   tags: ["frame", "border", "box-drawing", "static"],
+  facets: ["static"],
   wave: 1,
   animated: false,
   decorative: false,

@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "shaders",
   description: "Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.",
   tags: ["gradient", "shader", "webgl", "background", "dither", "flow"],
+  facets: ["animated", "background", "shader", "webgl", "dither"],
   wave: 3,
   animated: true,
   decorative: true,

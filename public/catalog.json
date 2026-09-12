@@ -10,6 +10,10 @@
       "measured ramp",
       "shape matching"
     ],
+    "facets": [
+      "static",
+      "image"
+    ],
     "wave": 1,
     "animated": false,
     "decorative": false,
@@ -144,6 +148,10 @@
       "morph",
       "transition"
     ],
+    "facets": [
+      "animated",
+      "text"
+    ],
     "wave": 2,
     "animated": true,
     "decorative": true,
@@ -270,6 +278,10 @@
       "noise",
       "animated",
       "decorative"
+    ],
+    "facets": [
+      "animated",
+      "background"
     ],
     "wave": 1,
     "animated": true,
@@ -403,6 +415,11 @@
       "pointer",
       "ripple",
       "noise",
+      "interactive"
+    ],
+    "facets": [
+      "animated",
+      "background",
       "interactive"
     ],
     "wave": 1,
@@ -539,6 +556,10 @@
       "measured ramp",
       "generative"
     ],
+    "facets": [
+      "animated",
+      "background"
+    ],
     "wave": 1,
     "animated": true,
     "decorative": true,
@@ -664,6 +685,10 @@
       "scramble",
       "decode"
     ],
+    "facets": [
+      "animated",
+      "text"
+    ],
     "wave": 1,
     "animated": true,
     "decorative": false,
@@ -763,6 +788,9 @@
       "rotation",
       "measured ramp",
       "depth buffer"
+    ],
+    "facets": [
+      "animated"
     ],
     "wave": 1,
     "animated": true,
@@ -876,6 +904,10 @@
       "static",
       "measured ramp",
       "shape matching"
+    ],
+    "facets": [
+      "static",
+      "text"
     ],
     "wave": 1,
     "animated": false,
@@ -996,6 +1028,10 @@
       "marching squares",
       "topography"
     ],
+    "facets": [
+      "animated",
+      "background"
+    ],
     "wave": 2,
     "animated": true,
     "decorative": true,
@@ -1104,6 +1140,9 @@
       "webcam",
       "animated",
       "measured ramp"
+    ],
+    "facets": [
+      "animated"
     ],
     "wave": 1,
     "animated": true,
@@ -1252,6 +1291,10 @@
       "animated",
       "background"
     ],
+    "facets": [
+      "animated",
+      "background"
+    ],
     "wave": 1,
     "animated": true,
     "decorative": true,
@@ -1380,6 +1423,10 @@
       "glyph grid",
       "data table"
     ],
+    "facets": [
+      "static",
+      "chart"
+    ],
     "wave": 3,
     "animated": false,
     "decorative": false,
@@ -1505,6 +1552,10 @@
       "glyph grid",
       "data table"
     ],
+    "facets": [
+      "static",
+      "chart"
+    ],
     "wave": 3,
     "animated": false,
     "decorative": false,
@@ -1627,6 +1678,10 @@
       "cards",
       "drag",
       "listbox"
+    ],
+    "facets": [
+      "static",
+      "interactive"
     ],
     "wave": 3,
     "animated": false,
@@ -1784,6 +1839,10 @@
       "braille",
       "data"
     ],
+    "facets": [
+      "static",
+      "chart"
+    ],
     "wave": 3,
     "animated": false,
     "decorative": false,
@@ -1928,6 +1987,12 @@
       "bayer matrix",
       "background"
     ],
+    "facets": [
+      "animated",
+      "background",
+      "canvas",
+      "dither"
+    ],
     "wave": 2,
     "animated": true,
     "decorative": true,
@@ -2036,6 +2101,12 @@
       "static",
       "dither",
       "canvas"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas",
+      "dither"
     ],
     "wave": 2,
     "animated": false,
@@ -2151,6 +2222,12 @@
       "halftone",
       "canvas"
     ],
+    "facets": [
+      "static",
+      "image",
+      "canvas",
+      "dither"
+    ],
     "wave": 2,
     "animated": false,
     "decorative": false,
@@ -2265,6 +2342,11 @@
       "duotone",
       "canvas"
     ],
+    "facets": [
+      "static",
+      "image",
+      "canvas"
+    ],
     "wave": 2,
     "animated": false,
     "decorative": false,
@@ -2358,6 +2440,10 @@
       "burst",
       "distortion"
     ],
+    "facets": [
+      "animated",
+      "text"
+    ],
     "wave": 2,
     "animated": true,
     "decorative": false,
@@ -2440,6 +2526,10 @@
       "grain",
       "texture",
       "blend mode"
+    ],
+    "facets": [
+      "animated",
+      "overlay"
     ],
     "wave": 2,
     "animated": true,
@@ -2549,6 +2639,10 @@
       "halftone",
       "css"
     ],
+    "facets": [
+      "static",
+      "background"
+    ],
     "wave": 2,
     "animated": false,
     "decorative": true,
@@ -2636,6 +2730,11 @@
       "static",
       "canvas",
       "glitch"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas"
     ],
     "wave": 2,
     "animated": false,
@@ -2748,6 +2847,10 @@
       "scanlines",
       "css"
     ],
+    "facets": [
+      "animated",
+      "overlay"
+    ],
     "wave": 2,
     "animated": true,
     "decorative": true,
@@ -2841,6 +2944,10 @@
       "3d",
       "rotation",
       "map",
+      "canvas"
+    ],
+    "facets": [
+      "animated",
       "canvas"
     ],
     "wave": 3,
@@ -2972,6 +3079,9 @@
       "loop",
       "css"
     ],
+    "facets": [
+      "animated"
+    ],
     "wave": 3,
     "animated": true,
     "decorative": false,
@@ -3064,6 +3174,9 @@
       "section",
       "css"
     ],
+    "facets": [
+      "static"
+    ],
     "wave": 3,
     "animated": false,
     "decorative": false,
@@ -3151,6 +3264,11 @@
       "section",
       "cta",
       "background"
+    ],
+    "facets": [
+      "animated",
+      "interactive",
+      "webgl"
     ],
     "wave": 3,
     "animated": true,
@@ -3273,6 +3391,10 @@
       "billing",
       "radio group",
       "section"
+    ],
+    "facets": [
+      "static",
+      "interactive"
     ],
     "wave": 3,
     "animated": false,
@@ -3433,6 +3555,10 @@
       "dashboard",
       "section"
     ],
+    "facets": [
+      "animated",
+      "chart"
+    ],
     "wave": 3,
     "animated": true,
     "decorative": false,
@@ -3588,6 +3714,10 @@
       "carousel",
       "section",
       "social proof"
+    ],
+    "facets": [
+      "animated",
+      "interactive"
     ],
     "wave": 3,
     "animated": true,
@@ -3750,6 +3880,13 @@
       "background",
       "dither"
     ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
     "wave": 3,
     "animated": true,
     "decorative": true,
@@ -3890,6 +4027,13 @@
       "background",
       "dither"
     ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
     "wave": 3,
     "animated": true,
     "decorative": true,
@@ -4028,6 +4172,13 @@
       "background",
       "dither",
       "flow"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
     ],
     "wave": 3,
     "animated": true,
@@ -4174,6 +4325,9 @@
       "box-drawing",
       "static"
     ],
+    "facets": [
+      "static"
+    ],
     "wave": 1,
     "animated": false,
     "decorative": false,
@@ -4277,6 +4431,9 @@
       "progress",
       "inline"
     ],
+    "facets": [
+      "animated"
+    ],
     "wave": 1,
     "animated": true,
     "decorative": false,
@@ -4371,6 +4528,10 @@
       "chart",
       "braille",
       "inline"
+    ],
+    "facets": [
+      "static",
+      "chart"
     ],
     "wave": 1,
     "animated": false,
@@ -4480,6 +4641,10 @@
       "cursor",
       "cli"
     ],
+    "facets": [
+      "animated",
+      "text"
+    ],
     "wave": 2,
     "animated": true,
     "decorative": false,
@@ -4571,6 +4736,10 @@
       "static",
       "pixel font"
     ],
+    "facets": [
+      "static",
+      "text"
+    ],
     "wave": 2,
     "animated": false,
     "decorative": false,
@@ -4649,6 +4818,11 @@
       "static",
       "quadrant blocks",
       "ordered dither"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "dither"
     ],
     "wave": 2,
     "animated": false,
@@ -4770,6 +4944,11 @@
       "image",
       "static",
       "braille",
+      "dither"
+    ],
+    "facets": [
+      "static",
+      "image",
       "dither"
     ],
     "wave": 2,
@@ -4901,6 +5080,10 @@
       "form",
       "ui"
     ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
     "wave": 3,
     "animated": false,
     "decorative": false,
@@ -5030,6 +5213,11 @@
       "overlay",
       "ui"
     ],
+    "facets": [
+      "static",
+      "overlay",
+      "interactive"
+    ],
     "wave": 3,
     "animated": false,
     "decorative": false,
@@ -5135,6 +5323,11 @@
       "popover",
       "disclosure",
       "overlay"
+    ],
+    "facets": [
+      "static",
+      "overlay",
+      "interactive"
     ],
     "wave": 3,
     "animated": false,
@@ -5272,6 +5465,10 @@
       "dropdown",
       "listbox",
       "form"
+    ],
+    "facets": [
+      "static",
+      "interactive"
     ],
     "wave": 3,
     "animated": false,
@@ -5423,6 +5620,10 @@
       "navigation",
       "panels",
       "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
     ],
     "wave": 3,
     "animated": false,

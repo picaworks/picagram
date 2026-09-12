@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "ascii",
   description: "Columns of glyphs fall at their own speed, each with a bright head and a trail that fades down the measured ramp.",
   tags: ["rain", "animated", "measured ramp", "generative"],
+  facets: ["animated", "background"],
   wave: 1,
   animated: true,
   decorative: true,

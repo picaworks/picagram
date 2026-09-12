@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "text-mode",
   description: "A terminal session that types a command and prints its output, then rests on a blinking cursor.",
   tags: ["terminal", "typing", "cursor", "cli"],
+  facets: ["animated", "text"],
   wave: 2,
   animated: true,
   decorative: false,

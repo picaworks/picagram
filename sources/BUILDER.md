@@ -1,6 +1,6 @@
 # Builder brief
 
-You build one Pica component end to end, in the repository at `/Users/rishabbalakrishnan/Documents/GitHub/pica`. About twenty builders work in this repository at the same time, one component each, so stay inside your own component directory.
+You build one Picagram component end to end, in the repository at `/Users/rishabbalakrishnan/Documents/GitHub/pica`. Up to sixteen builders work in this repository at the same time, one component each, so stay inside your own component directory.
 
 ## Read first, in this order
 
@@ -18,9 +18,17 @@ You build one Pica component end to end, in the repository at `/Users/rishabbala
    | CSS overlay | `registry/effects/scanlines/` |
    | control with events and children | `registry/ui/button/` |
    | shader | `registry/shaders/mesh-gradient/` |
+   | chart | `registry/data/bar-chart/` |
+   | immersive | `registry/immersive/globe/` |
+   | section, which composes other cores | `registry/sections/hero/` |
 
 6. The `lib/` modules your component uses. Read them instead of guessing their APIs.
-7. Your brief: the entry with your slug in `sources/wave-3.json`.
+7. Your brief: the entry with your slug in the wave file your prompt names, such as `sources/wave-4.json`.
+
+## Two kinds of brief
+
+- **A technique brief** describes the component in prose and names the published methods it follows. You may read those sources, the WAI-ARIA pattern for a control, and MDN.
+- **A spec brief** points at `specs/<your-slug>.md`, which is the whole design. Read "If your brief is a spec" below before you start.
 
 ## Rules
 
@@ -68,15 +76,15 @@ These are restated here because you start without the rest of the conversation.
 - **Typography.** Prose inherits the page's font. Use mono (`GRID_FONT` from `lib/font.ts`) only for glyphs, labels, numbers, and code. Never set a display font inside a component.
 - **Composition,** for sections only.
   - Import other cores as `import * as <slugInCamelCase> from "../../<category>/<slug>/core";`.
-  - Import only components that already exist in `registry/` today, not ones other builders are writing now.
+  - Import at most three cores, each from an earlier wave than yours, and none that another builder is writing now. Sizes are in `public/catalog.json`, and your section must still fit its budget. `test/compose.test.ts` checks both rules.
 - **Prose.** JSDoc and meta use plain sentences, with no dashes used as punctuation and no marketing words. The meta description is one sentence ending in a period, under 160 characters.
 - **Credits.** Use the credits in your brief. If the brief says original, set `original: true` and `credits: []`.
 
 ## Work loop
 
-1. **Write** `core.ts`, `index.tsx`, and `meta.ts`. `meta.wave` is 3. Add `interactions` for anything a user operates, `controlled` for a value prop, and `demo` when the defaults alone would show an empty or closed state.
+1. **Write** `core.ts`, `index.tsx`, and `meta.ts`. `meta.wave` is the wave number in your prompt. Declare `facets` from the twelve in `lib/meta.ts`, which are the only filters the catalog offers; `test/meta.test.ts` decides the mechanical ones, such as animated and webgl, so match what your component actually is. Add `interactions` for anything a user operates, `controlled` for a value prop, and `demo` when the defaults alone would show an empty or closed state.
 2. **Lint:** `npx eslint registry/<category>/<your-slug>`, and fix everything it reports.
-3. **Typecheck:** `npx tsc --noEmit 2>&1 | grep "registry/<category>/<your-slug>"` must print nothing. Other builders' files may show errors while they work.
+3. **Typecheck:** `npx tsc --noEmit --tsBuildInfoFile .pica/tsc/<your-slug>.tsbuildinfo 2>&1 | grep "registry/<category>/<your-slug>"` must print nothing. The build info file is yours alone, because every builder shares one repository and one shared cache would have them overwriting each other. Other builders' files may show errors while they work.
 4. **Verify:** `npm run verify -- <your-slug> --quick`, fixing until every check passes. It checks:
    - that both shapes match, on the dark and the light ground;
    - the accessibility of the host, with axe-core;
@@ -97,7 +105,16 @@ These are restated here because you start without the rest of the conversation.
    - Is anything cut off, empty, or broken?
 
    If something is not right, change the code and go back to step 4. Look at least once before you report.
-6. **Finish:** run the full `npm run verify -- <your-slug>` once.
+6. **Finish:** run the full `npm run verify -- <your-slug>` once, then read `.pica/captures/<your-slug>/vanilla-390.png`, which only the full run writes, and judge it the same way at phone width.
+
+## If your brief is a spec
+
+Some components re-implement a design Rish captured. He is the only person who sees the original, and you work from a written description of it, never from the thing itself. See `docs/decisions/0003-clean-room-soft-clone.md`.
+
+- **Your design input is `specs/<your-slug>.md` and nothing else.** Where the spec is silent, decide within `STYLE.md` and say what you decided in your report.
+- **Do not go looking for the original.** Do not open `sources/inbox/` or `sources/shortlists/`, do not open the URL in the spec's credit line, and do not search for the design, its author, or pictures of it.
+- **The credit line exists so you can credit it.** Copy it into `meta.credits` as an `inspired-by` credit, and set `meta.spec` to `<your-slug>.md`.
+- You still read Picagram's own code: `lib/`, the reference for your kind, and any core you compose.
 
 ## Report, as your final message
 

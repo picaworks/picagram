@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "text-mode",
   description: "A series of numbers drawn inline as eighth-block bars or a braille line, scaled to its own range.",
   tags: ["sparkline", "chart", "braille", "inline"],
+  facets: ["static", "chart"],
   wave: 1,
   animated: false,
   decorative: false,

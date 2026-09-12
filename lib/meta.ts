@@ -34,6 +34,27 @@ export const CATEGORY_TITLES: Readonly<Record<Category, string>> = {
   immersive: "Immersive",
 };
 
+/** The filters the catalog offers, in the order it shows them. This list never grows with the catalog: tags
+ *  stay free text, searchable and listed in the inspector, while a facet is one of these twelve and nothing
+ *  else, so the filter stays readable at any number of components. test/meta.test.ts decides every facet a
+ *  machine can decide, such as animated from `animated` and webgl from the bundle. */
+export const FACETS = [
+  "animated",
+  "static",
+  "image",
+  "text",
+  "background",
+  "overlay",
+  "interactive",
+  "chart",
+  "shader",
+  "canvas",
+  "webgl",
+  "dither",
+] as const;
+
+export type Facet = (typeof FACETS)[number];
+
 /** How the site's inspector edits one prop. */
 export type Control =
   | { type: "number"; min: number; max: number; step: number; label?: string }
@@ -72,6 +93,8 @@ export interface Meta {
   /** One sentence. Shown in the catalog, llms.txt, and the registry. */
   description: string;
   tags: readonly string[];
+  /** The catalog filters this component answers to. Exactly one of "animated" and "static". */
+  facets: readonly Facet[];
   /** The generation wave that produced it, for the review sheet. */
   wave: number;
   animated: boolean;

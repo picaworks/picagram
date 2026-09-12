@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "text-mode",
   description: "An image drawn with the sixteen quadrant block characters, each matching the corners a 2 by 2 sample fills.",
   tags: ["image", "static", "quadrant blocks", "ordered dither"],
+  facets: ["static", "image", "dither"],
   wave: 2,
   animated: false,
   decorative: false,

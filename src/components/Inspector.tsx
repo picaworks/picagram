@@ -1,7 +1,17 @@
 "use client";
-import { CATEGORY_TITLES, type CatalogItem, type PaletteProp, type PropValue, type Props, type Token } from "@/lib/catalog";
+import type { RefObject } from "react";
+import {
+  CATEGORY_TITLES,
+  type CatalogItem,
+  type Facet,
+  type PaletteProp,
+  type PropValue,
+  type Props,
+  type Token,
+} from "@/lib/catalog";
 import { formatBytes } from "@/lib/props";
 import type { Json } from "../../lib/types";
+import { ORIGINAL_LABEL } from "../../scripts/config";
 import { CodeTabs } from "./CodeTabs";
 import { ControlField } from "./Controls";
 
@@ -24,9 +34,15 @@ interface InspectorProps {
   codeOverrides: Props;
   onChange: (name: string, value: PropValue) => void;
   onReset: () => void;
-  activeTags: readonly string[];
-  onToggleTag: (tag: string) => void;
+  activeFacets: readonly Facet[];
+  onToggleFacet: (facet: Facet) => void;
+  /** A tag is not a filter: pressing one puts it in the search box. */
+  onSearchTag: (tag: string) => void;
   total: number;
+  /** False while the pane is collapsed. The aside stays in the DOM, hidden, so its id keeps resolving. */
+  open: boolean;
+  onCollapse: () => void;
+  collapseRef: RefObject<HTMLButtonElement | null>;
   /** Palette tokens the user set for this component. An unset token follows the page. */
   palette: PaletteProp;
   onPaletteChange: (token: Token, value: string) => void;
@@ -46,42 +62,62 @@ function formatTime(ms: number): string {
   return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
 }
 
-/** The right pane: what the selected component is, its controls, its palette, its code, its events, and who
- *  it builds on. */
+/** The right pane. It is one element whichever state it is in, so the id the two collapse buttons point at
+ *  always resolves, and a collapsed pane is the same element, hidden. */
 export function Inspector(p: InspectorProps) {
-  const { item } = p;
-  if (!item) {
-    return (
-      <aside className="inspector" aria-label="Inspector">
-        <div className="inspector-empty">
-          <p className="label">Nothing selected</p>
-          <p>
-            Select a frame on the canvas or a component under Layers. {p.total} {p.total === 1 ? "component" : "components"},
-            each as one React file and one HTML file.
-          </p>
-          <p className="label">for agents</p>
-          <ul className="tabs-links">
-            <li>
-              <a href="llms.txt">/llms.txt</a>
-              <span>The index, one line per component.</span>
-            </li>
-            <li>
-              <a href="llms-full.txt">/llms-full.txt</a>
-              <span>Every component in one file.</span>
-            </li>
-          </ul>
-        </div>
-      </aside>
-    );
-  }
+  return (
+    <aside id="inspector" className="inspector" aria-label="Inspector" hidden={!p.open}>
+      <div className="inspector-bar">
+        <span className="label">Inspector</span>
+        {/* This button exists only while the pane is open, so its name and its aria-expanded never change. */}
+        <button
+          ref={p.collapseRef}
+          type="button"
+          className="btn"
+          aria-controls="inspector"
+          aria-expanded={true}
+          onClick={p.onCollapse}
+        >
+          collapse inspector
+        </button>
+      </div>
+      {p.item === null ? <Empty total={p.total} /> : <Details p={p} item={p.item} />}
+    </aside>
+  );
+}
 
+function Empty({ total }: { total: number }) {
+  return (
+    <div className="inspector-empty">
+      <p className="label">Nothing selected</p>
+      <p>
+        Select a frame on the canvas or a component under Layers. {total} {total === 1 ? "component" : "components"},
+        each as one React file and one HTML file.
+      </p>
+      <p className="label">for agents</p>
+      <ul className="tabs-links">
+        <li>
+          <a href="llms.txt">/llms.txt</a>
+          <span>The index, one line per component.</span>
+        </li>
+        <li>
+          <a href="llms-full.txt">/llms-full.txt</a>
+          <span>Every component in one file.</span>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+/** What the selected component is, its controls, its palette, its code, its events, and who it builds on. */
+function Details({ p, item }: { p: InspectorProps; item: CatalogItem }) {
   const controls = Object.entries(item.controls);
   const changed = Object.keys(p.overrides).length;
   const palette = item.palette ?? ["fg"];
   const showEvents = Object.keys(item.events ?? {}).length > 0 || p.events.length > 0;
 
   return (
-    <aside className="inspector" aria-label="Inspector">
+    <>
       <header className="inspector-head">
         <p className="label">
           {CATEGORY_TITLES[item.category]} · {item.animated ? "animated" : "static"}
@@ -94,16 +130,27 @@ export function Inspector(p: InspectorProps) {
           <dt>slug</dt>
           <dd>{item.slug}</dd>
         </dl>
-        {item.tags.length > 0 && (
-          <div className="inspector-tags" role="group" aria-label="Tags, each filters the list">
-            {item.tags.map((tag) => (
+        {item.facets.length > 0 && (
+          <div className="inspector-tags" role="group" aria-label="Facets, each filters the list">
+            {item.facets.map((facet) => (
               <button
-                key={tag}
+                key={facet}
                 type="button"
                 className="chip"
-                aria-pressed={p.activeTags.includes(tag)}
-                onClick={() => p.onToggleTag(tag)}
+                aria-pressed={p.activeFacets.includes(facet)}
+                onClick={() => p.onToggleFacet(facet)}
               >
+                {facet}
+              </button>
+            ))}
+          </div>
+        )}
+        {item.tags.length > 0 && (
+          // A tag is free text, not one of the twelve facets, so it searches rather than toggles. These
+          // buttons carry no aria-pressed, because there is nothing to be pressed into.
+          <div className="inspector-tags" role="group" aria-label="Tags, each searches the catalog">
+            {item.tags.map((tag) => (
+              <button key={tag} type="button" className="chip" onClick={() => p.onSearchTag(tag)}>
                 {tag}
               </button>
             ))}
@@ -209,8 +256,8 @@ export function Inspector(p: InspectorProps) {
         <h2 id="credits-heading" className="label">
           Credits
         </h2>
-        {item.credits.length === 0 ? (
-          <p className="inspector-note">Original to Picagram.</p>
+        {item.original && item.credits.length === 0 ? (
+          <p className="inspector-note">{ORIGINAL_LABEL}</p>
         ) : (
           <ul className="credits">
             {item.credits.map((credit) => (
@@ -227,6 +274,6 @@ export function Inspector(p: InspectorProps) {
           </ul>
         )}
       </section>
-    </aside>
+    </>
   );
 }

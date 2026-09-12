@@ -25,6 +25,13 @@ export interface Entry {
   events: Record<string, { doc: string; detail: string }>;
 }
 
+/** Whether a component takes a picture: a string `src` whose JSDoc calls it an image. Verify hands those
+ *  components a photograph, and `test/meta.test.ts` requires the "image" facet of exactly the same set, so
+ *  the two can never drift apart. A video source is not one of them. */
+export function takesImage(entry: Entry): boolean {
+  return typeof entry.defaults.src === "string" && /image/i.test(entry.docs.src ?? "");
+}
+
 /** Absolute paths of every component directory, registry/<category>/<slug>, sorted. */
 export async function discover(): Promise<string[]> {
   const out: string[] = [];

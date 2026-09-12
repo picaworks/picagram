@@ -6,6 +6,7 @@ export const meta: Meta = {
   category: "dither",
   description: "An image screened into halftone dots, squares, or lines, their area set by darkness like a page of newsprint.",
   tags: ["image", "static", "halftone", "canvas"],
+  facets: ["static", "image", "canvas", "dither"],
   wave: 2,
   animated: false,
   decorative: false,
