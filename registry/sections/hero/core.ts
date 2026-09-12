@@ -1,6 +1,6 @@
 import * as asciiNoiseField from "../../ascii/ascii-noise-field/core";
 import * as meshGradient from "../../shaders/mesh-gradient/core";
-import { layer, scope, styleHost, type Layer } from "../../../lib/host";
+import { layer, scope, type Layer } from "../../../lib/host";
 import { sameJson } from "../../../lib/json";
 import { cssOn, cssVar } from "../../../lib/palette";
 import type { Mount, MotionProps } from "../../../lib/types";
@@ -80,14 +80,16 @@ function destroyBackground(bg: Background): void {
 }
 
 /** Layout for the host and the button grammar for its calls to action, from STYLE.md: the first action
- *  solid in the accent, the rest outline, square corners, and a hairline focus ring. Height and min-height
- *  are set as inline styles instead, so they are not shadowed by an outer page's own rules for the host. */
+ *  solid in the accent, the rest outline, square corners, and a hairline focus ring. The minimum height goes
+ *  in a :where() rule, which carries no specificity at all, so a page that gives this host a height of its
+ *  own wins without having to fight an inline style. */
 function rules(selector: string, p: HeroProps): string {
   const fg = cssVar("fg");
   const accent = cssVar("accent");
   const edge = p.align === "center" ? "center" : "flex-start";
   const textAlign = p.align === "center" ? "center" : "start";
   return [
+    `:where(${selector}){min-height:${vh(p.minHeight)}vh}`,
     `${selector}{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:${edge};padding:clamp(1.5rem, 5vw, 4rem);gap:0.6em}`,
     `${selector} > :not([data-pica]){max-width:40rem;text-align:${textAlign}}`,
     `${selector} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;max-width:40rem;margin-top:0.6em;justify-content:${edge}}`,
@@ -117,10 +119,9 @@ function renderActions(container: HTMLElement, actions: readonly HeroAction[]): 
 export const mount: Mount<HeroProps> = (host, initial = {}) => {
   let props: HeroProps = { ...defaults, ...initial };
   const sheet = scope(host);
-  // Auto height plus an explicit min-height, as inline styles: a page that gives this host a height of its
-  // own still wins (inline beats any stylesheet), and a plain block host sizes from its own content and
-  // this floor, exactly like a hero placed in normal page flow.
-  const restoreSize = styleHost(host, { height: "auto", "min-height": `${vh(props.minHeight)}vh` });
+  // Nothing about size is set inline. A block host already sizes from its own content, the scoped :where()
+  // rule adds a floor a page can override, and meta.stage "flow" is what tells the demo page and the catalog
+  // frame to give this host its own height.
 
   const actions = document.createElement("div");
   actions.setAttribute("data-pica", "");
@@ -161,15 +162,13 @@ export const mount: Mount<HeroProps> = (host, initial = {}) => {
         }
       }
 
-      if (props.minHeight !== before.minHeight) host.style.setProperty("min-height", `${vh(props.minHeight)}vh`);
-      if (props.align !== before.align) sheet.setRules(rules(sheet.selector, props));
+      if (props.minHeight !== before.minHeight || props.align !== before.align) sheet.setRules(rules(sheet.selector, props));
       if (!sameJson(before.actions, props.actions)) renderActions(actions, props.actions);
     },
     destroy() {
       destroyBackground(bg);
       actions.remove();
       sheet.destroy();
-      restoreSize();
       delete host.dataset.picaReady;
     },
   };

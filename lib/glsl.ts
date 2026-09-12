@@ -33,6 +33,24 @@ float pica_fbm(vec2 p, int octaves) {
 }
 `;
 
+/** The tail every shader repeats: take a tone from 0 to 1, quantize it through the Bayer matrix into a
+ *  number of steps, and composite that much ink over the ground. Needs DITHER before it.
+ *
+ *  The result is straight alpha, which is what lib/gl.ts asks the context for. Mixing toward u_bg instead
+ *  would be premultiplied whenever the ground is transparent, which is the default, and the browser would
+ *  then multiply by alpha a second time: every mid-tone would come out squared, so six even levels would
+ *  land near 7, 19, 38, 65 and 100 percent instead of 20 through 100. */
+export const TONE = `
+vec4 pica_tone(float tone, vec4 ink, float levels) {
+  float steps = max(1.0, levels);
+  float q = floor(clamp(tone, 0.0, 1.0) * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
+  float amount = clamp(q, 0.0, 1.0) * ink.a;
+  float onto = u_bg.a * (1.0 - amount);
+  float alpha = amount + onto;
+  return vec4((ink.rgb * amount + u_bg.rgb * onto) / max(alpha, 0.0001), alpha);
+}
+`;
+
 /** The 8 by 8 Bayer threshold at a pixel, in (0, 1), for ordered dithering:
  *  step(pica_bayer8(ivec2(gl_FragCoord.xy)), tone). The same matrix as bayerMatrix(8) in lib/dither.ts. */
 export const DITHER = `

@@ -56,6 +56,18 @@ These are restated here because you start without the rest of the conversation.
   - Each field's type on one line.
   - Props are JSON values. Callbacks never enter a core: a core reports input with `emitter` from `lib/events.ts`, and the wrapper takes `Handlers<Events>`.
 - **Names.** Every name in `lib/` is also a top-level name in your single React file. If verify reports that a name is declared twice, use the `lib/` export instead of your own copy, or rename yours.
+- **GLSL inside a template literal.**
+  - Indent every line. A line starting at column 0 with `const float` is read by the build as a JavaScript declaration and collides with another file's.
+  - Only `lib/` snippets use the `pica_` prefix. Order them `${NOISE}${DITHER}${TONE}`.
+  - Uniforms are floats named `u_<prop>`. Read an integer as `int(x + 0.5)`. There are no samplers and no textures.
+  - Loops take constant bounds with `if (i >= n) break;`.
+  - `gl_FragCoord` is y up. Use `1.0 - uv.y` for top down, and `pointerUv` from `lib/gl.ts` for the pointer.
+  - The CSS fallback must ink more than one percent of the frame on both grounds.
+- **An animated effect over an image** prepares once and draws forever. Use `createPlate` from `lib/pixels.ts`, and never read the whole image back per frame: verify fails any task over 50 ms. `registry/effects/scan-reveal-image/` is the reference, and its rule is worth copying exactly.
+  - Keep every decision about what a pixel is in `prepare`, and every decision about where it goes in `draw`.
+  - Anything that changes what a pixel is, meaning `src`, `fit`, `tone`, `contrast`, the palette, or your own per-pixel prop, prepares again. Anything that changes where it goes only redraws.
+  - Size each plate to the host's own box, capped at 480 px on the longer side, so no frame has to fit or scale it.
+  - Prepare before the loop draws its first frame, prepare again on a resize only when the plate's size actually changed, and turn `imageSmoothingEnabled` off for a plate holding one-bit dots.
 - **The host and its children.**
   - Change host attributes and styles only through `styleHost` and `hostAttributes`, and restore them on destroy.
   - Never write to, move, or remove a node you did not create.

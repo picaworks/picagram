@@ -1380,6 +1380,7 @@ html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
 html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
 #pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
 .pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
 .pica-stage #pica { width: auto; height: auto; }
 .pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>

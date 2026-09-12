@@ -642,6 +642,34 @@
       }
     },
     {
+      "name": "scan-reveal-image",
+      "type": "registry:component",
+      "title": "Scan Reveal Image",
+      "description": "An image a scan bar reveals as it sweeps down, sparse dither ahead of the bar and the finished picture behind it.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/scan-reveal-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "ITU-T Recommendation T.4: Standardization of Group 3 facsimile terminals for document transmission",
+            "author": "ITU-T",
+            "url": "https://www.itu.int/rec/T-REC-T.4/en",
+            "license": "ITU-T Recommendation"
+          }
+        ]
+      }
+    },
+    {
       "name": "scanlines",
       "type": "registry:component",
       "title": "Scanlines",
@@ -829,7 +857,7 @@
       "name": "aurora",
       "type": "registry:component",
       "title": "Aurora",
-      "description": "Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.",
+      "description": "Layered curtains of accent light standing on bowed lower borders, striated by vertical rays and dithered between a few tone steps on the GPU.",
       "categories": [
         "shaders"
       ],
@@ -843,6 +871,41 @@
         "license": "MIT + Commons Clause",
         "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
         "credits": [
+          {
+            "relation": "technique",
+            "title": "Simulating the aurora",
+            "author": "Gladimir V. G. Baranoski et al.",
+            "url": "https://doi.org/10.1002/vis.304",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Interactive Volume Rendering Aurora on the GPU",
+            "author": "Orion Sky Lawlor and Jon Genetti",
+            "url": "https://hdl.handle.net/11025/1242",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Small-scale auroral arc distortions",
+            "author": "Thomas J. Hallinan and T. Neil Davis",
+            "url": "https://doi.org/10.1016/0032-0633(70)90007-3",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "The development of the auroral substorm",
+            "author": "Syun-Ichi Akasofu",
+            "url": "https://doi.org/10.1016/0032-0633(64)90151-5",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Like an Outdoor Nightclub: Q&A on Pulsating Auroras",
+            "author": "NASA Science",
+            "url": "https://science.nasa.gov/blogs/the-sun-spot/2022/04/05/like-an-outdoor-nightclub-qa-on-pulsating-auroras/",
+            "license": "Public domain"
+          },
           {
             "relation": "technique",
             "title": "Improving Noise",

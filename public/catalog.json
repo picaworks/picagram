@@ -2837,6 +2837,157 @@
     "gzipBytes": 3559
   },
   {
+    "slug": "scan-reveal-image",
+    "title": "Scan Reveal Image",
+    "category": "effects",
+    "description": "An image a scan bar reveals as it sweeps down, sparse dither ahead of the bar and the finished picture behind it.",
+    "tags": [
+      "image",
+      "scan",
+      "fax",
+      "reveal",
+      "canvas"
+    ],
+    "facets": [
+      "animated",
+      "image",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "capture": 2800,
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "auto",
+          "light-on-dark",
+          "dark-on-light"
+        ]
+      },
+      "contrast": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2.5,
+        "step": 0.05
+      },
+      "duration": {
+        "type": "number",
+        "min": 1000,
+        "max": 12000,
+        "step": 250
+      },
+      "hold": {
+        "type": "number",
+        "min": 0,
+        "max": 6000,
+        "step": 250
+      },
+      "bar": {
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "label": "Bar thickness"
+      },
+      "preview": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "label": "Preview ink"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "label": "FPS"
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "ITU-T Recommendation T.4: Standardization of Group 3 facsimile terminals for document transmission",
+        "author": "ITU-T",
+        "url": "https://www.itu.int/rec/T-REC-T.4/en",
+        "license": "ITU-T Recommendation"
+      }
+    ],
+    "exportName": "ScanRevealImage",
+    "defaults": {
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "tone": "auto",
+      "contrast": 1.1,
+      "duration": 5000,
+      "hold": 2000,
+      "bar": 2,
+      "preview": 0.25,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty draws a built-in lit sphere, so the component renders with no network.",
+      "alt": "Text alternative. Empty marks the image decorative and hides it from assistive technology.",
+      "fit": "\"cover\" fills the host and crops; \"contain\" fits the whole image.",
+      "tone": "\"auto\" reads the host's colors. \"light-on-dark\" inks the bright pixels; \"dark-on-light\" inks the dark ones.",
+      "contrast": "Contrast around mid grey. 1 leaves the image as it is.",
+      "duration": "Milliseconds one sweep takes, from the top edge to the bottom.",
+      "hold": "Milliseconds the finished picture holds at the end of a sweep, before the next one starts.",
+      "bar": "The scan bar's thickness in pixels. The bar is the one mark drawn in the accent.",
+      "preview": "How much ink the sparse dither keeps where the scan has not reached yet, 0 to 1.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\"",
+      "contrast": "number",
+      "duration": "number",
+      "hold": "number",
+      "bar": "number",
+      "preview": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4678
+  },
+  {
     "slug": "scanlines",
     "title": "Scanlines",
     "category": "effects",
@@ -3274,6 +3425,7 @@
     "animated": true,
     "decorative": false,
     "wraps": "content",
+    "stage": "flow",
     "palette": [
       "fg",
       "accent"
@@ -3378,7 +3530,7 @@
       "intensity": "number"
     },
     "events": {},
-    "gzipBytes": 9228
+    "gzipBytes": 9219
   },
   {
     "slug": "pricing",
@@ -3872,7 +4024,7 @@
     "slug": "aurora",
     "title": "Aurora",
     "category": "shaders",
-    "description": "Slow curtains of accent light drifting down from the top of the host, dithered between a few tone steps on the GPU.",
+    "description": "Layered curtains of accent light standing on bowed lower borders, striated by vertical rays and dithered between a few tone steps on the GPU.",
     "tags": [
       "aurora",
       "shader",
@@ -3908,13 +4060,37 @@
         "max": 8,
         "step": 1
       },
+      "arc": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
       "height": {
         "type": "number",
         "min": 0.2,
         "max": 1,
         "step": 0.05
       },
+      "horizon": {
+        "type": "number",
+        "min": 0.4,
+        "max": 1,
+        "step": 0.05
+      },
       "sway": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "folds": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "rays": {
         "type": "number",
         "min": 0,
         "max": 1,
@@ -3958,6 +4134,41 @@
     "credits": [
       {
         "relation": "technique",
+        "title": "Simulating the aurora",
+        "author": "Gladimir V. G. Baranoski et al.",
+        "url": "https://doi.org/10.1002/vis.304",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Interactive Volume Rendering Aurora on the GPU",
+        "author": "Orion Sky Lawlor and Jon Genetti",
+        "url": "https://hdl.handle.net/11025/1242",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Small-scale auroral arc distortions",
+        "author": "Thomas J. Hallinan and T. Neil Davis",
+        "url": "https://doi.org/10.1016/0032-0633(70)90007-3",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "The development of the auroral substorm",
+        "author": "Syun-Ichi Akasofu",
+        "url": "https://doi.org/10.1016/0032-0633(64)90151-5",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Like an Outdoor Nightclub: Q&A on Pulsating Auroras",
+        "author": "NASA Science",
+        "url": "https://science.nasa.gov/blogs/the-sun-spot/2022/04/05/like-an-outdoor-nightclub-qa-on-pulsating-auroras/",
+        "license": "Public domain"
+      },
+      {
+        "relation": "technique",
         "title": "Improving Noise",
         "author": "Ken Perlin",
         "url": "https://mrl.cs.nyu.edu/~perlin/paper445.pdf",
@@ -3975,9 +4186,13 @@
     "exportName": "Aurora",
     "defaults": {
       "speed": 0.15,
-      "curtains": 4,
+      "curtains": 3,
+      "arc": 0.35,
       "height": 0.7,
+      "horizon": 0.85,
       "sway": 0.5,
+      "folds": 0.5,
+      "rays": 0.6,
       "intensity": 0.8,
       "levels": 6,
       "pixel": 2,
@@ -3990,10 +4205,14 @@
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "speed": "How fast the curtains drift and ripple. 0 holds them still.",
-      "curtains": "Number of vertical light curtains.",
-      "height": "How far down the host the curtains reach before they fade out, as a fraction of its height.",
+      "speed": "How fast the curtains drift and fold. 0 holds them still.",
+      "curtains": "Curtain layers, drawn from near to far.",
+      "arc": "How far each lower border bows toward the horizon at its ends, from 0 (level) to 1 (all the way down).",
+      "height": "How far the rays stand above the lower border, as a fraction of the host's height.",
+      "horizon": "Where the horizon sits, measured down from the top. Nothing draws below it.",
       "sway": "How far the curtains wander side to side, from 0 (straight) to 1 (a wide drift).",
+      "folds": "How deep the pleats along a curtain run, from 0 (a plain arc) to 1 (deep folds).",
+      "rays": "How strongly the vertical striations show, from 0 (a smooth sheet) to 1 (a rayed arc).",
       "intensity": "How strongly the curtains show over the ground, from 0 to 1.",
       "levels": "Tone steps the curtains are dithered between: 2 is one-bit, 16 reads as nearly smooth.",
       "pixel": "Size of one dither cell, in CSS pixels.",
@@ -4005,15 +4224,19 @@
       "seed": "number",
       "speed": "number",
       "curtains": "number",
+      "arc": "number",
       "height": "number",
+      "horizon": "number",
       "sway": "number",
+      "folds": "number",
+      "rays": "number",
       "intensity": "number",
       "levels": "number",
       "pixel": "number",
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4957
+    "gzipBytes": 5699
   },
   {
     "slug": "mesh-gradient",
@@ -4158,7 +4381,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4760
+    "gzipBytes": 4763
   },
   {
     "slug": "shader-flow",
@@ -4312,7 +4535,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5276
+    "gzipBytes": 5307
   },
   {
     "slug": "ascii-frame",

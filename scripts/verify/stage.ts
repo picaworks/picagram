@@ -127,7 +127,7 @@ export async function stage(entry: Entry): Promise<Staged> {
   const js = built.outputFiles?.[0]?.text ?? "";
   await writeFile(
     join(dir, "react.html"),
-    `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark light"><title>${entry.meta.title} · React</title><style>${DEMO_PAGE_CSS}\n#root { width: 100%; height: 100%; }</style></head><body><div id="root"></div><script>${js}</script></body></html>`,
+    `<!doctype html><html lang="en"${entry.meta.stage === "flow" ? ' data-stage="flow"' : ""}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark light"><title>${entry.meta.title} · React</title><style>${DEMO_PAGE_CSS}\n#root { width: 100%; height: 100%; }</style></head><body><div id="root"></div><script>${js}</script></body></html>`,
   );
   await writeFile(
     join(dir, "meta.json"),

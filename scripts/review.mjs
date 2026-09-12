@@ -47,7 +47,7 @@ function card({ meta, verify }, decision) {
       : meta.credits.map((c) => `${c.relation} ${c.title} (${c.author})`).join("; ");
   const chosen = decision?.decision ?? "";
   return `<article tabindex="0" data-slug="${escapeHtml(meta.slug)}" data-decision="${chosen}">
-  <img class="shot" src="/capture/${escapeHtml(meta.slug)}/vanilla-1280.png" data-dark="/capture/${escapeHtml(meta.slug)}/vanilla-1280.png" data-light="/capture/${escapeHtml(meta.slug)}/vanilla-1280-light.png" alt="" loading="lazy">
+  <img class="shot" src="/capture/${escapeHtml(meta.slug)}/vanilla-1280.png" alt="" loading="lazy">
   <h2>${escapeHtml(meta.title)} <span class="muted">${escapeHtml(meta.slug)}</span></h2>
   <p>${escapeHtml(meta.description)}</p>
   <p class="muted small">${escapeHtml(credits)}</p>
@@ -76,6 +76,10 @@ article:focus-visible, article.active { outline: 1px solid var(--amber); outline
 article[data-decision="cut"] { opacity: 0.55; }
 p { margin: 0; }
 .shot { display: block; width: 100%; aspect-ratio: 1280 / 800; object-fit: cover; background: #000; border: 1px solid var(--line); cursor: zoom-in; }
+/* A phone capture is taller than it is wide, and it is shown whole rather than cropped to the wide frame.
+   The height is capped so a row of cards still fits on one screen. */
+main[data-width="390"] .shot { aspect-ratio: 390 / 844; max-height: 60vh; object-fit: contain; }
+.shot.missing { opacity: 0.35; }
 textarea { width: 100%; font: inherit; color: var(--paper); background: transparent; border: 1px solid var(--line); padding: 6px 8px; resize: vertical; }
 .row { display: flex; gap: 8px; flex-wrap: wrap; }
 button { font: inherit; color: var(--paper); background: transparent; border: 1px solid var(--line); padding: 4px 10px; cursor: pointer; }
@@ -86,9 +90,10 @@ dialog iframe { width: 100%; height: 100%; border: 0; display: block; }
 kbd { border: 1px solid var(--line); padding: 0 4px; }
 </style></head><body>
 <header><h1>Pica review, wave ${wave}</h1><span class="muted"><span id="count">${decided}</span> of ${list.length} decided</span>
-<button type="button" id="ground" aria-pressed="false">ground: dark</button>
-<span class="muted small"><kbd>j</kbd> <kbd>k</kbd> move, <kbd>1</kbd> keep, <kbd>2</kbd> revise, <kbd>3</kbd> cut, <kbd>o</kbd> live, <kbd>l</kbd> light or dark, <kbd>esc</kbd> close</span></header>
-<main>${list.map((item) => card(item, log[item.meta.slug])).join("\n") || '<p style="padding:24px">Nothing staged for this wave. Run npm run verify first.</p>'}</main>
+<button type="button" id="width" aria-pressed="false">width: 1280</button>
+<button type="button" id="ground" aria-pressed="false">ground: ink</button>
+<span class="muted small"><kbd>j</kbd> <kbd>k</kbd> move, <kbd>1</kbd> keep, <kbd>2</kbd> revise, <kbd>3</kbd> cut, <kbd>o</kbd> live, <kbd>w</kbd> 1280 or 390, <kbd>l</kbd> ink or paper, <kbd>esc</kbd> close</span></header>
+<main data-width="1280">${list.map((item) => card(item, log[item.meta.slug])).join("\n") || '<p style="padding:24px">Nothing staged for this wave. Run npm run verify first.</p>'}</main>
 <dialog id="live"><iframe title="Live component"></iframe></dialog>
 <script>
 const cards = [...document.querySelectorAll("article")];
@@ -96,14 +101,32 @@ const dialog = document.getElementById("live");
 let active = 0;
 function focus(i) { active = Math.max(0, Math.min(cards.length - 1, i)); cards.forEach((c, j) => c.classList.toggle("active", j === active)); cards[active]?.focus(); }
 function openLive(card) { dialog.querySelector("iframe").src = "/live/" + card.dataset.slug; dialog.showModal(); }
+// Which capture each card shows: the wide one or the phone one, on ink or on paper. Every combination is
+// already on disk from a full verify, so a toggle is a matter of naming the right file. The choice rides in
+// sessionStorage, which is to say it lasts as long as this sheet is open and no longer.
+const main = document.querySelector("main");
+const widthButton = document.getElementById("width");
 const groundButton = document.getElementById("ground");
-let lightGround = false;
-function toggleGround() {
-  lightGround = !lightGround;
-  document.querySelectorAll(".shot").forEach((img) => { img.src = lightGround ? img.dataset.light : img.dataset.dark; });
-  groundButton.textContent = "ground: " + (lightGround ? "light" : "dark");
-  groundButton.setAttribute("aria-pressed", String(lightGround));
+const recall = (key, fallback) => { try { return sessionStorage.getItem(key) ?? fallback; } catch { return fallback; } };
+const remember = (key, value) => { try { sessionStorage.setItem(key, value); } catch { /* a window with no storage keeps the choice in memory alone */ } };
+const view = { width: recall("pica-width", "1280") === "390" ? "390" : "1280", ground: recall("pica-ground", "ink") === "paper" ? "paper" : "ink" };
+function showCaptures() {
+  main.dataset.width = view.width;
+  widthButton.textContent = "width: " + view.width;
+  widthButton.setAttribute("aria-pressed", String(view.width === "390"));
+  groundButton.textContent = "ground: " + view.ground;
+  groundButton.setAttribute("aria-pressed", String(view.ground === "paper"));
+  document.querySelectorAll(".shot").forEach((img) => {
+    img.classList.remove("missing");
+    img.title = "";
+    img.src = "/capture/" + img.closest("article").dataset.slug + "/vanilla-" + view.width + (view.ground === "paper" ? "-light" : "") + ".png";
+  });
+  remember("pica-width", view.width);
+  remember("pica-ground", view.ground);
 }
+function toggleWidth() { view.width = view.width === "1280" ? "390" : "1280"; showCaptures(); }
+function toggleGround() { view.ground = view.ground === "ink" ? "paper" : "ink"; showCaptures(); }
+widthButton.addEventListener("click", toggleWidth);
 groundButton.addEventListener("click", toggleGround);
 async function decide(card, decision) {
   const note = card.querySelector("textarea").value;
@@ -115,7 +138,10 @@ async function decide(card, decision) {
 }
 cards.forEach((card, i) => {
   card.addEventListener("focus", () => { active = i; cards.forEach((c, j) => c.classList.toggle("active", j === i)); });
-  card.querySelector(".shot").addEventListener("click", () => openLive(card));
+  const shot = card.querySelector(".shot");
+  shot.addEventListener("click", () => openLive(card));
+  // A capture only exists once a full verify has run, so say so rather than showing a broken image.
+  shot.addEventListener("error", () => { shot.classList.add("missing"); shot.title = "No capture at this width and ground. Run npm run verify without --quick."; });
   card.querySelector("[data-live]").addEventListener("click", () => openLive(card));
   card.querySelectorAll("[data-choice]").forEach((b) => b.addEventListener("click", () => decide(card, b.dataset.choice)));
 });
@@ -126,9 +152,11 @@ document.addEventListener("keydown", (e) => {
   else if (e.key === "k") focus(active - 1);
   else if (card && ["1", "2", "3"].includes(e.key)) decide(card, ["keep", "revise", "cut"][Number(e.key) - 1]);
   else if (card && e.key === "o") openLive(card);
+  else if (e.key === "w") toggleWidth();
   else if (e.key === "l") toggleGround();
 });
 dialog.addEventListener("close", () => { dialog.querySelector("iframe").src = "about:blank"; });
+showCaptures();
 focus(0);
 </script></body></html>`;
 }

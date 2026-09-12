@@ -57,6 +57,10 @@ export const DEMO_PAGE_CSS = [
   'html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }',
   'html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }',
   "#pica { width: 100%; height: 100%; }",
+  // A flow component sizes from its own content, with the frame as a floor rather than a ceiling. The floor
+  // is in viewport units, not a percentage: the React harness renders inside a #root of automatic height,
+  // where a percentage minimum resolves to nothing and the two shapes would then disagree.
+  'html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }',
   // A text run is captured centered and enlarged, so it reads at a useful size. See meta.stage.
   ".pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }",
   ".pica-stage #pica { width: auto; height: auto; }",

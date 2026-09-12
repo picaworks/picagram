@@ -210,11 +210,12 @@ export function vanillaParts(entry: Entry, bundle: VanillaBundle): { html: strin
 
 export function vanillaHtml(entry: Entry, bundle: VanillaBundle): string {
   const parts = vanillaParts(entry, bundle);
+  const stage = entry.meta.stage === "flow" ? ' data-stage="flow"' : "";
   return `<!doctype html>
 <!--
   ${headerLines(entry).join("\n  ")}
 -->
-<html lang="en">
+<html lang="en"${stage}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -31,8 +31,38 @@ export interface LogEntry {
   detail: unknown;
 }
 
+/** Every URL asked for by every page opened since the last forget, in order. A component may request nothing
+ *  but its own page, and the only way to see that is to watch a real browser. This lives in module state
+ *  rather than in another argument to open(), so a page records what it fetches whichever group opened it.
+ *  index.ts reads it once a component's groups have run, and forgets it before the next component. */
+const asked: string[] = [];
+
+/** Where a component's page may ask for bytes: the server it was served from, or a source the page carries
+ *  itself, meaning a data: URI, as an image component is handed, or a blob: URI a script made. */
+function local(url: string, origin: string): boolean {
+  return url.startsWith("data:") || url.startsWith("blob:") || url === origin || url.startsWith(`${origin}/`);
+}
+
+export interface Requests {
+  /** How many requests every page opened since the last forget made. */
+  readonly seen: number;
+  /** The first request that went anywhere other than the page's own origin, or null when none did. */
+  readonly offOrigin: string | null;
+}
+
+/** What every page opened so far asked for, judged against the origin they were served from. */
+export function requests(origin: string): Requests {
+  return { seen: asked.length, offOrigin: asked.find((url) => !local(url, origin)) ?? null };
+}
+
+/** Starts the count again, so each component answers for its own pages alone. */
+export function forgetRequests(): void {
+  asked.length = 0;
+}
+
 export async function open(context: BrowserContext, url: string, options: OpenOptions, errors: string[]): Promise<Page> {
   const page = await context.newPage();
+  page.on("request", (request) => asked.push(request.url()));
   page.on("console", (message) => {
     if (message.type() === "error") errors.push(message.text());
   });

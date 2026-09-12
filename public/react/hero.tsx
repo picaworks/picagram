@@ -1435,8 +1435,9 @@ type Uniform = number | readonly number[];
 interface ShaderOptions {
   /** GLSL ES 3.00 that follows the prelude. It declares any extra uniforms, defines main(), and writes
    *  pica_color, with straight (not premultiplied) alpha. The prelude declares u_resolution in device
-   *  pixels, u_time in seconds (wrapping every hour), u_seed, u_pointer (0 to 1 across the host, or -1 when
-   *  outside), the palette as u_fg, u_bg, u_accent, and u_muted (RGBA, 0 to 1), and two helpers:
+   *  pixels, u_time in seconds (wrapping every hour), u_seed, u_pointer (0 to 1 across the host with y
+   *  running up, the same way as gl_FragCoord, or -1 when outside: set it with pointerUv), the palette as
+   *  u_fg, u_bg, u_accent, and u_muted (RGBA, 0 to 1), and two helpers:
    *  pica_hash(uvec2), an integer hash, and pica_random(vec2), a seeded value in [0, 1) per cell. */
   fragment: string;
   /** A CSS background shown instead when WebGL2 is unavailable or the shader cannot build. Build it from
@@ -1524,6 +1525,17 @@ function compileStage(gl: WebGL2RenderingContext, type: number, source: string):
   if (!gl.isContextLost()) console.error(`Pica shader did not compile: ${gl.getShaderInfoLog(shader) ?? ""}`);
   gl.deleteShader(shader);
   return null;
+}
+
+/** A pointer event as u_pointer wants it: 0 to 1 across the host, with y running up like gl_FragCoord, and
+ *  [-1, -1] when the pointer is outside. Reading the DOM's own top-down y straight into the uniform is the
+ *  mistake this exists to stop, because it mirrors every pointer effect vertically. */
+function pointerUv(host: HTMLElement, event: { clientX: number; clientY: number }): [number, number] {
+  const rect = host.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return [-1, -1];
+  const x = (event.clientX - rect.left) / rect.width;
+  const y = 1 - (event.clientY - rect.top) / rect.height;
+  return x < 0 || x > 1 || y < 0 || y > 1 ? [-1, -1] : [x, y];
 }
 
 function createShader(host: HTMLElement, options: ShaderOptions): Shader {
@@ -1673,6 +1685,24 @@ float pica_fbm(vec2 p, int octaves) {
     amp *= 0.5;
   }
   return sum;
+}
+`;
+
+/** The tail every shader repeats: take a tone from 0 to 1, quantize it through the Bayer matrix into a
+ *  number of steps, and composite that much ink over the ground. Needs DITHER before it.
+ *
+ *  The result is straight alpha, which is what lib/gl.ts asks the context for. Mixing toward u_bg instead
+ *  would be premultiplied whenever the ground is transparent, which is the default, and the browser would
+ *  then multiply by alpha a second time: every mid-tone would come out squared, so six even levels would
+ *  land near 7, 19, 38, 65 and 100 percent instead of 20 through 100. */
+const TONE = `
+vec4 pica_tone(float tone, vec4 ink, float levels) {
+  float steps = max(1.0, levels);
+  float q = floor(clamp(tone, 0.0, 1.0) * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
+  float amount = clamp(q, 0.0, 1.0) * ink.a;
+  float onto = u_bg.a * (1.0 - amount);
+  float alpha = amount + onto;
+  return vec4((ink.rgb * amount + u_bg.rgb * onto) / max(alpha, 0.0001), alpha);
 }
 `;
 
@@ -1909,14 +1939,16 @@ function destroyBackground(bg: Background): void {
 }
 
 /** Layout for the host and the button grammar for its calls to action, from STYLE.md: the first action
- *  solid in the accent, the rest outline, square corners, and a hairline focus ring. Height and min-height
- *  are set as inline styles instead, so they are not shadowed by an outer page's own rules for the host. */
+ *  solid in the accent, the rest outline, square corners, and a hairline focus ring. The minimum height goes
+ *  in a :where() rule, which carries no specificity at all, so a page that gives this host a height of its
+ *  own wins without having to fight an inline style. */
 function rules(selector: string, p: HeroProps): string {
   const fg = cssVar("fg");
   const accent = cssVar("accent");
   const edge = p.align === "center" ? "center" : "flex-start";
   const textAlign = p.align === "center" ? "center" : "start";
   return [
+    `:where(${selector}){min-height:${vh(p.minHeight)}vh}`,
     `${selector}{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:${edge};padding:clamp(1.5rem, 5vw, 4rem);gap:0.6em}`,
     `${selector} > :not([data-pica]){max-width:40rem;text-align:${textAlign}}`,
     `${selector} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;max-width:40rem;margin-top:0.6em;justify-content:${edge}}`,
@@ -1946,10 +1978,9 @@ function renderActions(container: HTMLElement, actions: readonly HeroAction[]): 
 export const mount: Mount<HeroProps> = (host, initial = {}) => {
   let props: HeroProps = { ...defaults, ...initial };
   const sheet = scope(host);
-  // Auto height plus an explicit min-height, as inline styles: a page that gives this host a height of its
-  // own still wins (inline beats any stylesheet), and a plain block host sizes from its own content and
-  // this floor, exactly like a hero placed in normal page flow.
-  const restoreSize = styleHost(host, { height: "auto", "min-height": `${vh(props.minHeight)}vh` });
+  // Nothing about size is set inline. A block host already sizes from its own content, the scoped :where()
+  // rule adds a floor a page can override, and meta.stage "flow" is what tells the demo page and the catalog
+  // frame to give this host its own height.
 
   const actions = document.createElement("div");
   actions.setAttribute("data-pica", "");
@@ -1990,15 +2021,13 @@ export const mount: Mount<HeroProps> = (host, initial = {}) => {
         }
       }
 
-      if (props.minHeight !== before.minHeight) host.style.setProperty("min-height", `${vh(props.minHeight)}vh`);
-      if (props.align !== before.align) sheet.setRules(rules(sheet.selector, props));
+      if (props.minHeight !== before.minHeight || props.align !== before.align) sheet.setRules(rules(sheet.selector, props));
       if (!sameJson(before.actions, props.actions)) renderActions(actions, props.actions);
     },
     destroy() {
       destroyBackground(bg);
       actions.remove();
       sheet.destroy();
-      restoreSize();
       delete host.dataset.picaReady;
     },
   };
