@@ -6871,6 +6871,133 @@
     "gzipBytes": 4541
   },
   {
+    "slug": "city-grid",
+    "title": "City Grid",
+    "category": "immersive",
+    "description": "A seeded city of blocks on a street grid, seen from above at a fixed tilt and panning slowly past.",
+    "tags": [
+      "city",
+      "axonometric",
+      "skyline",
+      "procedural",
+      "background"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "density": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "blockSize": {
+        "type": "number",
+        "min": 8,
+        "max": 48,
+        "step": 1
+      },
+      "height": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "spread": {
+        "type": "number",
+        "min": 0.5,
+        "max": 4,
+        "step": 0.1
+      },
+      "angle": {
+        "type": "number",
+        "min": 15,
+        "max": 60,
+        "step": 1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.02
+      },
+      "fps": {
+        "type": "number",
+        "min": 12,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Procedural modeling of cities",
+        "author": "Yoav I. H. Parish and Pascal Müller",
+        "url": "https://doi.org/10.1145/383259.383292",
+        "license": "Paper"
+      }
+    ],
+    "exportName": "CityGrid",
+    "defaults": {
+      "density": 0.7,
+      "blockSize": 18,
+      "height": 0.5,
+      "spread": 1.5,
+      "angle": 30,
+      "speed": 0.12,
+      "fps": 20,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "density": "Share of blocks that carry a building, from 0 to 1. The rest stay empty lots.",
+      "blockSize": "The street grid's module on screen, in CSS pixels. A block spans a few modules on each side.",
+      "height": "Height of the skyline from 0 to 1. 0 leaves a city of one-storey blocks.",
+      "spread": "How wide each cluster of tall blocks grows. Larger spreads reach further past the downtown.",
+      "angle": "Tilt of the axonometric view in degrees. A low angle looks across the roofs.",
+      "speed": "Pan speed along one street axis. 0 holds the city still.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "density": "number",
+      "blockSize": "number",
+      "height": "number",
+      "spread": "number",
+      "angle": "number",
+      "speed": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4854
+  },
+  {
     "slug": "globe",
     "title": "Globe",
     "category": "immersive",
@@ -7002,6 +7129,150 @@
     },
     "events": {},
     "gzipBytes": 3528
+  },
+  {
+    "slug": "terrain-field",
+    "title": "Terrain Field",
+    "category": "immersive",
+    "description": "A landscape of profile lines that drift toward the viewer, each ridge hiding the rows behind it.",
+    "tags": [
+      "terrain",
+      "horizon",
+      "landscape",
+      "hidden-line",
+      "canvas"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "canvas"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "controls": {
+      "rows": {
+        "type": "number",
+        "min": 12,
+        "max": 80,
+        "step": 1
+      },
+      "columns": {
+        "type": "number",
+        "min": 40,
+        "max": 400,
+        "step": 10
+      },
+      "scale": {
+        "type": "number",
+        "min": 0.5,
+        "max": 6,
+        "step": 0.1
+      },
+      "height": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "perspective": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "weight": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.1
+      },
+      "fade": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 12,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "A Two-Space Solution to the Hidden Line Problem for Plotting Functions of Two Variables",
+        "author": "T. J. Wright",
+        "url": "https://doi.org/10.1109/T-C.1973.223597",
+        "license": "Paper"
+      }
+    ],
+    "exportName": "TerrainField",
+    "defaults": {
+      "rows": 40,
+      "columns": 160,
+      "scale": 1.8,
+      "height": 0.5,
+      "perspective": 0.5,
+      "speed": 0.15,
+      "weight": 1,
+      "fade": 0.6,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "rows": "Profile lines in the stack, from a flat hairline at the horizon to the nearest ridge.",
+      "columns": "Points sampled along each profile line. More columns draw a smoother ridge.",
+      "scale": "Horizontal frequency of the height field: how many landforms fit across the frame.",
+      "height": "The most a ridge may rise, as a fraction of the frame's height.",
+      "perspective": "How strongly the rows crowd toward the horizon and grow toward the viewer.",
+      "speed": "How fast the rows drift toward the viewer. 0 holds the terrain still.",
+      "weight": "Stroke width of each profile line, in CSS pixels.",
+      "fade": "How much the far rows dim toward the muted color. 0 draws every row at full strength.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "rows": "number",
+      "columns": "number",
+      "scale": "number",
+      "height": "number",
+      "perspective": "number",
+      "speed": "number",
+      "weight": "number",
+      "fade": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 3965
   },
   {
     "slug": "marquee",

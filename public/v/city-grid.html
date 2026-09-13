@@ -1,0 +1,739 @@
+<!doctype html>
+<!--
+  Pica · City Grid · city-grid
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>City Grid · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaCityGrid = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/immersive/city-grid/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/dither.ts
+  function bayerMatrix(size) {
+    let m = [0];
+    let n = 1;
+    while (n < size) {
+      const next = new Array(4 * n * n).fill(0);
+      for (let y = 0; y < n; y++) {
+        for (let x = 0; x < n; x++) {
+          const v = 4 * (m[y * n + x] ?? 0);
+          next[y * 2 * n + x] = v;
+          next[y * 2 * n + x + n] = v + 2;
+          next[(y + n) * 2 * n + x] = v + 3;
+          next[(y + n) * 2 * n + x + n] = v + 1;
+        }
+      }
+      m = next;
+      n *= 2;
+    }
+    const out = new Float32Array(size * size);
+    for (let i = 0; i < out.length; i++) out[i] = ((m[i] ?? 0) + 0.5) / (size * size);
+    return out;
+  }
+  var KERNELS = {
+    "floyd-steinberg": [[1, 0, 7 / 16], [-1, 1, 3 / 16], [0, 1, 5 / 16], [1, 1, 1 / 16]],
+    // Atkinson spreads three quarters of the error, which keeps highlights and shadows cleaner.
+    atkinson: [[1, 0, 1 / 8], [2, 0, 1 / 8], [-1, 1, 1 / 8], [0, 1, 1 / 8], [1, 1, 1 / 8], [0, 2, 1 / 8]]
+  };
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
+
+  // lib/noise.ts
+  var SIMPLEX_GRAD = [
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1,
+    0,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    -1,
+    0,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1
+  ];
+  var SIMPLEX_F2 = 0.5 * (Math.sqrt(3) - 1);
+  var SIMPLEX_G2 = (3 - Math.sqrt(3)) / 6;
+  var SIMPLEX_F3 = 1 / 3;
+  var SIMPLEX_G3 = 1 / 6;
+  function createNoise(seed = 1) {
+    const random = createRng(seed);
+    const p = [];
+    for (let i = 0; i < 256; i++) p.push(i);
+    for (let i = 255; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      const swap = p[i];
+      p[i] = p[j];
+      p[j] = swap;
+    }
+    const perm = [];
+    const grad = [];
+    for (let i = 0; i < 512; i++) {
+      const v = p[i & 255];
+      perm.push(v);
+      grad.push(v % 12 * 3);
+    }
+    function corner2(g, x, y) {
+      let t = 0.5 - x * x - y * y;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y);
+    }
+    function corner3(g, x, y, z) {
+      let t = 0.6 - x * x - y * y - z * z;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y + SIMPLEX_GRAD[g + 2] * z);
+    }
+    function noise2(xin, yin) {
+      const s = (xin + yin) * SIMPLEX_F2;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const t = (i + j) * SIMPLEX_G2;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const i1 = x0 > y0 ? 1 : 0;
+      const j1 = 1 - i1;
+      const ii = i & 255;
+      const jj = j & 255;
+      return 70 * (corner2(grad[ii + perm[jj]], x0, y0) + corner2(grad[ii + i1 + perm[jj + j1]], x0 - i1 + SIMPLEX_G2, y0 - j1 + SIMPLEX_G2) + corner2(grad[ii + 1 + perm[jj + 1]], x0 - 1 + 2 * SIMPLEX_G2, y0 - 1 + 2 * SIMPLEX_G2));
+    }
+    function noise3(xin, yin, zin) {
+      const s = (xin + yin + zin) * SIMPLEX_F3;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const k = Math.floor(zin + s);
+      const t = (i + j + k) * SIMPLEX_G3;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const z0 = zin - (k - t);
+      let i1 = 0, j1 = 0, k1 = 0, i2 = 0, j2 = 0, k2 = 0;
+      if (x0 >= y0) {
+        if (y0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          j2 = 1;
+        } else if (x0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          k2 = 1;
+        } else {
+          k1 = 1;
+          i2 = 1;
+          k2 = 1;
+        }
+      } else if (y0 < z0) {
+        k1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else if (x0 < z0) {
+        j1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else {
+        j1 = 1;
+        i2 = 1;
+        j2 = 1;
+      }
+      const ii = i & 255;
+      const jj = j & 255;
+      const kk = k & 255;
+      const g = SIMPLEX_G3;
+      return 32 * (corner3(grad[ii + perm[jj + perm[kk]]], x0, y0, z0) + corner3(grad[ii + i1 + perm[jj + j1 + perm[kk + k1]]], x0 - i1 + g, y0 - j1 + g, z0 - k1 + g) + corner3(grad[ii + i2 + perm[jj + j2 + perm[kk + k2]]], x0 - i2 + 2 * g, y0 - j2 + 2 * g, z0 - k2 + 2 * g) + corner3(grad[ii + 1 + perm[jj + 1 + perm[kk + 1]]], x0 - 1 + 3 * g, y0 - 1 + 3 * g, z0 - 1 + 3 * g));
+    }
+    return { noise2, noise3 };
+  }
+
+  // registry/immersive/city-grid/core.ts
+  var defaults = {
+    density: 0.7,
+    blockSize: 18,
+    height: 0.5,
+    spread: 1.5,
+    angle: 30,
+    speed: 0.12,
+    fps: 20,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var DEG = Math.PI / 180;
+  var STILL = 1200;
+  var MID_TONE = 0.38;
+  var SCREEN_TILE = 8;
+  var BLOCK_UNITS = 4;
+  var STREET_UNITS = 1.4;
+  var PITCH = BLOCK_UNITS + STREET_UNITS;
+  var CENTER_GAP = 7;
+  var MAX_STORIES = 10;
+  var STOREY = 0.65;
+  var MARGIN_PX = 48;
+  var PAD_ALPHA = 0.25;
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let noise = createNoise(props.seed);
+    labelHost(host, "");
+    const surface = createCanvas(host, { onResize: () => loop.redraw() });
+    const ctx = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => loop.redraw());
+    const tile = document.createElement("canvas");
+    tile.width = SCREEN_TILE;
+    tile.height = SCREEN_TILE;
+    const tileCtx = tile.getContext("2d");
+    const matrix = bayerMatrix(SCREEN_TILE);
+    const pts = [];
+    let screen = null;
+    let screenColor = "";
+    function centerRand(k, n) {
+      return hashSeed(props.seed ^ 2654435769, k, n) / 4294967296;
+    }
+    function field(bi, bj) {
+      let bump = 0;
+      const k0 = Math.round(bj / CENTER_GAP);
+      for (let k = k0 - 2; k <= k0 + 2; k++) {
+        const pinned = k === 0;
+        const cj = k * CENTER_GAP + (pinned ? 1.5 : 0) + (centerRand(k, 1) - 0.5) * CENTER_GAP * (pinned ? 0.1 : 0.6);
+        const ci = (centerRand(k, 2) - 0.5) * CENTER_GAP * (pinned ? 0.1 : 0.9) - (pinned ? 1.8 : 0);
+        const radius = props.spread * (1.2 + 1.8 * centerRand(k, 3));
+        const strength = pinned ? 0.9 + 0.1 * centerRand(k, 4) : 0.4 + 0.5 * centerRand(k, 4);
+        const dx = bi - ci;
+        const dy = bj - cj;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < radius) {
+          const s = 1 - d / radius;
+          bump = Math.max(bump, strength * s * s * (3 - 2 * s));
+        }
+      }
+      const base = 0.2 + 0.18 * noise.noise2(bi * 0.33, bj * 0.33);
+      return base * (1 - bump) + bump;
+    }
+    function screenPattern() {
+      const fg = palette.colors.fg;
+      if (screen && screenColor === fg) return screen;
+      if (!ctx || !tileCtx) return null;
+      const [r, g, b] = parseColor(fg);
+      const img = tileCtx.createImageData(SCREEN_TILE, SCREEN_TILE);
+      for (let i = 0; i < matrix.length; i++) {
+        img.data[i * 4] = r;
+        img.data[i * 4 + 1] = g;
+        img.data[i * 4 + 2] = b;
+        img.data[i * 4 + 3] = (matrix[i] ?? 0) < MID_TONE ? 255 : 0;
+      }
+      tileCtx.putImageData(img, 0, 0);
+      screen = ctx.createPattern(tile, "repeat");
+      screenColor = fg;
+      return screen;
+    }
+    function draw(t) {
+      const { width, height, dpr, cssWidth, cssHeight } = surface;
+      if (ctx && width > 0 && height > 0) {
+        const W = cssWidth;
+        const H = cssHeight;
+        const W2 = W / 2;
+        const H2 = H / 2;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const fit = Math.min(1, Math.max(0.7, Math.min(W, H) / 760));
+        const u = Math.min(96, Math.max(4, props.blockSize)) * fit;
+        const tilt = Math.min(80, Math.max(5, props.angle)) * DEG;
+        const ca = Math.cos(tilt);
+        const sa = Math.sin(tilt);
+        const cau = ca * u;
+        const sau = sa * u;
+        const density = Math.min(1, Math.max(0, props.density));
+        const rise = Math.min(1, Math.max(0, props.height));
+        const maxZ = u * STOREY * (1 + rise * MAX_STORIES);
+        const pitch = PITCH * u;
+        const crossing = W * ca + H * sa + 4 * pitch * (ca + sa);
+        const rate = Math.min(1, Math.max(0, props.speed)) * crossing / (30 * u);
+        const cx = 0;
+        const cy = t / 1e3 * rate;
+        const m = MARGIN_PX;
+        const pHalf = (W2 + m) / cau;
+        const qLo = (-H2 - m) / sau;
+        const qHi = (H2 + m + maxZ) / sau;
+        const iLo = cx + (-pHalf + qLo) / 2;
+        const iHi = cx + (pHalf + qHi) / 2;
+        const jLo = cy + (qLo - pHalf) / 2;
+        const jHi = cy + (qHi + pHalf) / 2;
+        const bILo = Math.floor(iLo / PITCH);
+        const bIHi = Math.floor(iHi / PITCH);
+        const bJLo = Math.floor(jLo / PITCH);
+        const bJHi = Math.floor(jHi / PITCH);
+        const sLo = bILo + bJLo;
+        const sHi = bIHi + bJHi;
+        const fg = palette.colors.fg;
+        const muted = palette.colors.muted;
+        const mid = screenPattern();
+        const corner = (wx, wy, z) => {
+          const ax = wx - cx;
+          const ay = wy - cy;
+          pts.push(W2 + (ax - ay) * cau, H2 + (ax + ay) * sau - z);
+        };
+        const quad = (path, a, b, c, d) => {
+          path.moveTo(pts[a] ?? 0, pts[a + 1] ?? 0);
+          path.lineTo(pts[b] ?? 0, pts[b + 1] ?? 0);
+          path.lineTo(pts[c] ?? 0, pts[c + 1] ?? 0);
+          path.lineTo(pts[d] ?? 0, pts[d + 1] ?? 0);
+          path.closePath();
+        };
+        for (let s = sLo; s <= sHi; s++) {
+          const erase = new Path2D();
+          const flat = new Path2D();
+          const screened = new Path2D();
+          const roofs = new Path2D();
+          const pads = new Path2D();
+          const lo = Math.max(bILo, s - bJHi);
+          const hi = Math.min(bIHi, s - bJLo);
+          for (let bi = lo; bi <= hi; bi++) {
+            const bj = s - bi;
+            const gx = W2 + (bi * PITCH - cx - (bj * PITCH - cy)) * cau;
+            const gy = H2 + (bi * PITCH - cx + (bj * PITCH - cy)) * sau;
+            if (gx < -m - pitch || gx > W + m + pitch || gy < -m - pitch - maxZ || gy > H + m + pitch) continue;
+            const h = hashSeed(props.seed, bi, bj);
+            pts.length = 0;
+            if ((h & 1023) / 1024 >= density) {
+              corner(bi * PITCH + 0.3, bj * PITCH + 0.3, 0);
+              corner(bi * PITCH + BLOCK_UNITS - 0.3, bj * PITCH + 0.3, 0);
+              corner(bi * PITCH + BLOCK_UNITS - 0.3, bj * PITCH + BLOCK_UNITS - 0.3, 0);
+              corner(bi * PITCH + 0.3, bj * PITCH + BLOCK_UNITS - 0.3, 0);
+              quad(pads, 0, 2, 4, 6);
+              continue;
+            }
+            const r2 = (h >>> 10 & 1023) / 1024;
+            const ix = 0.3 + 0.3 * ((h >>> 20 & 255) / 256);
+            const iy = 0.3 + 0.3 * ((h >>> 28) / 16);
+            const x0 = bi * PITCH + ix;
+            const x1 = bi * PITCH + BLOCK_UNITS - ix;
+            const y0 = bj * PITCH + iy;
+            const y1 = bj * PITCH + BLOCK_UNITS - iy;
+            const stories = Math.max(1, Math.round(Math.min(1, field(bi, bj) * (0.65 + 0.55 * r2)) * (1 + rise * MAX_STORIES)));
+            const z = stories * u * STOREY;
+            corner(x0, y0, 0);
+            corner(x1, y0, 0);
+            corner(x1, y1, 0);
+            corner(x0, y1, 0);
+            corner(x0, y0, z);
+            corner(x1, y0, z);
+            corner(x1, y1, z);
+            corner(x0, y1, z);
+            quad(erase, 12, 14, 6, 4);
+            quad(erase, 8, 10, 12, 14);
+            quad(flat, 10, 12, 4, 2);
+            quad(screened, 12, 14, 6, 4);
+            quad(roofs, 8, 10, 12, 14);
+          }
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.fill(erase);
+          ctx.globalCompositeOperation = "source-over";
+          ctx.fillStyle = fg;
+          ctx.fill(flat);
+          if (mid) {
+            ctx.fillStyle = mid;
+            ctx.fill(screened);
+          }
+          ctx.strokeStyle = muted;
+          ctx.lineWidth = 1;
+          ctx.stroke(roofs);
+          ctx.globalAlpha = PAD_ALPHA;
+          ctx.stroke(pads);
+          ctx.globalAlpha = 1;
+        }
+      }
+      host.dataset.picaReady = "true";
+    }
+    const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL, frame: draw });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.seed !== before.seed) noise = createNoise(props.seed);
+        palette.refresh();
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+        loop.redraw();
+      },
+      destroy() {
+        loop.destroy();
+        surface.destroy();
+        palette.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaCityGrid.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

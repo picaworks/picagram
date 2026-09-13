@@ -1439,6 +1439,34 @@
       }
     },
     {
+      "name": "city-grid",
+      "type": "registry:component",
+      "title": "City Grid",
+      "description": "A seeded city of blocks on a street grid, seen from above at a fixed tilt and panning slowly past.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/city-grid.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Procedural modeling of cities",
+            "author": "Yoav I. H. Parish and Pascal Müller",
+            "url": "https://doi.org/10.1145/383259.383292",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
       "name": "globe",
       "type": "registry:component",
       "title": "Globe",
@@ -1462,6 +1490,34 @@
             "author": "Martin Roberts",
             "url": "https://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/",
             "license": "Article"
+          }
+        ]
+      }
+    },
+    {
+      "name": "terrain-field",
+      "type": "registry:component",
+      "title": "Terrain Field",
+      "description": "A landscape of profile lines that drift toward the viewer, each ridge hiding the rows behind it.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/terrain-field.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "A Two-Space Solution to the Hidden Line Problem for Plotting Functions of Two Variables",
+            "author": "T. J. Wright",
+            "url": "https://doi.org/10.1109/T-C.1973.223597",
+            "license": "Paper"
           }
         ]
       }

@@ -215,9 +215,17 @@ Original to Picagram.
 
 - Technique from [An Informal Catalogue of Slit-Scan Video Artworks and Research](https://www.flong.com/archive/texts/lists/slit_scan/index.html) by Golan Levin (Article).
 
+## City Grid (`city-grid`)
+
+- Technique from [Procedural modeling of cities](https://doi.org/10.1145/383259.383292) by Yoav I. H. Parish and Pascal Müller (Paper).
+
 ## Globe (`globe`)
 
 - Technique from [Evenly distributing points on a sphere](https://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/) by Martin Roberts (Article).
+
+## Terrain Field (`terrain-field`)
+
+- Technique from [A Two-Space Solution to the Hidden Line Problem for Plotting Functions of Two Variables](https://doi.org/10.1109/T-C.1973.223597) by T. J. Wright (Paper).
 
 ## Marquee (`marquee`)
 
