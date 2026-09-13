@@ -1,6 +1,7 @@
 /** Renders components in a real browser and checks both shapes. Each group of checks is its own module in
  *  this directory. Captures land in .pica/captures; dark and light thumbnails land in public/thumbs.
- *  Usage: npm run verify -- <slug> [<slug> ...] [--quick]. With no slug, verifies every component.
+ *  Usage: npm run verify -- <slug> [<slug> ...] [--quick] [--shard <n>/<total>]. With no slug, verifies
+ *  every component; with --shard, the nth slice of them, which is how CI splits the catalog across runners.
  *  --quick checks one viewport and skips the long-task check, for iterating while the machine is busy.
  *  PICA_VERIFY_SLOTS caps how many of these may drive a browser at once on one machine, six by default and
  *  uncapped on CI. See docs/testing/README.md. */
@@ -176,9 +177,28 @@ async function takeSlot(limit: number): Promise<() => Promise<void>> {
   }
 }
 
+/** Which slice of the catalog this process verifies, as --shard <n>/<total> with n from 1. Components are
+ *  dealt round robin over the loaded order rather than cut into blocks, because the catalog is loaded by
+ *  category and a block would hand one shard every shader while another took only CSS overlays. Dealing
+ *  spreads the slow kinds evenly, and it is deterministic, so a rerun of shard 3 verifies the same
+ *  components. */
+const SHARD_AT = process.argv.indexOf("--shard");
+
+function shardOf(entries: readonly Entry[]): readonly Entry[] {
+  if (SHARD_AT === -1) return entries;
+  const value = process.argv[SHARD_AT + 1] ?? "";
+  const [n, total] = value.split("/").map(Number);
+  if (!Number.isInteger(n) || !Number.isInteger(total) || n === undefined || total === undefined || total < 1 || n < 1 || n > total) {
+    throw new Error(`--shard takes <n>/<total> with n from 1 to total, not ${JSON.stringify(value)}`);
+  }
+  return entries.filter((_, index) => index % total === n - 1);
+}
+
 async function main(): Promise<void> {
-  const slugs = process.argv.slice(2).filter((arg) => !arg.startsWith("-"));
-  const entries = await loadAll(slugs);
+  // The value after --shard is its own, never a slug, so a mistyped one reports what it is rather than
+  // sending the catalog looking for a component by that name.
+  const slugs = process.argv.slice(2).filter((arg, index) => !arg.startsWith("-") && index + 2 !== SHARD_AT + 1);
+  const entries = shardOf(await loadAll(slugs));
   const server = await serve(WORK);
   const release = await takeSlot(slotLimit());
   const browser = await chromium.launch({ args: FLAGS });

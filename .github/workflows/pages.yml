@@ -1,7 +1,10 @@
 # Builds the catalog site on every pull request and every push to main, and publishes it to GitHub Pages from
-# main. The build runs on macOS, so the thumbnails npm run verify captures use the same fonts a Mac does, and the
-# whole gate runs first. On a pull request, the build job is the check branch protection requires before it can
-# merge. See docs/architecture/site.md.
+# main. Everything runs on macOS, so the thumbnails npm run verify captures use the same fonts a Mac does.
+#
+# The browser gate is split across eight runners, because it is the whole cost of this workflow: verifying
+# eighty components in one process took 12.3 of the build's 14 minutes, and the catalog is on its way to more
+# than two hundred. Each shard verifies its own slice and uploads the thumbnails it captured; the build job
+# collects them all, and it is still the one check branch protection requires. See docs/architecture/site.md.
 name: Pages
 
 on:
@@ -20,9 +23,17 @@ concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  SHARDS: 8
+
 jobs:
-  build:
+  verify:
     runs-on: macos-latest
+    strategy:
+      # Every shard reports, so one broken component does not hide the others behind a cancelled run.
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -31,11 +42,44 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install chromium
+      # Captures its slice's thumbnails while it checks them; they are not committed.
+      - run: npm run verify -- --quick --shard ${{ matrix.shard }}/${{ env.SHARDS }}
+      - uses: actions/upload-artifact@v5
+        with:
+          name: thumbs-${{ matrix.shard }}
+          path: public/thumbs
+          if-no-files-found: error
+          retention-days: 1
+
+  build:
+    # Runs even when a shard fails, so the required check goes red and says so, rather than sitting
+    # unresolved as a skipped job while the pull request waits for a status that will never arrive.
+    if: always()
+    needs: verify
+    runs-on: macos-latest
+    steps:
+      - name: Every verify shard passed
+        if: needs.verify.result != 'success'
+        run: |
+          echo "the verify matrix reported ${{ needs.verify.result }}" >&2
+          exit 1
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      # check:site drives the built site in Chromium.
+      - run: npx playwright install chromium
       - run: npm run lint
       - run: npm test
       - run: npm run build:registry
-      # Captures every component's thumbnails while it checks them; they are not committed.
-      - run: npm run verify -- --quick
+      # The shards captured the thumbnails between them, and the site needs all of them at once.
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: thumbs-*
+          merge-multiple: true
+          path: public/thumbs
       - run: npm run check:site
       # check:site builds with a test fixture in the catalog, so the published build is a clean one.
       - run: npx next build
