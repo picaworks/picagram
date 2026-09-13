@@ -67,7 +67,7 @@ Properties that must hold for every input, and where each is checked.
 | A component's pages request nothing beyond their own origin, a `data:` URI, or a `blob:` URI | `scripts/verify/index.ts`, `page.ts` |
 | A section at 390 has no sideways overflow, keeps its content on top, is never clipped when it flows, keeps the page's own font for prose, and gives focus only to links and buttons | `scripts/verify/section.ts` |
 | An animated component shows no change for 700 ms under reduced motion | `scripts/verify/motion.ts` |
-| Otherwise an animated component changes within 3 s in both shapes, sampled continuously so a short burst cannot fall between two samples, and runs no task over 50 ms in those 3 s | `scripts/verify/motion.ts` |
+| Otherwise an animated component changes within 3 s, sampled continuously so a short burst cannot fall between two samples, and runs no task over 50 ms in those 3 s. A full run reads the React shape's motion too, which `--quick` skips because the extra screenshot work starves the same window it measures | `scripts/verify/motion.ts` |
 | A decorative host that wraps nothing is `aria-hidden` | `scripts/verify/access.ts` |
 | A wrapping host is never hidden, and never has a role that hides its children | `scripts/verify/access.ts` |
 | Any other host is hidden, or has a role and a label, or carries readable text | `scripts/verify/access.ts` |
