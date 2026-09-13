@@ -1,0 +1,595 @@
+<!doctype html>
+<!--
+  Pica · World Map · world-map
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>World Map · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaWorldMap = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/immersive/world-map/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/geo.ts
+  var GEO_STEP = 0.25;
+  var GEO_DIGITS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+  var GEO_RAD = Math.PI / 180;
+  var GEO_SEAM_SLACK = 0.05;
+  var GEO_GRATICULE_LIMIT = 80;
+  var GEO_EE_A1 = 1.340264;
+  var GEO_EE_A2 = -0.081106;
+  var GEO_EE_A3 = 893e-6;
+  var GEO_EE_A4 = 3796e-6;
+  function geoDecode(encoded) {
+    const rings = [];
+    let at = 0;
+    function pull() {
+      let bits = 0;
+      let place = 1;
+      while (at < encoded.length) {
+        const digit = GEO_DIGITS.indexOf(encoded.charAt(at++));
+        if (digit < 0) return 0;
+        bits += digit % 32 * place;
+        if (digit < 32) return bits % 2 === 0 ? bits / 2 : -(bits + 1) / 2;
+        place *= 32;
+      }
+      return 0;
+    }
+    while (at < encoded.length) {
+      const count = pull();
+      if (count < 2) break;
+      const ring = new Float32Array(count * 2);
+      let lon = 0;
+      let lat = 0;
+      for (let p = 0; p < count; p++) {
+        lon += pull();
+        lat += pull();
+        ring[p * 2] = lon * GEO_STEP;
+        ring[p * 2 + 1] = lat * GEO_STEP;
+      }
+      rings.push(ring);
+    }
+    return rings;
+  }
+  function geoSeam(lon0, lat0, lon1, lat1) {
+    const meridian = 180 - GEO_SEAM_SLACK;
+    const pole = GEO_SEAM_SLACK - 90;
+    return Math.abs(lon0) >= meridian && Math.abs(lon1) >= meridian || lat0 <= pole && lat1 <= pole;
+  }
+  function geoEqualEarth(lon, lat) {
+    const theta = Math.asin(Math.sqrt(3) / 2 * Math.sin(lat * GEO_RAD));
+    const t2 = theta * theta;
+    const t3 = t2 * theta;
+    const t6 = t3 * t3;
+    const slope = 9 * GEO_EE_A4 * t6 * t2 + 7 * GEO_EE_A3 * t6 + 3 * GEO_EE_A2 * t2 + GEO_EE_A1;
+    const x = 2 * Math.sqrt(3) * lon * GEO_RAD * Math.cos(theta) / (3 * slope);
+    const y = GEO_EE_A4 * t6 * t3 + GEO_EE_A3 * t6 * theta + GEO_EE_A2 * t3 + GEO_EE_A1 * theta;
+    return [x, y];
+  }
+  var GEO_EE_EDGE = [geoEqualEarth(180, 0)[0], geoEqualEarth(0, 90)[1]];
+  var GEO_EQUAL_EARTH_BOX = {
+    x: -GEO_EE_EDGE[0],
+    y: -GEO_EE_EDGE[1],
+    width: 2 * GEO_EE_EDGE[0],
+    height: 2 * GEO_EE_EDGE[1]
+  };
+  function geoGraticule(step, sample = 5) {
+    const gap = Math.min(180, Math.max(1, step));
+    const fine = Math.min(gap, Math.max(0.5, sample));
+    const out = [];
+    const down = Math.max(1, Math.round(2 * GEO_GRATICULE_LIMIT / fine));
+    for (let m = 0; m < Math.ceil(360 / gap - 1e-9); m++) {
+      const line = new Float32Array((down + 1) * 2);
+      for (let i = 0; i <= down; i++) {
+        line[i * 2] = -180 + m * gap;
+        line[i * 2 + 1] = -GEO_GRATICULE_LIMIT + 2 * GEO_GRATICULE_LIMIT * i / down;
+      }
+      out.push(line);
+    }
+    const across = Math.max(1, Math.round(360 / fine));
+    const rows = Math.floor(GEO_GRATICULE_LIMIT / gap + 1e-9);
+    for (let r = -rows; r <= rows; r++) {
+      const line = new Float32Array((across + 1) * 2);
+      for (let i = 0; i <= across; i++) {
+        line[i * 2] = -180 + 360 * i / across;
+        line[i * 2 + 1] = r * gap;
+      }
+      out.push(line);
+    }
+    return out;
+  }
+  function geoRaster(rings, width, height, project) {
+    const cols = Math.max(0, Math.floor(width));
+    const rows = Math.max(0, Math.floor(height));
+    const mask = new Uint8Array(cols * rows);
+    const canvas = document.createElement("canvas");
+    canvas.width = cols;
+    canvas.height = rows;
+    const ctx = cols > 0 && rows > 0 ? canvas.getContext("2d", { willReadFrequently: true }) : null;
+    if (!ctx) return mask;
+    ctx.beginPath();
+    for (const ring of rings) {
+      for (let p = 0; p + 1 < ring.length; p += 2) {
+        const lon = ring[p] ?? 0;
+        const lat = ring[p + 1] ?? 0;
+        const [ux, uy] = project ? project(lon, lat) : [(lon + 180) / 360, (90 - lat) / 180];
+        if (p === 0) ctx.moveTo(ux * cols, uy * rows);
+        else ctx.lineTo(ux * cols, uy * rows);
+      }
+      ctx.closePath();
+    }
+    ctx.fill("evenodd");
+    const pixels = ctx.getImageData(0, 0, cols, rows).data;
+    for (let i = 0; i < mask.length; i++) mask[i] = (pixels[i * 4 + 3] ?? 0) > 127 ? 1 : 0;
+    return mask;
+  }
+
+  // lib/geo-land.ts
+  var GEO_LAND = "MpLvTQP5BHbGqBScAKjR3RBJrBAgBaOP6GzOhQfFEJbJgBbGRJJjCR1BAcJhBDWN8DRMFkCM4BByDOJIvBBAK2BM0BG2BMFGyBUcC0BFuCOKFWGuBAaF2BEkBOoBJKG2CQOIeAUJeFMEoBDENLPYBWSgBCoBSmBCaBoCAYOcLgBCaGQFqBDMG0BBwBECIUNgCAKHuBFOCkCRuBBWFPPZFTTcNpBDPNsDb2BBApB_5CAAqBwCGgDJ4DGzCGGOwBQjCINOuBB4BQoCK8DBuBG0BL2BAXW8BH-BE4BFKEgBF6BIOKJOGWmBUkBKAFQ9QtNWHZFVEdSeJSKIHIzO3MHJNEWGIyRtMLACIKHMskBlKWBBRPBJSGEUorBnKKFVTHNJFTECKcQSUCDW0rBhJGHSFICTbROGGBSLQMFCHI4pBxFLELOYRawMrDENbtCLDLEFYIQBUEKOEMKMUGLuD8jBtDOJKfSLINIBCHONGVDdJJNbAHNBPJJELBVGJOLGCILFISNPNUXInBFPFDHdAPHXGGWLcFcGW0BQMMGOWSKEKHKCIQQEBGYHOALTeTOAGSAUGOIXKkfxCDIIEQATLIwd_BKFTBKII4e_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-TJXzBY-BAIsGkUEHlCGiCCIgZ4TlCKmBIgBRM3V-TPLfAdQQI-BLSjR4U0BFrDdnBRnCCkBWzBWiDK2CBoC3G8UyBF5CDmCH8BGcF7BTKNFVhBHOTdGFJgBArBNfDTJrBJXVFVlBGbYRcaWVFRUIGdYVE5BAlBU8BIRE2CSyFMgCB";
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // registry/immersive/world-map/core.ts
+  var defaults = {
+    markers: [
+      { lat: 37.77, lon: -122.42, label: "San Francisco" },
+      { lat: 51.51, lon: -0.13, label: "London" },
+      { lat: -1.29, lon: 36.82, label: "Nairobi" },
+      { lat: -33.87, lon: 151.21, label: "Sydney" }
+    ],
+    label: "A dotted world map",
+    pitch: 4,
+    dotSize: 2.4,
+    ocean: 0,
+    coastline: false,
+    graticule: 0,
+    labels: false,
+    fontFamily: GRID_FONT
+  };
+  var TAU = Math.PI * 2;
+  var LAND_ALPHA = 0.9;
+  var GRATICULE_ALPHA = 0.45;
+  var OUTLINE_ALPHA = 0.6;
+  var EDGE_STEP = 3;
+  function boundaryRing() {
+    const pts = [];
+    for (let lat = -90; lat <= 90; lat += EDGE_STEP) pts.push(180, lat);
+    for (let lon = 180 - EDGE_STEP; lon >= -180; lon -= EDGE_STEP) pts.push(lon, 90);
+    for (let lat = 90 - EDGE_STEP; lat >= -90; lat -= EDGE_STEP) pts.push(-180, lat);
+    for (let lon = -180 + EDGE_STEP; lon <= 180; lon += EDGE_STEP) pts.push(lon, -90);
+    return Float32Array.from(pts);
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const land = geoDecode(GEO_LAND);
+    const boundary = boundaryRing();
+    function updateLabel() {
+      const names = props.markers.map((m) => typeof m.label === "string" ? m.label : "").filter((name) => name !== "");
+      const text = props.label === "" ? "" : names.length > 0 ? `${props.label}: ${names.join(", ")}.` : `${props.label}.`;
+      labelHost(host, text);
+    }
+    const surface = createCanvas(host, { onResize: () => draw() });
+    const ctx = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => draw());
+    updateLabel();
+    function draw() {
+      const { width, height, dpr, cssWidth, cssHeight } = surface;
+      if (ctx && width > 0 && height > 0) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const em = parseFloat(getComputedStyle(host).fontSize) || 16;
+        const box = GEO_EQUAL_EARTH_BOX;
+        const scale = Math.min((cssWidth - 2 * em) / box.width, (cssHeight - 2 * em) / box.height);
+        const mapW = Math.max(0, box.width * scale);
+        const mapH = Math.max(0, box.height * scale);
+        const mapX = (cssWidth - mapW) / 2;
+        const mapY = (cssHeight - mapH) / 2;
+        const pitch = Math.min(12, Math.max(2, props.pitch));
+        const cols = Math.max(1, Math.round(mapW / pitch));
+        const rows = Math.max(1, Math.round(mapH / pitch));
+        const cellW = mapW / cols;
+        const cellH = mapH / rows;
+        const uv = (lon, lat) => {
+          const [x, y] = geoEqualEarth(lon, lat);
+          return [(x - box.x) / box.width, 1 - (y - box.y) / box.height];
+        };
+        const at = (lon, lat) => {
+          const [u, v] = uv(lon, lat);
+          return [mapX + u * mapW, mapY + v * mapH];
+        };
+        const onLand = geoRaster(land, cols, rows, uv);
+        const inside = props.ocean > 0 ? geoRaster([boundary], cols, rows, uv) : null;
+        if (props.graticule > 0) {
+          ctx.strokeStyle = palette.colors.muted;
+          ctx.globalAlpha = GRATICULE_ALPHA;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          for (const line of geoGraticule(Math.min(45, Math.max(1, props.graticule)))) {
+            for (let p = 0; p + 1 < line.length; p += 2) {
+              const [px, py] = at(line[p] ?? 0, line[p + 1] ?? 0);
+              if (p === 0) ctx.moveTo(px, py);
+              else ctx.lineTo(px, py);
+            }
+          }
+          ctx.stroke();
+        }
+        const dotS = Math.min(3, Math.max(0.5, props.dotSize));
+        const dotR = dotS / 2;
+        ctx.fillStyle = palette.colors.fg;
+        const stamp = (mask, skip) => {
+          ctx.beginPath();
+          for (let j = 0; j < rows; j++) {
+            const py = mapY + (j + 0.5) * cellH;
+            for (let i = 0; i < cols; i++) {
+              const cell = j * cols + i;
+              if ((mask[cell] ?? 0) === 0 || (skip?.[cell] ?? 0) === 1) continue;
+              const px = mapX + (i + 0.5) * cellW;
+              ctx.rect(px - dotR, py - dotR, dotS, dotS);
+            }
+          }
+          ctx.fill();
+        };
+        if (inside) {
+          ctx.globalAlpha = LAND_ALPHA * Math.min(1, Math.max(0, props.ocean));
+          stamp(inside, onLand);
+        }
+        ctx.globalAlpha = LAND_ALPHA;
+        stamp(onLand, null);
+        ctx.strokeStyle = palette.colors.muted;
+        ctx.globalAlpha = OUTLINE_ALPHA;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let p = 0; p + 1 < boundary.length; p += 2) {
+          const [px, py] = at(boundary[p] ?? 0, boundary[p + 1] ?? 0);
+          if (p === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        if (props.coastline) {
+          ctx.globalAlpha = 1;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          for (const ring of land) {
+            for (let p = 0; p + 1 < ring.length; p += 2) {
+              const [px, py] = at(ring[p] ?? 0, ring[p + 1] ?? 0);
+              if (p === 0 || geoSeam(ring[p - 2] ?? 0, ring[p - 1] ?? 0, ring[p] ?? 0, ring[p + 1] ?? 0)) ctx.moveTo(px, py);
+              else ctx.lineTo(px, py);
+            }
+          }
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = palette.colors.accent;
+        ctx.strokeStyle = palette.colors.accent;
+        ctx.lineWidth = 1;
+        const markR = Math.max(1.5, dotS);
+        const ringR = markR * 2.2;
+        const placed = [];
+        const named = [];
+        for (const m of props.markers) {
+          const [mx, my] = at(m.lon, m.lat);
+          if (!Number.isFinite(mx) || !Number.isFinite(my)) continue;
+          ctx.beginPath();
+          ctx.arc(mx, my, markR, 0, TAU);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(mx, my, ringR, 0, TAU);
+          ctx.stroke();
+          placed.push(mx - ringR, my - ringR, mx + ringR, my + ringR);
+          if (typeof m.label === "string" && m.label !== "") named.push({ x: mx, y: my, text: m.label.toUpperCase() });
+        }
+        if (props.labels && named.length > 0) {
+          const fontSize = Math.max(9, Math.round(em * 0.7));
+          ctx.font = `${fontSize}px ${props.fontFamily}`;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.letterSpacing = "0.04em";
+          ctx.fillStyle = palette.colors.muted;
+          const gap = ringR + 3;
+          for (const n of named) {
+            const w = ctx.measureText(n.text).width;
+            const candidates = [
+              [n.x + gap, n.y],
+              [n.x - gap - w, n.y],
+              [n.x - w / 2, n.y + gap + fontSize / 2],
+              [n.x - w / 2, n.y - gap - fontSize / 2]
+            ];
+            for (const [tx, ty] of candidates) {
+              const x0 = tx - 1;
+              const y0 = ty - fontSize / 2 - 1;
+              const x1 = tx + w + 1;
+              const y1 = ty + fontSize / 2 + 1;
+              if (x0 < 0 || y0 < 0 || x1 > cssWidth || y1 > cssHeight) continue;
+              let free = true;
+              for (let q = 0; q + 3 < placed.length; q += 4) {
+                if (x0 - 2 < (placed[q + 2] ?? 0) && x1 + 2 > (placed[q] ?? 0) && y0 - 2 < (placed[q + 3] ?? 0) && y1 + 2 > (placed[q + 1] ?? 0)) {
+                  free = false;
+                  break;
+                }
+              }
+              if (!free) continue;
+              placed.push(x0, y0, x1, y1);
+              ctx.fillText(n.text, tx, ty);
+              break;
+            }
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+      host.dataset.picaReady = "true";
+    }
+    draw();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (!sameJson(props.markers, before.markers) || props.label !== before.label) updateLabel();
+        palette.refresh();
+        draw();
+      },
+      destroy() {
+        surface.destroy();
+        palette.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaWorldMap.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

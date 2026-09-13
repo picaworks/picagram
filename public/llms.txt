@@ -112,7 +112,9 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 
 - [City Grid](https://picagram.dev/c/city-grid.md): A seeded city of blocks on a street grid, seen from above at a fixed tilt and panning slowly past.
 - [Globe](https://picagram.dev/c/globe.md): A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.
+- [Orbit View](https://picagram.dev/c/orbit-view.md): The Earth's limb seen from a spacecraft, with dotted land below the horizon and a stepped dithered atmosphere.
 - [Terrain Field](https://picagram.dev/c/terrain-field.md): A landscape of profile lines that drift toward the viewer, each ridge hiding the rows behind it.
+- [World Map](https://picagram.dev/c/world-map.md): A world map on the Equal Earth projection, its land an even grid of dots with named places marked.
 
 ## Optional
 

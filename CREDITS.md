@@ -223,9 +223,20 @@ Original to Picagram.
 
 - Technique from [Evenly distributing points on a sphere](https://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/) by Martin Roberts (Article).
 
+## Orbit View (`orbit-view`)
+
+- Technique from [Map Projections: A Working Manual](https://doi.org/10.3133/pp1395) by John P. Snyder, USGS Professional Paper 1395 (Public domain).
+- Port of [Natural Earth](https://www.naturalearthdata.com/about/terms-of-use/) by Tom Patterson and Nathaniel Vaughn Kelso (Public domain).
+
 ## Terrain Field (`terrain-field`)
 
 - Technique from [A Two-Space Solution to the Hidden Line Problem for Plotting Functions of Two Variables](https://doi.org/10.1109/T-C.1973.223597) by T. J. Wright (Paper).
+
+## World Map (`world-map`)
+
+- Technique from [The Equal Earth map projection](https://doi.org/10.1080/13658816.2018.1504949) by Bojan Šavrič, Tom Patterson and Bernhard Jenny (Paper).
+- Technique from [Equal Earth, EPSG method 1078](https://epsg.io/1078-method) by IOGP (Standard, no code).
+- Port of [Natural Earth](https://www.naturalearthdata.com/about/terms-of-use/) by Tom Patterson and Nathaniel Vaughn Kelso (Public domain).
 
 ## Marquee (`marquee`)
 

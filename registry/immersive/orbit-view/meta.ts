@@ -1,0 +1,46 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "orbit-view",
+  title: "Orbit View",
+  category: "immersive",
+  description: "The Earth's limb seen from a spacecraft, with dotted land below the horizon and a stepped dithered atmosphere.",
+  tags: ["3d", "map", "earth", "horizon", "space", "canvas"],
+  facets: ["animated", "canvas", "dither"],
+  wave: 4,
+  animated: true,
+  decorative: false,
+  controls: {
+    label: { type: "string" },
+    altitude: { type: "number", min: 200, max: 36000, step: 20 },
+    tilt: { type: "number", min: 0, max: 80, step: 1 },
+    heading: { type: "number", min: 0, max: 360, step: 1 },
+    lat: { type: "number", min: -80, max: 80, step: 1 },
+    lon: { type: "number", min: -180, max: 180, step: 1 },
+    speed: { type: "number", min: 0, max: 1, step: 0.05 },
+    pitch: { type: "number", min: 2, max: 10, step: 0.5 },
+    graticule: { type: "number", min: 0, max: 45, step: 15 },
+    atmosphere: { type: "number", min: 0, max: 1, step: 0.05 },
+    telemetry: { type: "boolean" },
+    fps: { type: "number", min: 12, max: 30, step: 1 },
+    seed: { type: "number", min: 0, max: 9999, step: 1 },
+    paused: { type: "boolean" },
+  },
+  palette: ["fg", "accent", "muted"],
+  credits: [
+    {
+      relation: "technique",
+      title: "Map Projections: A Working Manual",
+      author: "John P. Snyder, USGS Professional Paper 1395",
+      url: "https://doi.org/10.3133/pp1395",
+      license: "Public domain",
+    },
+    {
+      relation: "port-of",
+      title: "Natural Earth",
+      author: "Tom Patterson and Nathaniel Vaughn Kelso",
+      url: "https://www.naturalearthdata.com/about/terms-of-use/",
+      license: "Public domain",
+    },
+  ],
+};

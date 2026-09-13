@@ -1495,6 +1495,41 @@
       }
     },
     {
+      "name": "orbit-view",
+      "type": "registry:component",
+      "title": "Orbit View",
+      "description": "The Earth's limb seen from a spacecraft, with dotted land below the horizon and a stepped dithered atmosphere.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/orbit-view.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Map Projections: A Working Manual",
+            "author": "John P. Snyder, USGS Professional Paper 1395",
+            "url": "https://doi.org/10.3133/pp1395",
+            "license": "Public domain"
+          },
+          {
+            "relation": "port-of",
+            "title": "Natural Earth",
+            "author": "Tom Patterson and Nathaniel Vaughn Kelso",
+            "url": "https://www.naturalearthdata.com/about/terms-of-use/",
+            "license": "Public domain"
+          }
+        ]
+      }
+    },
+    {
       "name": "terrain-field",
       "type": "registry:component",
       "title": "Terrain Field",
@@ -1518,6 +1553,48 @@
             "author": "T. J. Wright",
             "url": "https://doi.org/10.1109/T-C.1973.223597",
             "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
+      "name": "world-map",
+      "type": "registry:component",
+      "title": "World Map",
+      "description": "A world map on the Equal Earth projection, its land an even grid of dots with named places marked.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/world-map.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "The Equal Earth map projection",
+            "author": "Bojan Šavrič, Tom Patterson and Bernhard Jenny",
+            "url": "https://doi.org/10.1080/13658816.2018.1504949",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Equal Earth, EPSG method 1078",
+            "author": "IOGP",
+            "url": "https://epsg.io/1078-method",
+            "license": "Standard, no code"
+          },
+          {
+            "relation": "port-of",
+            "title": "Natural Earth",
+            "author": "Tom Patterson and Nathaniel Vaughn Kelso",
+            "url": "https://www.naturalearthdata.com/about/terms-of-use/",
+            "license": "Public domain"
           }
         ]
       }
