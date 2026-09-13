@@ -8023,6 +8023,490 @@
     "gzipBytes": 5699
   },
   {
+    "slug": "caustic-field",
+    "title": "Caustic Field",
+    "category": "shaders",
+    "description": "The net of bright filaments light draws on a pool floor, refracted through a slow wave surface and dithered on the GPU.",
+    "tags": [
+      "caustics",
+      "water",
+      "light",
+      "shader",
+      "webgl",
+      "background",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "controls": {
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "scale": {
+        "type": "number",
+        "min": 0.5,
+        "max": 6,
+        "step": 0.1
+      },
+      "waves": {
+        "type": "number",
+        "min": 2,
+        "max": 5,
+        "step": 1
+      },
+      "depth": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "sharpness": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Pixel (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 60,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Method of displaying optical effects within water using accumulation buffer",
+        "author": "Tomoyuki Nishita and Eihachiro Nakamae",
+        "url": "https://doi.org/10.1145/192161.192261",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Catastrophe Optics: Morphologies of Caustics and Their Diffraction Patterns",
+        "author": "M. V. Berry and C. Upstill",
+        "url": "https://doi.org/10.1016/S0079-6638(08)70215-4",
+        "license": "Paper"
+      }
+    ],
+    "original": false,
+    "exportName": "CausticField",
+    "defaults": {
+      "speed": 0.15,
+      "scale": 2,
+      "waves": 3,
+      "depth": 0.5,
+      "sharpness": 0.7,
+      "levels": 5,
+      "pixel": 2,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "speed": "How fast the net drifts. 0 holds it still.",
+      "scale": "Scale of the surface the light passes through: lower is a broader net, higher is a denser one.",
+      "waves": "How many wave trains displace the surface, from 2 to 5.",
+      "depth": "How far the surface bends the light, from 0 (a flat surface, no caustics) to 1 (a tight net).",
+      "sharpness": "How sharply the filaments fall off, from 0 (a wider net) to 1 (hairlines).",
+      "levels": "Tone steps the field is dithered between: 2 is one-bit, 16 reads as nearly smooth.",
+      "pixel": "Size of one dither cell, in CSS pixels.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "speed": "number",
+      "scale": "number",
+      "waves": "number",
+      "depth": "number",
+      "sharpness": "number",
+      "levels": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5306
+  },
+  {
+    "slug": "contour-flow",
+    "title": "Contour Flow",
+    "category": "shaders",
+    "description": "Contours of a slowly drifting terrain, each line drawn light and thin where it faces the light and dark and thick where it faces away.",
+    "tags": [
+      "contour",
+      "topography",
+      "terrain",
+      "relief",
+      "shader",
+      "webgl",
+      "dither",
+      "background"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "controls": {
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "scale": {
+        "type": "number",
+        "min": 0.5,
+        "max": 6,
+        "step": 0.1
+      },
+      "bands": {
+        "type": "number",
+        "min": 4,
+        "max": 40,
+        "step": 1
+      },
+      "light": {
+        "type": "number",
+        "min": 0,
+        "max": 360,
+        "step": 15,
+        "label": "Light (deg)"
+      },
+      "relief": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "index": {
+        "type": "number",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "label": "Index every"
+      },
+      "thickness": {
+        "type": "number",
+        "min": 0.5,
+        "max": 3,
+        "step": 0.5,
+        "label": "Thickness (px)"
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "Pixel (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 60,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "The Relief Contour Method of Representing Topography on Maps",
+        "author": "Kitiro Tanaka",
+        "url": "https://doi.org/10.2307/211219",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Cartographic Relief Presentation",
+        "author": "Eduard Imhof",
+        "url": "https://doi.org/10.1515/9783110844016",
+        "license": "Book"
+      }
+    ],
+    "original": false,
+    "exportName": "ContourFlow",
+    "defaults": {
+      "speed": 0.12,
+      "scale": 1.8,
+      "bands": 16,
+      "light": 315,
+      "relief": 0.7,
+      "index": 5,
+      "thickness": 1,
+      "levels": 4,
+      "pixel": 1,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "speed": "How fast the terrain drifts. 0 holds it still.",
+      "scale": "Size of the terrain across the frame: lower values are broad hills, higher values are busier.",
+      "bands": "How many contours the field is cut into, at a constant interval.",
+      "light": "Direction the light comes from, in degrees: 0 is the top, 90 the right, 315 the upper left.",
+      "relief": "How strongly the light changes a line's weight and tone, from 0 (every line alike) to 1.",
+      "index": "Every this many contours is drawn as an index contour in the accent. 0 draws none.",
+      "thickness": "Width of a contour line in shader pixels before the relief thins or thickens it.",
+      "levels": "Tone steps the lines are dithered between: 2 is one-bit, 16 reads as nearly smooth.",
+      "pixel": "Size of one dither cell, in CSS pixels.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "speed": "number",
+      "scale": "number",
+      "bands": "number",
+      "light": "number",
+      "relief": "number",
+      "index": "number",
+      "thickness": "number",
+      "levels": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5165
+  },
+  {
+    "slug": "liquid-metal",
+    "title": "Liquid Metal",
+    "category": "shaders",
+    "description": "Slow blobs merge and part like drops of mercury, each surface mirroring a two band horizon through summed fields and reflection mapping.",
+    "tags": [
+      "shader",
+      "webgl",
+      "background",
+      "dither",
+      "metaballs",
+      "reflection"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "interactive",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "controls": {
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "blobs": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1
+      },
+      "size": {
+        "type": "number",
+        "min": 0.05,
+        "max": 0.4,
+        "step": 0.01
+      },
+      "threshold": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.9,
+        "step": 0.05
+      },
+      "horizon": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "pointer": {
+        "type": "boolean"
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Pixel (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 60,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "pointerMove",
+          "x": 0.7,
+          "y": 0.4
+        }
+      ]
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "A Generalization of Algebraic Surface Drawing",
+        "author": "James F. Blinn",
+        "url": "https://doi.org/10.1145/357306.357310",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Texture and reflection in computer generated images",
+        "author": "James F. Blinn and Martin E. Newell",
+        "url": "https://doi.org/10.1145/360349.360353",
+        "license": "Paper"
+      }
+    ],
+    "original": false,
+    "exportName": "LiquidMetal",
+    "defaults": {
+      "speed": 0.12,
+      "blobs": 3,
+      "size": 0.16,
+      "threshold": 0.5,
+      "horizon": 0.55,
+      "pointer": true,
+      "levels": 6,
+      "pixel": 2,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "speed": "How fast the blobs drift. 0 holds them still.",
+      "blobs": "How many centres contribute to the field.",
+      "size": "Size of each drop, as a fraction of the host's short side.",
+      "threshold": "Field sum that counts as surface: lower values fatten every blob and merge them sooner.",
+      "horizon": "Where the horizon sits in the reflected environment, from 0 (all ground) to 1 (all sky).",
+      "pointer": "Whether the nearest blob leans toward the pointer.",
+      "levels": "Tone steps the metal is dithered between: 2 is one-bit, 16 reads as nearly smooth.",
+      "pixel": "Size of one dither cell, in CSS pixels.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "speed": "number",
+      "blobs": "number",
+      "size": "number",
+      "threshold": "number",
+      "horizon": "number",
+      "pointer": "boolean",
+      "levels": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5929
+  },
+  {
     "slug": "mesh-gradient",
     "title": "Mesh Gradient",
     "category": "shaders",
@@ -8166,6 +8650,431 @@
     },
     "events": {},
     "gzipBytes": 4763
+  },
+  {
+    "slug": "pixel-plasma",
+    "title": "Pixel Plasma",
+    "category": "shaders",
+    "description": "The demoscene plasma as a printed screen: summed sinusoids drawn as coarse square pixels and dithered between a few tone steps on the GPU.",
+    "tags": [
+      "plasma",
+      "shader",
+      "webgl",
+      "background",
+      "dither",
+      "demoscene"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "controls": {
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "scale": {
+        "type": "number",
+        "min": 0.5,
+        "max": 4,
+        "step": 0.1
+      },
+      "waves": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 2,
+        "max": 12,
+        "step": 1,
+        "label": "Pixel (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 60,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Plasma effect",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Plasma_effect",
+        "license": "Algorithm, no code"
+      },
+      {
+        "relation": "technique",
+        "title": "Ordered dithering",
+        "author": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "original": false,
+    "exportName": "PixelPlasma",
+    "defaults": {
+      "speed": 0.2,
+      "scale": 1.4,
+      "waves": 4,
+      "levels": 5,
+      "pixel": 6,
+      "fps": 20,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "speed": "How fast the field drifts. 0 holds it still.",
+      "scale": "Field size across the frame: lower values are broad lobes, higher values are busier.",
+      "waves": "Sinusoids summed into the field. The last one rings out from a slowly moving centre.",
+      "levels": "Tone steps the field is dithered between: 2 is one-bit, 16 reads as nearly smooth.",
+      "pixel": "Size of one drawn pixel, in CSS pixels. Coarseness is the point.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "speed": "number",
+      "scale": "number",
+      "waves": "number",
+      "levels": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4793
+  },
+  {
+    "slug": "ripple-field",
+    "title": "Ripple Field",
+    "category": "shaders",
+    "description": "Rings spread from seeded drops on a still surface, dispersing as they travel and cancelling where they cross, dithered on the GPU.",
+    "tags": [
+      "ripple",
+      "water",
+      "shader",
+      "webgl",
+      "background",
+      "dither",
+      "interference"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "interactive",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "controls": {
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "drops": {
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "step": 1
+      },
+      "wavelength": {
+        "type": "number",
+        "min": 0.02,
+        "max": 0.4,
+        "step": 0.01
+      },
+      "decay": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "pointer": {
+        "type": "boolean"
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Pixel (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 60,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "pointerMove",
+          "x": 0.35,
+          "y": 0.4
+        },
+        {
+          "step": "pointerMove",
+          "x": 0.7,
+          "y": 0.6
+        }
+      ]
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Simulating Ocean Water",
+        "author": "Jerry Tessendorf",
+        "url": "https://jtessen.people.clemson.edu/reports/papers_files/coursenotes2004.pdf",
+        "license": "Course notes"
+      }
+    ],
+    "original": false,
+    "exportName": "RippleField",
+    "defaults": {
+      "speed": 0.18,
+      "drops": 4,
+      "wavelength": 0.09,
+      "decay": 0.5,
+      "pointer": true,
+      "levels": 5,
+      "pixel": 2,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "speed": "How fast the rings travel. 0 holds the surface still.",
+      "drops": "How many drop points disturb the surface at once.",
+      "wavelength": "Ring spacing, as a fraction of the host's shorter side.",
+      "decay": "How quickly a ring system fades over its life, from 0 (lingers) to 1 (gone early).",
+      "pointer": "Whether the pointer raises one ring that follows it.",
+      "levels": "Tone steps the surface is dithered between: 2 is one-bit, 16 reads as nearly smooth.",
+      "pixel": "Size of one dither cell, in CSS pixels.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "speed": "number",
+      "drops": "number",
+      "wavelength": "number",
+      "decay": "number",
+      "pointer": "boolean",
+      "levels": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5180
+  },
+  {
+    "slug": "scan-beam",
+    "title": "Scan Beam",
+    "category": "shaders",
+    "description": "A radar plan position display whose accent beam sweeps hairline rings and spokes, lighting seeded echoes that decay in dithered steps.",
+    "tags": [
+      "radar",
+      "sweep",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "controls": {
+      "period": {
+        "type": "number",
+        "min": 4,
+        "max": 30,
+        "step": 0.5,
+        "label": "Period (s)"
+      },
+      "rings": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1
+      },
+      "spokes": {
+        "type": "number",
+        "min": 4,
+        "max": 36,
+        "step": 1
+      },
+      "echoes": {
+        "type": "number",
+        "min": 0,
+        "max": 24,
+        "step": 1
+      },
+      "persistence": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "Pixel (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 60,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "IEEE Standard for Radar Definitions",
+        "author": "IEEE Std 686-2024",
+        "url": "https://doi.org/10.1109/IEEESTD.2024.10815038",
+        "license": "IEEE standard"
+      }
+    ],
+    "original": false,
+    "exportName": "ScanBeam",
+    "defaults": {
+      "period": 8,
+      "rings": 4,
+      "spokes": 12,
+      "echoes": 7,
+      "persistence": 0.7,
+      "levels": 6,
+      "pixel": 1,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "period": "Seconds per full turn of the beam.",
+      "rings": "Range rings drawn as hairlines, counting the outer rim.",
+      "spokes": "Bearing spokes radiating from the centre.",
+      "echoes": "Seeded echoes that light as the beam crosses them, then fade in steps.",
+      "persistence": "How far around the circle a return keeps showing, from 0 (the beam alone) to 1 (the whole turn).",
+      "levels": "Tone steps the decay is dithered between: 2 is one-bit, 16 reads as nearly smooth.",
+      "pixel": "Size of one shader pixel, in CSS pixels.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "period": "number",
+      "rings": "number",
+      "spokes": "number",
+      "echoes": "number",
+      "persistence": "number",
+      "levels": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5086
   },
   {
     "slug": "shader-flow",
@@ -8320,6 +9229,281 @@
     },
     "events": {},
     "gzipBytes": 5307
+  },
+  {
+    "slug": "tunnel-grid",
+    "title": "Tunnel Grid",
+    "category": "shaders",
+    "description": "A slow flight down a tunnel drawn as a hairline grid, mapped by angle and inverse distance into a receding texture.",
+    "tags": [
+      "tunnel",
+      "grid",
+      "shader",
+      "webgl",
+      "background",
+      "dither",
+      "perspective"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "controls": {
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "rings": {
+        "type": "number",
+        "min": 4,
+        "max": 40,
+        "step": 1
+      },
+      "spokes": {
+        "type": "number",
+        "min": 4,
+        "max": 64,
+        "step": 1
+      },
+      "fade": {
+        "type": "number",
+        "min": 0,
+        "max": 0.5,
+        "step": 0.01
+      },
+      "twist": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "Pixel (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 60,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Survey of Texture Mapping",
+        "author": "Paul S. Heckbert",
+        "url": "https://doi.org/10.1109/MCG.1986.276672",
+        "license": "Paper"
+      }
+    ],
+    "original": false,
+    "exportName": "TunnelGrid",
+    "defaults": {
+      "speed": 0.15,
+      "rings": 14,
+      "spokes": 24,
+      "fade": 0.12,
+      "twist": 0.15,
+      "levels": 4,
+      "pixel": 1,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "speed": "How fast the flight runs, as rings per second of texture travel. 0 holds the tunnel still.",
+      "rings": "Ring density along the tunnel: lower values space the depth out, higher values crowd it.",
+      "spokes": "Radial lines running the length of the tunnel.",
+      "fade": "Fraction of the radius around the vanishing point that stays empty, hiding where the mapping compresses past the pixel scale.",
+      "twist": "How far the spokes spiral as they recede, from 0 (straight) to 1 (a deep wind).",
+      "levels": "Tone steps the grid is dithered between: 2 is one-bit, 16 reads as nearly smooth.",
+      "pixel": "Size of one shader pixel, in CSS pixels.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "speed": "number",
+      "rings": "number",
+      "spokes": "number",
+      "fade": "number",
+      "twist": "number",
+      "levels": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4772
+  },
+  {
+    "slug": "voronoi-drift",
+    "title": "Voronoi Drift",
+    "category": "shaders",
+    "description": "A plane divided into territories around slowly drifting sites, each cell a flat dithered accent tone behind a fg hairline.",
+    "tags": [
+      "voronoi",
+      "cells",
+      "shader",
+      "webgl",
+      "background",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "controls": {
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "cells": {
+        "type": "number",
+        "min": 4,
+        "max": 40,
+        "step": 1
+      },
+      "border": {
+        "type": "number",
+        "min": 0,
+        "max": 3,
+        "step": 0.5,
+        "label": "Border (px)"
+      },
+      "jitter": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Pixel (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 6,
+        "max": 60,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "A cellular texture basis function",
+        "author": "Steven Worley",
+        "url": "https://doi.org/10.1145/237170.237267",
+        "license": "Paper"
+      }
+    ],
+    "original": false,
+    "exportName": "VoronoiDrift",
+    "defaults": {
+      "speed": 0.12,
+      "cells": 14,
+      "border": 1,
+      "jitter": 0.9,
+      "levels": 4,
+      "pixel": 2,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "speed": "How fast the sites drift. 0 holds them still.",
+      "cells": "How finely the plane divides: a low value is a few large cells, a high value a dense mosaic.",
+      "border": "Width of the hairline between cells, in CSS pixels. 0 draws no border.",
+      "jitter": "How far a site wanders from its lattice point, from 0 (a fixed square grid) to 1 (nearly the whole cell).",
+      "levels": "Tone steps a cell's fill is dithered between: 2 is one-bit, 16 reads as nearly smooth.",
+      "pixel": "Size of one drawn pixel, in CSS pixels.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "speed": "number",
+      "cells": "number",
+      "border": "number",
+      "jitter": "number",
+      "levels": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4952
   },
   {
     "slug": "ascii-frame",

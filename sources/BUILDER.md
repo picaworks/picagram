@@ -96,6 +96,9 @@ These are restated here because you start without the rest of the conversation.
 
 1. **Write** `core.ts`, `index.tsx`, and `meta.ts`. `meta.wave` is the wave number in your prompt. Declare `facets` from the twelve in `lib/meta.ts`, which are the only filters the catalog offers; `test/meta.test.ts` decides the mechanical ones, such as animated and webgl, so match what your component actually is. Add `interactions` for anything a user operates, `controlled` for a value prop, and `demo` when the defaults alone would show an empty or closed state.
    - If your component has a hover state, declare a `hover` step naming the element that changes. Verify measures that element's own box and fails when it changes 1% or less, so the step must name the thing that tints, not its container.
+   - Declaring any `interactions` or `controlled` prop makes your component operated, and
+     `test/meta.test.ts` then requires the `interactive` facet. Add it, in the order `FACETS` in
+     `lib/meta.ts` declares.
    - If your component answers the pointer, declare `pointerMove` steps with `x` and `y` as fractions of the host from 0 to 1, y measured downward. A list holding one runs with the clock unpinned, which is the only way a core that tracks the pointer while it animates will answer at all.
 2. **Lint:** `npx eslint registry/<category>/<your-slug>`, and fix everything it reports.
 3. **Typecheck:** `npx tsc --noEmit --tsBuildInfoFile .pica/tsc/<your-slug>.tsbuildinfo 2>&1 | grep "registry/<category>/<your-slug>"` must print nothing. The build info file is yours alone, because every builder shares one repository and one shared cache would have them overwriting each other. Other builders' files may show errors while they work.

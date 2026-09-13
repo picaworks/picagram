@@ -253,16 +253,52 @@ Original to Picagram.
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
 
+## Caustic Field (`caustic-field`)
+
+- Technique from [Method of displaying optical effects within water using accumulation buffer](https://doi.org/10.1145/192161.192261) by Tomoyuki Nishita and Eihachiro Nakamae (Paper).
+- Technique from [Catastrophe Optics: Morphologies of Caustics and Their Diffraction Patterns](https://doi.org/10.1016/S0079-6638(08)70215-4) by M. V. Berry and C. Upstill (Paper).
+
+## Contour Flow (`contour-flow`)
+
+- Technique from [The Relief Contour Method of Representing Topography on Maps](https://doi.org/10.2307/211219) by Kitiro Tanaka (Paper).
+- Technique from [Cartographic Relief Presentation](https://doi.org/10.1515/9783110844016) by Eduard Imhof (Book).
+
+## Liquid Metal (`liquid-metal`)
+
+- Technique from [A Generalization of Algebraic Surface Drawing](https://doi.org/10.1145/357306.357310) by James F. Blinn (Paper).
+- Technique from [Texture and reflection in computer generated images](https://doi.org/10.1145/360349.360353) by James F. Blinn and Martin E. Newell (Paper).
+
 ## Mesh Gradient (`mesh-gradient`)
 
 - Technique from [Domain warping](https://iquilezles.org/articles/warp/) by Inigo Quilez (Article).
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
 
+## Pixel Plasma (`pixel-plasma`)
+
+- Technique from [Plasma effect](https://en.wikipedia.org/wiki/Plasma_effect) by Wikipedia (Algorithm, no code).
+- Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
+
+## Ripple Field (`ripple-field`)
+
+- Technique from [Simulating Ocean Water](https://jtessen.people.clemson.edu/reports/papers_files/coursenotes2004.pdf) by Jerry Tessendorf (Course notes).
+
+## Scan Beam (`scan-beam`)
+
+- Technique from [IEEE Standard for Radar Definitions](https://doi.org/10.1109/IEEESTD.2024.10815038) by IEEE Std 686-2024 (IEEE standard).
+
 ## Shader Flow (`shader-flow`)
 
 - Technique from [Domain warping](https://iquilezles.org/articles/warp/) by Inigo Quilez (Article).
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
+
+## Tunnel Grid (`tunnel-grid`)
+
+- Technique from [Survey of Texture Mapping](https://doi.org/10.1109/MCG.1986.276672) by Paul S. Heckbert (Paper).
+
+## Voronoi Drift (`voronoi-drift`)
+
+- Technique from [A cellular texture basis function](https://doi.org/10.1145/237170.237267) by Steven Worley (Paper).
 
 ## ASCII Frame (`ascii-frame`)
 
