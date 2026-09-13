@@ -7305,7 +7305,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 8101
+    "gzipBytes": 7359
   },
   {
     "slug": "terrain-field",
