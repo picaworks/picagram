@@ -50,7 +50,9 @@ The filter offers twelve fixed facets from `FACETS` in `lib/meta.ts`, never a gr
 
 ## Hosting and paths
 
-GitHub Pages serves the site at https://picagram.dev. `.github/workflows/pages.yml` runs on every pull request and every push to `main`, on macOS so the captures use a Mac's fonts: the whole gate, then `npm run verify -- --quick`, which also writes the thumbnails, since `public/thumbs/` is not committed, then `check:site`, then a clean `next build` into `out/`. On a pull request its `build` job is the check that branch protection requires; on `main` the workflow also publishes `out/`.
+GitHub Pages serves the site at https://picagram.dev. `.github/workflows/pages.yml` runs on every pull request and every push to `main`, on macOS so the captures use a Mac's fonts. The browser gate runs first, split across eight runners: each `verify` shard checks its own slice with `npm run verify -- --quick --shard <n>/8` and uploads the thumbnails it captured, since `public/thumbs/` is not committed. The `build` job then runs the rest of the gate, collects every shard's thumbnails, and does `check:site` and a clean `next build` into `out/`. It runs even when a shard fails, so the required check goes red rather than sitting unresolved. On a pull request that `build` job is the check branch protection requires; on `main` the workflow also publishes `out/`.
+
+The gate is sharded because it is the whole cost of the workflow: eighty components in one process took 12.3 of the build's 14 minutes, and a component is about nine seconds of browser time, almost all of it opening pages rather than computing. Sharding is what keeps that flat as the catalog grows.
 
 `main` is protected. Every change is a pull request, merged squashed only after `build` passes and only from a branch that is up to date with `main`. Nobody pushes to `main` directly, admins included, and force pushes and deletions are off.
 

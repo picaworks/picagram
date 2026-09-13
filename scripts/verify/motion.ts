@@ -1,7 +1,7 @@
 /** An animated component holds still under reduced motion, moves otherwise, and stays off long tasks. Motion
  *  is read in both shapes: a wrapper that drops a motion prop, or remounts on every render, leaves the vanilla
  *  file animating perfectly while the React one sits still or restarts. */
-import { diffPixels, diffRatio, clipOf, open, percent, READY } from "./page";
+import { changedPixels, changedRatio, clipOf, open, percent, READY } from "./page";
 import type { Ctx, Shape } from "./types";
 
 export async function motion(ctx: Ctx): Promise<void> {
@@ -12,18 +12,20 @@ export async function motion(ctx: Ctx): Promise<void> {
     const page = await open(reduced, ctx.url("vanilla"), { props }, ctx.errors);
     const before = await page.screenshot();
     await page.waitForTimeout(700);
-    const moved = diffRatio(before, await page.screenshot());
+    // changedRatio for the same reason animates uses changedPixels: asking pixelmatch whether a person
+    // would notice lets a component drift under reduced motion and still report itself perfectly still.
+    const moved = changedRatio(before, await page.screenshot());
     ctx.checks.push({ name: "still under reduced motion", ok: moved === 0, detail: `${percent(moved)} changed in 700 ms` });
   } finally {
     await reduced.close();
   }
 
   await animates(ctx, props, "vanilla");
-  // The React shape's motion is read only on a full run. It doubles the screenshot work of the most
-  // timing-sensitive check in the suite, and CI leaves PICA_VERIFY_SLOTS uncapped, so under --quick a slow
-  // drifting field can lose its whole three second window to screenshot latency and report no change at all.
-  // "no long tasks" is skipped here for the same reason.
-  if (!ctx.quick) await animates(ctx, props, "react");
+  // Both shapes, on a quick run too. This was briefly read only on a full run, on the theory that the extra
+  // screenshot work was starving the window it measures, but that diagnosis was wrong: the loop below runs
+  // components one at a time on one browser, so nothing there competes for anything. What actually failed was
+  // the comparison, which is fixed where it is made.
+  await animates(ctx, props, "react");
 }
 
 /** Watches one shape move. Only the vanilla run carries the long-task check: it measures the core's own work,
@@ -52,7 +54,11 @@ async function animates(ctx: Ctx, props: Record<string, unknown>, shape: Shape):
     const started = Date.now();
     const before = await shot();
     let moved = 0;
-    while (moved === 0 && Date.now() - started < 3000) moved = diffPixels(before, await shot());
+    // changedPixels, not diffPixels: pixelmatch asks whether a person would notice a difference between two
+    // frames, and at its 0.1 threshold a flat grey shift under 27 levels scores as identical. A field that
+    // drifts slowly moves each pixel far less than that between two samples, so the most patient components
+    // in the catalog were reporting no motion at all while plainly animating.
+    while (moved === 0 && Date.now() - started < 3000) moved = changedPixels(before, await shot());
     const elapsed = Date.now() - started;
     ctx.checks.push({
       name,

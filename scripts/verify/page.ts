@@ -156,10 +156,12 @@ export function inkRatio(png: Buffer): number {
  *  hover happened at all, so an intended change is measured here instead, the same way inkRatio measures ink.
  *  The cutoff sits well under the weakest real case (23 + 23 + 23) and well over the noise, which SwiftShader
  *  reports as zero. */
-export function changedRatio(a: Buffer, b: Buffer, cutoff = 12): number {
+export function changedPixels(a: Buffer, b: Buffer, cutoff = 12): number {
   const left = PNG.sync.read(a);
   const right = PNG.sync.read(b);
-  if (left.width !== right.width || left.height !== right.height) return 1;
+  if (left.width !== right.width || left.height !== right.height) {
+    return Math.max(left.width * left.height, right.width * right.height);
+  }
   let moved = 0;
   for (let i = 0; i < left.width * left.height * 4; i += 4) {
     const dr = Math.abs((left.data[i] ?? 0) - (right.data[i] ?? 0));
@@ -167,7 +169,12 @@ export function changedRatio(a: Buffer, b: Buffer, cutoff = 12): number {
     const db = Math.abs((left.data[i + 2] ?? 0) - (right.data[i + 2] ?? 0));
     if (dr + dg + db > cutoff) moved++;
   }
-  return moved / (left.width * left.height);
+  return moved;
+}
+
+export function changedRatio(a: Buffer, b: Buffer, cutoff = 12): number {
+  const { width, height } = PNG.sync.read(a);
+  return Math.min(1, changedPixels(a, b, cutoff) / (width * height));
 }
 
 export const percent = (ratio: number): string => `${(ratio * 100).toFixed(3)}% of pixels`;

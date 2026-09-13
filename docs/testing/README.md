@@ -15,7 +15,7 @@ What each browser group checks:
 | Group | Checks |
 |---|---|
 | render | React matches vanilla at two viewports and on paper; thumbnails; the byte budget |
-| motion | still under reduced motion, moving otherwise, and on a full run no long tasks and the React shape moving too |
+| motion | still under reduced motion, moving otherwise in both shapes, and on a full run no long tasks |
 | accessibility | the host rule, axe-core, and probe children in wrapping components |
 | lifecycle | destroy restores the host, props stay untouched, and empty data still renders |
 | palette | four ways of setting colors agree |
