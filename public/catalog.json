@@ -7131,6 +7131,183 @@
     "gzipBytes": 3528
   },
   {
+    "slug": "orbit-view",
+    "title": "Orbit View",
+    "category": "immersive",
+    "description": "The Earth's limb seen from a spacecraft, with dotted land below the horizon and a stepped dithered atmosphere.",
+    "tags": [
+      "3d",
+      "map",
+      "earth",
+      "horizon",
+      "space",
+      "canvas"
+    ],
+    "facets": [
+      "animated",
+      "canvas",
+      "dither"
+    ],
+    "wave": 4,
+    "animated": true,
+    "decorative": false,
+    "controls": {
+      "label": {
+        "type": "string"
+      },
+      "altitude": {
+        "type": "number",
+        "min": 200,
+        "max": 36000,
+        "step": 20
+      },
+      "tilt": {
+        "type": "number",
+        "min": 0,
+        "max": 80,
+        "step": 1
+      },
+      "heading": {
+        "type": "number",
+        "min": 0,
+        "max": 360,
+        "step": 1
+      },
+      "lat": {
+        "type": "number",
+        "min": -80,
+        "max": 80,
+        "step": 1
+      },
+      "lon": {
+        "type": "number",
+        "min": -180,
+        "max": 180,
+        "step": 1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "pitch": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 0.5
+      },
+      "graticule": {
+        "type": "number",
+        "min": 0,
+        "max": 45,
+        "step": 15
+      },
+      "atmosphere": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "telemetry": {
+        "type": "boolean"
+      },
+      "fps": {
+        "type": "number",
+        "min": 12,
+        "max": 30,
+        "step": 1
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Map Projections: A Working Manual",
+        "author": "John P. Snyder, USGS Professional Paper 1395",
+        "url": "https://doi.org/10.3133/pp1395",
+        "license": "Public domain"
+      },
+      {
+        "relation": "port-of",
+        "title": "Natural Earth",
+        "author": "Tom Patterson and Nathaniel Vaughn Kelso",
+        "url": "https://www.naturalearthdata.com/about/terms-of-use/",
+        "license": "Public domain"
+      }
+    ],
+    "exportName": "OrbitView",
+    "defaults": {
+      "label": "Earth's limb from orbit",
+      "altitude": 420,
+      "tilt": 35,
+      "heading": 110,
+      "lat": 42,
+      "lon": 12,
+      "speed": 0.15,
+      "pitch": 4,
+      "graticule": 15,
+      "atmosphere": 0.6,
+      "telemetry": true,
+      "fps": 24,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "Text alternative naming the view. Empty hides the host from assistive technology.",
+      "altitude": "Spacecraft height above the surface in kilometres. Higher sees more of the disc and a flatter limb.",
+      "tilt": "Camera tilt away from straight down, in degrees. 0 looks at the sub-point, 80 nearly at the horizon.",
+      "heading": "Compass azimuth of the camera's lean and of the ground track, in degrees clockwise from north.",
+      "lat": "Starting latitude of the point under the spacecraft, in degrees north.",
+      "lon": "Starting longitude of the point under the spacecraft, in degrees east.",
+      "speed": "Ground track speed. 0 holds the sub-point at lat and lon.",
+      "pitch": "Spacing of the land dots in CSS pixels.",
+      "graticule": "Graticule spacing in degrees. 0 draws no graticule.",
+      "atmosphere": "Strength of the dithered atmosphere bands above the limb. 0 draws no atmosphere.",
+      "telemetry": "Show the telemetry block.",
+      "fps": "Frames per second ceiling.",
+      "fontFamily": "Font for the telemetry readout."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "altitude": "number",
+      "tilt": "number",
+      "heading": "number",
+      "lat": "number",
+      "lon": "number",
+      "speed": "number",
+      "pitch": "number",
+      "graticule": "number",
+      "atmosphere": "number",
+      "telemetry": "boolean",
+      "fps": "number",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 8101
+  },
+  {
     "slug": "terrain-field",
     "title": "Terrain Field",
     "category": "immersive",
@@ -7273,6 +7450,159 @@
     },
     "events": {},
     "gzipBytes": 3965
+  },
+  {
+    "slug": "world-map",
+    "title": "World Map",
+    "category": "immersive",
+    "description": "A world map on the Equal Earth projection, its land an even grid of dots with named places marked.",
+    "tags": [
+      "map",
+      "world",
+      "projection",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "canvas"
+    ],
+    "wave": 4,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "markers": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "pitch": {
+        "type": "number",
+        "min": 2,
+        "max": 12,
+        "step": 0.5
+      },
+      "dotSize": {
+        "type": "number",
+        "min": 0.5,
+        "max": 3,
+        "step": 0.1
+      },
+      "ocean": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "coastline": {
+        "type": "boolean"
+      },
+      "graticule": {
+        "type": "number",
+        "min": 0,
+        "max": 45,
+        "step": 15
+      },
+      "labels": {
+        "type": "boolean"
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "demo": {
+      "props": {
+        "labels": true
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "The Equal Earth map projection",
+        "author": "Bojan Šavrič, Tom Patterson and Bernhard Jenny",
+        "url": "https://doi.org/10.1080/13658816.2018.1504949",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Equal Earth, EPSG method 1078",
+        "author": "IOGP",
+        "url": "https://epsg.io/1078-method",
+        "license": "Standard, no code"
+      },
+      {
+        "relation": "port-of",
+        "title": "Natural Earth",
+        "author": "Tom Patterson and Nathaniel Vaughn Kelso",
+        "url": "https://www.naturalearthdata.com/about/terms-of-use/",
+        "license": "Public domain"
+      }
+    ],
+    "exportName": "WorldMap",
+    "defaults": {
+      "markers": [
+        {
+          "lat": 37.77,
+          "lon": -122.42,
+          "label": "San Francisco"
+        },
+        {
+          "lat": 51.51,
+          "lon": -0.13,
+          "label": "London"
+        },
+        {
+          "lat": -1.29,
+          "lon": 36.82,
+          "label": "Nairobi"
+        },
+        {
+          "lat": -33.87,
+          "lon": 151.21,
+          "label": "Sydney"
+        }
+      ],
+      "label": "A dotted world map",
+      "pitch": 4,
+      "dotSize": 2.4,
+      "ocean": 0,
+      "coastline": false,
+      "graticule": 0,
+      "labels": false,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "markers": "Places on the map, each an accent dot with a thin ring.",
+      "label": "Text alternative, followed by each marker's label. Empty hides the host from assistive technology.",
+      "pitch": "CSS pixels between the centres of neighbouring dots.",
+      "dotSize": "Side of each square land dot, in CSS pixels.",
+      "ocean": "How visible ocean dots are against land dots. 0 draws only the land.",
+      "coastline": "Stroke the coastlines themselves over the dots.",
+      "graticule": "Degrees between graticule lines, in steps of 15. 0 draws none.",
+      "labels": "Draw each marker's label beside it, placed so labels never overlap.",
+      "fontFamily": "Font stack for the marker labels."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "markers": "readonly WorldMapMarker[]",
+      "label": "string",
+      "pitch": "number",
+      "dotSize": "number",
+      "ocean": "number",
+      "coastline": "boolean",
+      "graticule": "number",
+      "labels": "boolean",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 6943
   },
   {
     "slug": "marquee",
