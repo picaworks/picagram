@@ -18,7 +18,12 @@ export async function motion(ctx: Ctx): Promise<void> {
     await reduced.close();
   }
 
-  for (const shape of ["vanilla", "react"] as const) await animates(ctx, props, shape);
+  await animates(ctx, props, "vanilla");
+  // The React shape's motion is read only on a full run. It doubles the screenshot work of the most
+  // timing-sensitive check in the suite, and CI leaves PICA_VERIFY_SLOTS uncapped, so under --quick a slow
+  // drifting field can lose its whole three second window to screenshot latency and report no change at all.
+  // "no long tasks" is skipped here for the same reason.
+  if (!ctx.quick) await animates(ctx, props, "react");
 }
 
 /** Watches one shape move. Only the vanilla run carries the long-task check: it measures the core's own work,
