@@ -40,6 +40,7 @@ Properties that must hold for every input, and where each is checked.
 | A wrapper extends `Handlers` exactly when its core declares events | `test/meta.test.ts` |
 | A wrapper renders the host element that the demo page mounts on | `test/meta.test.ts` |
 | Facets say what the component is: exactly one of animated and static, and image, webgl, shader, canvas, interactive, chart, and dither follow what the core imports and declares | `test/meta.test.ts` |
+| A `pointerMove` step names a fraction from 0 to 1 on each axis, and a component with a controlled prop opens its first interaction with a press or a click | `test/meta.test.ts` |
 | From wave 4 on, no `technique` or `inspired-by` credit points at a code host or a component collection | `test/meta.test.ts` |
 
 ## Build
@@ -66,7 +67,7 @@ Properties that must hold for every input, and where each is checked.
 | A component's pages request nothing beyond their own origin, a `data:` URI, or a `blob:` URI | `scripts/verify/index.ts`, `page.ts` |
 | A section at 390 has no sideways overflow, keeps its content on top, is never clipped when it flows, keeps the page's own font for prose, and gives focus only to links and buttons | `scripts/verify/section.ts` |
 | An animated component shows no change for 700 ms under reduced motion | `scripts/verify/motion.ts` |
-| Otherwise an animated component changes within 3 s, sampled continuously so a short burst cannot fall between two samples, and runs no task over 50 ms in those 3 s | `scripts/verify/motion.ts` |
+| Otherwise an animated component changes within 3 s in both shapes, sampled continuously so a short burst cannot fall between two samples, and runs no task over 50 ms in those 3 s | `scripts/verify/motion.ts` |
 | A decorative host that wraps nothing is `aria-hidden` | `scripts/verify/access.ts` |
 | A wrapping host is never hidden, and never has a role that hides its children | `scripts/verify/access.ts` |
 | Any other host is hidden, or has a role and a label, or carries readable text | `scripts/verify/access.ts` |
@@ -77,8 +78,12 @@ Properties that must hold for every input, and where each is checked.
 | Each listed palette token changes the picture | `scripts/verify/colors.ts` |
 | A palette set before mount, after mount, through the prop, and through page variables gives the same picture | `scripts/verify/colors.ts` |
 | Each declared interaction reports the same events in both shapes, and React's `on` props hear every one | `scripts/verify/interact.ts` |
+| A hover step moves the pointer onto the element it names and changes more than 1% of that element's own box, measured against a still picture and against a channel delta rather than a perceptual one, because a 10% tint is invisible to pixelmatch | `scripts/verify/interact.ts` |
+| An interaction that drives the pointer runs with the clock unpinned, so a core that tracks the pointer only while it animates still answers, and its hovers go uncompared because the picture moves on its own | `scripts/verify/interact.ts` |
 | A controlled prop echoed back ends where the uncontrolled component ends, and a controlled prop never updated stays put | `scripts/verify/interact.ts` |
 | Shaders render on SwiftShader, survive a lost context, and fall back without WebGL2 | `scripts/verify/gpu.ts` |
+| A shader's own canvas holds a live WebGL2 context showing no CSS fallback, and inks more than 1% of itself with everything painted over it hidden | `scripts/verify/gpu.ts` |
+| An animated shader's own canvas advances within 3 s on the real WebGL2 path | `scripts/verify/gpu.ts` |
 | Image components render a real PNG, and the video component renders a camera | `scripts/verify/fixtures.ts` |
 
 ## Site

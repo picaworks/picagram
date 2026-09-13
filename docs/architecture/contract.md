@@ -100,7 +100,7 @@ Components draw with four tokens, which only `lib/palette.ts` reads.
 - **API.** `createShader(host, { fragment, fallback, uniforms, maxDpr, css, onInvalidate })` from `lib/gl.ts`.
 - **Fragment.** GLSL ES 3.00 that follows the prelude, declared in `lib/gl.ts`. It writes `pica_color` with straight alpha.
 - **Snippets.** `lib/glsl.ts` adds `NOISE` (gradient noise and `pica_fbm`), `DITHER` (`pica_bayer8`), and `TONE` (`pica_tone`, which quantizes a tone through the Bayer matrix and composites it over the ground). Order them `${NOISE}${DITHER}${TONE}`.
-- **The pointer.** `u_pointer` runs 0 to 1 across the host with y up, the same way as `gl_FragCoord`, and reads -1 outside. Set it with `pointerUv` from `lib/gl.ts`, which flips the DOM's top-down y for you.
+- **The pointer.** `u_pointer` runs 0 to 1 across the host with y up, the same way as `gl_FragCoord`, and reads -1 outside. Set it with `pointerUv` from `lib/gl.ts`, which flips the DOM's top-down y for you. A `pointerMove` step in `meta.interactions` uses the DOM's own top-down y and does not flip, so the two conventions meet only inside `pointerUv`. A core that answers the pointer only while its clock runs is still driven, because a list holding a `pointerMove` unpins `time`.
 - **GLSL in a template literal** is indented, always. A line starting at column 0 with `const float` is read by the build's collision check as a JavaScript declaration.
 - **Frames.** The core owns the loop: its frame calls `shader.draw(t)`, and `onInvalidate` calls `loop.redraw()`.
 - **Fallback.** Provide a CSS background built from `cssVar`. It shows when WebGL2 is missing, and `shader.ok` is false then.
@@ -184,7 +184,7 @@ The fields are typed in `lib/meta.ts`.
 | `wraps` | `"content"` when the component decorates children, and `"panels"` when each direct child is a panel. |
 | `host` | The host element, when it is not a div: `span`, `button`, or `dialog`. |
 | `controlled` | Each controlled prop, mapped to its event. |
-| `interactions` | Lists of steps (`press`, `click`, `expectFocus`, `expectEvent`, `expectAttr`) that verify runs in both shapes. |
+| `interactions` | Lists of steps (`press`, `click`, `hover`, `pointerMove`, `expectFocus`, `expectEvent`, `expectAttr`) that verify runs in both shapes. A `hover` names the element that changes and must change more than 1% of it. A `pointerMove` takes a fraction of the host on each axis, with y measured downward as the DOM measures it, and unpins the clock for its whole list. |
 | `stage` | `"inline"` centers and enlarges a text run on the demo page. `"flow"` lets a component take its own height above a floor of one frame, the way a section sits in a real page, so a hero is never clipped on a phone. A flow component sets its own minimum in a `:where()` rule rather than an inline style, so a page that gives the host a height still wins. |
 | `capture` | The animation time for captures, when 1200 ms is not representative. |
 | `demo` | Props and child markup for captures and the catalog. It is never the defaults. Child markup uses tags, `class`, and plain attributes only, with no inline styles. |

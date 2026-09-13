@@ -1,5 +1,5 @@
 /** Opening a component's page and comparing captures. */
-import type { BrowserContext, Page } from "@playwright/test";
+import type { BrowserContext, Locator, Page } from "@playwright/test";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 
@@ -149,7 +149,49 @@ export function inkRatio(png: Buffer): number {
   return away / (width * height);
 }
 
+/** Share of pixels whose channels moved at all. diffPixels asks pixelmatch whether a person would notice,
+ *  and at its 0.1 threshold a hover tint is below the cutoff: STYLE.md allows "a fg tint of about 10%", which
+ *  over either ground is a flat channel delta of 23 and scores 267 against pixelmatch's 352, so it reports
+ *  exactly zero changed pixels. That is the right answer for a parity check and the wrong one for proving a
+ *  hover happened at all, so an intended change is measured here instead, the same way inkRatio measures ink.
+ *  The cutoff sits well under the weakest real case (23 + 23 + 23) and well over the noise, which SwiftShader
+ *  reports as zero. */
+export function changedRatio(a: Buffer, b: Buffer, cutoff = 12): number {
+  const left = PNG.sync.read(a);
+  const right = PNG.sync.read(b);
+  if (left.width !== right.width || left.height !== right.height) return 1;
+  let moved = 0;
+  for (let i = 0; i < left.width * left.height * 4; i += 4) {
+    const dr = Math.abs((left.data[i] ?? 0) - (right.data[i] ?? 0));
+    const dg = Math.abs((left.data[i + 1] ?? 0) - (right.data[i + 1] ?? 0));
+    const db = Math.abs((left.data[i + 2] ?? 0) - (right.data[i + 2] ?? 0));
+    if (dr + dg + db > cutoff) moved++;
+  }
+  return moved / (left.width * left.height);
+}
+
 export const percent = (ratio: number): string => `${(ratio * 100).toFixed(3)}% of pixels`;
 
 /** The error message of anything thrown. */
 export const message = (error: unknown): string => (error instanceof Error ? error.message.split("\n")[0] ?? "" : String(error));
+
+/** The screenshot clip for one element, cropped to the viewport. Null when it has no box on screen, which is
+ *  what a zero-sized or scrolled-away element gives. Clipping matters wherever a small change has to show:
+ *  a hover tint measured over a whole 1280 by 800 frame falls under the parity tolerance and reads as noise. */
+export async function clipOf(page: Page, locator: Locator): Promise<Clip | null> {
+  const box = await locator.boundingBox();
+  const view = page.viewportSize();
+  if (!box || !view) return null;
+  const x = Math.max(0, Math.floor(box.x));
+  const y = Math.max(0, Math.floor(box.y));
+  const width = Math.min(view.width, Math.ceil(box.x + box.width)) - x;
+  const height = Math.min(view.height, Math.ceil(box.y + box.height)) - y;
+  return width > 0 && height > 0 ? { x, y, width, height } : null;
+}
+
+export interface Clip {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}

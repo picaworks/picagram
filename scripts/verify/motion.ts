@@ -1,6 +1,8 @@
-/** An animated component holds still under reduced motion, moves otherwise, and stays off long tasks. */
-import { diffPixels, diffRatio, open, percent } from "./page";
-import type { Ctx } from "./types";
+/** An animated component holds still under reduced motion, moves otherwise, and stays off long tasks. Motion
+ *  is read in both shapes: a wrapper that drops a motion prop, or remounts on every render, leaves the vanilla
+ *  file animating perfectly while the React one sits still or restarts. */
+import { diffPixels, diffRatio, clipOf, open, percent, READY } from "./page";
+import type { Ctx, Shape } from "./types";
 
 export async function motion(ctx: Ctx): Promise<void> {
   const props = { ...(ctx.entry.meta.demo?.props ?? {}), seed: 1 };
@@ -16,9 +18,16 @@ export async function motion(ctx: Ctx): Promise<void> {
     await reduced.close();
   }
 
+  for (const shape of ["vanilla", "react"] as const) await animates(ctx, props, shape);
+}
+
+/** Watches one shape move. Only the vanilla run carries the long-task check: it measures the core's own work,
+ *  which is the same code in both shapes, and a second three-second window would buy nothing. */
+async function animates(ctx: Ctx, props: Record<string, unknown>, shape: Shape): Promise<void> {
+  const name = shape === "vanilla" ? "animates" : "animates in react";
   const live = await ctx.context();
   try {
-    const page = await open(live, ctx.url("vanilla"), { props }, ctx.errors);
+    const page = await open(live, ctx.url(shape), { props }, ctx.errors);
     await page.evaluate(() => {
       const w = window as unknown as { picaLongest: number };
       w.picaLongest = 0;
@@ -33,16 +42,7 @@ export async function motion(ctx: Ctx): Promise<void> {
     // Samples as fast as the browser takes screenshots, for up to three seconds, and stops at the first change.
     // Fixed gaps between samples let a short burst (glitch-text's 280 ms glitch) fall between two of them on a
     // slow machine. Each shot is clipped to the host, which keeps it quick.
-    const box = await page.locator("#pica").boundingBox();
-    const view = page.viewportSize();
-    let clip: { x: number; y: number; width: number; height: number } | null = null;
-    if (box && view) {
-      const x = Math.max(0, Math.floor(box.x));
-      const y = Math.max(0, Math.floor(box.y));
-      const width = Math.min(view.width, Math.ceil(box.x + box.width)) - x;
-      const height = Math.min(view.height, Math.ceil(box.y + box.height)) - y;
-      if (width > 0 && height > 0) clip = { x, y, width, height };
-    }
+    const clip = await clipOf(page, page.locator(READY).first());
     const shot = () => page.screenshot(clip ? { clip } : {});
     const started = Date.now();
     const before = await shot();
@@ -50,11 +50,11 @@ export async function motion(ctx: Ctx): Promise<void> {
     while (moved === 0 && Date.now() - started < 3000) moved = diffPixels(before, await shot());
     const elapsed = Date.now() - started;
     ctx.checks.push({
-      name: "animates",
+      name,
       ok: moved > 0,
       detail: moved > 0 ? `${moved} pixels changed within ${elapsed} ms` : "no change in 3 s",
     });
-    if (!ctx.quick) {
+    if (!ctx.quick && shape === "vanilla") {
       // The long-task check keeps its full three-second window, even when motion showed early.
       if (elapsed < 3000) await page.waitForTimeout(3000 - elapsed);
       const longest = await page.evaluate(() => (window as unknown as { picaLongest: number }).picaLongest);

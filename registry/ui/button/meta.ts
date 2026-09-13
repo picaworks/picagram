@@ -24,6 +24,7 @@ export const meta: Meta = {
       { step: "click", selector: "" },
       { step: "expectEvent", name: "press" },
     ],
+    [{ step: "hover", selector: "" }],
   ],
   controls: {
     variant: { type: "select", options: ["solid", "outline", "ghost", "brackets"] },

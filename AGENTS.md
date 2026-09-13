@@ -13,9 +13,10 @@ It is not a design system, not a general shader library, and not a mirror of any
 
 Status: phase 2.
 - The shared runtime now carries JSON data, events, children, a palette, WebGL2 shaders, and composition.
-- Waves 1 to 3 are built, 46 components in all, and all three are in review.
+- Waves 1 to 4 have built 70 components. Waves 1 to 3 are in review; wave 4 is two thirds built, with 24 of its 36 shipped and the other 12 already briefed in `sources/wave-4.json`.
 - The catalog is live at picagram.dev, deployed from `main`.
-- The expansion approved on 2026-09-11 is under way: the catalog shell, then the runtime, then wave 4 with 36 primitives and wave 5 with 10 heroes, reaching 92 components. See `docs/plans/2026-09-11-catalog-expansion.md`.
+- The expansion approved on 2026-09-11 is under way: the catalog shell, then the runtime, then wave 4 with 36 primitives and wave 5 with 10 heroes. See `docs/plans/2026-09-11-catalog-expansion.md`.
+- The expansion approved on 2026-09-13 carries it to 174: wave 4's remaining 12, then 30 UI primitives, 12 patterns, 10 motion, 12 ASCII and text mode, 8 particle effects, 10 heroes, and 10 body sections. Component work is farmed to Devin CLI sessions, with a coordinator and a reviewer here. See `docs/plans/2026-09-13-devin-fanout-expansion.md`.
 
 Open work is listed in `docs/plans/`.
 
@@ -26,8 +27,8 @@ Open work is listed in `docs/plans/`.
 | No component copies code from a reference. A component built from a captured design reference is re-implemented from a written spec, and the spec contains no code. Only Rish captures a reference; an agent may shortlist one by its metadata alone. | `test/invariants.test.ts` ("clean room"); `test/sources.test.ts` (shortlists); `.gitignore` keeps `sources/inbox/` out of the repo. Details: `docs/decisions/0003-clean-room-soft-clone.md` and `0009-metadata-shortlists.md`. |
 | Components make no network requests. | ESLint `no-restricted-globals` and `no-restricted-properties` in `eslint.config.js`; `test/invariants.test.ts` ("network"). |
 | `lib/` imports only `lib/`, and cores import only `lib/`, except that section cores compose other cores through a namespace import. Wrappers import `react`, `./core`, and `lib/use-pica` only. | ESLint `no-restricted-imports`; `test/invariants.test.ts` ("dependencies"); `test/compose.test.ts`. Details: `docs/decisions/0007-composition-and-budgets.md`. |
-| Only `lib/loop.ts` schedules frames, and all randomness is seeded. | ESLint bans on `requestAnimationFrame`, `setInterval`, and `Math.random`; `test/invariants.test.ts` ("motion"); `npm run verify` checks reduced motion and animation in a browser. |
-| Each job has one owner. Only `lib/events.ts` dispatches events, only `lib/gl.ts` opens WebGL2, and only `lib/palette.ts` reads the palette's custom properties. No component hard-codes a color. | ESLint `no-restricted-syntax`; `test/invariants.test.ts` ("single owners", "colors"). Details: `docs/decisions/0005-palette.md`, `0006-webgl2-runtime.md`. |
+| Only `lib/loop.ts` schedules frames, and all randomness is seeded. | ESLint bans on `requestAnimationFrame`, `setInterval`, and `Math.random`; `test/invariants.test.ts` ("motion"); `npm run verify` checks reduced motion in a browser, and animation in both shapes. |
+| Each job has one owner. Only `lib/events.ts` dispatches events, only `lib/gl.ts` opens WebGL2, and only `lib/palette.ts` reads the palette's custom properties. No component hard-codes a color. | ESLint `no-restricted-syntax`; `test/invariants.test.ts` ("single owners", "colors"); `npm run verify` checks that a shader's own canvas inks and advances on the real WebGL2 path, not its fallback. Details: `docs/decisions/0005-palette.md`, `0006-webgl2-runtime.md`. |
 | A core never touches a node it did not create and never hides content it wraps. On destroy, it leaves its host exactly as it found it. | The lifecycle and accessibility checks in `npm run verify`. Details: `docs/decisions/0004-interactive-components.md`. |
 | Both shapes are generated from one source and must render and behave the same. | `scripts/single-file.ts`; `test/generated.test.ts`; the parity, palette, and interaction checks in `npm run verify`. Details: `docs/decisions/0002-one-core-two-shapes.md`. |
 | A section composes at most three other cores, each from a wave earlier than its own. | `test/compose.test.ts` (sections). Details: `docs/decisions/0007-composition-and-budgets.md`. |

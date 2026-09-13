@@ -15,12 +15,12 @@ What each browser group checks:
 | Group | Checks |
 |---|---|
 | render | React matches vanilla at two viewports and on paper; thumbnails; the byte budget |
-| motion | still under reduced motion, moving otherwise, and no long tasks |
+| motion | still under reduced motion, moving otherwise in both shapes, and no long tasks |
 | accessibility | the host rule, axe-core, and probe children in wrapping components |
 | lifecycle | destroy restores the host, props stay untouched, and empty data still renders |
 | palette | four ways of setting colors agree |
-| gpu | the software renderer, a lost context, and the fallback without WebGL2 |
-| interaction | scripted steps, events, and controlled echo |
+| gpu | the software renderer, a lost context, the fallback without WebGL2, and the component's own canvas inking and advancing on the real path |
+| interaction | scripted steps, events, hover changing the picture, and controlled echo |
 | section | at 390: overflow, content on top, clipping, the page's font, and what can take focus |
 | fixture | a real PNG, and a fake camera |
 

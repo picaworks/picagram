@@ -10,6 +10,12 @@ export const meta: Meta = {
   wave: 1,
   animated: true,
   decorative: true,
+  interactions: [
+    [
+      { step: "pointerMove", x: 0.3, y: 0.35 },
+      { step: "pointerMove", x: 0.7, y: 0.65 },
+    ],
+  ],
   controls: {
     growth: { type: "number", min: 6, max: 40, step: 1 },
     width: { type: "number", min: 1, max: 6, step: 0.1 },
