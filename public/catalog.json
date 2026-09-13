@@ -425,6 +425,20 @@
     "wave": 1,
     "animated": true,
     "decorative": true,
+    "interactions": [
+      [
+        {
+          "step": "pointerMove",
+          "x": 0.3,
+          "y": 0.35
+        },
+        {
+          "step": "pointerMove",
+          "x": 0.7,
+          "y": 0.65
+        }
+      ]
+    ],
     "controls": {
       "growth": {
         "type": "number",
@@ -9114,6 +9128,12 @@
         {
           "step": "expectEvent",
           "name": "press"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": ""
         }
       ]
     ],

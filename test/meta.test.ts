@@ -58,6 +58,25 @@ describe.each(entries.map((e) => [e.meta.slug, e] as const))("%s", (_slug, entry
     }
   });
 
+  it("scripted steps are well formed", () => {
+    for (const steps of meta.interactions ?? []) {
+      for (const step of steps) {
+        if (step.step !== "pointerMove") continue;
+        for (const [axis, value] of [["x", step.x], ["y", step.y]] as const) {
+          const fraction = Number.isFinite(value) && value >= 0 && value <= 1;
+          expect(fraction, `pointerMove ${axis} is ${value}, which is not a fraction of the host`).toBe(true);
+        }
+      }
+    }
+    // scripts/verify/interact.ts drives a controlled prop by replaying only the presses and clicks of the
+    // first interaction, so a list that opens with a pointer step alone would leave it nothing to replay.
+    if (Object.keys(meta.controlled ?? {}).length > 0) {
+      const first = meta.interactions?.[0] ?? [];
+      const opens = first.some((step) => step.step === "press" || step.step === "click");
+      expect(opens, "the first interaction opens with a press or a click").toBe(true);
+    }
+  });
+
   it("palette tokens are real tokens", () => {
     for (const token of meta.palette ?? []) expect(TOKENS, `palette token "${token}"`).toContain(token);
   });

@@ -67,10 +67,16 @@ export type Control =
   | { type: "json"; label?: string };
 
 /** One step of a scripted interaction, which verify runs against both shapes. Selectors are scoped to the
- *  host, and an empty selector means the host itself. Event names are the core's, such as "valueChange". */
+ *  host, and an empty selector means the host itself. Event names are the core's, such as "valueChange".
+ *  "hover" moves the pointer onto an element and requires its own box to change, which is how a hover state
+ *  is proved to exist. "pointerMove" moves the pointer to a fraction of the host, x and y from 0 to 1 with y
+ *  down, and requires the host to change: it is what drives a pointer-reactive component, including the
+ *  u_pointer uniform in lib/gl.ts. A component whose pointer does nothing simply declares neither. */
 export type Step =
   | { step: "press"; key: string }
   | { step: "click"; selector: string }
+  | { step: "hover"; selector: string }
+  | { step: "pointerMove"; x: number; y: number }
   | { step: "expectFocus"; selector: string }
   | { step: "expectEvent"; name: string; detail?: Json }
   | { step: "expectAttr"; selector: string; name: string; value: string | null };
