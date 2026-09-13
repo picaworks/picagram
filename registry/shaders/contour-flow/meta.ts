@@ -1,0 +1,45 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "contour-flow",
+  title: "Contour Flow",
+  category: "shaders",
+  description: "Contours of a slowly drifting terrain, each line drawn light and thin where it faces the light and dark and thick where it faces away.",
+  tags: ["contour", "topography", "terrain", "relief", "shader", "webgl", "dither", "background"],
+  facets: ["animated", "background", "shader", "webgl", "dither"],
+  wave: 4,
+  animated: true,
+  decorative: true,
+  palette: ["fg", "accent", "bg"],
+  controls: {
+    speed: { type: "number", min: 0, max: 1, step: 0.05 },
+    scale: { type: "number", min: 0.5, max: 6, step: 0.1 },
+    bands: { type: "number", min: 4, max: 40, step: 1 },
+    light: { type: "number", min: 0, max: 360, step: 15, label: "Light (deg)" },
+    relief: { type: "number", min: 0, max: 1, step: 0.05 },
+    index: { type: "number", min: 0, max: 10, step: 1, label: "Index every" },
+    thickness: { type: "number", min: 0.5, max: 3, step: 0.5, label: "Thickness (px)" },
+    levels: { type: "number", min: 2, max: 16, step: 1 },
+    pixel: { type: "number", min: 1, max: 4, step: 1, label: "Pixel (px)" },
+    fps: { type: "number", min: 6, max: 60, step: 1 },
+    paused: { type: "boolean" },
+    seed: { type: "number", min: 0, max: 9999, step: 1 },
+  },
+  credits: [
+    {
+      relation: "technique",
+      title: "The Relief Contour Method of Representing Topography on Maps",
+      author: "Kitiro Tanaka",
+      url: "https://doi.org/10.2307/211219",
+      license: "Paper",
+    },
+    {
+      relation: "technique",
+      title: "Cartographic Relief Presentation",
+      author: "Eduard Imhof",
+      url: "https://doi.org/10.1515/9783110844016",
+      license: "Book",
+    },
+  ],
+  original: false,
+};

@@ -62,8 +62,16 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 ## Shaders
 
 - [Aurora](https://picagram.dev/c/aurora.md): Layered curtains of accent light standing on bowed lower borders, striated by vertical rays and dithered between a few tone steps on the GPU.
+- [Caustic Field](https://picagram.dev/c/caustic-field.md): The net of bright filaments light draws on a pool floor, refracted through a slow wave surface and dithered on the GPU.
+- [Contour Flow](https://picagram.dev/c/contour-flow.md): Contours of a slowly drifting terrain, each line drawn light and thin where it faces the light and dark and thick where it faces away.
+- [Liquid Metal](https://picagram.dev/c/liquid-metal.md): Slow blobs merge and part like drops of mercury, each surface mirroring a two band horizon through summed fields and reflection mapping.
 - [Mesh Gradient](https://picagram.dev/c/mesh-gradient.md): A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.
+- [Pixel Plasma](https://picagram.dev/c/pixel-plasma.md): The demoscene plasma as a printed screen: summed sinusoids drawn as coarse square pixels and dithered between a few tone steps on the GPU.
+- [Ripple Field](https://picagram.dev/c/ripple-field.md): Rings spread from seeded drops on a still surface, dispersing as they travel and cancelling where they cross, dithered on the GPU.
+- [Scan Beam](https://picagram.dev/c/scan-beam.md): A radar plan position display whose accent beam sweeps hairline rings and spokes, lighting seeded echoes that decay in dithered steps.
 - [Shader Flow](https://picagram.dev/c/shader-flow.md): Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.
+- [Tunnel Grid](https://picagram.dev/c/tunnel-grid.md): A slow flight down a tunnel drawn as a hairline grid, mapped by angle and inverse distance into a receding texture.
+- [Voronoi Drift](https://picagram.dev/c/voronoi-drift.md): A plane divided into territories around slowly drifting sites, each cell a flat dithered accent tone behind a fg hairline.
 
 ## Motion
 

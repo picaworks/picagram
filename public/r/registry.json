@@ -1673,6 +1673,111 @@
       }
     },
     {
+      "name": "caustic-field",
+      "type": "registry:component",
+      "title": "Caustic Field",
+      "description": "The net of bright filaments light draws on a pool floor, refracted through a slow wave surface and dithered on the GPU.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/caustic-field.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Method of displaying optical effects within water using accumulation buffer",
+            "author": "Tomoyuki Nishita and Eihachiro Nakamae",
+            "url": "https://doi.org/10.1145/192161.192261",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Catastrophe Optics: Morphologies of Caustics and Their Diffraction Patterns",
+            "author": "M. V. Berry and C. Upstill",
+            "url": "https://doi.org/10.1016/S0079-6638(08)70215-4",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
+      "name": "contour-flow",
+      "type": "registry:component",
+      "title": "Contour Flow",
+      "description": "Contours of a slowly drifting terrain, each line drawn light and thin where it faces the light and dark and thick where it faces away.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/contour-flow.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "The Relief Contour Method of Representing Topography on Maps",
+            "author": "Kitiro Tanaka",
+            "url": "https://doi.org/10.2307/211219",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Cartographic Relief Presentation",
+            "author": "Eduard Imhof",
+            "url": "https://doi.org/10.1515/9783110844016",
+            "license": "Book"
+          }
+        ]
+      }
+    },
+    {
+      "name": "liquid-metal",
+      "type": "registry:component",
+      "title": "Liquid Metal",
+      "description": "Slow blobs merge and part like drops of mercury, each surface mirroring a two band horizon through summed fields and reflection mapping.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/liquid-metal.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "A Generalization of Algebraic Surface Drawing",
+            "author": "James F. Blinn",
+            "url": "https://doi.org/10.1145/357306.357310",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Texture and reflection in computer generated images",
+            "author": "James F. Blinn and Martin E. Newell",
+            "url": "https://doi.org/10.1145/360349.360353",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
       "name": "mesh-gradient",
       "type": "registry:component",
       "title": "Mesh Gradient",
@@ -1715,6 +1820,97 @@
       }
     },
     {
+      "name": "pixel-plasma",
+      "type": "registry:component",
+      "title": "Pixel Plasma",
+      "description": "The demoscene plasma as a printed screen: summed sinusoids drawn as coarse square pixels and dithered between a few tone steps on the GPU.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-plasma.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Plasma effect",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Plasma_effect",
+            "license": "Algorithm, no code"
+          },
+          {
+            "relation": "technique",
+            "title": "Ordered dithering",
+            "author": "Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Ordered_dithering",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ripple-field",
+      "type": "registry:component",
+      "title": "Ripple Field",
+      "description": "Rings spread from seeded drops on a still surface, dispersing as they travel and cancelling where they cross, dithered on the GPU.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/ripple-field.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Simulating Ocean Water",
+            "author": "Jerry Tessendorf",
+            "url": "https://jtessen.people.clemson.edu/reports/papers_files/coursenotes2004.pdf",
+            "license": "Course notes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "scan-beam",
+      "type": "registry:component",
+      "title": "Scan Beam",
+      "description": "A radar plan position display whose accent beam sweeps hairline rings and spokes, lighting seeded echoes that decay in dithered steps.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/scan-beam.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "IEEE Standard for Radar Definitions",
+            "author": "IEEE Std 686-2024",
+            "url": "https://doi.org/10.1109/IEEESTD.2024.10815038",
+            "license": "IEEE standard"
+          }
+        ]
+      }
+    },
+    {
       "name": "shader-flow",
       "type": "registry:component",
       "title": "Shader Flow",
@@ -1744,6 +1940,62 @@
             "title": "Improving Noise",
             "author": "Ken Perlin",
             "url": "https://mrl.cs.nyu.edu/~perlin/paper445.pdf",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tunnel-grid",
+      "type": "registry:component",
+      "title": "Tunnel Grid",
+      "description": "A slow flight down a tunnel drawn as a hairline grid, mapped by angle and inverse distance into a receding texture.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/tunnel-grid.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Survey of Texture Mapping",
+            "author": "Paul S. Heckbert",
+            "url": "https://doi.org/10.1109/MCG.1986.276672",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
+      "name": "voronoi-drift",
+      "type": "registry:component",
+      "title": "Voronoi Drift",
+      "description": "A plane divided into territories around slowly drifting sites, each cell a flat dithered accent tone behind a fg hairline.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/voronoi-drift.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "A cellular texture basis function",
+            "author": "Steven Worley",
+            "url": "https://doi.org/10.1145/237170.237267",
             "license": "Paper"
           }
         ]

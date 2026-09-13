@@ -1,0 +1,700 @@
+<!doctype html>
+<!--
+  Pica · Liquid Metal · liquid-metal
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Liquid Metal · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaLiquidMetal = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/shaders/liquid-metal/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/gl.ts
+  var FULLSCREEN_VERTEX = `#version 300 es
+void main() {
+  vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}
+`;
+  var SHADER_PRELUDE = `#version 300 es
+precision highp float;
+precision highp int;
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform float u_seed;
+uniform vec2 u_pointer;
+uniform vec4 u_fg;
+uniform vec4 u_bg;
+uniform vec4 u_accent;
+uniform vec4 u_muted;
+out vec4 pica_color;
+uint pica_hash(uvec2 v) {
+  v = v * 1664525u + 1013904223u;
+  v.x += v.y * 1664525u;
+  v.y += v.x * 1664525u;
+  v ^= v >> 16u;
+  v.x += v.y * 1664525u;
+  v.y += v.x * 1664525u;
+  v ^= v >> 16u;
+  return v.x ^ v.y;
+}
+float pica_random(vec2 cell) {
+  uvec2 c = uvec2(ivec2(floor(cell)));
+  return float(pica_hash(c + uvec2(uint(u_seed) * 747796405u, uint(u_seed)))) / 4294967296.0;
+}
+`;
+  var WRAP_SECONDS = 3600;
+  var MAX_PIXELS = 2e6;
+  function toVectors(colors) {
+    const vec = (color) => parseColor(color).map((channel) => channel / 255);
+    return { fg: vec(colors.fg), bg: vec(colors.bg), accent: vec(colors.accent), muted: vec(colors.muted) };
+  }
+  function compileStage(gl, type, source) {
+    const shader = gl.createShader(type);
+    if (!shader) return null;
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader;
+    if (!gl.isContextLost()) console.error(`Pica shader did not compile: ${gl.getShaderInfoLog(shader) ?? ""}`);
+    gl.deleteShader(shader);
+    return null;
+  }
+  function pointerUv(host, event) {
+    const rect = host.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return [-1, -1];
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = 1 - (event.clientY - rect.top) / rect.height;
+    return x < 0 || x > 1 || y < 0 || y > 1 ? [-1, -1] : [x, y];
+  }
+  function createShader(host, options) {
+    const { fragment, fallback, onInvalidate } = options;
+    const values = new Map([["u_pointer", [-1, -1]], ...Object.entries(options.uniforms ?? {})]);
+    const surface = createCanvas(host, {
+      maxDpr: options.maxDpr ?? 1.5,
+      maxPixels: MAX_PIXELS,
+      css: options.css ?? "",
+      onResize: () => onInvalidate()
+    });
+    const canvas = surface.canvas;
+    let colors = { fg: [], bg: [], accent: [], muted: [] };
+    const palette = watchPalette(host, (next) => {
+      colors = toVectors(next);
+      onInvalidate();
+    });
+    colors = toVectors(palette.colors);
+    const gl = canvas.getContext("webgl2", {
+      alpha: true,
+      antialias: false,
+      depth: false,
+      stencil: false,
+      premultipliedAlpha: false,
+      preserveDrawingBuffer: false,
+      powerPreference: "low-power"
+    });
+    let program = null;
+    let locations = /* @__PURE__ */ new Map();
+    let lost = false;
+    function build() {
+      program = null;
+      if (!gl || gl.isContextLost()) return false;
+      const vertex = compileStage(gl, gl.VERTEX_SHADER, FULLSCREEN_VERTEX);
+      const pixel = compileStage(gl, gl.FRAGMENT_SHADER, SHADER_PRELUDE + fragment);
+      if (!vertex || !pixel) return false;
+      const linked = gl.createProgram();
+      gl.attachShader(linked, vertex);
+      gl.attachShader(linked, pixel);
+      gl.linkProgram(linked);
+      gl.deleteShader(vertex);
+      gl.deleteShader(pixel);
+      if (!gl.getProgramParameter(linked, gl.LINK_STATUS)) {
+        if (!gl.isContextLost()) console.error(`Pica shader did not link: ${gl.getProgramInfoLog(linked) ?? ""}`);
+        gl.deleteProgram(linked);
+        return false;
+      }
+      program = linked;
+      locations = /* @__PURE__ */ new Map();
+      gl.disable(gl.DITHER);
+      return true;
+    }
+    function upload(context, linked, name, value) {
+      let location = locations.get(name);
+      if (location === void 0) {
+        location = context.getUniformLocation(linked, name);
+        locations.set(name, location);
+      }
+      if (!location) return;
+      if (typeof value === "number") context.uniform1f(location, value);
+      else if (value.length === 2) context.uniform2f(location, value[0] ?? 0, value[1] ?? 0);
+      else if (value.length === 3) context.uniform3f(location, value[0] ?? 0, value[1] ?? 0, value[2] ?? 0);
+      else if (value.length === 4) context.uniform4f(location, value[0] ?? 0, value[1] ?? 0, value[2] ?? 0, value[3] ?? 0);
+      else context.uniform1fv(location, new Float32Array(value));
+    }
+    let ok = build();
+    canvas.style.background = ok ? "" : fallback;
+    const onLost = (event) => {
+      event.preventDefault();
+      lost = true;
+    };
+    const onRestored = () => {
+      lost = false;
+      ok = build();
+      canvas.style.background = ok ? "" : fallback;
+      onInvalidate();
+    };
+    canvas.addEventListener("webglcontextlost", onLost);
+    canvas.addEventListener("webglcontextrestored", onRestored);
+    return {
+      get ok() {
+        return ok;
+      },
+      set(name, value) {
+        values.set(name, value);
+      },
+      draw(t) {
+        if (!ok || lost || !gl || !program) return;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.useProgram(program);
+        upload(gl, program, "u_resolution", [canvas.width, canvas.height]);
+        upload(gl, program, "u_time", t / 1e3 % WRAP_SECONDS);
+        upload(gl, program, "u_fg", colors.fg);
+        upload(gl, program, "u_bg", colors.bg);
+        upload(gl, program, "u_accent", colors.accent);
+        upload(gl, program, "u_muted", colors.muted);
+        for (const [name, value] of values) upload(gl, program, name, value);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      },
+      destroy() {
+        canvas.removeEventListener("webglcontextlost", onLost);
+        canvas.removeEventListener("webglcontextrestored", onRestored);
+        palette.destroy();
+        if (gl && !gl.isContextLost()) gl.getExtension("WEBGL_lose_context")?.loseContext();
+        surface.destroy();
+      }
+    };
+  }
+
+  // lib/glsl.ts
+  var TONE = `
+vec4 pica_tone(float tone, vec4 ink, float levels) {
+  float steps = max(1.0, levels);
+  float q = floor(clamp(tone, 0.0, 1.0) * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
+  float amount = clamp(q, 0.0, 1.0) * ink.a;
+  float onto = u_bg.a * (1.0 - amount);
+  float alpha = amount + onto;
+  return vec4((ink.rgb * amount + u_bg.rgb * onto) / max(alpha, 0.0001), alpha);
+}
+`;
+  var DITHER = `
+float pica_bayer8(ivec2 p) {
+  int x = p.x & 7;
+  int y = p.y & 7;
+  int a = x ^ y;
+  int v = ((a & 1) << 5) | ((y & 1) << 4) | ((a & 2) << 2) | ((y & 2) << 1) | ((a & 4) >> 1) | ((y & 4) >> 2);
+  return (float(v) + 0.5) / 64.0;
+}
+`;
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // registry/shaders/liquid-metal/core.ts
+  var defaults = {
+    speed: 0.12,
+    blobs: 3,
+    size: 0.16,
+    threshold: 0.5,
+    horizon: 0.55,
+    pointer: true,
+    levels: 6,
+    pixel: 2,
+    fps: 30,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL = 1200;
+  var FRAGMENT = `${DITHER}${TONE}
+  uniform float u_speed;
+  uniform float u_blobs;
+  uniform float u_size;
+  uniform float u_threshold;
+  uniform float u_horizon;
+  uniform float u_levels;
+  // Drop zero's seeded home near the middle; drop one keys off it so the two stay near enough to merge.
+  vec2 firstHome() {
+    float a = pica_random(vec2(0.0, 3.0)) * 6.2831853;
+    return vec2(cos(a), sin(a)) * mix(0.05, 0.14, pica_random(vec2(0.0, 5.0)));
+  }
+  vec3 centre(int i, float t, vec2 lim) {
+    float fi = float(i);
+    float z = mix(0.4, 0.65, pica_random(vec2(fi, 17.0)));
+    vec2 home;
+    if (i == 0) {
+      home = firstHome();
+    } else if (i == 1) {
+      // A companion: homed just over one merge distance from drop zero, so the still frame catches the
+      // pair mid-neck and the slow drift below keeps parting and rejoining them.
+      float d = pica_random(vec2(1.0, 7.0)) * 6.2831853;
+      float gap = mix(3.1, 3.6, pica_random(vec2(1.0, 11.0))) * u_size * 0.52;
+      home = firstHome() + vec2(cos(d), sin(d)) * gap;
+    } else {
+      float a = fi * 6.2831853 / max(u_blobs, 1.0) + (pica_random(vec2(fi, 3.0)) - 0.5) * 0.9;
+      home = vec2(cos(a), sin(a)) * mix(0.18, 0.34, pica_random(vec2(fi, 5.0)));
+    }
+    float f1 = mix(0.25, 0.5, pica_random(vec2(fi, 29.0)));
+    float f2 = mix(0.2, 0.45, pica_random(vec2(fi, 33.0)));
+    float ph1 = pica_random(vec2(fi, 13.0)) * 6.2831853;
+    float ph2 = pica_random(vec2(fi, 21.0)) * 6.2831853;
+    float amp = mix(0.025, 0.06, pica_random(vec2(fi, 37.0)));
+    vec2 c = home + amp * vec2(sin(t * f1 + ph1), cos(t * f2 + ph2));
+    return vec3(clamp(c, -lim, lim), z);
+  }
+  void main() {
+    vec2 res = u_resolution;
+    float mn = min(res.x, res.y);
+    vec2 p = (gl_FragCoord.xy - 0.5 * res) / mn;
+    float t = u_time * u_speed;
+    int n = int(u_blobs + 0.5);
+    vec2 pointerP = (u_pointer - 0.5) * res / mn;
+    vec2 lim = max(0.5 * res / mn - 0.16, vec2(0.02));
+    vec3 cs[6];
+    int near = 0;
+    float nd = 1e9;
+    for (int i = 0; i < 6; i++) {
+      if (i >= n) break;
+      cs[i] = centre(i, t, lim);
+      vec2 rel = cs[i].xy - pointerP;
+      float dd = dot(rel, rel);
+      if (dd < nd) { nd = dd; near = i; }
+    }
+    float field = 0.0;
+    vec2 grad = vec2(0.0);
+    for (int i = 0; i < 6; i++) {
+      if (i >= n) break;
+      vec3 cb = cs[i];
+      if (i == near) cb.xy += (pointerP - cb.xy) * 0.2 * step(0.0, u_pointer.x);
+      float s = u_size * cb.z;
+      vec2 d = p - cb.xy;
+      float q = exp(-dot(d, d) / (2.0 * s * s));
+      field += q;
+      grad -= d * q / (s * s);
+    }
+    float aa = max(fwidth(field), 0.02);
+    float inside = smoothstep(u_threshold - aa, u_threshold + aa, field);
+    // Field strength stands in for depth into the drop: rho runs 1 at the rim to 0 where the summed field
+    // reaches a centre's own peak of 1, so each crown reflects the horizon like a sphere's pole does.
+    float rho = clamp(u_threshold * (1.0 - field) / (field * (1.0 - u_threshold)), 0.0, 1.0);
+    vec2 outw = -grad / max(length(grad), 0.0001);
+    vec3 nrm = vec3(outw * rho, sqrt(max(0.0, 1.0 - rho * rho)));
+    float ry = 2.0 * nrm.z * nrm.y;
+    float hline = 1.0 - 2.0 * u_horizon;
+    float band = 1.0 - smoothstep(0.015, 0.06, abs(ry - hline));
+    // Mid-tones only: the sky band tops out near two thirds of fg and the ground band keeps a whisper, so
+    // the bent horizon line is the loudest thing on each drop and nothing reaches near-full ink.
+    float skyT = mix(0.3, 0.6, smoothstep(hline, 1.0, ry));
+    float gndT = mix(0.18, 0.07, smoothstep(-1.0, hline, ry));
+    float tone = max(ry > hline ? skyT : gndT, band * 0.85);
+    vec4 ink = vec4(mix(u_fg.rgb, u_accent.rgb, band), mix(u_fg.a, u_accent.a, band));
+    pica_color = pica_tone(tone * inside, ink, u_levels - 1.0);
+  }
+`;
+  var FALLBACK = `linear-gradient(to bottom, transparent 30%, color-mix(in srgb, ${cssVar("fg")} 20%, transparent) 46%, color-mix(in srgb, ${cssVar("accent")} 45%, transparent) 55%, color-mix(in srgb, ${cssVar("fg")} 14%, transparent) 63%, transparent 78%)`;
+  function uniforms(p) {
+    return {
+      u_seed: p.seed,
+      u_speed: p.speed,
+      u_blobs: p.blobs,
+      u_size: p.size,
+      u_threshold: p.threshold,
+      u_horizon: p.horizon,
+      u_levels: p.levels
+    };
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    function build() {
+      return createShader(host, {
+        fragment: FRAGMENT,
+        fallback: FALLBACK,
+        uniforms: uniforms(props),
+        // One drawn pixel per dither cell, scaled up square by CSS: a cell stays crisp, and a bigger cell
+        // costs less to draw.
+        maxDpr: 1 / Math.max(1, props.pixel),
+        css: "image-rendering:pixelated",
+        onInvalidate: () => loop.redraw()
+      });
+    }
+    let shader = build();
+    function draw(t) {
+      shader.draw(t);
+      host.dataset.picaReady = "true";
+    }
+    function live() {
+      return props.pointer && !props.paused && props.time === null && !loop.reduced;
+    }
+    function onPointerMove(e) {
+      if (!live()) return;
+      shader.set("u_pointer", pointerUv(host, e));
+      loop.redraw();
+    }
+    function onPointerLeave() {
+      if (!props.pointer) return;
+      shader.set("u_pointer", [-1, -1]);
+      loop.redraw();
+    }
+    labelHost(host, "");
+    const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL, frame: draw });
+    host.addEventListener("pointermove", onPointerMove);
+    host.addEventListener("pointerleave", onPointerLeave);
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.pixel !== before.pixel) {
+          shader.destroy();
+          shader = build();
+        } else {
+          for (const [name, value] of Object.entries(uniforms(props))) shader.set(name, value);
+        }
+        if (!props.pointer && before.pointer) shader.set("u_pointer", [-1, -1]);
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+        loop.redraw();
+      },
+      destroy() {
+        host.removeEventListener("pointermove", onPointerMove);
+        host.removeEventListener("pointerleave", onPointerLeave);
+        loop.destroy();
+        shader.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaLiquidMetal.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>
