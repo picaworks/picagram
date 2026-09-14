@@ -1,0 +1,802 @@
+<!doctype html>
+<!--
+  Pica · Cyberpunk Hero · cyberpunk-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Cyberpunk Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><p>The page's own copy lands here, between the lead and the links.</p></div>
+<script>
+"use strict";
+var PicaCyberpunkHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/cyberpunk-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults3,
+    mount: () => mount3
+  });
+
+  // lib/a11y.ts
+  function hiddenText(text) {
+    const span = document.createElement("span");
+    span.textContent = text;
+    span.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    return span;
+  }
+  function animatedText(host, text, tag = "span") {
+    const hidden = hiddenText(text);
+    hidden.setAttribute("data-pica", "");
+    const layer2 = document.createElement(tag);
+    layer2.setAttribute("data-pica", "");
+    layer2.setAttribute("aria-hidden", "true");
+    host.append(hidden, layer2);
+    return {
+      layer: layer2,
+      setText(next) {
+        hidden.textContent = next;
+      },
+      remove() {
+        hidden.remove();
+        layer2.remove();
+      }
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+
+  // lib/ramp.ts
+  var FALLBACK_RAMP = " .:-=+*#%@";
+  var rampCache = /* @__PURE__ */ new Map();
+  function uniqueGlyphs(chars) {
+    return Array.from(new Set(Array.from(chars.length > 0 ? chars : FALLBACK_RAMP)));
+  }
+  function fontSettled(fontFamily) {
+    try {
+      return document.fonts.check(`12px ${fontFamily}`);
+    } catch {
+      return true;
+    }
+  }
+  function inkMaps(glyphs, fontFamily, lineHeight, n) {
+    if (typeof document === "undefined") return null;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    const fontPx = 40;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    const w = Math.max(1, Math.ceil(ctx.measureText("M").width || fontPx * 0.6));
+    const h = Math.max(1, Math.ceil(fontPx * lineHeight));
+    canvas.width = w;
+    canvas.height = h;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#000";
+    return glyphs.map((glyph) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillText(glyph, 0, h / 2);
+      const alpha = ctx.getImageData(0, 0, w, h).data;
+      const sums = new Array(n * n).fill(0);
+      for (let y = 0; y < h; y++) {
+        const sy = Math.min(n - 1, Math.floor(y / h * n));
+        for (let x = 0; x < w; x++) {
+          const k = sy * n + Math.min(n - 1, Math.floor(x / w * n));
+          sums[k] = (sums[k] ?? 0) + (alpha[(y * w + x) * 4 + 3] ?? 0);
+        }
+      }
+      return sums;
+    });
+  }
+  function measureRamp(chars, fontFamily, lineHeight = 1.2) {
+    const glyphs = uniqueGlyphs(chars);
+    const key = `${fontFamily}|${lineHeight}|${glyphs.join("")}`;
+    const cached = rampCache.get(key);
+    if (cached) return cached;
+    const maps = inkMaps(glyphs, fontFamily, lineHeight, 1);
+    if (!maps) {
+      const last = Math.max(1, glyphs.length - 1);
+      return { glyphs, levels: glyphs.map((_, i) => i / last) };
+    }
+    const order = glyphs.map((glyph, i) => ({ glyph, ink: maps[i]?.[0] ?? 0 })).sort((a, b) => a.ink - b.ink);
+    const lightest = order[0]?.ink ?? 0;
+    const span = (order[order.length - 1]?.ink ?? 1) - lightest || 1;
+    const ramp = {
+      glyphs: order.map((o) => o.glyph),
+      levels: order.map((o) => (o.ink - lightest) / span)
+    };
+    if (fontSettled(fontFamily)) rampCache.set(key, ramp);
+    return ramp;
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
+
+  // registry/effects/glitch-text/core.ts
+  var defaults = {
+    text: "SIGNAL LOST",
+    interval: 2500,
+    burst: 280,
+    intensity: 0.5,
+    glyphs: FALLBACK_RAMP,
+    fontFamily: GRID_FONT,
+    fps: 30,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var SLICE_COUNT = 4;
+  var MAX_SHIFT_CH = 1.2;
+  var MAX_SWAP_CHANCE = 0.35;
+  function burstAt(t, interval, burst) {
+    const period = Math.max(1, interval);
+    const duration = Math.min(Math.max(0, burst), period);
+    const phase = period * 0.4;
+    const shifted = t - phase;
+    const index = Math.floor(shifted / period);
+    const local = shifted - index * period;
+    return { active: duration > 0 && local < duration, index };
+  }
+  function buildBurst(props, index) {
+    const rng = createRng(hashSeed(props.seed, index));
+    const ramp = measureRamp(props.glyphs, props.fontFamily);
+    const swapChance = MAX_SWAP_CHANCE * props.intensity;
+    const text = Array.from(props.text).map((ch) => {
+      if (rng() >= swapChance) return ch;
+      const at = Math.min(ramp.glyphs.length - 1, Math.floor(rng() * ramp.glyphs.length));
+      return ramp.glyphs[at] ?? ch;
+    }).join("");
+    const shifts = Array.from({ length: SLICE_COUNT }, () => (rng() * 2 - 1) * MAX_SHIFT_CH * props.intensity);
+    return { text, shifts };
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const text = animatedText(host, props.text);
+    const view = text.layer;
+    view.style.position = "relative";
+    view.style.display = "inline-block";
+    view.style.whiteSpace = "pre";
+    view.style.userSelect = "none";
+    view.style.pointerEvents = "none";
+    view.style.fontFamily = props.fontFamily;
+    view.style.color = cssVar("fg");
+    function draw(t) {
+      const slot = burstAt(t, props.interval, props.burst);
+      view.textContent = "";
+      if (slot.active) {
+        const glitch = buildBurst(props, slot.index);
+        for (let i = 0; i < SLICE_COUNT; i++) {
+          const strip = document.createElement("span");
+          strip.style.display = "inline-block";
+          strip.style.whiteSpace = "pre";
+          if (i > 0) {
+            strip.style.position = "absolute";
+            strip.style.left = "0";
+            strip.style.top = "0";
+          }
+          strip.style.clipPath = `inset(${i / SLICE_COUNT * 100}% 0 ${(SLICE_COUNT - i - 1) / SLICE_COUNT * 100}% 0)`;
+          strip.style.transform = `translateX(${(glitch.shifts[i] ?? 0).toFixed(3)}ch)`;
+          strip.textContent = glitch.text;
+          view.appendChild(strip);
+        }
+      } else {
+        view.textContent = props.text;
+      }
+      host.dataset.picaReady = "true";
+    }
+    const motion = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: 0, frame: draw });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.text !== before.text) text.setText(props.text);
+        if (props.fontFamily !== before.fontFamily) view.style.fontFamily = props.fontFamily;
+        motion.update({ paused: props.paused, time: props.time, fps: props.fps });
+        motion.redraw();
+      },
+      destroy() {
+        motion.destroy();
+        text.remove();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // registry/effects/scanlines/core.ts
+  var defaults2 = {
+    spacing: 3,
+    thickness: 1,
+    opacity: 0.18,
+    roll: true,
+    rollSpeed: 9,
+    fps: 30,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var ROLL_BAND = `linear-gradient(to bottom, transparent 0%, transparent 38%, ${cssVar("fg")} 50%, transparent 62%, transparent 100%)`;
+  var ROLL_VAR = "--pica-scanlines-roll";
+  var mount2 = (host, initial = {}) => {
+    let props = { ...defaults2, ...initial };
+    const lines = layer(host, "over");
+    const sheet = scope(host);
+    function draw(t) {
+      if (props.roll) {
+        const period = Math.max(1, props.rollSpeed) * 1e3;
+        const phase = (t % period + period) % period / period;
+        lines.el.style.setProperty(ROLL_VAR, `${(phase * host.clientHeight).toFixed(2)}px`);
+      }
+      host.dataset.picaReady = "true";
+    }
+    sheet.setRules(rules(sheet.selector, props));
+    const loop = createLoop({
+      el: host,
+      fps: props.fps,
+      paused: props.paused,
+      time: props.time,
+      still: 0,
+      frame: draw
+    });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.spacing !== before.spacing || props.thickness !== before.thickness || props.opacity !== before.opacity || props.roll !== before.roll) {
+          sheet.setRules(rules(sheet.selector, props));
+        }
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+        loop.redraw();
+      },
+      destroy() {
+        loop.destroy();
+        sheet.destroy();
+        lines.remove();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  function rules(selector, p) {
+    const thickness = Math.min(p.thickness, p.spacing);
+    const ink = cssVar("fg");
+    const stripes = `repeating-linear-gradient(to bottom, ${ink} 0, ${ink} ${thickness}px, transparent ${thickness}px, transparent ${p.spacing}px)`;
+    const declarations = [`opacity:${p.opacity}`];
+    if (p.roll) {
+      declarations.push(
+        `background-image:${ROLL_BAND},${stripes}`,
+        `background-size:100% 100%,100% ${p.spacing}px`,
+        "background-repeat:repeat-y,repeat-y",
+        `background-position:0 var(${ROLL_VAR},0px),0 0`
+      );
+    } else {
+      declarations.push(`background-image:${stripes}`, `background-size:100% ${p.spacing}px`, "background-repeat:repeat-y");
+    }
+    return `${selector} > div[data-pica]{${declarations.join(";")}}`;
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // registry/sections/cyberpunk-hero/core.ts
+  var defaults3 = {
+    headline: "Still transmitting.",
+    subhead: "The session has been open for 47 days. Every line still answers.",
+    kicker: "TERM 09 // UPLINK HELD",
+    actions: [
+      { label: "Browse components", href: "#components" },
+      { label: "Read the docs", href: "#docs" }
+    ],
+    align: "start",
+    minHeight: 68,
+    telemetry: true,
+    scanlines: true,
+    intensity: 0.55,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var POSITIONS = ["tl", "tr", "bl", "br"];
+  var ACCENT_CORNER = 1;
+  var TEAR_INTERVAL = 4800;
+  var TEAR_BURST = 240;
+  var TEAR_FPS = 8;
+  var ROLL_MS = 14e3;
+  var CURSOR_MS = 530;
+  var NARROW = "44rem";
+  var INSET = "clamp(1.1rem, 3.5vw, 3rem)";
+  var ROLL_BAND2 = `linear-gradient(to bottom, transparent 0%, transparent 38%, ${cssVar("fg")} 50%, transparent 62%, transparent 100%)`;
+  function unit(value) {
+    return Math.min(1, Math.max(0, value));
+  }
+  function clampVh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function pad2(n) {
+    return String(Math.max(0, Math.floor(n))).padStart(2, "0");
+  }
+  function hex4(n) {
+    return Math.floor(n).toString(16).toUpperCase().padStart(4, "0").slice(-4);
+  }
+  function scanOpacity(intensity) {
+    return (0.05 + unit(intensity) * 0.3).toFixed(3);
+  }
+  function scanProps(p) {
+    return { paused: p.paused, time: p.time, seed: p.seed, opacity: 1, roll: false, fps: 6 };
+  }
+  function tearProps(p) {
+    return { text: p.headline, interval: TEAR_INTERVAL, burst: TEAR_BURST, intensity: 0.6, fontFamily: "inherit", fps: TEAR_FPS, paused: p.paused, time: p.time, seed: p.seed };
+  }
+  function readouts(seed, epoch) {
+    const jitter = (lane) => createRng(hashSeed(seed, epoch, lane))();
+    const base = createRng(hashSeed(seed, 0, 77));
+    const session = Math.floor(base() * 65535);
+    const up = Math.floor(base() * 4e6) + epoch;
+    const pkt = 4e5 + Math.floor(base() * 8e5) + epoch * (120 + Math.floor(base() * 300));
+    const dd = Math.floor(up / 86400);
+    const hh = Math.floor(up / 3600) % 24;
+    const mm = Math.floor(up / 60) % 60;
+    const ss = up % 60;
+    return [
+      [`SES ${hex4(session)}`, `UP ${pad2(dd)}:${pad2(hh)}:${pad2(mm)}:${pad2(ss)}`],
+      [`SIG ${(93 + jitter(1) * 6).toFixed(1)}`, `DRP ${(jitter(2) * 0.6).toFixed(1)}%`],
+      [`PKT ${pkt}`, `RTT ${(8 + jitter(3) * 30).toFixed(0)}MS`],
+      [`MEM ${(52 + jitter(4) * 18).toFixed(1)}%`, `TMP ${(36 + jitter(5) * 9).toFixed(1)}°C`]
+    ];
+  }
+  function part(tag, name) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute(`data-pica-${name}`, "");
+    return node;
+  }
+  function rules2(s, p) {
+    const fg = cssVar("fg");
+    const bg = cssVar("bg");
+    const accent = cssVar("accent");
+    const dim = `color-mix(in srgb, ${fg} 62%, transparent)`;
+    const faint = `color-mix(in srgb, ${fg} 60%, transparent)`;
+    const hairline = `color-mix(in srgb, ${fg} 42%, transparent)`;
+    const edge = p.align === "center" ? "center" : "flex-start";
+    const textAlign = p.align === "center" ? "center" : "start";
+    return [
+      `:where(${s}){min-height:${clampVh(p.minHeight)}vh}`,
+      `${s}{box-sizing:border-box;position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:center;align-items:${edge};gap:clamp(0.9rem,2.5vh,1.4rem);padding:clamp(3.5rem,9vh,6rem) clamp(1.25rem,5vw,4.5rem);color:${fg};background-color:${bg};overflow-wrap:break-word}`,
+      `${s} > :not([data-pica]){margin:0;max-width:44rem;text-align:${textAlign}}`,
+      `${s} > [data-pica-head]{display:flex;flex-direction:column;align-items:${edge};gap:0.55em;width:100%;max-width:44rem;text-align:${textAlign}}`,
+      `${s} [data-pica-kicker]{margin:0;font-family:${GRID_FONT};font-size:0.72rem;line-height:1.6;letter-spacing:0.12em;text-transform:uppercase;color:${dim}}`,
+      `${s} [data-pica-cursor]{display:inline-block;margin-left:0.35em;color:${fg}}`,
+      `${s} [data-pica-headline]{margin:0;max-width:100%;font-size:clamp(1.9rem,6vw,4rem);line-height:1.05;font-weight:700;letter-spacing:-0.015em;overflow:hidden}`,
+      `${s} [data-pica-subhead]{margin:0;max-width:34rem;font-size:clamp(1rem,1.4vw,1.15rem);line-height:1.55;color:${dim}}`,
+      `${s} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.7em;width:100%;max-width:44rem;justify-content:${edge}}`,
+      `${s} > [data-pica-actions]:empty{display:none}`,
+      `${s} > [data-pica-actions] a{appearance:none;text-decoration:none;font-family:${GRID_FONT};font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;line-height:1.2;padding:0.8em 1.3em;display:inline-flex;align-items:center;border:1px solid ${hairline};border-radius:0;color:${fg};background:transparent;cursor:pointer}`,
+      `${s} > [data-pica-actions] a[data-variant="solid"]{color:${fg};background:currentColor;border-color:currentColor}`,
+      `${s} > [data-pica-actions] a[data-variant="solid"] > [data-pica-ink]{color:${cssOn("fg")}}`,
+      `${s} > [data-pica-actions] a[data-variant="solid"]:hover{background:color-mix(in srgb, currentColor 85%, transparent)}`,
+      `${s} > [data-pica-actions] a[data-variant="outline"]:hover{background:color-mix(in srgb, ${fg} 10%, transparent);border-color:${fg}}`,
+      `${s} > [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${s} > [data-pica-corners]{position:absolute;inset:0;z-index:1;pointer-events:none}`,
+      `${s} [data-pica-corner]{position:absolute;display:flex;flex-direction:column;gap:0.2em;font-family:${GRID_FONT};font-size:0.62rem;line-height:1.6;letter-spacing:0.08em;font-variant-numeric:tabular-nums;color:${faint};white-space:pre}`,
+      `${s} [data-pica-corner][data-pica-pos="tl"]{top:${INSET};left:${INSET}}`,
+      `${s} [data-pica-corner][data-pica-pos="tr"]{top:${INSET};right:${INSET};text-align:right;align-items:flex-end}`,
+      `${s} [data-pica-corner][data-pica-pos="bl"]{bottom:${INSET};left:${INSET}}`,
+      `${s} [data-pica-corner][data-pica-pos="br"]{bottom:${INSET};right:${INSET};text-align:right;align-items:flex-end}`,
+      `${s} [data-pica-hot]{color:${accent}}`,
+      // The band is twice the host's height, hung so it always covers the frame, and the clock shifts it by
+      // a translateY in percent of its own box: half of it is exactly the host's height, which is the shift
+      // the old background-position math needed, and a percentage needs no layout read on the frame.
+      `${s} [data-pica-band]{position:absolute;top:-100%;left:0;right:0;height:200%;z-index:1;will-change:transform;background-image:${ROLL_BAND2};background-size:100% 50%;background-repeat:repeat-y}`,
+      `@media (max-width: ${NARROW}){${s} [data-pica-corner][data-pica-pos="bl"],${s} [data-pica-corner][data-pica-pos="br"]{display:none}}`
+    ].join("\n");
+  }
+  function renderActions(container, actions) {
+    container.replaceChildren();
+    for (const [i, action] of actions.slice(0, 3).entries()) {
+      const a = document.createElement("a");
+      a.setAttribute("data-pica", "");
+      a.dataset.variant = i === 0 ? "solid" : "outline";
+      a.href = action.href;
+      if (i === 0) {
+        const ink = document.createElement("span");
+        ink.setAttribute("data-pica", "");
+        ink.setAttribute("data-pica-ink", "");
+        ink.textContent = action.label;
+        a.append(ink);
+      } else {
+        a.textContent = action.label;
+      }
+      container.append(a);
+    }
+  }
+  var mount3 = (host, initial = {}) => {
+    let props = { ...defaults3, ...initial };
+    const sheet = scope(host);
+    const head = part("div", "head");
+    const kickerEl = part("p", "kicker");
+    const kickerText = document.createTextNode(props.kicker);
+    const cursorEl = part("span", "cursor");
+    cursorEl.setAttribute("aria-hidden", "true");
+    cursorEl.textContent = "█";
+    kickerEl.append(kickerText, cursorEl);
+    const headlineEl = part("h1", "headline");
+    const subheadEl = part("p", "subhead");
+    head.append(kickerEl, headlineEl, subheadEl);
+    host.prepend(head);
+    const actionsEl = part("div", "actions");
+    const cornersEl = part("div", "corners");
+    cornersEl.setAttribute("aria-hidden", "true");
+    const rowEls = POSITIONS.map((pos, i) => {
+      const corner = part("div", "corner");
+      corner.setAttribute("data-pica-pos", pos);
+      const rows = [0, 1].map((j) => {
+        const row = document.createElement("div");
+        row.setAttribute("data-pica", "");
+        if (i === ACCENT_CORNER && j === 0) row.setAttribute("data-pica-hot", "");
+        corner.append(row);
+        return row;
+      });
+      cornersEl.append(corner);
+      return rows;
+    });
+    host.append(actionsEl, cornersEl);
+    let scanLayer = null;
+    let scan = null;
+    let bandEl = null;
+    function mountScan() {
+      scanLayer = layer(host, "over");
+      scanLayer.el.style.overflow = "hidden";
+      scanLayer.el.style.opacity = scanOpacity(props.intensity);
+      scan = mount2(scanLayer.el, scanProps(props));
+      bandEl = part("span", "band");
+      scanLayer.el.append(bandEl);
+    }
+    function dropScan() {
+      scan?.destroy();
+      scan = null;
+      scanLayer?.remove();
+      scanLayer = null;
+      bandEl = null;
+    }
+    if (props.scanlines) mountScan();
+    const tear = mount(headlineEl, tearProps(props));
+    let epoch = -1;
+    function renderReadouts() {
+      const rows = readouts(props.seed, Math.max(0, epoch));
+      rowEls.forEach((pair, i) => {
+        const lines = rows[i] ?? [];
+        pair.forEach((el, j) => {
+          el.textContent = lines[j] ?? "";
+        });
+      });
+    }
+    let cursorOn = true;
+    function draw(t) {
+      if (bandEl) {
+        const phase = (t % ROLL_MS + ROLL_MS) % ROLL_MS / ROLL_MS;
+        bandEl.style.transform = `translateY(${(phase * 50).toFixed(3)}%)`;
+      }
+      const on = Math.floor(t / CURSOR_MS) % 2 === 0;
+      if (on !== cursorOn) {
+        cursorOn = on;
+        cursorEl.style.opacity = on ? "1" : "0";
+      }
+      const next = Math.floor(t / 1e3);
+      if (next !== epoch) {
+        epoch = next;
+        if (props.telemetry) renderReadouts();
+      }
+      host.dataset.picaReady = "true";
+    }
+    const clock = createLoop({ el: host, fps: 30, paused: props.paused, time: props.time, still: 0, frame: draw });
+    sheet.setRules(rules2(sheet.selector, props));
+    kickerEl.hidden = props.kicker.trim() === "";
+    subheadEl.textContent = props.subhead;
+    subheadEl.hidden = props.subhead.trim() === "";
+    headlineEl.hidden = props.headline.trim() === "";
+    cornersEl.hidden = !props.telemetry;
+    renderActions(actionsEl, props.actions);
+    renderReadouts();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        const motion = changed(before, props, ["paused", "time", "seed"]);
+        if (props.headline !== before.headline) headlineEl.hidden = props.headline.trim() === "";
+        if (motion || props.headline !== before.headline) tear.update(tearProps(props));
+        if (props.kicker !== before.kicker) {
+          kickerText.nodeValue = props.kicker;
+          kickerEl.hidden = props.kicker.trim() === "";
+        }
+        if (props.subhead !== before.subhead) {
+          subheadEl.textContent = props.subhead;
+          subheadEl.hidden = props.subhead.trim() === "";
+        }
+        if (!sameJson(before.actions, props.actions)) renderActions(actionsEl, props.actions);
+        if (props.scanlines !== before.scanlines) {
+          if (props.scanlines) {
+            mountScan();
+            clock.redraw();
+          } else {
+            dropScan();
+          }
+        } else {
+          if (scan && motion) scan.update(scanProps(props));
+          if (scanLayer && props.intensity !== before.intensity) scanLayer.el.style.opacity = scanOpacity(props.intensity);
+        }
+        if (props.telemetry !== before.telemetry) {
+          cornersEl.hidden = !props.telemetry;
+          if (props.telemetry) renderReadouts();
+        }
+        if (props.align !== before.align || props.minHeight !== before.minHeight) {
+          sheet.setRules(rules2(sheet.selector, props));
+        }
+        if (props.seed !== before.seed) renderReadouts();
+        clock.update({ paused: props.paused, time: props.time });
+      },
+      destroy() {
+        clock.destroy();
+        tear.destroy();
+        dropScan();
+        head.remove();
+        actionsEl.remove();
+        cornersEl.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaCyberpunkHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

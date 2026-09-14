@@ -1,0 +1,883 @@
+<!doctype html>
+<!--
+  Pica · Ethereal Hero · ethereal-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Ethereal Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><h1>Air, drawn honestly.</h1></div>
+<script>
+"use strict";
+var PicaEtherealHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/ethereal-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // lib/dither-mask.ts
+  var VOID_SIGMA = 1.5;
+  var blueNoiseCache = /* @__PURE__ */ new Map();
+  function blueNoiseMatrix(size) {
+    const kept = blueNoiseCache.get(size);
+    if (kept) return kept;
+    const n = size * size;
+    const pattern = new Uint8Array(n);
+    const energy = new Float32Array(n);
+    const radius = Math.min(Math.ceil(VOID_SIGMA * 3), (size >> 1) - 1);
+    const span = radius * 2 + 1;
+    const kernel = new Float32Array(span * span);
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        kernel[(dy + radius) * span + dx + radius] = Math.exp(-(dx * dx + dy * dy) / (2 * VOID_SIGMA * VOID_SIGMA));
+      }
+    }
+    const spread = (index, sign) => {
+      const cx = index % size;
+      const cy = (index - cx) / size;
+      for (let dy = -radius; dy <= radius; dy++) {
+        const row = ((cy + dy) % size + size) % size * size;
+        const krow = (dy + radius) * span;
+        for (let dx = -radius; dx <= radius; dx++) {
+          const x = ((cx + dx) % size + size) % size;
+          energy[row + x] = (energy[row + x] ?? 0) + sign * (kernel[krow + dx + radius] ?? 0);
+        }
+      }
+    };
+    const peak = (want, most) => {
+      let best = 0;
+      let bestEnergy = Number.NaN;
+      for (let i = 0; i < n; i++) {
+        if (pattern[i] !== want) continue;
+        const e = energy[i] ?? 0;
+        if (Number.isNaN(bestEnergy) || (most ? e > bestEnergy : e < bestEnergy)) {
+          best = i;
+          bestEnergy = e;
+        }
+      }
+      return best;
+    };
+    const ones = Math.max(1, Math.round(n / 10));
+    const scatter = createRng(size);
+    for (let placed = 0; placed < ones; ) {
+      const i = Math.floor(scatter() * n);
+      if (pattern[i] === 0) {
+        pattern[i] = 1;
+        spread(i, 1);
+        placed++;
+      }
+    }
+    for (let pass = 0; pass < n; pass++) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      const hole = peak(0, false);
+      if (hole === cluster) {
+        pattern[cluster] = 1;
+        spread(cluster, 1);
+        break;
+      }
+      pattern[hole] = 1;
+      spread(hole, 1);
+    }
+    const rank = new Int32Array(n);
+    const settled = pattern.slice();
+    for (let r = ones - 1; r >= 0; r--) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      rank[cluster] = r;
+    }
+    pattern.set(settled);
+    energy.fill(0);
+    for (let i = 0; i < n; i++) if (pattern[i] === 1) spread(i, 1);
+    for (let r = ones; r < n; r++) {
+      const hole = peak(0, false);
+      pattern[hole] = 1;
+      spread(hole, 1);
+      rank[hole] = r;
+    }
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i++) out[i] = ((rank[i] ?? 0) + 0.5) / n;
+    blueNoiseCache.set(size, out);
+    return out;
+  }
+  function maskAt(mask, size, x, y) {
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return mask[my * size + mx] ?? 0.5;
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/noise.ts
+  var SIMPLEX_GRAD = [
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1,
+    0,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    -1,
+    0,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1
+  ];
+  var SIMPLEX_F2 = 0.5 * (Math.sqrt(3) - 1);
+  var SIMPLEX_G2 = (3 - Math.sqrt(3)) / 6;
+  var SIMPLEX_F3 = 1 / 3;
+  var SIMPLEX_G3 = 1 / 6;
+  function createNoise(seed = 1) {
+    const random = createRng(seed);
+    const p = [];
+    for (let i = 0; i < 256; i++) p.push(i);
+    for (let i = 255; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      const swap = p[i];
+      p[i] = p[j];
+      p[j] = swap;
+    }
+    const perm = [];
+    const grad = [];
+    for (let i = 0; i < 512; i++) {
+      const v = p[i & 255];
+      perm.push(v);
+      grad.push(v % 12 * 3);
+    }
+    function corner2(g, x, y) {
+      let t = 0.5 - x * x - y * y;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y);
+    }
+    function corner3(g, x, y, z) {
+      let t = 0.6 - x * x - y * y - z * z;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y + SIMPLEX_GRAD[g + 2] * z);
+    }
+    function noise2(xin, yin) {
+      const s = (xin + yin) * SIMPLEX_F2;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const t = (i + j) * SIMPLEX_G2;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const i1 = x0 > y0 ? 1 : 0;
+      const j1 = 1 - i1;
+      const ii = i & 255;
+      const jj = j & 255;
+      return 70 * (corner2(grad[ii + perm[jj]], x0, y0) + corner2(grad[ii + i1 + perm[jj + j1]], x0 - i1 + SIMPLEX_G2, y0 - j1 + SIMPLEX_G2) + corner2(grad[ii + 1 + perm[jj + 1]], x0 - 1 + 2 * SIMPLEX_G2, y0 - 1 + 2 * SIMPLEX_G2));
+    }
+    function noise3(xin, yin, zin) {
+      const s = (xin + yin + zin) * SIMPLEX_F3;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const k = Math.floor(zin + s);
+      const t = (i + j + k) * SIMPLEX_G3;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const z0 = zin - (k - t);
+      let i1 = 0, j1 = 0, k1 = 0, i2 = 0, j2 = 0, k2 = 0;
+      if (x0 >= y0) {
+        if (y0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          j2 = 1;
+        } else if (x0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          k2 = 1;
+        } else {
+          k1 = 1;
+          i2 = 1;
+          k2 = 1;
+        }
+      } else if (y0 < z0) {
+        k1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else if (x0 < z0) {
+        j1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else {
+        j1 = 1;
+        i2 = 1;
+        j2 = 1;
+      }
+      const ii = i & 255;
+      const jj = j & 255;
+      const kk = k & 255;
+      const g = SIMPLEX_G3;
+      return 32 * (corner3(grad[ii + perm[jj + perm[kk]]], x0, y0, z0) + corner3(grad[ii + i1 + perm[jj + j1 + perm[kk + k1]]], x0 - i1 + g, y0 - j1 + g, z0 - k1 + g) + corner3(grad[ii + i2 + perm[jj + j2 + perm[kk + k2]]], x0 - i2 + 2 * g, y0 - j2 + 2 * g, z0 - k2 + 2 * g) + corner3(grad[ii + 1 + perm[jj + 1 + perm[kk + 1]]], x0 - 1 + 3 * g, y0 - 1 + 3 * g, z0 - 1 + 3 * g));
+    }
+    return { noise2, noise3 };
+  }
+
+  // registry/sections/ethereal-hero/core.ts
+  var defaults = {
+    headline: "Atmosphere without haze.",
+    subhead: "Depth drawn as grain: blue noise that rises and thins until it reads as air.",
+    actions: [
+      { label: "Enter", href: "#" },
+      { label: "How it works", href: "#" }
+    ],
+    align: "center",
+    minHeight: 80,
+    density: 0.12,
+    horizon: 0.45,
+    rise: 6,
+    sway: 4,
+    pixel: 2,
+    fps: 15,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL_TIME = 1200;
+  var BLUE_SIZE = 32;
+  var AMBIENT = 15e-4;
+  var DENSITY_CURVE = 2.1;
+  var TONE_STEPS = 4;
+  var CLUMP_SPAN = 48;
+  var CLUMP_GAIN = 1.4;
+  var CLUMP_BASE = 0.35;
+  var CLUMP_RANGE = 0.75;
+  var BEND_CELLS = 5;
+  var BEND_TURNS = 1.5;
+  var BEND_RATE = 0.11;
+  var SWAY_RATE = 0.23;
+  var CRAWL = 0.04;
+  function clamp01(v) {
+    return v < 0 ? 0 : v > 1 ? 1 : v;
+  }
+  function vh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function rules(s, p) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const onFg = cssOn("fg");
+    const center = p.align === "center";
+    const edge = center ? "center" : "flex-start";
+    const textAlign = center ? "center" : "start";
+    const tint = `color-mix(in srgb, ${fg} 10%, transparent)`;
+    return [
+      `:where(${s}){min-height:${vh(p.minHeight)}vh}`,
+      `${s}{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;align-items:${edge};padding:clamp(1.5rem,6vw,5rem);padding-block-start:clamp(4rem,16vh,10rem);gap:1.6em;color:${fg};text-align:${textAlign}}`,
+      `${s} > :not([data-pica]){margin-block:0;text-align:${textAlign}}`,
+      `${s} > :not([data-pica]):not(:is(h1,h2,h3)){max-width:42rem}`,
+      `${s} > p:not([data-pica]){color:${muted}}`,
+      `${s} > :is(h1,h2,h3){margin-block:0;max-width:16em;font-size:clamp(2.1rem,5.2vw,3.9rem);line-height:1.28;font-weight:500;letter-spacing:-0.01em;color:${fg};text-wrap:balance;overflow-wrap:break-word}`,
+      `${s} > :is(h1,h2,h3):empty{display:none}`,
+      `${s} > [data-part="subhead"]{margin-block:0;max-width:56ch;font-size:clamp(1rem,1.3vw,1.15rem);line-height:1.85;color:${muted};overflow-wrap:break-word}`,
+      `${s} > [data-part="subhead"]:empty{display:none}`,
+      `${s} > [data-part="actions"]{display:flex;flex-wrap:wrap;align-items:center;gap:0.8em;margin-top:1.2em;justify-content:${edge}}`,
+      `${s} > [data-part="actions"]:empty{display:none}`,
+      `${s} > [data-part="actions"] a{appearance:none;margin:0;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.65em 1.3em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
+      // The solid link paints its background from currentColor and carries the fg itself, so the fallback
+      // for --pica-fg resolves to the link's own color rather than its inverted text. Its label sits in a
+      // span, where the same fallback resolves to the inherited fg and inverts it back for the text.
+      `${s} > [data-part="actions"] a[data-variant="solid"]{background:currentColor;color:${fg}}`,
+      `${s} > [data-part="actions"] a[data-variant="solid"] > [data-part="label"]{color:${onFg}}`,
+      `${s} > [data-part="actions"] a[data-variant="outline"]{background:transparent;color:${fg};border-color:${fg}}`,
+      `${s} > [data-part="actions"] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${fg} 88%, transparent)}`,
+      `${s} > [data-part="actions"] a[data-variant="outline"]:hover{background:${tint}}`,
+      `${s} > [data-part="actions"] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const sheet = scope(host);
+    const under = layer(host, "under");
+    const surface = createCanvas(under.el, {
+      autoSize: false,
+      css: "image-rendering:pixelated",
+      onResize: () => {
+        if (layout()) loop.redraw();
+      }
+    });
+    const canvas = surface.canvas;
+    const ctx = canvas.getContext("2d");
+    const mask = blueNoiseMatrix(BLUE_SIZE);
+    const headline = document.createElement("h1");
+    headline.setAttribute("data-pica", "");
+    headline.setAttribute("data-part", "headline");
+    const subhead = document.createElement("p");
+    subhead.setAttribute("data-pica", "");
+    subhead.setAttribute("data-part", "subhead");
+    const actions = document.createElement("div");
+    actions.setAttribute("data-pica", "");
+    actions.setAttribute("data-part", "actions");
+    host.append(headline, subhead, actions);
+    let cols = 1;
+    let rows = 1;
+    let values = new Float32Array(1);
+    let imageData = null;
+    let inkR = 0;
+    let inkG = 0;
+    let inkB = 0;
+    let inkA = 0;
+    let bgR = 0;
+    let bgG = 0;
+    let bgB = 0;
+    let bgA = 0;
+    let builtSeed = Number.NaN;
+    let builtDensity = Number.NaN;
+    let builtHorizon = Number.NaN;
+    let swayPhase = 0;
+    let bendPhase = 0;
+    function syncColors() {
+      const [r, g, b, a] = parseColor(palette.colors.muted);
+      const [br, bg, bb, ba] = parseColor(palette.colors.bg);
+      inkR = r;
+      inkG = g;
+      inkB = b;
+      inkA = a;
+      bgR = br;
+      bgG = bg;
+      bgB = bb;
+      bgA = ba;
+    }
+    const palette = watchPalette(host, () => {
+      syncColors();
+      loop.redraw();
+    });
+    syncColors();
+    function rebuild() {
+      const noise = createNoise(props.seed);
+      const phases = createRng(props.seed);
+      swayPhase = phases() * Math.PI * 2;
+      bendPhase = phases() * Math.PI * 2;
+      const density = Math.min(1, Math.max(0, props.density));
+      const horizon = Math.min(0.95, Math.max(0, props.horizon));
+      const span = Math.max(0.05, 1 - horizon);
+      for (let y = 0; y < rows; y++) {
+        const yn = (y + 0.5) / rows;
+        const ramp = Math.pow(clamp01((yn - horizon) / span), DENSITY_CURVE);
+        for (let x = 0; x < cols; x++) {
+          const clump = clamp01(noise.noise2(x / CLUMP_SPAN, y / CLUMP_SPAN) * CLUMP_GAIN * 0.5 + 0.5);
+          const tone = Math.round(ramp * (CLUMP_BASE + CLUMP_RANGE * clump) * TONE_STEPS) / TONE_STEPS;
+          values[y * cols + x] = AMBIENT + density * tone;
+        }
+      }
+      builtSeed = props.seed;
+      builtDensity = props.density;
+      builtHorizon = props.horizon;
+    }
+    function layout() {
+      const px = Math.max(1, Math.round(props.pixel));
+      const w = Math.max(1, Math.round(surface.cssWidth / px));
+      const h = Math.max(1, Math.round(surface.cssHeight / px));
+      let changed = false;
+      if (w !== cols || h !== rows || !imageData) {
+        cols = w;
+        rows = h;
+        canvas.width = cols;
+        canvas.height = rows;
+        imageData = ctx ? ctx.createImageData(cols, rows) : null;
+        values = new Float32Array(cols * rows);
+        changed = true;
+      }
+      if (changed || props.seed !== builtSeed || props.density !== builtDensity || props.horizon !== builtHorizon) {
+        rebuild();
+        changed = true;
+      }
+      return changed;
+    }
+    function draw(t) {
+      const context = ctx;
+      const data = imageData;
+      if (!context || !data) {
+        host.dataset.picaReady = "true";
+        return;
+      }
+      const tSec = t / 1e3;
+      const turn = tSec * CRAWL % 1;
+      const step = props.rise * tSec;
+      const swayX = Math.round(props.sway * Math.sin(tSec * SWAY_RATE + swayPhase));
+      const bendFreq = Math.PI * 2 * BEND_TURNS / Math.max(1, cols);
+      const bendSlide = tSec * BEND_RATE + bendPhase;
+      const buf = data.data;
+      let i = 0;
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const oy = Math.round(step + BEND_CELLS * Math.sin(x * bendFreq + bendSlide));
+          const th = maskAt(mask, BLUE_SIZE, x + swayX, y + oy) + turn;
+          const on = (values[i] ?? 0) >= (th >= 1 ? th - 1 : th);
+          const o = i * 4;
+          buf[o] = on ? inkR : bgR;
+          buf[o + 1] = on ? inkG : bgG;
+          buf[o + 2] = on ? inkB : bgB;
+          buf[o + 3] = on ? inkA : bgA;
+          i++;
+        }
+      }
+      context.putImageData(data, 0, 0);
+      host.dataset.picaReady = "true";
+    }
+    function renderText() {
+      headline.textContent = props.headline;
+      subhead.textContent = props.subhead;
+    }
+    function renderActions() {
+      actions.replaceChildren();
+      for (const [i, action] of props.actions.slice(0, 3).entries()) {
+        const a = document.createElement("a");
+        a.setAttribute("data-pica", "");
+        a.href = action.href;
+        if (i === 0) {
+          a.dataset.variant = "solid";
+          const label = document.createElement("span");
+          label.setAttribute("data-pica", "");
+          label.setAttribute("data-part", "label");
+          label.textContent = action.label;
+          a.append(label);
+        } else {
+          a.dataset.variant = "outline";
+          a.textContent = action.label;
+        }
+        actions.append(a);
+      }
+    }
+    sheet.setRules(rules(sheet.selector, props));
+    renderText();
+    renderActions();
+    layout();
+    const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL_TIME, frame: draw });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.headline !== before.headline || props.subhead !== before.subhead) renderText();
+        if (!sameJson(before.actions, props.actions)) renderActions();
+        if (props.align !== before.align || props.minHeight !== before.minHeight) sheet.setRules(rules(sheet.selector, props));
+        palette.refresh();
+        syncColors();
+        const changed = layout();
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+        if (changed || props.rise !== before.rise || props.sway !== before.sway) loop.redraw();
+      },
+      destroy() {
+        loop.destroy();
+        surface.destroy();
+        palette.destroy();
+        under.remove();
+        headline.remove();
+        subhead.remove();
+        actions.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaEtherealHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "y2k-hero",
+  title: "Y2K Hero",
+  category: "sections",
+  description: "A centered turn of the millennium hero with banded chrome rails, seeded starbursts, a scrolling ticker, and real calls to action.",
+  tags: ["y2k", "hero", "section", "chrome", "starburst", "ticker", "cta"],
+  facets: ["animated", "text", "background", "canvas", "dither"],
+  wave: 9,
+  animated: true,
+  decorative: false,
+  wraps: "content",
+  stage: "flow",
+  palette: ["fg", "accent", "bg"],
+  demo: {
+    props: {
+      headline: "The Year Three Thousand",
+      subhead: "Chrome plated components for the modern web.",
+    },
+    children: "<p>Hand assembled, seeded fresh on every visit, and best viewed at any resolution.</p>",
+  },
+  controls: {
+    headline: { type: "string" },
+    subhead: { type: "textarea", rows: 2 },
+    actions: { type: "json" },
+    align: { type: "select", options: ["center", "start"] },
+    minHeight: { type: "number", min: 30, max: 100, step: 5, label: "Min height (vh)" },
+    ticker: { type: "string" },
+    scanlines: { type: "boolean" },
+    rails: { type: "boolean" },
+    stars: { type: "number", min: 0, max: 4, step: 1 },
+    intensity: { type: "number", min: 0, max: 1, step: 0.05 },
+    sheen: { type: "boolean" },
+    fps: { type: "number", min: 5, max: 30, step: 1 },
+    paused: { type: "boolean" },
+    seed: { type: "number", min: 0, max: 9999, step: 1 },
+  },
+  original: true,
+  credits: [],
+};

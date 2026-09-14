@@ -1,0 +1,1229 @@
+<!doctype html>
+<!--
+  Pica · Bento Hero · bento-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Bento Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><p>Every component ships as one file: a React wrapper, or a plain HTML page that needs nothing.</p><p class="note">Free for personal projects.</p></div>
+<script>
+"use strict";
+var PicaBentoHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/bento-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults3,
+    mount: () => mount3
+  });
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/noise.ts
+  var SIMPLEX_GRAD = [
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1,
+    0,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    -1,
+    0,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1
+  ];
+  var SIMPLEX_F2 = 0.5 * (Math.sqrt(3) - 1);
+  var SIMPLEX_G2 = (3 - Math.sqrt(3)) / 6;
+  var SIMPLEX_F3 = 1 / 3;
+  var SIMPLEX_G3 = 1 / 6;
+  function createNoise(seed = 1) {
+    const random = createRng(seed);
+    const p = [];
+    for (let i = 0; i < 256; i++) p.push(i);
+    for (let i = 255; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      const swap = p[i];
+      p[i] = p[j];
+      p[j] = swap;
+    }
+    const perm = [];
+    const grad = [];
+    for (let i = 0; i < 512; i++) {
+      const v = p[i & 255];
+      perm.push(v);
+      grad.push(v % 12 * 3);
+    }
+    function corner2(g, x, y) {
+      let t = 0.5 - x * x - y * y;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y);
+    }
+    function corner3(g, x, y, z) {
+      let t = 0.6 - x * x - y * y - z * z;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y + SIMPLEX_GRAD[g + 2] * z);
+    }
+    function noise2(xin, yin) {
+      const s = (xin + yin) * SIMPLEX_F2;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const t = (i + j) * SIMPLEX_G2;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const i1 = x0 > y0 ? 1 : 0;
+      const j1 = 1 - i1;
+      const ii = i & 255;
+      const jj = j & 255;
+      return 70 * (corner2(grad[ii + perm[jj]], x0, y0) + corner2(grad[ii + i1 + perm[jj + j1]], x0 - i1 + SIMPLEX_G2, y0 - j1 + SIMPLEX_G2) + corner2(grad[ii + 1 + perm[jj + 1]], x0 - 1 + 2 * SIMPLEX_G2, y0 - 1 + 2 * SIMPLEX_G2));
+    }
+    function noise3(xin, yin, zin) {
+      const s = (xin + yin + zin) * SIMPLEX_F3;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const k = Math.floor(zin + s);
+      const t = (i + j + k) * SIMPLEX_G3;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const z0 = zin - (k - t);
+      let i1 = 0, j1 = 0, k1 = 0, i2 = 0, j2 = 0, k2 = 0;
+      if (x0 >= y0) {
+        if (y0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          j2 = 1;
+        } else if (x0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          k2 = 1;
+        } else {
+          k1 = 1;
+          i2 = 1;
+          k2 = 1;
+        }
+      } else if (y0 < z0) {
+        k1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else if (x0 < z0) {
+        j1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else {
+        j1 = 1;
+        i2 = 1;
+        j2 = 1;
+      }
+      const ii = i & 255;
+      const jj = j & 255;
+      const kk = k & 255;
+      const g = SIMPLEX_G3;
+      return 32 * (corner3(grad[ii + perm[jj + perm[kk]]], x0, y0, z0) + corner3(grad[ii + i1 + perm[jj + j1 + perm[kk + k1]]], x0 - i1 + g, y0 - j1 + g, z0 - k1 + g) + corner3(grad[ii + i2 + perm[jj + j2 + perm[kk + k2]]], x0 - i2 + 2 * g, y0 - j2 + 2 * g, z0 - k2 + 2 * g) + corner3(grad[ii + 1 + perm[jj + 1 + perm[kk + 1]]], x0 - 1 + 3 * g, y0 - 1 + 3 * g, z0 - 1 + 3 * g));
+    }
+    return { noise2, noise3 };
+  }
+
+  // lib/ramp.ts
+  var FALLBACK_RAMP = " .:-=+*#%@";
+  var rampCache = /* @__PURE__ */ new Map();
+  function uniqueGlyphs(chars) {
+    return Array.from(new Set(Array.from(chars.length > 0 ? chars : FALLBACK_RAMP)));
+  }
+  function fontSettled(fontFamily) {
+    try {
+      return document.fonts.check(`12px ${fontFamily}`);
+    } catch {
+      return true;
+    }
+  }
+  function inkMaps(glyphs, fontFamily, lineHeight, n) {
+    if (typeof document === "undefined") return null;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    const fontPx = 40;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    const w = Math.max(1, Math.ceil(ctx.measureText("M").width || fontPx * 0.6));
+    const h = Math.max(1, Math.ceil(fontPx * lineHeight));
+    canvas.width = w;
+    canvas.height = h;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#000";
+    return glyphs.map((glyph) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillText(glyph, 0, h / 2);
+      const alpha = ctx.getImageData(0, 0, w, h).data;
+      const sums = new Array(n * n).fill(0);
+      for (let y = 0; y < h; y++) {
+        const sy = Math.min(n - 1, Math.floor(y / h * n));
+        for (let x = 0; x < w; x++) {
+          const k = sy * n + Math.min(n - 1, Math.floor(x / w * n));
+          sums[k] = (sums[k] ?? 0) + (alpha[(y * w + x) * 4 + 3] ?? 0);
+        }
+      }
+      return sums;
+    });
+  }
+  function measureRamp(chars, fontFamily, lineHeight = 1.2) {
+    const glyphs = uniqueGlyphs(chars);
+    const key = `${fontFamily}|${lineHeight}|${glyphs.join("")}`;
+    const cached = rampCache.get(key);
+    if (cached) return cached;
+    const maps = inkMaps(glyphs, fontFamily, lineHeight, 1);
+    if (!maps) {
+      const last = Math.max(1, glyphs.length - 1);
+      return { glyphs, levels: glyphs.map((_, i) => i / last) };
+    }
+    const order = glyphs.map((glyph, i) => ({ glyph, ink: maps[i]?.[0] ?? 0 })).sort((a, b) => a.ink - b.ink);
+    const lightest = order[0]?.ink ?? 0;
+    const span = (order[order.length - 1]?.ink ?? 1) - lightest || 1;
+    const ramp = {
+      glyphs: order.map((o) => o.glyph),
+      levels: order.map((o) => (o.ink - lightest) / span)
+    };
+    if (fontSettled(fontFamily)) rampCache.set(key, ramp);
+    return ramp;
+  }
+  function pick(ramp, v) {
+    const { glyphs, levels } = ramp;
+    const last = glyphs.length - 1;
+    if (last < 0) return " ";
+    if (v <= 0) return glyphs[0] ?? " ";
+    if (v >= 1) return glyphs[last] ?? " ";
+    let lo = 0;
+    let hi = last;
+    while (hi - lo > 1) {
+      const mid = lo + hi >> 1;
+      if ((levels[mid] ?? 0) < v) lo = mid;
+      else hi = mid;
+    }
+    const nearer = v - (levels[lo] ?? 0) <= (levels[hi] ?? 1) - v ? lo : hi;
+    return glyphs[nearer] ?? " ";
+  }
+
+  // registry/ascii/ascii-noise-field/core.ts
+  var defaults = {
+    scale: 0.08,
+    speed: 0.15,
+    octaves: 2,
+    contrast: 1.4,
+    density: 0.45,
+    glyphs: FALLBACK_RAMP,
+    fontSize: 12,
+    fontFamily: GRID_FONT,
+    lineHeight: 1.2,
+    fps: 24,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL_TIME = 1200;
+  var OCTAVE_GAIN = 0.5;
+  var MAX_OCTAVES = 3;
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let noise = createNoise(props.seed);
+    let ramp = measureRamp(props.glyphs, props.fontFamily, props.lineHeight);
+    const freq = [1, 1, 1];
+    const rowCoord = [0, 0, 0];
+    const timeCoord = [0, 0, 0];
+    function gridOptions(p) {
+      return { fontFamily: p.fontFamily, fontSize: p.fontSize, columns: 0, lineHeight: p.lineHeight, renderer: "auto", color: "" };
+    }
+    function draw(t) {
+      const { cols, rows, aspect } = grid;
+      const octaves = Math.min(MAX_OCTAVES, Math.max(1, Math.round(props.octaves)));
+      const scale = props.scale;
+      const contrast = props.contrast;
+      const density = props.density;
+      const seconds = t / 1e3 * props.speed;
+      let f = 1;
+      for (let o = 0; o < octaves; o++) {
+        freq[o] = f;
+        timeCoord[o] = seconds * f;
+        f *= 2;
+      }
+      for (let y = 0; y < rows; y++) {
+        for (let o = 0; o < octaves; o++) rowCoord[o] = y * scale / aspect * (freq[o] ?? 1);
+        for (let x = 0; x < cols; x++) {
+          let sum = 0;
+          let amp = 1;
+          let norm = 0;
+          for (let o = 0; o < octaves; o++) {
+            sum += noise.noise3(x * scale * (freq[o] ?? 1), rowCoord[o] ?? 0, timeCoord[o] ?? 0) * amp;
+            norm += amp;
+            amp *= OCTAVE_GAIN;
+          }
+          const level = sum / norm / 2 + 0.5;
+          const shaped = Math.min(1, Math.max(0, (level - density) * contrast + 0.5));
+          grid.set(x, y, pick(ramp, shaped));
+        }
+      }
+      grid.flush();
+      host.dataset.picaReady = "true";
+    }
+    const grid = createGrid(host, gridOptions(props), () => {
+      ramp = measureRamp(props.glyphs, props.fontFamily, props.lineHeight);
+      loop.redraw();
+    });
+    const loop = createLoop({
+      el: host,
+      fps: props.fps,
+      paused: props.paused,
+      time: props.time,
+      still: STILL_TIME,
+      frame: draw
+    });
+    labelHost(host, "");
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.seed !== before.seed) noise = createNoise(props.seed);
+        if (props.glyphs !== before.glyphs || props.fontFamily !== before.fontFamily || props.lineHeight !== before.lineHeight) {
+          ramp = measureRamp(props.glyphs, props.fontFamily, props.lineHeight);
+        }
+        if (props.fontFamily !== before.fontFamily || props.fontSize !== before.fontSize || props.lineHeight !== before.lineHeight) {
+          grid.update(gridOptions(props));
+        }
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+      },
+      destroy() {
+        loop.destroy();
+        grid.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+
+  // lib/blocks.ts
+  var BRAILLE_BASE = 10240;
+  function brailleDot(row, col) {
+    if (row === 3) return col === 0 ? 64 : 128;
+    return 1 << (col === 0 ? row : row + 3);
+  }
+  function braille(bits) {
+    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
+  }
+  var LOWER_EIGHTHS = " ▁▂▃▄▅▆▇█";
+  var clampEighths = (n) => Math.max(0, Math.min(8, Math.round(n)));
+  function lowerEighth(n) {
+    return LOWER_EIGHTHS[clampEighths(n)] ?? " ";
+  }
+
+  // registry/text-mode/ascii-sparkline/core.ts
+  var defaults2 = {
+    values: [
+      3.1,
+      3.5,
+      3.3,
+      3.9,
+      4.4,
+      4.1,
+      4.7,
+      5.2,
+      4.9,
+      5.5,
+      6.1,
+      5.8,
+      6.4,
+      7,
+      6.7,
+      7.3,
+      7.9,
+      8.4,
+      9.1,
+      9.8,
+      9.3,
+      8.6,
+      7.9,
+      7.2
+    ],
+    mode: "blocks",
+    width: 0,
+    min: null,
+    max: null,
+    label: "trend",
+    fontFamily: GRID_FONT
+  };
+  function resample(source, count) {
+    const last = source.length - 1;
+    const out = new Array(count);
+    for (let i = 0; i < count; i++) {
+      const t = count > 1 ? i * last / (count - 1) : 0;
+      const lo = Math.floor(t);
+      const hi = Math.min(lo + 1, last);
+      const frac = t - lo;
+      out[i] = (source[lo] ?? 0) * (1 - frac) + (source[hi] ?? 0) * frac;
+    }
+    return out;
+  }
+  function render(props, clean) {
+    if (clean.length === 0) return "";
+    const lo = props.min ?? Math.min(...clean);
+    const hi = props.max ?? Math.max(...clean);
+    const span = hi - lo;
+    const scale = (v) => span > 0 ? Math.min(1, Math.max(0, (v - lo) / span)) : 0.5;
+    if (props.mode === "braille") {
+      const cells2 = props.width > 0 ? props.width : Math.ceil(clean.length / 2);
+      const dots = resample(clean, cells2 * 2);
+      let text2 = "";
+      for (let c = 0; c < cells2; c++) {
+        let bits = 0;
+        for (let col = 0; col < 2; col++) {
+          const t = scale(dots[c * 2 + col] ?? lo);
+          const row = Math.min(3, Math.max(0, Math.round((1 - t) * 3)));
+          bits |= brailleDot(row, col);
+        }
+        text2 += braille(bits);
+      }
+      return text2;
+    }
+    const cells = props.width > 0 ? props.width : clean.length;
+    let text = "";
+    for (const v of resample(clean, cells)) {
+      const level = Math.min(7, Math.max(0, Math.round(scale(v) * 7)));
+      text += lowerEighth(level + 1);
+    }
+    return text;
+  }
+  function short(n) {
+    return String(Math.round(n * 10) / 10);
+  }
+  function describe(props, clean) {
+    if (clean.length === 0) return `${props.label}: no data`;
+    const lo = props.min ?? Math.min(...clean);
+    const hi = props.max ?? Math.max(...clean);
+    const last = clean[clean.length - 1] ?? 0;
+    const unit = clean.length === 1 ? "value" : "values";
+    return `${props.label}: ${clean.length} ${unit} from ${short(lo)} to ${short(hi)}, last ${short(last)}`;
+  }
+  var mount2 = (host, initial = {}) => {
+    let props = { ...defaults2, ...initial };
+    const view = document.createElement("span");
+    view.setAttribute("data-pica", "");
+    view.setAttribute("aria-hidden", "true");
+    view.style.whiteSpace = "nowrap";
+    view.style.userSelect = "none";
+    view.style.pointerEvents = "none";
+    view.style.color = cssVar("fg");
+    host.appendChild(view);
+    function draw() {
+      const clean = props.values.filter((v) => Number.isFinite(v));
+      view.style.fontFamily = props.fontFamily;
+      view.textContent = render(props, clean);
+      labelHost(host, describe(props, clean));
+      host.dataset.picaReady = "true";
+    }
+    draw();
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        draw();
+      },
+      destroy() {
+        view.remove();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+
+  // registry/sections/bento-hero/core.ts
+  var defaults3 = {
+    headline: "Components drawn in text.",
+    subhead: "A library of text-mode components for React and plain HTML, each one generated as a single file.",
+    actions: [
+      { label: "Browse components", href: "#components" },
+      { label: "Read the docs", href: "#docs" }
+    ],
+    facts: [
+      { label: "Components", value: "70+" },
+      { label: "Median size", value: "4.6 KB" },
+      { label: "Dependencies", value: "0" }
+    ],
+    trend: [14, 16, 18, 19, 21, 23, 26, 29, 27, 31, 34, 38],
+    align: "start",
+    field: "noise",
+    intensity: 0.25,
+    minHeight: 60,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var TRAY_COLLAPSE = 620;
+  var TRAY_ROWS = 40;
+  var TRAY_LAST = TRAY_ROWS + 3;
+  var GROUP = ":not([data-pica]),[data-pica-lower]";
+  var FIELD_GLYPHS = " .:-=";
+  var LOWER_SEED = 5;
+  var SIDE_SEED = 11;
+  var GAP = "clamp(0.7rem,1.5vw,1.2rem)";
+  var PAD = "clamp(1.3rem,3vw,2.2rem)";
+  function clampVh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function noiseContrast(intensity) {
+    return 0.7 + Math.min(1, Math.max(0, intensity)) * 0.8;
+  }
+  function noiseDensity(intensity) {
+    return 0.78 - Math.min(1, Math.max(0, intensity)) * 0.22;
+  }
+  function fieldProps(p, salt) {
+    return { paused: p.paused, time: p.time, seed: hashSeed(p.seed, salt, 7), contrast: noiseContrast(p.intensity), density: noiseDensity(p.intensity), glyphs: FIELD_GLYPHS, fontSize: 10 };
+  }
+  function part(tag, name) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute(`data-pica-${name}`, "");
+    return node;
+  }
+  function fieldHostEl() {
+    const el = part("div", "fieldhost");
+    el.style.position = "absolute";
+    el.style.inset = "0.55em";
+    return el;
+  }
+  function trayRules(s, p, hasSide) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const edge = p.align === "center" ? "center" : "flex-start";
+    const textAlign = p.align === "center" ? "center" : "start";
+    const pad = PAD;
+    const gap = GAP;
+    const hairline = `color-mix(in srgb, ${muted} 55%, transparent)`;
+    const columns = hasSide ? "minmax(0,3fr) minmax(0,2fr)" : "minmax(0,1fr)";
+    const slot = `${s} > :not([data-pica]), ${s} > [data-pica-lower]`;
+    return [
+      `:where(${s}){min-height:${clampVh(p.minHeight)}vh}`,
+      `${s}{box-sizing:border-box;position:relative;display:grid;grid-template-columns:${columns};grid-template-rows:auto repeat(${TRAY_ROWS},minmax(0,auto)) minmax(auto,1fr);column-gap:${gap};row-gap:0;padding:${gap};color:${fg};text-align:${textAlign}}`,
+      `${s}[data-pica-fit="min"]{grid-template-columns:minmax(0,1fr)}`,
+      `${s} > [data-pica-lead]{grid-column:1;grid-row:1;min-width:0;box-sizing:border-box;display:flex;flex-direction:column;gap:0.55em;margin:0 0 ${gap};padding:${pad};border:1px solid ${muted};text-align:${textAlign}}`,
+      `${s} [data-pica-headline]{margin:0;font-size:clamp(2.1rem,5vw,3.6rem);line-height:1.05;font-weight:640;letter-spacing:-0.015em;overflow-wrap:break-word}`,
+      `${s} [data-pica-subhead]{margin:0;font-size:clamp(0.95rem,1.4vw,1.12rem);line-height:1.55;color:${muted};max-width:36em${p.align === "center" ? ";margin-inline:auto" : ""}}`,
+      `${s} [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.7em;justify-content:${edge};margin-top:0.45em}`,
+      `${s} [data-pica-actions]:empty{display:none}`,
+      `${s} [data-pica-actions] a{appearance:none;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.6em 1.25em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
+      `${s} [data-pica-actions] a[data-variant="solid"]{background:${accent};color:${cssOn("accent")}}`,
+      `${s} [data-pica-actions] a[data-variant="outline"]{background:transparent;color:${fg};border-color:${fg}}`,
+      `${s} [data-pica-actions] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${accent} 85%, ${fg})}`,
+      `${s} [data-pica-actions] a[data-variant="outline"]:hover{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${s} [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${slot}{grid-column:1;min-width:0;box-sizing:border-box;margin-block:0;padding:0.4em ${pad};border-left:1px solid ${muted};border-right:1px solid ${muted};overflow-wrap:break-word}`,
+      `${s} > :nth-child(1 of ${GROUP}){border-top:1px solid ${muted}}`,
+      `${s} > :nth-child(1 of ${GROUP}):not([data-pica-lower]){padding-top:${pad}}`,
+      `${s} > :nth-last-child(1 of ${GROUP}){border-bottom:1px solid ${muted}}`,
+      `${s} > :nth-last-child(1 of ${GROUP}):not([data-pica-lower]){padding-bottom:${pad}}`,
+      `${s} > [data-pica-lower]{overflow:hidden;padding:0;min-height:7rem}`,
+      `${s} > :nth-child(n+2 of ${GROUP})[data-pica-lower]{border-top:1px solid ${hairline}}`,
+      `${s} > [data-pica-side]{min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:${gap};align-content:start}`,
+      `${s}[data-pica-fit="min"] > [data-pica-side]{grid-template-columns:minmax(0,1fr)}`,
+      `${s} [data-pica-cell]{min-width:0;box-sizing:border-box;position:relative;display:flex;flex-direction:column;justify-content:center;gap:0.45em;padding:0.75em 0.9em;border:1px solid ${muted}}`,
+      `${s} [data-pica-cell][data-pica-wide]{grid-column:1/-1}`,
+      `${s}[data-pica-fit="min"] [data-pica-cell][data-pica-wide]{grid-column:auto}`,
+      `${s} [data-pica-flabel]{font-family:${GRID_FONT};font-size:0.68em;letter-spacing:0.05em;text-transform:uppercase;color:${muted}}`,
+      `${s} [data-pica-fvalue]{font-family:${GRID_FONT};font-size:clamp(1.1rem,1.9vw,1.6rem);font-variant-numeric:tabular-nums;color:${fg}}`,
+      `${s} [data-pica-sparkhost]{font-size:0.85em;line-height:1.3;min-width:0}`,
+      `${s} [data-pica-cell][data-pica-fieldcell]{padding:0;overflow:hidden;min-height:6rem}`,
+      // The field inks in muted rather than fg: the grid inside sets its own color from --pica-fg, so the
+      // token is rerouted on its host. The fallback repeats muted's own fallback without naming the token,
+      // which would be a self-reference and leave the field at full fg.
+      `${s} [data-pica-fieldhost]{--pica-fg:var(--pica-muted,color-mix(in srgb,currentColor 65%,transparent))}`
+    ].join("\n");
+  }
+  var mount3 = (host, initial = {}) => {
+    let props = { ...defaults3, ...initial };
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    let destroyed = false;
+    const lead = part("div", "lead");
+    const headlineEl = part("h1", "headline");
+    const subheadEl = part("p", "subhead");
+    const actionsEl = part("div", "actions");
+    lead.append(headlineEl, subheadEl, actionsEl);
+    const lower = part("div", "lower");
+    lower.style.position = "relative";
+    const lowerHost = fieldHostEl();
+    lower.append(lowerHost);
+    const side = part("div", "side");
+    host.prepend(lead);
+    host.append(lower, side);
+    let spark = null;
+    let lowerField = null;
+    let sideField = null;
+    let leadOn = true;
+    function renderLead() {
+      headlineEl.textContent = props.headline;
+      headlineEl.style.display = props.headline === "" ? "none" : "";
+      subheadEl.textContent = props.subhead;
+      subheadEl.style.display = props.subhead === "" ? "none" : "";
+      renderActions();
+      leadOn = props.headline !== "" || props.subhead !== "" || actionsEl.childElementCount > 0;
+      lead.style.display = leadOn ? "" : "none";
+    }
+    function renderActions() {
+      actionsEl.replaceChildren();
+      for (const [i, action] of props.actions.slice(0, 3).entries()) {
+        const a = document.createElement("a");
+        a.setAttribute("data-pica", "");
+        a.dataset.variant = i === 0 ? "solid" : "outline";
+        a.href = action.href;
+        a.textContent = action.label;
+        actionsEl.append(a);
+      }
+    }
+    function factTile(fact) {
+      const cell = part("div", "cell");
+      const label = part("div", "flabel");
+      label.textContent = fact.label;
+      const value = part("div", "fvalue");
+      value.textContent = fact.value;
+      cell.append(label, value);
+      return cell;
+    }
+    function trendTile() {
+      const cell = part("div", "cell");
+      const label = part("div", "flabel");
+      label.textContent = "Trend";
+      const clean = props.trend.filter((v) => Number.isFinite(v));
+      const value = part("div", "fvalue");
+      value.textContent = String(clean[clean.length - 1] ?? 0);
+      const sub = part("div", "sparkhost");
+      cell.append(label, value, sub);
+      spark = mount2(sub, { values: [...props.trend], label: "trend" });
+      return cell;
+    }
+    function fieldTile() {
+      const cell = part("div", "cell");
+      cell.setAttribute("data-pica-fieldcell", "");
+      const sub = fieldHostEl();
+      cell.append(sub);
+      sideField = mount(sub, fieldProps(props, SIDE_SEED));
+      return cell;
+    }
+    function syncLower() {
+      if (props.field === "noise") {
+        if (!lower.isConnected) {
+          if (side.isConnected) host.insertBefore(lower, side);
+          else host.append(lower);
+        }
+        if (!lowerField) lowerField = mount(lowerHost, fieldProps(props, LOWER_SEED));
+      } else {
+        lowerField?.destroy();
+        lowerField = null;
+        if (lower.isConnected) lower.remove();
+      }
+    }
+    function buildMinors() {
+      spark?.destroy();
+      spark = null;
+      sideField?.destroy();
+      sideField = null;
+      const tiles = props.facts.slice(0, 4).map(factTile);
+      if (props.trend.some((v) => Number.isFinite(v))) tiles.push(trendTile());
+      if (props.field === "noise") tiles.push(fieldTile());
+      side.replaceChildren();
+      if (tiles.length === 0) {
+        if (side.isConnected) side.remove();
+        return;
+      }
+      if (tiles.length % 2 === 1) tiles[tiles.length - 1]?.setAttribute("data-pica-wide", "");
+      side.append(...tiles);
+      if (!side.isConnected) host.append(side);
+    }
+    function applyLayout() {
+      const min = host.clientWidth < TRAY_COLLAPSE;
+      attrs.set("data-pica-fit", min ? "min" : null);
+      const kids = host.querySelectorAll(":scope > :not([data-pica])").length;
+      const after = 1 + (leadOn ? 1 : 0) + kids;
+      const lowOn = lower.isConnected;
+      if (min) {
+        lower.style.gridRow = `${Math.min(after, TRAY_LAST - 1)} / span 1`;
+        side.style.gridColumn = "1";
+        side.style.gridRow = `${Math.min(after + (lowOn ? 1 : 0), TRAY_LAST - 1)} / -1`;
+        side.style.marginTop = kids + (lowOn ? 1 : 0) > 0 ? GAP : "0";
+      } else {
+        lower.style.gridRow = `${Math.min(after, TRAY_LAST - 1)} / -1`;
+        side.style.gridColumn = "2";
+        side.style.gridRow = "1 / -1";
+        side.style.marginTop = "0";
+      }
+      const tiles = side.children.length;
+      const rows = Math.ceil(tiles / (min ? 1 : 2));
+      const flexes = props.field === "noise" && tiles > 0;
+      side.style.gridTemplateRows = flexes ? rows > 1 ? `repeat(${rows - 1},auto) minmax(auto,1fr)` : "minmax(auto,1fr)" : `repeat(${Math.max(rows, 1)},auto)`;
+    }
+    const resizer = typeof ResizeObserver === "function" ? new ResizeObserver(applyLayout) : null;
+    const mutator = typeof MutationObserver === "function" ? new MutationObserver(applyLayout) : null;
+    renderLead();
+    buildMinors();
+    syncLower();
+    sheet.setRules(trayRules(sheet.selector, props, side.isConnected));
+    applyLayout();
+    resizer?.observe(host);
+    mutator?.observe(host, { childList: true });
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (changed(before, props, ["headline", "subhead"]) || !sameJson(before.actions, props.actions)) renderLead();
+        if (changed(before, props, ["facts", "trend", "field"])) {
+          buildMinors();
+          syncLower();
+          sheet.setRules(trayRules(sheet.selector, props, side.isConnected));
+        }
+        if (changed(before, props, ["paused", "time", "seed", "intensity"])) {
+          lowerField?.update(fieldProps(props, LOWER_SEED));
+          sideField?.update(fieldProps(props, SIDE_SEED));
+        }
+        if (changed(before, props, ["align", "minHeight"])) sheet.setRules(trayRules(sheet.selector, props, side.isConnected));
+        applyLayout();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        resizer?.disconnect();
+        mutator?.disconnect();
+        spark?.destroy();
+        lowerField?.destroy();
+        sideField?.destroy();
+        lead.remove();
+        lower.remove();
+        side.remove();
+        sheet.destroy();
+        attrs.restore();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaBentoHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

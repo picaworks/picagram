@@ -15,6 +15,7 @@ import { extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, type Frame, type Page } from "@playwright/test";
 import { FACETS } from "../lib/meta";
+import { searchText } from "../src/lib/catalog";
 import { BASE_PATH } from "./config";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -187,6 +188,8 @@ async function main(): Promise<void> {
     slug: string;
     facets: string[];
     tags: string[];
+    description: string;
+    category: string;
   }[];
   const site = await serve();
   const home = `${site.url}${BASE_PATH}/`;
@@ -448,12 +451,14 @@ async function main(): Promise<void> {
     });
     await dark.locator(".layers-facets .chip", { hasText: new RegExp(`^${facet} `) }).click();
 
-    const haystack = (item: (typeof catalog)[number]) =>
-      [item.title, item.slug, ...item.tags, ...item.facets].join(" ").toLowerCase();
+    // Uniqueness is decided by the site's own matches(), not a copy of it. This test used to carry its own
+    // haystack that left out description and category, so it could pick a tag it believed unique while the
+    // search box, reading more fields, found a second component. That stayed hidden until the catalog grew
+    // enough to change which tag the loop reaches first.
     let owner = catalog[0];
     let uniqueTag = "";
     for (const item of catalog) {
-      const only = item.tags.find((tag) => catalog.filter((other) => haystack(other).includes(tag.toLowerCase())).length === 1);
+      const only = item.tags.find((tag) => catalog.filter((other) => searchText(other).includes(tag.toLowerCase())).length === 1);
       if (only) {
         owner = item;
         uniqueTag = only;

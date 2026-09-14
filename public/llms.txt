@@ -103,10 +103,31 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 ## Sections
 
 - [Bento Grid](https://picagram.dev/c/bento-grid.md): A CSS grid section that sizes its children by position into a feature, mosaic, or equal column pattern.
+- [Bento Hero](https://picagram.dev/c/bento-hero.md): A hero laid out as a bento tray: a lead cell for the headline and calls to action over a content cell, beside a column of smaller fact and field cells.
+- [Bohemian Hero](https://picagram.dev/c/bohemian-hero.md): A hero dressed like a weaving: seeded thread bands, a scalloped hairline arch, and copy offset against a selvedge joined by a woven crossband.
+- [Brutalist Hero](https://picagram.dev/c/brutalist-hero.md): A hero section that shows its structure: bordered blocks that collide, mono labels, and the accent as flat fill.
+- [Clay Hero](https://picagram.dev/c/clay-hero.md): Soft inflated forms settle behind the page's own content, shaded in screened tone bands.
+- [Cyberpunk Hero](https://picagram.dev/c/cyberpunk-hero.md): A hero that reads as a terminal held open too long, with scanlines over everything, a headline that tears in rare bursts, and readouts in the corners.
+- [Editorial Hero](https://picagram.dev/c/editorial-hero.md): A magazine opening spread: a deck, a large headline, a measured standfirst with a drop capital, and a byline between hairlines.
+- [Ethereal Hero](https://picagram.dev/c/ethereal-hero.md): A hero that floats its copy in clear air while sparse blue noise grain rises from the ground below.
+- [Glass Hero](https://picagram.dev/c/glass-hero.md): A hero that floats a frosted pane of screened dots over a field drifting behind it.
 - [Hero](https://picagram.dev/c/hero.md): A page hero that adds calls to action and a composed background behind a headline and copy.
+- [Liquid Glass Hero](https://picagram.dev/c/liquid-glass-hero.md): A hero behind a drifting lens slab that bends the printed field beneath its curved edge, screened into tone steps.
+- [Luxury Hero](https://picagram.dev/c/luxury-hero.md): A hero built from space alone: a small tracked headline, one accent hairline, and text links with rules beneath them.
+- [Maximalist Hero](https://picagram.dev/c/maximalist-hero.md): A maximalist page hero that packs two beating fields, an index and a boxed figure, and edge bands around a headline and copy.
+- [Minimal Hero](https://picagram.dev/c/minimal-hero.md): A hero reduced to one large headline, a line of support, and a single call to action.
+- [Neumorphic Hero](https://picagram.dev/c/neumorphic-hero.md): A soft UI hero that trades blur for screens: a slab and a rail of stat tiles rise from the ground on dithered bevels, and the call to action presses in.
+- [Pixel Art Hero](https://picagram.dev/c/pixel-art-hero.md): A hero drawn as one low resolution screen: pixel type, snapped frames, and a field that shimmers a cell at a time.
 - [Pricing](https://picagram.dev/c/pricing.md): Pricing tiers with a monthly and yearly switch, each plan a card with its own call to action.
+- [Scrapbook Hero](https://picagram.dev/c/scrapbook-hero.md): A hero assembled like a scrapbook page, with seeded tilts, torn deckle edges, taped corners, and a pasted photocopy print around the page's own copy.
+- [Sketch Hero](https://picagram.dev/c/sketch-hero.md): A hero still being drawn, with hatched fills, overshot construction lines, and working annotations behind the content.
 - [Stats KPI](https://picagram.dev/c/stats-kpi.md): A row of key numbers in mono figures, each with a delta glyph and an inline trend sparkline.
+- [Surrealist Hero](https://picagram.dev/c/surrealist-hero.md): A hero behind which a dithered sea stands at two heights, under a sun reflected in the wrong shape.
+- [Swiss Hero](https://picagram.dev/c/swiss-hero.md): A hero set on a strict twelve column grid: flush left type, hairline rules, white space, and one accent.
 - [Testimonials](https://picagram.dev/c/testimonials.md): Quotes shown as a grid of cards, or as one quote at a time that resolves from scrambled glyphs.
+- [Victorian Hero](https://picagram.dev/c/victorian-hero.md): A playbill hero: a doubled ruled border with fleuron corners, stacked lines in many sizes, and rules between them.
+- [Wabi Sabi Hero](https://picagram.dev/c/wabi-sabi-hero.md): A hero worn like a handled page: a frame missing one side, rules that stop short, and grain that gathers at the edges.
+- [Y2K Hero](https://picagram.dev/c/y2k-hero.md): A centered turn of the millennium hero with banded chrome rails, seeded starbursts, a scrolling ticker, and real calls to action.
 
 ## Immersive
 

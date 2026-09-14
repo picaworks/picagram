@@ -1,0 +1,1305 @@
+<!doctype html>
+<!--
+  Pica · Maximalist Hero · maximalist-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Maximalist Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><p>Seventy components drawn in text and counting, from glyph grids to WebGL fields, all reading the same four tones.</p><ul><li>React and single file HTML builds</li><li>No runtime dependencies</li><li>One palette, everywhere</li></ul></div>
+<script>
+"use strict";
+var PicaMaximalistHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/maximalist-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults4,
+    mount: () => mount4
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // lib/dither-mask.ts
+  var VOID_SIGMA = 1.5;
+  var blueNoiseCache = /* @__PURE__ */ new Map();
+  function blueNoiseMatrix(size) {
+    const kept = blueNoiseCache.get(size);
+    if (kept) return kept;
+    const n = size * size;
+    const pattern = new Uint8Array(n);
+    const energy = new Float32Array(n);
+    const radius = Math.min(Math.ceil(VOID_SIGMA * 3), (size >> 1) - 1);
+    const span = radius * 2 + 1;
+    const kernel = new Float32Array(span * span);
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        kernel[(dy + radius) * span + dx + radius] = Math.exp(-(dx * dx + dy * dy) / (2 * VOID_SIGMA * VOID_SIGMA));
+      }
+    }
+    const spread = (index, sign) => {
+      const cx = index % size;
+      const cy = (index - cx) / size;
+      for (let dy = -radius; dy <= radius; dy++) {
+        const row = ((cy + dy) % size + size) % size * size;
+        const krow = (dy + radius) * span;
+        for (let dx = -radius; dx <= radius; dx++) {
+          const x = ((cx + dx) % size + size) % size;
+          energy[row + x] = (energy[row + x] ?? 0) + sign * (kernel[krow + dx + radius] ?? 0);
+        }
+      }
+    };
+    const peak = (want, most) => {
+      let best = 0;
+      let bestEnergy = Number.NaN;
+      for (let i = 0; i < n; i++) {
+        if (pattern[i] !== want) continue;
+        const e = energy[i] ?? 0;
+        if (Number.isNaN(bestEnergy) || (most ? e > bestEnergy : e < bestEnergy)) {
+          best = i;
+          bestEnergy = e;
+        }
+      }
+      return best;
+    };
+    const ones = Math.max(1, Math.round(n / 10));
+    const scatter = createRng(size);
+    for (let placed = 0; placed < ones; ) {
+      const i = Math.floor(scatter() * n);
+      if (pattern[i] === 0) {
+        pattern[i] = 1;
+        spread(i, 1);
+        placed++;
+      }
+    }
+    for (let pass = 0; pass < n; pass++) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      const hole = peak(0, false);
+      if (hole === cluster) {
+        pattern[cluster] = 1;
+        spread(cluster, 1);
+        break;
+      }
+      pattern[hole] = 1;
+      spread(hole, 1);
+    }
+    const rank = new Int32Array(n);
+    const settled = pattern.slice();
+    for (let r = ones - 1; r >= 0; r--) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      rank[cluster] = r;
+    }
+    pattern.set(settled);
+    energy.fill(0);
+    for (let i = 0; i < n; i++) if (pattern[i] === 1) spread(i, 1);
+    for (let r = ones; r < n; r++) {
+      const hole = peak(0, false);
+      pattern[hole] = 1;
+      spread(hole, 1);
+      rank[hole] = r;
+    }
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i++) out[i] = ((rank[i] ?? 0) + 0.5) / n;
+    blueNoiseCache.set(size, out);
+    return out;
+  }
+  var clusterCache = /* @__PURE__ */ new Map();
+  function clusterMatrix(size) {
+    const kept = clusterCache.get(size);
+    if (kept) return kept;
+    const n = size * size;
+    const turn = Math.PI * 2 / size;
+    const spot = new Float32Array(n);
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) spot[y * size + x] = Math.cos(turn * (x + y)) + Math.cos(turn * (y - x));
+    }
+    const order = Array.from({ length: n }, (_, i) => i);
+    order.sort((a, b) => (spot[b] ?? 0) - (spot[a] ?? 0) || a - b);
+    const out = new Float32Array(n);
+    order.forEach((index, r) => {
+      out[index] = (r + 0.5) / n;
+    });
+    clusterCache.set(size, out);
+    return out;
+  }
+  function maskAt(mask, size, x, y) {
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return mask[my * size + mx] ?? 0.5;
+  }
+  function ditherLevels(values, width, height, levels, mask, size) {
+    const top = Math.max(1, Math.min(255, Math.floor(levels) - 1));
+    const out = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const i = y * width + x;
+        const scaled = Math.min(1, Math.max(0, values[i] ?? 0)) * top;
+        const band = Math.floor(scaled);
+        out[i] = Math.min(top, band + (scaled - band >= maskAt(mask, size, x, y) ? 1 : 0));
+      }
+    }
+    return out;
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // registry/dither/dither-waves/core.ts
+  var defaults = {
+    trains: 3,
+    period: 34,
+    spread: 27,
+    angle: 0,
+    levels: 2,
+    mask: "cluster",
+    pixel: 2,
+    speed: 0.12,
+    fps: 15,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL_TIME = 1200;
+  var MAX_TRAINS = 4;
+  var BLUE_SIZE = 32;
+  var CLUSTER_SIZE = 8;
+  var BASE_RATE = 0.4;
+  var TRAIN_RATE = [0.37, 0.53, 0.29, 0.61];
+  function maskFor(kind) {
+    return kind === "blue" ? { mask: blueNoiseMatrix(BLUE_SIZE), size: BLUE_SIZE } : { mask: clusterMatrix(CLUSTER_SIZE), size: CLUSTER_SIZE };
+  }
+  function seedPhases(seed) {
+    const rng = createRng(seed);
+    return Array.from({ length: MAX_TRAINS }, () => rng() * Math.PI * 2);
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let cols = 1;
+    let rows = 1;
+    let imageData = null;
+    let colCos = new Float32Array(0);
+    let colSin = new Float32Array(0);
+    let rowCos = new Float32Array(0);
+    let rowSin = new Float32Array(0);
+    let field = new Float32Array(0);
+    let inkR = 0;
+    let inkG = 0;
+    let inkB = 0;
+    let inkA = 255;
+    let cachedSeed = props.seed;
+    let phase0 = seedPhases(props.seed);
+    const surface = createCanvas(host, {
+      autoSize: false,
+      css: "image-rendering:pixelated",
+      onResize: () => {
+        if (layout()) loop.redraw();
+      }
+    });
+    const canvas = surface.canvas;
+    const ctx = canvas.getContext("2d");
+    function syncInk() {
+      const [r, g, b, a] = parseColor(palette.colors.fg);
+      inkR = r;
+      inkG = g;
+      inkB = b;
+      inkA = a;
+    }
+    const palette = watchPalette(host, () => {
+      syncInk();
+      loop.redraw();
+    });
+    syncInk();
+    function layout() {
+      const pixelSize = Math.max(1, props.pixel);
+      const w = Math.max(1, Math.round(surface.cssWidth / pixelSize));
+      const h = Math.max(1, Math.round(surface.cssHeight / pixelSize));
+      if (w === cols && h === rows && imageData) return false;
+      cols = w;
+      rows = h;
+      canvas.width = cols;
+      canvas.height = rows;
+      imageData = ctx ? ctx.createImageData(cols, rows) : null;
+      colCos = new Float32Array(MAX_TRAINS * cols);
+      colSin = new Float32Array(MAX_TRAINS * cols);
+      rowCos = new Float32Array(MAX_TRAINS * rows);
+      rowSin = new Float32Array(MAX_TRAINS * rows);
+      field = new Float32Array(cols * rows);
+      return true;
+    }
+    function draw(t) {
+      const context = ctx;
+      const data = imageData;
+      if (!context || !data) {
+        host.dataset.picaReady = "true";
+        return;
+      }
+      if (props.seed !== cachedSeed) {
+        cachedSeed = props.seed;
+        phase0 = seedPhases(cachedSeed);
+      }
+      const trainCount = Math.max(2, Math.min(MAX_TRAINS, Math.round(props.trains)));
+      const periodCells = Math.max(1, props.period);
+      const k = 2 * Math.PI / periodCells;
+      const angleBase = props.angle * Math.PI / 180;
+      const spreadRad = props.spread * Math.PI / 180;
+      const timeS = t * 1e-3 * props.speed;
+      for (let i = 0; i < trainCount; i++) {
+        const theta = angleBase + i * spreadRad;
+        const kx = k * Math.cos(theta);
+        const ky = k * Math.sin(theta);
+        const phase = (phase0[i] ?? 0) + timeS * BASE_RATE * (TRAIN_RATE[i] ?? 1);
+        const colBase = i * cols;
+        for (let x = 0; x < cols; x++) {
+          const a = kx * x;
+          colCos[colBase + x] = Math.cos(a);
+          colSin[colBase + x] = Math.sin(a);
+        }
+        const rowBase = i * rows;
+        for (let y = 0; y < rows; y++) {
+          const b = ky * y + phase;
+          rowCos[rowBase + y] = Math.cos(b);
+          rowSin[rowBase + y] = Math.sin(b);
+        }
+      }
+      let idx = 0;
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          let sum = 0;
+          for (let i = 0; i < trainCount; i++) {
+            const cc = colCos[i * cols + x] ?? 0;
+            const cs = colSin[i * cols + x] ?? 0;
+            const rc = rowCos[i * rows + y] ?? 0;
+            const rs = rowSin[i * rows + y] ?? 0;
+            sum += cc * rc - cs * rs;
+          }
+          field[idx] = sum / trainCount * 0.5 + 0.5;
+          idx++;
+        }
+      }
+      const { mask, size } = maskFor(props.mask);
+      const levels = Math.max(2, Math.min(4, Math.round(props.levels)));
+      const bands = ditherLevels(field, cols, rows, levels, mask, size);
+      const top = levels - 1;
+      const buf = data.data;
+      for (let p = 0; p < bands.length; p++) {
+        const o = p * 4;
+        const band = bands[p] ?? 0;
+        const alpha = top > 0 ? Math.round(band / top * inkA) : inkA;
+        buf[o] = inkR;
+        buf[o + 1] = inkG;
+        buf[o + 2] = inkB;
+        buf[o + 3] = alpha;
+      }
+      context.putImageData(data, 0, 0);
+      host.dataset.picaReady = "true";
+    }
+    labelHost(host, "");
+    layout();
+    const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL_TIME, frame: draw });
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        palette.refresh();
+        syncInk();
+        layout();
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+      },
+      destroy() {
+        loop.destroy();
+        surface.destroy();
+        palette.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+
+  // registry/effects/halftone-css/core.ts
+  var defaults2 = {
+    size: 14,
+    dot: 0.28,
+    fade: "radial",
+    angle: 45,
+    strength: 0.6
+  };
+  var mount2 = (host, initial = {}) => {
+    let props = { ...defaults2, ...initial };
+    const scoped = scope(host);
+    const dots = layer(host, "over");
+    labelHost(host, "");
+    scoped.setRules(sheet(scoped.selector, props));
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        scoped.setRules(sheet(scoped.selector, props));
+      },
+      destroy() {
+        scoped.destroy();
+        dots.remove();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  function sheet(selector, p) {
+    const radius = p.size * p.dot;
+    const half = p.size / 2;
+    const dot = `radial-gradient(circle at center, ${cssVar("fg")} ${radius}px, transparent ${radius}px)`;
+    const mask = maskImage(p.fade, p.angle);
+    const rules2 = [
+      `background-image:${dot},${dot}`,
+      `background-size:${p.size}px ${p.size}px,${p.size}px ${p.size}px`,
+      `background-position:0 0,${half}px ${half}px`,
+      `opacity:${p.strength}`
+    ];
+    if (mask) {
+      rules2.push(
+        `-webkit-mask-image:${mask}`,
+        `mask-image:${mask}`,
+        "-webkit-mask-repeat:no-repeat",
+        "mask-repeat:no-repeat",
+        "-webkit-mask-size:100% 100%",
+        "mask-size:100% 100%"
+      );
+    }
+    return `${selector} > div{${rules2.join(";")}}`;
+  }
+  function maskImage(fade, angle) {
+    if (fade === "radial") return "radial-gradient(circle at center, currentColor 0%, transparent 100%)";
+    if (fade === "linear") return `linear-gradient(${angle}deg, currentColor 0%, transparent 100%)`;
+    return "";
+  }
+
+  // registry/motion/marquee/core.ts
+  var defaults3 = {
+    speed: 40,
+    direction: "left",
+    gap: 2,
+    pauseOnHover: true,
+    fps: 30,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var DATA_PICA = "data-pica";
+  var OFFSET_VAR = "--pica-marquee-x";
+  var mount3 = (host, initial = {}) => {
+    let props = { ...defaults3, ...initial };
+    const sheet2 = scope(host);
+    const restoreHost = styleHost(host, {
+      display: "flex",
+      "flex-wrap": "nowrap",
+      "align-items": "center",
+      overflow: "hidden",
+      gap: `${props.gap}em`,
+      [OFFSET_VAR]: "0px"
+    });
+    sheet2.setRules(`${sheet2.selector} > *:not([${DATA_PICA}]){flex:none;transform:translateX(var(${OFFSET_VAR},0px))}`);
+    let hovered = false;
+    let focused = false;
+    let period = 0;
+    let clones = [];
+    function isOwn(node) {
+      return node instanceof HTMLElement && node.hasAttribute(DATA_PICA);
+    }
+    function realChildren() {
+      const out = [];
+      for (const child of Array.from(host.children)) {
+        if (child instanceof HTMLElement && !child.hasAttribute(DATA_PICA)) out.push(child);
+      }
+      return out;
+    }
+    function buildClone(children) {
+      const group = document.createElement("div");
+      group.setAttribute(DATA_PICA, "");
+      group.setAttribute("aria-hidden", "true");
+      group.setAttribute("inert", "");
+      group.style.cssText = `display:flex;flex:none;gap:${props.gap}em;transform:translateX(var(${OFFSET_VAR},0px))`;
+      for (const child of children) group.appendChild(child.cloneNode(true));
+      return group;
+    }
+    function clearClones() {
+      for (const clone of clones) clone.remove();
+      clones = [];
+    }
+    function rebuildClones() {
+      clearClones();
+      const children = realChildren();
+      const first = children[0];
+      if (!first) {
+        period = 0;
+        return;
+      }
+      const startLeft = first.getBoundingClientRect().left;
+      const probe = buildClone(children);
+      host.append(probe);
+      period = Math.max(1, probe.getBoundingClientRect().left - startLeft);
+      probe.remove();
+      const needed = Math.max(1, Math.ceil(host.clientWidth / period));
+      const built = [];
+      for (let i = 0; i < needed; i++) {
+        const clone = buildClone(children);
+        if (props.direction === "right") host.prepend(clone);
+        else host.append(clone);
+        built.push(clone);
+      }
+      clones = built;
+    }
+    rebuildClones();
+    const childObserver = new MutationObserver((records) => {
+      const changed2 = records.some(
+        (record) => Array.from(record.addedNodes).some((node) => !isOwn(node)) || Array.from(record.removedNodes).some((node) => !isOwn(node))
+      );
+      if (changed2) rebuildClones();
+    });
+    childObserver.observe(host, { childList: true });
+    function isPaused() {
+      return props.paused || props.pauseOnHover && hovered || focused;
+    }
+    function draw(t) {
+      const wrapped = period > 0 ? t / 1e3 * props.speed % period : 0;
+      const offset = props.direction === "left" ? -wrapped : wrapped;
+      host.style.setProperty(OFFSET_VAR, `${offset.toFixed(2)}px`);
+      host.dataset.picaReady = "true";
+    }
+    const loop = createLoop({
+      el: host,
+      fps: props.fps,
+      paused: isPaused(),
+      time: props.time,
+      still: 0,
+      frame: draw
+    });
+    function onEnter() {
+      hovered = true;
+      loop.update({ paused: isPaused() });
+    }
+    function onLeave() {
+      hovered = false;
+      loop.update({ paused: isPaused() });
+    }
+    function onFocusIn() {
+      focused = true;
+      loop.update({ paused: isPaused() });
+    }
+    function onFocusOut(event) {
+      focused = event.relatedTarget instanceof Node && host.contains(event.relatedTarget);
+      loop.update({ paused: isPaused() });
+    }
+    host.addEventListener("mouseenter", onEnter);
+    host.addEventListener("mouseleave", onLeave);
+    host.addEventListener("focusin", onFocusIn);
+    host.addEventListener("focusout", onFocusOut);
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.gap !== before.gap) host.style.setProperty("gap", `${props.gap}em`);
+        if (props.gap !== before.gap || props.direction !== before.direction) rebuildClones();
+        loop.update({ paused: isPaused(), time: props.time, fps: props.fps });
+        loop.redraw();
+      },
+      destroy() {
+        loop.destroy();
+        host.removeEventListener("mouseenter", onEnter);
+        host.removeEventListener("mouseleave", onLeave);
+        host.removeEventListener("focusin", onFocusIn);
+        host.removeEventListener("focusout", onFocusOut);
+        childObserver.disconnect();
+        clearClones();
+        sheet2.destroy();
+        restoreHost();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // registry/sections/maximalist-hero/core.ts
+  var defaults4 = {
+    headline: "More is more.",
+    subhead: "Two fields deep, four tones wide, and every edge of the frame working.",
+    kicker: "Components drawn in text",
+    ticker: "ASCII / Dither / Shader / Grid / Type",
+    figure: "70+",
+    caption: "Components · one palette · four tones",
+    index: ["ASCII", "Dither", "Shaders", "Motion", "Sections"],
+    indexTitle: "Index",
+    actions: [
+      { label: "Browse components", href: "#components" },
+      { label: "Read the docs", href: "#docs" }
+    ],
+    align: "start",
+    intensity: 0.55,
+    minHeight: 84,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var MAX_ACTIONS = 3;
+  var TICKER_ITEMS = 3;
+  var MAX_INDEX = 6;
+  var FIT_MIN = 760;
+  function unit(value) {
+    return Math.min(1, Math.max(0, value));
+  }
+  function vh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function fieldOpacity(intensity) {
+    return (0.08 + unit(intensity) * 0.3).toFixed(3);
+  }
+  function dotStrength(intensity) {
+    return Math.round((0.05 + unit(intensity) * 0.15) * 100) / 100;
+  }
+  function wavesProps(p) {
+    return {
+      trains: 3,
+      period: 64,
+      spread: 24,
+      angle: 12,
+      levels: 3,
+      mask: "cluster",
+      pixel: 4,
+      speed: 0.1,
+      fps: 15,
+      paused: p.paused,
+      time: p.time,
+      seed: p.seed
+    };
+  }
+  function dotsProps(p) {
+    return { size: 11, dot: 0.26, fade: "none", strength: dotStrength(p.intensity) };
+  }
+  function bandProps(p, direction) {
+    return { speed: 34, direction, gap: 2.4, pauseOnHover: true, fps: 30, paused: p.paused, time: p.time, seed: p.seed };
+  }
+  function origin(p) {
+    return p.align === "center" ? "center" : "left";
+  }
+  function rules(selector, p) {
+    const fg = cssVar("fg");
+    const bg = cssVar("bg");
+    const accent = cssVar("accent");
+    const muted = cssVar("muted");
+    const edge = p.align === "center" ? "center" : "flex-start";
+    const textAlign = p.align === "center" ? "center" : "start";
+    const hang = origin(p);
+    const corner = `linear-gradient(${fg}, ${fg})`;
+    const tint = `color-mix(in srgb, ${bg} 74%, transparent)`;
+    const hairline = `color-mix(in srgb, ${fg} 38%, transparent)`;
+    return [
+      `:where(${selector}){min-height:${vh(p.minHeight)}vh}`,
+      `${selector}{position:relative;isolation:isolate;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;align-items:${edge};--maxh-pad:clamp(1.25rem,4vw,3.25rem);--maxh-board:min(37%,23rem);padding:var(--maxh-pad) calc(var(--maxh-pad) + var(--maxh-board)) var(--maxh-pad) var(--maxh-pad)}`,
+      `${selector}[data-pica-fit="min"],${selector}[data-pica-plain]{--maxh-board:0rem}`,
+      `${selector} > [data-pica-veil]{background:color-mix(in srgb, ${bg} 55%, transparent)}`,
+      `${selector} > [data-pica-corners]{position:absolute;inset:0;pointer-events:none;background-image:${corner},${corner},${corner},${corner},${corner},${corner},${corner},${corner};background-repeat:no-repeat;background-size:18px 1px,1px 18px,18px 1px,1px 18px,18px 1px,1px 18px,18px 1px,1px 18px;background-position:10px 10px,10px 10px,right 10px top 10px,right 10px top 10px,left 10px bottom 10px,left 10px bottom 10px,right 10px bottom 10px,right 10px bottom 10px}`,
+      `${selector} > [data-pica-rail]{position:absolute;top:50%;left:0.55em;transform:translateY(-50%);writing-mode:vertical-rl;white-space:nowrap;pointer-events:none;font-family:${GRID_FONT};font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:${muted}}`,
+      `${selector} > [data-pica-band]{flex:none;align-self:stretch;margin-left:calc(-1 * var(--maxh-pad));margin-right:calc(0px - var(--maxh-pad) - var(--maxh-board));border-top:1px solid ${fg};border-bottom:1px solid ${fg};background:${bg};padding:0.55em 0;font-family:${GRID_FONT};font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:${fg}}`,
+      `${selector} > [data-pica-band="top"]{margin-top:calc(-1 * var(--maxh-pad));border-top:0}`,
+      `${selector} > [data-pica-band="bottom"]{margin-top:auto;margin-bottom:calc(-1 * var(--maxh-pad));border-bottom:0}`,
+      `${selector} > [data-pica-band] > span{white-space:nowrap}`,
+      `${selector} > [data-pica-band] > span > em{font-style:normal;color:${muted}}`,
+      `${selector} > [data-pica-stack]{display:flex;flex-direction:column;align-items:${edge};gap:0.9em;margin-top:auto;padding:2em 0 1.1em}`,
+      `${selector} [data-pica-kicker]{display:flex;flex-wrap:wrap;align-items:center;gap:0.35em 0.7em;width:100%;max-width:56ch;font-family:${GRID_FONT};font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:${muted};transform:rotate(-1deg);transform-origin:${hang} center}`,
+      `${selector} [data-pica-kicker] > b{flex:none;width:0.6em;height:0.6em;background:${accent}}`,
+      `${selector} [data-pica-kicker] > i{flex:1 1 2em;height:1px;background:${muted}}`,
+      `${selector} [data-pica-kicker] > span{white-space:nowrap}`,
+      // The knockout chip and its text need different colors: the chip paints the page's foreground and the
+      // text its inverse. Both jobs need currentColor, so they sit on two nested spans. The outer keeps the
+      // inherited color, so its background reads the true foreground even with --pica-fg unset; the inner
+      // carries only text in the inverse ink. One element doing both would paint ink on ink.
+      `${selector} [data-pica-headline]{margin:0.12em 0 0.24em;font-size:clamp(2.5rem,9.5vw,5.75rem);font-weight:800;line-height:0.98;letter-spacing:-0.02em;text-align:${textAlign};max-width:15ch;transform:rotate(1.2deg);transform-origin:${hang} center}`,
+      `${selector} [data-pica-headline] > span{background:${fg};padding:0.05em 0.2em 0.11em;-webkit-box-decoration-break:clone;box-decoration-break:clone}`,
+      `${selector} [data-pica-headline] > span > i{font-style:normal;color:${cssOn("fg")}}`,
+      `${selector} [data-pica-subhead]{margin:0;font-size:clamp(1.05rem,2.3vw,1.4rem);line-height:1.45;color:${muted};max-width:46ch;text-align:${textAlign};transform:rotate(-0.6deg);transform-origin:${hang} top}`,
+      `${selector} > :not([data-pica]){max-width:52ch;text-align:${textAlign}}`,
+      `${selector} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;justify-content:${edge};gap:0.7em;max-width:52ch;margin-top:1.2em;margin-bottom:auto;transform:rotate(-0.7deg);transform-origin:${hang} center}`,
+      `${selector} > [data-pica-actions]:empty{display:none}`,
+      `${selector} > [data-pica-actions] a{appearance:none;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.62em 1.3em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
+      `${selector} > [data-pica-actions] a[data-variant="solid"]{background:${accent};color:${cssOn("accent")}}`,
+      `${selector} > [data-pica-actions] a[data-variant="outline"]{background:transparent;color:${fg};border-color:${fg}}`,
+      `${selector} > [data-pica-actions] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${accent} 85%, ${fg})}`,
+      `${selector} > [data-pica-actions] a[data-variant="outline"]:hover{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${selector} > [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      // The board owns the right edge from the top pad to the bottom one. Absolute, so it can always reach
+      // band to band; the host's right padding keeps every in-flow child clear of it.
+      `${selector} > [data-pica-board]{position:absolute;top:var(--maxh-pad);right:var(--maxh-pad);bottom:var(--maxh-pad);width:var(--maxh-board);display:flex;flex-direction:column;justify-content:center;gap:clamp(0.9em,2.5vh,1.6em)}`,
+      `${selector}[data-pica-fit="min"] > [data-pica-board]{position:static;width:auto;align-self:stretch;margin-top:1.4em;justify-content:flex-start}`,
+      `${selector} [data-pica-index]{flex:none;border:1px solid ${fg};background:${tint};transform:rotate(0.9deg);transform-origin:right top;font-family:${GRID_FONT};font-size:0.68rem;letter-spacing:0.07em;text-transform:uppercase}`,
+      `${selector} [data-pica-index] > div{display:flex;align-items:center;gap:0.7em;padding:0.6em 0.85em;color:${muted}}`,
+      `${selector} [data-pica-index] > div > b{flex:none;width:0.55em;height:0.55em;background:${accent}}`,
+      `${selector} [data-pica-index] > div > i{flex:1;height:1px;background:${hairline}}`,
+      `${selector} [data-pica-index] ul{list-style:none;margin:0;padding:0}`,
+      `${selector} [data-pica-index] li{display:flex;gap:0.8em;padding:0.5em 0.85em;border-top:1px solid ${hairline};color:${fg}}`,
+      `${selector} [data-pica-index] li > b{flex:none;font-weight:400;color:${muted}}`,
+      `${selector} [data-pica-figure]{position:relative;flex:1;min-height:7.5em;display:flex;flex-direction:column;justify-content:flex-end;gap:0.3em;padding:0.75em 0.85em;border:1px solid ${fg};background:${tint};transform:rotate(-1.1deg);transform-origin:left bottom}`,
+      `${selector} [data-pica-figure] > b{position:absolute;top:-0.5em;right:-0.5em;width:1em;height:1em;background:${accent}}`,
+      `${selector} [data-pica-figure] > strong{display:block;font-size:clamp(2.6rem,6.5vw,5.25rem);font-weight:800;line-height:0.95;letter-spacing:-0.02em;color:${fg}}`,
+      `${selector} [data-pica-figure] > span{font-family:${GRID_FONT};font-size:0.66rem;letter-spacing:0.08em;text-transform:uppercase;color:${muted}}`,
+      `${selector} [data-pica-tones]{display:flex;height:0.55em;margin-top:0.55em}`,
+      `${selector} [data-pica-tones] > i{flex:1}`,
+      `${selector} [data-pica-tones] > i:nth-child(1){background:${fg}}`,
+      `${selector} [data-pica-tones] > i:nth-child(2){background:${muted}}`,
+      `${selector} [data-pica-tones] > i:nth-child(3){background:${accent}}`,
+      `${selector} [data-pica-tones] > i:nth-child(4){background:${bg};box-shadow:inset 0 0 0 1px ${hairline}}`
+    ].join("\n");
+  }
+  function renderActions(container, actions) {
+    container.replaceChildren();
+    for (const [i, action] of actions.slice(0, MAX_ACTIONS).entries()) {
+      const a = document.createElement("a");
+      a.setAttribute("data-pica", "");
+      a.dataset.variant = i === 0 ? "solid" : "outline";
+      a.href = action.href;
+      a.textContent = action.label;
+      container.append(a);
+    }
+  }
+  function fillBand(band, ticker) {
+    for (const item of Array.from(band.querySelectorAll(":scope > span"))) item.remove();
+    for (let i = 0; ticker && i < TICKER_ITEMS; i++) {
+      const item = document.createElement("span");
+      item.textContent = ticker;
+      const sep = document.createElement("em");
+      sep.setAttribute("aria-hidden", "true");
+      sep.textContent = "  ·  ";
+      item.append(sep);
+      band.append(item);
+    }
+  }
+  function mountBand(host, where, p) {
+    const el = document.createElement("div");
+    el.setAttribute("data-pica", "");
+    el.setAttribute("data-pica-band", where);
+    el.setAttribute("aria-hidden", "true");
+    fillBand(el, p.ticker);
+    el.style.display = p.ticker ? "" : "none";
+    const instance = mount3(el, bandProps(p, where === "top" ? "left" : "right"));
+    return { el, instance };
+  }
+  function part(tag, name) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute(`data-pica-${name}`, "");
+    return node;
+  }
+  var mount4 = (host, initial = {}) => {
+    let props = { ...defaults4, ...initial };
+    const sheet2 = scope(host);
+    const attrs = hostAttributes(host);
+    let destroyed = false;
+    const veilLayer = layer(host, "under");
+    veilLayer.el.setAttribute("data-pica-veil", "");
+    const dotsLayer = layer(host, "under");
+    const wavesLayer = layer(host, "under");
+    wavesLayer.el.style.opacity = fieldOpacity(props.intensity);
+    const dots = mount2(dotsLayer.el, dotsProps(props));
+    const waves = mount(wavesLayer.el, wavesProps(props));
+    const stack = document.createElement("div");
+    stack.setAttribute("data-pica", "");
+    stack.setAttribute("data-pica-stack", "");
+    const kicker = document.createElement("div");
+    kicker.setAttribute("data-pica", "");
+    kicker.setAttribute("data-pica-kicker", "");
+    const tick = document.createElement("b");
+    tick.setAttribute("aria-hidden", "true");
+    const kickerText = document.createElement("span");
+    kickerText.textContent = props.kicker;
+    const kickerLine = document.createElement("i");
+    kickerLine.setAttribute("aria-hidden", "true");
+    const kickerTag = document.createElement("span");
+    kickerTag.setAttribute("aria-hidden", "true");
+    kickerTag.textContent = "Two fields · four tones";
+    kicker.append(tick, kickerText, kickerLine, kickerTag);
+    kicker.style.display = props.kicker ? "" : "none";
+    const headline = document.createElement("h1");
+    headline.setAttribute("data-pica", "");
+    headline.setAttribute("data-pica-headline", "");
+    const headlineChip = document.createElement("span");
+    const headlineText = document.createElement("i");
+    headlineText.textContent = props.headline;
+    headlineChip.append(headlineText);
+    headline.append(headlineChip);
+    headline.style.display = props.headline ? "" : "none";
+    const subhead = document.createElement("p");
+    subhead.setAttribute("data-pica", "");
+    subhead.setAttribute("data-pica-subhead", "");
+    subhead.textContent = props.subhead;
+    subhead.style.display = props.subhead ? "" : "none";
+    stack.append(kicker, headline, subhead);
+    const board = part("div", "board");
+    const indexBox = part("div", "index");
+    const indexHead = document.createElement("div");
+    indexHead.setAttribute("data-pica", "");
+    const indexTick = document.createElement("b");
+    indexTick.setAttribute("aria-hidden", "true");
+    const indexTitleEl = document.createElement("span");
+    const indexRule = document.createElement("i");
+    indexRule.setAttribute("aria-hidden", "true");
+    const indexCount = document.createElement("span");
+    indexHead.append(indexTick, indexTitleEl, indexRule, indexCount);
+    const indexList = document.createElement("ul");
+    indexBox.append(indexHead, indexList);
+    const figureBox = part("div", "figure");
+    const figureTab = document.createElement("b");
+    figureTab.setAttribute("aria-hidden", "true");
+    const figureText = document.createElement("strong");
+    const figureCaption = document.createElement("span");
+    const tones = part("span", "tones");
+    tones.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < 4; i++) {
+      const cell = document.createElement("i");
+      cell.setAttribute("data-pica", "");
+      tones.append(cell);
+    }
+    figureBox.append(figureTab, figureText, figureCaption, tones);
+    board.append(indexBox, figureBox);
+    const actions = document.createElement("div");
+    actions.setAttribute("data-pica", "");
+    actions.setAttribute("data-pica-actions", "");
+    const corners = document.createElement("div");
+    corners.setAttribute("data-pica", "");
+    corners.setAttribute("data-pica-corners", "");
+    corners.setAttribute("aria-hidden", "true");
+    const rail = document.createElement("div");
+    rail.setAttribute("data-pica", "");
+    rail.setAttribute("data-pica-rail", "");
+    rail.setAttribute("aria-hidden", "true");
+    rail.textContent = props.kicker;
+    rail.style.display = props.kicker ? "" : "none";
+    const bandTop = mountBand(host, "top", props);
+    const bandBottom = mountBand(host, "bottom", props);
+    host.prepend(stack);
+    host.prepend(bandTop.el);
+    stack.after(board);
+    host.append(actions, bandBottom.el, corners, rail);
+    function renderIndex() {
+      indexTitleEl.textContent = props.indexTitle;
+      const rows = props.index.slice(0, MAX_INDEX);
+      indexCount.textContent = rows.length ? `01–${String(rows.length).padStart(2, "0")}` : "";
+      indexList.replaceChildren();
+      for (const [i, label] of rows.entries()) {
+        const li = document.createElement("li");
+        li.setAttribute("data-pica", "");
+        const n = document.createElement("b");
+        n.textContent = String(i + 1).padStart(2, "0");
+        const text = document.createElement("span");
+        text.textContent = label;
+        li.append(n, text);
+        indexList.append(li);
+      }
+      indexBox.style.display = rows.length || props.indexTitle ? "" : "none";
+    }
+    function renderFigure() {
+      figureText.textContent = props.figure;
+      figureCaption.textContent = props.caption;
+      figureCaption.style.display = props.caption ? "" : "none";
+      figureBox.style.display = props.figure || props.caption ? "" : "none";
+    }
+    function syncBoard() {
+      const empty = !props.figure && !props.caption && props.index.length === 0 && !props.indexTitle;
+      board.style.display = empty ? "none" : "";
+      attrs.set("data-pica-plain", empty ? "" : null);
+    }
+    function measure() {
+      attrs.set("data-pica-fit", host.clientWidth < FIT_MIN ? "min" : null);
+    }
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(measure) : null;
+    sheet2.setRules(rules(sheet2.selector, props));
+    renderActions(actions, props.actions);
+    renderIndex();
+    renderFigure();
+    syncBoard();
+    measure();
+    observer?.observe(host);
+    host.dataset.picaReady = "true";
+    function syncBand(band) {
+      fillBand(band.el, props.ticker);
+      band.el.style.display = props.ticker ? "" : "none";
+    }
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (changed(before, props, ["paused", "time", "seed"])) {
+          const motion = { paused: props.paused, time: props.time, seed: props.seed };
+          waves.update(wavesProps(props));
+          bandTop.instance.update(motion);
+          bandBottom.instance.update(motion);
+        }
+        if (props.intensity !== before.intensity) {
+          wavesLayer.el.style.opacity = fieldOpacity(props.intensity);
+          dots.update({ strength: dotStrength(props.intensity) });
+        }
+        if (props.align !== before.align || props.minHeight !== before.minHeight) {
+          sheet2.setRules(rules(sheet2.selector, props));
+        }
+        if (props.headline !== before.headline) {
+          headlineText.textContent = props.headline;
+          headline.style.display = props.headline ? "" : "none";
+        }
+        if (props.subhead !== before.subhead) {
+          subhead.textContent = props.subhead;
+          subhead.style.display = props.subhead ? "" : "none";
+        }
+        if (props.kicker !== before.kicker) {
+          kickerText.textContent = props.kicker;
+          rail.textContent = props.kicker;
+          kicker.style.display = props.kicker ? "" : "none";
+          rail.style.display = props.kicker ? "" : "none";
+        }
+        if (props.ticker !== before.ticker) {
+          syncBand(bandTop);
+          syncBand(bandBottom);
+        }
+        if (props.indexTitle !== before.indexTitle || !sameJson(before.index, props.index)) renderIndex();
+        if (props.figure !== before.figure || props.caption !== before.caption) renderFigure();
+        if (changed(before, props, ["figure", "caption", "indexTitle"]) || !sameJson(before.index, props.index)) syncBoard();
+        if (!sameJson(before.actions, props.actions)) renderActions(actions, props.actions);
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        observer?.disconnect();
+        waves.destroy();
+        dots.destroy();
+        bandTop.instance.destroy();
+        bandBottom.instance.destroy();
+        wavesLayer.remove();
+        dotsLayer.remove();
+        veilLayer.remove();
+        bandTop.el.remove();
+        bandBottom.el.remove();
+        stack.remove();
+        board.remove();
+        actions.remove();
+        corners.remove();
+        rail.remove();
+        sheet2.destroy();
+        attrs.restore();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaMaximalistHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

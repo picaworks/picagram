@@ -1,0 +1,610 @@
+<!doctype html>
+<!--
+  Pica · Victorian Hero · victorian-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Victorian Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><p>Doors at seven. The management begs patience for any delay in the machinery.</p></div>
+<script>
+"use strict";
+var PicaVictorianHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/victorian-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // registry/sections/victorian-hero/core.ts
+  var defaults = {
+    kicker: "Picagram presents",
+    headline: "The Victorian Hero",
+    subhead: "A playbill for the printed web, drawn in type and rules alone.",
+    actions: [
+      { label: "See the bill", href: "#bill" },
+      { label: "Book seats", href: "#seats" }
+    ],
+    align: "center",
+    frame: "double",
+    minHeight: 80
+  };
+  var FLEURON = [
+    [1, 0, "▟"],
+    [2, 0, "▙"],
+    [0, 1, "▟"],
+    [1, 1, "█"],
+    [2, 1, "█"],
+    [3, 1, "▙"],
+    [1, 2, "▜"],
+    [2, 2, "▛"]
+  ];
+  function vh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function part(name, tag = "div") {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute(`data-pica-${name}`, "");
+    return node;
+  }
+  function hasChildren(host) {
+    for (const node of host.childNodes) {
+      if (node.nodeType === 1) {
+        if (!node.hasAttribute("data-pica")) return true;
+      } else if (node.nodeType === 3 && (node.textContent ?? "").trim() !== "") {
+        return true;
+      }
+    }
+    return false;
+  }
+  function makeRule() {
+    const rule = part("rule");
+    rule.setAttribute("aria-hidden", "true");
+    const gem = part("gem", "span");
+    gem.textContent = "▟▙\n▜▛";
+    rule.append(part("line", "span"), gem, part("line", "span"));
+    return rule;
+  }
+  function drawFrame(grid, p) {
+    const cols = grid.cols;
+    const rows = grid.rows;
+    grid.clear();
+    if (p.frame !== "none" && cols >= 6 && rows >= 6) {
+      for (let x = 0; x < cols; x++) {
+        grid.set(x, 0, x === 0 ? "▛" : x === cols - 1 ? "▜" : "▀");
+        grid.set(x, rows - 1, x === 0 ? "▙" : x === cols - 1 ? "▟" : "▄");
+      }
+      for (let y = 1; y < rows - 1; y++) {
+        grid.set(0, y, "█");
+        grid.set(cols - 1, y, "█");
+      }
+      if (p.frame === "double" && cols >= 20 && rows >= 12) {
+        for (const [x, y] of [
+          [1, 1],
+          [cols - 5, 1],
+          [1, rows - 4],
+          [cols - 5, rows - 4]
+        ]) {
+          for (const [dx, dy, ch] of FLEURON) grid.set(x + dx, y + dy, ch);
+        }
+        const top = 4;
+        const bottom = rows - 5;
+        const left = 4;
+        const right = cols - 5;
+        for (let x = left + 1; x < right; x++) {
+          grid.set(x, top, "─");
+          grid.set(x, bottom, "─");
+        }
+        for (let y = top + 1; y < bottom; y++) {
+          grid.set(left, y, "│");
+          grid.set(right, y, "│");
+        }
+        grid.set(left, top, "┌");
+        grid.set(right, top, "┐");
+        grid.set(left, bottom, "└");
+        grid.set(right, bottom, "┘");
+      }
+    }
+    grid.flush();
+  }
+  function rules(selector, p) {
+    const s = selector;
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const centered = p.align !== "start";
+    const pad = p.frame === "double" ? "clamp(4.5rem,10vh,7rem) clamp(3.25rem,8vw,7rem)" : p.frame === "single" ? "clamp(2.25rem,6vh,4rem) clamp(1.75rem,4vw,3rem)" : "clamp(1.5rem,5vh,4rem) clamp(1.5rem,5vw,4rem)";
+    return [
+      `:where(${s}){min-height:${vh(p.minHeight)}vh}`,
+      `${s}{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:${centered ? "center" : "flex-start"};text-align:${centered ? "center" : "start"};color:${fg};padding:${pad};overflow-wrap:break-word}`,
+      `${s} > *{box-sizing:border-box;margin:0}`,
+      `${s} > [data-pica-kicker]{width:min(46rem,100%);font-family:${GRID_FONT};font-size:0.7em;letter-spacing:0.32em;text-transform:uppercase;color:${muted};padding-left:0.32em}`,
+      `${s} > [data-pica-headline]{width:min(46rem,100%);font-size:clamp(2rem,7vw,4.5rem);font-weight:800;line-height:1.02;text-transform:uppercase;text-wrap:balance}`,
+      `${s} > [data-pica-subhead]{width:min(46rem,100%);font-size:clamp(1rem,1.6vw,1.2rem);font-style:italic;line-height:1.5}`,
+      `${s} > [data-pica-rule]{display:flex;align-items:center;gap:0.85em;width:min(46rem,100%);margin:0.85em 0}`,
+      `${s} > [data-pica-rule] [data-pica-line]{flex:1;height:1px;background:${muted}}`,
+      `${s} > [data-pica-rule] [data-pica-gem]{font-family:${GRID_FONT};font-size:0.72em;line-height:1;white-space:pre;color:${accent};text-align:center}`,
+      `${s} > :not([data-pica]){width:min(46rem,100%);color:${muted};font-size:0.95em;line-height:1.75}`,
+      `${s} > [data-pica-actions]{display:flex;flex-wrap:wrap;justify-content:${centered ? "center" : "flex-start"};gap:0.8em;width:min(46rem,100%)}`,
+      `${s} > [data-pica-actions]:empty{display:none}`,
+      `${s} > [data-pica-actions] a{appearance:none;text-decoration:none;font-family:${GRID_FONT};font-size:0.72em;letter-spacing:0.16em;text-transform:uppercase;line-height:1.35;padding:0.75em 1.3em;color:${fg};border:1px solid ${fg};border-radius:0;cursor:pointer}`,
+      `${s} > [data-pica-actions] a[data-variant="lead"]{border:3px double ${fg}}`,
+      `${s} > [data-pica-actions] a:hover{color:${accent};border-color:${accent}}`,
+      `${s} > [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const sheet = scope(host);
+    const under = layer(host, "under");
+    const grid = createGrid(
+      under.el,
+      { fontFamily: GRID_FONT, fontSize: 14, lineHeight: 1, columns: 0, renderer: "dom", color: "" },
+      draw
+    );
+    const kickerEl = part("kicker", "p");
+    const headlineEl = part("headline", "h1");
+    const subheadEl = part("subhead", "p");
+    const actionsEl = part("actions");
+    let ruleNodes = [];
+    function draw() {
+      drawFrame(grid, props);
+    }
+    function renderActions() {
+      actionsEl.replaceChildren();
+      for (const [i, action] of props.actions.slice(0, 3).entries()) {
+        const a = document.createElement("a");
+        a.setAttribute("data-pica", "");
+        if (i === 0) a.dataset.variant = "lead";
+        a.href = action.href || "#";
+        a.textContent = action.label;
+        actionsEl.append(a);
+      }
+    }
+    function syncStack() {
+      kickerEl.textContent = props.kicker;
+      headlineEl.textContent = props.headline;
+      subheadEl.textContent = props.subhead;
+      for (const rule2 of ruleNodes) rule2.remove();
+      ruleNodes = [];
+      const seq = [];
+      if (props.kicker.trim()) seq.push(kickerEl);
+      if (props.headline.trim()) seq.push(headlineEl);
+      if (props.subhead.trim()) seq.push(subheadEl);
+      if (hasChildren(host)) seq.push("children");
+      if (actionsEl.childElementCount > 0) seq.push(actionsEl);
+      const before = [];
+      const after = [];
+      let seen = false;
+      const emit = (node) => {
+        (seen ? after : before).push(node);
+      };
+      const rule = () => {
+        const node = makeRule();
+        ruleNodes.push(node);
+        return node;
+      };
+      if (seq.length > 0) emit(rule());
+      for (const [i, item] of seq.entries()) {
+        if (i > 0) emit(rule());
+        if (item === "children") seen = true;
+        else emit(item);
+      }
+      if (seq.length > 0) emit(rule());
+      host.prepend(...before);
+      host.append(...after);
+    }
+    sheet.setRules(rules(sheet.selector, props));
+    renderActions();
+    syncStack();
+    draw();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.align !== before.align || props.minHeight !== before.minHeight || props.frame !== before.frame) {
+          sheet.setRules(rules(sheet.selector, props));
+        }
+        if (props.frame !== before.frame) draw();
+        const actionsChanged = !sameJson(before.actions, props.actions);
+        if (actionsChanged) renderActions();
+        if (actionsChanged || changed(before, props, ["kicker", "headline", "subhead"])) syncStack();
+      },
+      destroy() {
+        grid.destroy();
+        under.remove();
+        for (const rule of ruleNodes) rule.remove();
+        for (const node of [kickerEl, headlineEl, subheadEl, actionsEl]) node.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaVictorianHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

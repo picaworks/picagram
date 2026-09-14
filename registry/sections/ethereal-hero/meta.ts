@@ -1,0 +1,45 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "ethereal-hero",
+  title: "Ethereal Hero",
+  category: "sections",
+  description: "A hero that floats its copy in clear air while sparse blue noise grain rises from the ground below.",
+  tags: ["hero", "landing", "section", "cta", "grain", "blue noise"],
+  facets: ["animated", "text", "background", "interactive", "canvas", "dither"],
+  wave: 9,
+  animated: true,
+  decorative: false,
+  wraps: "content",
+  stage: "flow",
+  palette: ["fg", "muted", "bg"],
+  demo: {
+    props: {
+      headline: "",
+      subhead: "The depth below is a screen, not a shadow: sparse grain that thickens as it falls.",
+      actions: [
+        { label: "Enter the catalog", href: "#catalog" },
+        { label: "Read the method", href: "#method" },
+      ],
+    },
+    children: "<h1>Air, drawn honestly.</h1>",
+  },
+  interactions: [[{ step: "press", key: "Tab" }, { step: "expectFocus", selector: "a" }]],
+  controls: {
+    headline: { type: "string" },
+    subhead: { type: "string" },
+    actions: { type: "json" },
+    align: { type: "select", options: ["start", "center"] },
+    minHeight: { type: "number", min: 30, max: 100, step: 5, label: "Min height (vh)" },
+    density: { type: "number", min: 0, max: 0.5, step: 0.01 },
+    horizon: { type: "number", min: 0, max: 0.9, step: 0.05 },
+    rise: { type: "number", min: 0, max: 30, step: 1, label: "Rise (cells/s)" },
+    sway: { type: "number", min: 0, max: 12, step: 1 },
+    pixel: { type: "number", min: 1, max: 4, step: 1, label: "Grain size (px)" },
+    fps: { type: "number", min: 5, max: 30, step: 1 },
+    paused: { type: "boolean" },
+    seed: { type: "number", min: 0, max: 9999, step: 1 },
+  },
+  original: true,
+  credits: [],
+};

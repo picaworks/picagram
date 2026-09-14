@@ -1,0 +1,817 @@
+<!doctype html>
+<!--
+  Pica · Editorial Hero · editorial-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Editorial Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><h2>The measure of a page</h2><p>Sixty characters is where a line stops being a guess and starts being a measure, and everything after the standfirst answers to it.</p></div>
+<script>
+"use strict";
+var PicaEditorialHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/editorial-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults2,
+    mount: () => mount2
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+  function relativeLuminance(color) {
+    const [r, g, b] = parseColor(color);
+    const linear = (v) => {
+      const c = v / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+  }
+  function inkColor(host) {
+    return readPalette(host).fg;
+  }
+  function hostTone(host) {
+    const fg = relativeLuminance(inkColor(host));
+    let bg = 1;
+    for (let el = host; el; el = el.parentElement) {
+      const background = getComputedStyle(el).backgroundColor;
+      if (parseColor(background)[3] > 0) {
+        bg = relativeLuminance(background);
+        break;
+      }
+    }
+    return fg > bg ? "light-on-dark" : "dark-on-light";
+  }
+
+  // lib/dither.ts
+  function bayerMatrix(size) {
+    let m = [0];
+    let n = 1;
+    while (n < size) {
+      const next = new Array(4 * n * n).fill(0);
+      for (let y = 0; y < n; y++) {
+        for (let x = 0; x < n; x++) {
+          const v = 4 * (m[y * n + x] ?? 0);
+          next[y * 2 * n + x] = v;
+          next[y * 2 * n + x + n] = v + 2;
+          next[(y + n) * 2 * n + x] = v + 3;
+          next[(y + n) * 2 * n + x + n] = v + 1;
+        }
+      }
+      m = next;
+      n *= 2;
+    }
+    const out = new Float32Array(size * size);
+    for (let i = 0; i < out.length; i++) out[i] = ((m[i] ?? 0) + 0.5) / (size * size);
+    return out;
+  }
+  var bayerCache = /* @__PURE__ */ new Map();
+  function bayerAt(size, x, y) {
+    let m = bayerCache.get(size);
+    if (!m) {
+      m = bayerMatrix(size);
+      bayerCache.set(size, m);
+    }
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return m[my * size + mx] ?? 0.5;
+  }
+  function threshold(values, width, height, level = 0.5, bayer = 0) {
+    const out = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const i = y * width + x;
+        const cut = bayer === 0 ? level : level + bayerAt(bayer, x, y) - 0.5;
+        out[i] = (values[i] ?? 0) >= cut ? 1 : 0;
+      }
+    }
+    return out;
+  }
+  var KERNELS = {
+    "floyd-steinberg": [[1, 0, 7 / 16], [-1, 1, 3 / 16], [0, 1, 5 / 16], [1, 1, 1 / 16]],
+    // Atkinson spreads three quarters of the error, which keeps highlights and shadows cleaner.
+    atkinson: [[1, 0, 1 / 8], [2, 0, 1 / 8], [-1, 1, 1 / 8], [0, 1, 1 / 8], [1, 1, 1 / 8], [0, 2, 1 / 8]]
+  };
+  function diffuse(values, width, height, kernel) {
+    const v = Float32Array.from(values);
+    const out = new Uint8Array(width * height);
+    const taps = KERNELS[kernel];
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const i = y * width + x;
+        const old = v[i] ?? 0;
+        const bit = old >= 0.5 ? 1 : 0;
+        out[i] = bit;
+        const error = old - bit;
+        for (const [dx, dy, weight] of taps) {
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx >= 0 && nx < width && ny < height) {
+            const j = ny * width + nx;
+            v[j] = (v[j] ?? 0) + error * weight;
+          }
+        }
+      }
+    }
+    return out;
+  }
+
+  // lib/sample.ts
+  function fitRect(sourceW, sourceH, boxW, boxH, fit, alignX = 0.5, alignY = 0.5) {
+    const scale = fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+    const w = sourceW * scale;
+    const h = sourceH * scale;
+    return { x: (boxW - w) * alignX, y: (boxH - h) * alignY, w, h };
+  }
+  function createSampler() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    let ink = new Float32Array(0);
+    return {
+      sample(source, sourceW, sourceH, host, o) {
+        const ny = o.ny ?? o.n;
+        const sw = o.cols * o.n;
+        const sh = o.rows * ny;
+        if (ink.length !== sw * sh) ink = new Float32Array(sw * sh);
+        if (!ctx || sourceW <= 0 || sourceH <= 0) return ink.fill(0);
+        if (canvas.width !== sw) canvas.width = sw;
+        if (canvas.height !== sh) canvas.height = sh;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, sw, sh);
+        if (o.mirror) ctx.setTransform(-1, 0, 0, 1, sw, 0);
+        const box = fitRect(sourceW, sourceH, o.cols * o.aspect, o.rows, o.fit, o.alignX, o.alignY);
+        const toX = o.n / o.aspect;
+        ctx.drawImage(source, box.x * toX, box.y * ny, box.w * toX, box.h * ny);
+        const data = ctx.getImageData(0, 0, sw, sh).data;
+        const lightOnDark = (o.tone === "auto" ? hostTone(host) : o.tone) === "light-on-dark";
+        for (let p = 0; p < sw * sh; p++) {
+          const i = p * 4;
+          const alpha = (data[i + 3] ?? 0) / 255;
+          const luma = (0.2126 * (data[i] ?? 0) + 0.7152 * (data[i + 1] ?? 0) + 0.0722 * (data[i + 2] ?? 0)) / 255;
+          const linear = Math.min(1, Math.max(0, (luma - 0.5) * o.contrast + 0.5)) ** 2.2;
+          ink[p] = alpha * (lightOnDark ? linear : 1 - linear);
+        }
+        return ink;
+      }
+    };
+  }
+
+  // lib/subject.ts
+  function litSphere(size = 256, lightX = 0.36, lightY = 0.34) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const light = ctx.createRadialGradient(size * lightX, size * lightY, size * 0.02, size * 0.5, size * 0.5, size * 0.46);
+      light.addColorStop(0, "#ffffff");
+      light.addColorStop(0.55, "#8a8a8a");
+      light.addColorStop(1, "#141414");
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return canvas;
+  }
+
+  // lib/source.ts
+  function loadSource(src, ready, fail) {
+    if (!src) {
+      const sphere = litSphere();
+      ready({ image: sphere, width: sphere.width, height: sphere.height, builtIn: true });
+      return () => void 0;
+    }
+    let live = true;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "async";
+    img.onload = () => {
+      if (live) ready({ image: img, width: img.naturalWidth, height: img.naturalHeight, builtIn: false });
+    };
+    img.onerror = () => {
+      if (live) fail();
+    };
+    img.src = src;
+    return () => {
+      live = false;
+    };
+  }
+  function fitFor(source, fit) {
+    return source.builtIn ? "contain" : fit;
+  }
+  function fitHostAspect(host, width, height) {
+    if (host.clientHeight >= 2 || width <= 0 || height <= 0) return () => void 0;
+    return styleHost(host, { "aspect-ratio": `${width} / ${height}` });
+  }
+  function showNote(host, text) {
+    const note = document.createElement("span");
+    note.setAttribute("data-pica", "");
+    note.setAttribute("aria-hidden", "true");
+    note.textContent = text;
+    note.style.cssText = [
+      "position:absolute",
+      "inset:0",
+      "display:flex",
+      "align-items:center",
+      "justify-content:center",
+      "pointer-events:none",
+      `color:${cssVar("muted")}`
+    ].join(";");
+    const restore = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    host.appendChild(note);
+    return () => {
+      note.remove();
+      restore();
+    };
+  }
+
+  // registry/dither/dither-image/core.ts
+  var defaults = {
+    src: "",
+    alt: "",
+    algorithm: "atkinson",
+    scale: 3,
+    contrast: 1.1,
+    fit: "cover",
+    tone: "auto"
+  };
+  function toBits(ink, cols, rows, algorithm) {
+    if (algorithm === "floyd-steinberg" || algorithm === "atkinson") return diffuse(ink, cols, rows, algorithm);
+    const size = algorithm === "bayer2" ? 2 : algorithm === "bayer4" ? 4 : 8;
+    return threshold(ink, cols, rows, 0.5, size);
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let source = null;
+    let failed = false;
+    let cancel = () => void 0;
+    let undoAspect = () => void 0;
+    let removeNote = null;
+    const sampler = createSampler();
+    const surface = createCanvas(host, { autoSize: false, css: "image-rendering:pixelated", onResize: () => draw() });
+    const canvas = surface.canvas;
+    const ctx = canvas.getContext("2d");
+    const palette = watchPalette(host, () => draw());
+    function load() {
+      cancel();
+      failed = false;
+      cancel = loadSource(props.src, use, () => {
+        source = null;
+        failed = true;
+        draw();
+      });
+    }
+    function use(next) {
+      source = next;
+      undoAspect();
+      undoAspect = fitHostAspect(host, next.width, next.height);
+      draw();
+    }
+    function setNote(on) {
+      if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+      if (!on && removeNote) {
+        removeNote();
+        removeNote = null;
+      }
+    }
+    function draw() {
+      const cols = Math.max(1, Math.round(host.clientWidth / props.scale));
+      const rows = Math.max(1, Math.round(host.clientHeight / props.scale));
+      canvas.width = cols;
+      canvas.height = rows;
+      setNote(failed);
+      if (ctx && source && !failed) {
+        const ink = sampler.sample(source.image, source.width, source.height, host, {
+          cols,
+          rows,
+          aspect: 1,
+          n: 1,
+          fit: fitFor(source, props.fit),
+          tone: props.tone,
+          contrast: props.contrast,
+          mirror: false
+        });
+        const bits = toBits(ink, cols, rows, props.algorithm);
+        const [r, g, b, a] = parseColor(palette.colors.fg);
+        const image = ctx.createImageData(cols, rows);
+        for (let i = 0; i < bits.length; i++) {
+          const j = i * 4;
+          const on = bits[i] === 1;
+          image.data[j] = r;
+          image.data[j + 1] = g;
+          image.data[j + 2] = b;
+          image.data[j + 3] = on ? a : 0;
+        }
+        ctx.putImageData(image, 0, 0);
+      } else if (ctx) {
+        ctx.clearRect(0, 0, cols, rows);
+      }
+      if (source || failed) host.dataset.picaReady = "true";
+    }
+    labelHost(host, props.alt);
+    load();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        palette.refresh();
+        labelHost(host, props.alt);
+        if (props.src !== before.src) load();
+        else draw();
+      },
+      destroy() {
+        cancel();
+        setNote(false);
+        surface.destroy();
+        undoAspect();
+        palette.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // registry/sections/editorial-hero/core.ts
+  var defaults2 = {
+    deck: "Notes on the craft",
+    headline: "The enduring craft of the printed page.",
+    subhead: "What a magazine knows that a feed forgets: the eye wants a way in, a measure it can hold, and ink that trusts the paper it sits on, all of it decided before the first word is read.",
+    byline: "By the Picagram desk",
+    date: "September 2026",
+    actions: [
+      { label: "Read the story", href: "#story" },
+      { label: "Subscribe", href: "#subscribe" }
+    ],
+    align: "start",
+    src: "",
+    alt: "",
+    minHeight: 60
+  };
+  function vh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function part(name, tag = "div") {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute("data-part", name);
+    return node;
+  }
+  function rules(selector, p) {
+    const s = selector;
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    const muted = cssVar("muted");
+    const hairline = `color-mix(in srgb, ${fg} 26%, transparent)`;
+    const textAlign = p.align === "center" ? "center" : "start";
+    const inset = p.align === "center" ? "auto" : "0";
+    return [
+      `:where(${s}){min-height:${vh(p.minHeight)}vh}`,
+      `${s}{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;color:${fg};padding:clamp(1.5rem,5vw,4rem);overflow-wrap:break-word}`,
+      `${s} [data-part="spread"]{display:grid;grid-template-columns:minmax(0,1fr);column-gap:clamp(2rem,4vw,3.5rem);row-gap:2.5rem;align-items:end}`,
+      `${s} [data-part="spread"][data-figure]{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}`,
+      `${s}[data-pica-fit="min"] [data-part="spread"][data-figure]{grid-template-columns:minmax(0,1fr)}`,
+      `${s} [data-part="text"]{display:flex;flex-direction:column;min-width:0;text-align:${textAlign}}`,
+      `${s} [data-part="deck"]{margin:0 0 clamp(1.5rem,3vw,2.5rem);padding-top:0.9em;border-top:1px solid ${hairline};font-size:0.95em;font-style:italic;color:${muted}}`,
+      `${s} [data-part="headline"]{margin:0 0 clamp(1.5rem,3.5vw,2.75rem);font-size:clamp(2.5rem,6.5vw,5.25rem);line-height:1;letter-spacing:-0.02em;font-weight:600;text-wrap:balance}`,
+      `${s} [data-part="standfirst"]{margin:0 0 clamp(2rem,3.5vw,3rem);margin-inline:${inset};max-width:60ch;display:flow-root;font-size:1.2em;line-height:1.55}`,
+      `${s} [data-part="standfirst"]::first-letter{float:left;font-size:4.35em;line-height:0.82;padding-top:0.05em;padding-right:0.12em;font-weight:600}`,
+      `${s} [data-part="byline"]{display:flex;flex-wrap:wrap;gap:0.4em 2em;justify-content:space-between;margin:0 0 clamp(2rem,3.5vw,3rem);padding:0.75em 0;border-top:1px solid ${hairline};border-bottom:1px solid ${hairline};font-family:${GRID_FONT};font-size:0.75em;letter-spacing:0.04em;text-transform:uppercase;color:${muted}}`,
+      `${s} [data-part="actions"]{display:flex;flex-wrap:wrap;gap:0.75em;align-self:${p.align === "center" ? "center" : "flex-start"}}`,
+      `${s} [data-part="actions"]:empty{display:none}`,
+      `${s} [data-part="actions"] a{appearance:none;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.6em 1.25em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
+      `${s} [data-part="actions"] a[data-variant="solid"]{background:${accent};color:${cssOn("accent")}}`,
+      `${s} [data-part="actions"] a[data-variant="outline"]{background:transparent;color:${fg};border-color:${fg}}`,
+      `${s} [data-part="actions"] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${accent} 85%, ${fg})}`,
+      `${s} [data-part="actions"] a[data-variant="outline"]:hover{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${s} [data-part="actions"] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${s} [data-part="figure"]{position:relative;width:100%;min-width:0;aspect-ratio:4/5;border:1px solid ${hairline}}`,
+      `${s}[data-pica-fit="min"]{padding:1.25rem}`,
+      `${s}[data-pica-fit="min"] [data-part="spread"]{row-gap:1.5rem}`,
+      `${s}[data-pica-fit="min"] [data-part="figure"]{aspect-ratio:2/1}`,
+      `${s}[data-pica-fit="min"] [data-part="deck"]{margin-bottom:1rem}`,
+      `${s}[data-pica-fit="min"] [data-part="headline"]{margin-bottom:1rem}`,
+      `${s}[data-pica-fit="min"] [data-part="standfirst"]{margin-bottom:1.25rem}`,
+      `${s}[data-pica-fit="min"] [data-part="byline"]{margin-bottom:1.25rem}`,
+      `${s} > :not([data-pica]){max-width:60ch;text-align:${textAlign};margin-inline:${inset}}`
+    ].join("\n");
+  }
+  function renderActions(container, actions) {
+    container.replaceChildren();
+    for (const [i, action] of actions.slice(0, 3).entries()) {
+      const a = document.createElement("a");
+      a.setAttribute("data-pica", "");
+      a.dataset.variant = i === 0 ? "solid" : "outline";
+      a.href = action.href;
+      a.textContent = action.label;
+      container.append(a);
+    }
+  }
+  var mount2 = (host, initial = {}) => {
+    let props = { ...defaults2, ...initial };
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    const spread = part("spread");
+    const text = part("text");
+    const deck = part("deck", "p");
+    const headline = part("headline", "h1");
+    const standfirst = part("standfirst", "p");
+    const byline = part("byline", "p");
+    const by = document.createElement("span");
+    by.setAttribute("data-pica", "");
+    const when = document.createElement("span");
+    when.setAttribute("data-pica", "");
+    byline.append(by, when);
+    const actions = part("actions");
+    text.append(deck, headline, standfirst, byline, actions);
+    spread.append(text);
+    host.prepend(spread);
+    let plate = null;
+    function renderText() {
+      deck.textContent = props.deck;
+      deck.style.display = props.deck ? "" : "none";
+      headline.textContent = props.headline;
+      headline.style.display = props.headline ? "" : "none";
+      standfirst.textContent = props.subhead;
+      standfirst.style.display = props.subhead ? "" : "none";
+      by.textContent = props.byline;
+      by.style.display = props.byline ? "" : "none";
+      when.textContent = props.date;
+      when.style.display = props.date ? "" : "none";
+      byline.style.display = props.byline || props.date ? "" : "none";
+    }
+    function mountPlate() {
+      const node = part("figure");
+      spread.append(node);
+      spread.setAttribute("data-figure", "");
+      const ready = new MutationObserver(() => {
+        if (node.dataset.picaReady !== "true") return;
+        host.dataset.picaReady = "true";
+        ready.disconnect();
+      });
+      ready.observe(node, { attributes: true, attributeFilter: ["data-pica-ready"] });
+      plate = { node, ready, instance: mount(node, { src: props.src, alt: props.alt }) };
+    }
+    function destroyPlate() {
+      if (!plate) return;
+      plate.ready.disconnect();
+      plate.instance.destroy();
+      plate.node.remove();
+      plate = null;
+      spread.removeAttribute("data-figure");
+    }
+    function measure() {
+      attrs.set("data-pica-fit", host.clientWidth < 720 ? "min" : null);
+    }
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(measure) : null;
+    sheet.setRules(rules(sheet.selector, props));
+    renderText();
+    renderActions(actions, props.actions);
+    measure();
+    observer?.observe(host);
+    if (props.src) mountPlate();
+    if (!plate) host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.align !== before.align || props.minHeight !== before.minHeight) {
+          sheet.setRules(rules(sheet.selector, props));
+        }
+        if (changed(before, props, ["deck", "headline", "subhead", "byline", "date"])) renderText();
+        if (!sameJson(before.actions, props.actions)) renderActions(actions, props.actions);
+        if (props.src !== before.src) {
+          if (!props.src) destroyPlate();
+          else if (!plate) mountPlate();
+          else plate.instance.update({ src: props.src, alt: props.alt });
+        } else if (plate && props.alt !== before.alt) {
+          plate.instance.update({ alt: props.alt });
+        }
+      },
+      destroy() {
+        observer?.disconnect();
+        destroyPlate();
+        spread.remove();
+        sheet.destroy();
+        attrs.restore();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaEditorialHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,748 @@
+<!doctype html>
+<!--
+  Pica · Bohemian Hero · bohemian-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Bohemian Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><p>Every band is generated from the seed: a counted thread border, a scalloped edge, and a fringe, with the prose kept in front of all of it.</p></div>
+<script>
+"use strict";
+var PicaBohemianHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/bohemian-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
+
+  // registry/sections/bohemian-hero/core.ts
+  var defaults = {
+    headline: "Woven at the edges, open in the middle.",
+    subhead: "Counted thread bands frame the field, an arch shelters the copy, and the prose always sits in front of the work.",
+    actions: [
+      { label: "Browse components", href: "#components" },
+      { label: "Read the docs", href: "#docs" }
+    ],
+    align: "start",
+    bands: true,
+    arch: true,
+    intensity: 0.8,
+    minHeight: 62,
+    seed: 1
+  };
+  var TILE = 30;
+  var BAND = TILE;
+  var RUNNER = 28;
+  var BAND_GAP = 4.5;
+  var SCALLOP = 4.2;
+  var SCALLOP_STEP = 10.5;
+  var MIN_WIDE = 760;
+  var ARCH_INSET = 9;
+  var TRACKS = "repeat(12, minmax(0, 1fr))";
+  var GUTTER = "clamp(0.75rem, 2vw, 1.5rem)";
+  var ROW_GAP = "clamp(1rem, 2.4vh, 1.7rem)";
+  var PAD_TOP = "clamp(5.5rem, 14vh, 9rem)";
+  var PAD_BOTTOM = "clamp(5rem, 11vh, 7rem)";
+  var PAD_SIDE = "clamp(1.25rem, 5vw, 4.5rem)";
+  function vh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function px(value) {
+    const n = parseFloat(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+  function part(tag, name) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute(`data-pica-${name}`, "");
+    return node;
+  }
+  function hline(ctx, x1, y, x2) {
+    ctx.beginPath();
+    ctx.moveTo(x1, Math.round(y) + 0.5);
+    ctx.lineTo(x2, Math.round(y) + 0.5);
+    ctx.stroke();
+  }
+  function vline(ctx, x, y1, y2) {
+    ctx.beginPath();
+    ctx.moveTo(Math.round(x) + 0.5, y1);
+    ctx.lineTo(Math.round(x) + 0.5, y2);
+    ctx.stroke();
+  }
+  function rules(selector, p) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const col = p.align === "end" ? "6 / 13" : "1 / 8";
+    const edge = p.align === "end" ? "flex-end" : "flex-start";
+    const textAlign = p.align === "end" ? "end" : "start";
+    return [
+      `:where(${selector}){min-height:${vh(p.minHeight)}vh}`,
+      `${selector}{position:relative;isolation:isolate;box-sizing:border-box;display:grid;grid-template-columns:${TRACKS};column-gap:${GUTTER};row-gap:${ROW_GAP};align-content:center;padding:${PAD_TOP} ${PAD_SIDE} ${PAD_BOTTOM};color:${fg};text-align:${textAlign}}`,
+      `${selector} *{box-sizing:border-box}`,
+      `${selector} > *{min-width:0}`,
+      `${selector} > :not([data-pica]){grid-column:${col};margin:0;min-width:0;max-width:33em;overflow-wrap:break-word}`,
+      `${selector} [data-pica-type]{grid-column:${col};grid-row:1;min-width:0;text-align:${textAlign}}`,
+      `${selector} [data-pica-headline]{margin:0;font-size:clamp(2.5rem,6vw,4.9rem);line-height:1.03;font-weight:650;letter-spacing:-0.015em;overflow-wrap:break-word}`,
+      `${selector} [data-pica-subhead]{margin:1em 0 0;max-width:33em;font-size:clamp(1.02rem,1.45vw,1.24rem);line-height:1.6;color:${muted}}`,
+      `${selector} [data-pica-actions]{grid-column:${col};display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;justify-content:${edge}}`,
+      `${selector} [data-pica-actions][hidden],${selector} [data-pica-actions]:empty{display:none}`,
+      `${selector} [data-pica-actions] a{appearance:none;margin:0;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.6em 1.3em;display:inline-flex;align-items:center;border:1px solid ${muted};border-radius:0;color:${fg};background:transparent;cursor:pointer}`,
+      `${selector} [data-pica-actions] a[data-variant="solid"]{background:${accent};border-color:${accent};color:${cssOn("accent")}}`,
+      `${selector} [data-pica-actions] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${accent} 85%, ${fg})}`,
+      `${selector} [data-pica-actions] a[data-variant="outline"]:hover{border-color:${fg};background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${selector} [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${selector}[data-pica-fit="min"] > :not([data-pica]),${selector}[data-pica-fit="min"] [data-pica-type],${selector}[data-pica-fit="min"] [data-pica-actions]{grid-column:1 / -1;max-width:none}`
+    ].join("\n");
+  }
+  function renderActions(container, actions) {
+    container.replaceChildren();
+    for (const [i, action] of actions.slice(0, 3).entries()) {
+      const a = document.createElement("a");
+      a.setAttribute("data-pica", "");
+      a.dataset.variant = i === 0 ? "solid" : "outline";
+      a.href = action.href;
+      a.textContent = action.label;
+      container.append(a);
+    }
+    container.hidden = actions.length === 0;
+  }
+  function makeTile(colors, seed, dpr, k) {
+    const tile = document.createElement("canvas");
+    const size = Math.max(1, Math.ceil(TILE * dpr));
+    tile.width = size;
+    tile.height = size;
+    const c = tile.getContext("2d");
+    if (!c) return tile;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const rng = createRng(hashSeed(seed, 11));
+    c.fillStyle = colors.fg;
+    for (const y of [3.5, 24.5]) {
+      const dash = 4 + Math.floor(rng() * 3);
+      const gap = 2 + Math.floor(rng() * 3);
+      const off = Math.floor(rng() * (dash + gap));
+      c.globalAlpha = 0.5 * k;
+      for (let x = -off; x < TILE; x += dash + gap) c.fillRect(x, y, dash, 3);
+    }
+    const mid = TILE / 2;
+    c.strokeStyle = colors.fg;
+    c.globalAlpha = 0.55 * k;
+    c.lineWidth = 1;
+    c.beginPath();
+    c.moveTo(mid, 8.5);
+    c.lineTo(mid + 6, 14.5);
+    c.lineTo(mid, 20.5);
+    c.lineTo(mid - 6, 14.5);
+    c.closePath();
+    c.stroke();
+    for (const edgeX of [0, TILE]) {
+      c.beginPath();
+      c.moveTo(edgeX, 11);
+      c.lineTo(edgeX + (edgeX === 0 ? 3 : -3), 14.5);
+      c.lineTo(edgeX, 18);
+      c.stroke();
+    }
+    c.fillStyle = colors.accent;
+    c.globalAlpha = 0.85 * k;
+    c.fillRect(mid - 1.4, 13.1, 2.8, 2.8);
+    c.fillStyle = colors.muted;
+    c.globalAlpha = 0.5 * k;
+    for (let i = 0; i < 3; i++) {
+      const x = 2 + Math.floor(rng() * (TILE - 5));
+      c.fillRect(x, 7.2, 1.4, 2.4);
+      c.fillRect(TILE - 3 - Math.floor(rng() * (TILE - 6)), 20.4, 1.4, 2.4);
+    }
+    return tile;
+  }
+  function weave(ctx, tile, x, y, w, h) {
+    const pattern = ctx.createPattern(tile, "repeat");
+    if (!pattern) return;
+    ctx.fillStyle = pattern;
+    ctx.fillRect(x, y, w, h);
+  }
+  function archGeometry(box, width, topInner, bottomTop) {
+    const mX = Math.min(46, Math.max(24, width * 0.04));
+    const half = (box.r - box.l) / 2 + mX;
+    const rise = Math.min(half * 0.52, box.t - topInner - 16, 210);
+    if (rise < 16) return null;
+    const sY = box.t - 8;
+    const b = Math.min(box.b + 30, bottomTop - 8);
+    if (b - sY < 40) return null;
+    return { cx: (box.l + box.r) / 2, half, rise, sY, b };
+  }
+  function archEdgeX(g, y, side) {
+    if (y < g.sY) {
+      const t = (g.sY - y) / g.rise;
+      if (t < 1) return g.cx + side * g.half * Math.sqrt(1 - t * t);
+    }
+    return g.cx + side * g.half;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let dead = false;
+    const sheet = scope(host);
+    const attrs = hostAttributes(host);
+    const typeEl = part("div", "type");
+    const headlineEl = part("h1", "headline");
+    const subheadEl = part("p", "subhead");
+    typeEl.append(headlineEl, subheadEl);
+    const actionsEl = part("div", "actions");
+    host.append(typeEl, actionsEl);
+    function pageChildren() {
+      const out = [];
+      for (const el of Array.from(host.children)) {
+        if (el instanceof HTMLElement && !el.hasAttribute("data-pica")) out.push(el);
+      }
+      return out;
+    }
+    function applyRows() {
+      actionsEl.style.gridRow = `${pageChildren().length + 2}`;
+    }
+    function renderText() {
+      headlineEl.textContent = props.headline;
+      headlineEl.hidden = props.headline.trim() === "";
+      subheadEl.textContent = props.subhead;
+      subheadEl.hidden = props.subhead.trim() === "";
+      typeEl.hidden = headlineEl.hidden && subheadEl.hidden;
+    }
+    function contentBox() {
+      let l = Infinity;
+      let t = Infinity;
+      let r = -Infinity;
+      let b = -Infinity;
+      for (const el of [typeEl, actionsEl, ...pageChildren()]) {
+        if (el.offsetWidth === 0 && el.offsetHeight === 0) continue;
+        l = Math.min(l, el.offsetLeft);
+        t = Math.min(t, el.offsetTop);
+        r = Math.max(r, el.offsetLeft + el.offsetWidth);
+        b = Math.max(b, el.offsetTop + el.offsetHeight);
+      }
+      return r > l && b > t ? { l, t, r, b } : null;
+    }
+    sheet.setRules(rules(sheet.selector, props));
+    renderText();
+    renderActions(actionsEl, props.actions);
+    applyRows();
+    const under = layer(host, "under");
+    const surface = createCanvas(under.el, { onResize: () => draw() });
+    const ctx = surface.canvas.getContext("2d");
+    const paletteWatch = watchPalette(host, () => draw());
+    function drawArch(g, colors, k) {
+      if (!ctx) return;
+      const { cx, half, rise, sY, b } = g;
+      const l = cx - half;
+      const r = cx + half;
+      const arch = (hw, ry, ll, rr, bb) => {
+        ctx.beginPath();
+        ctx.moveTo(ll, bb);
+        ctx.lineTo(ll, sY);
+        ctx.ellipse(cx, sY, hw, ry, 0, Math.PI, Math.PI * 2);
+        ctx.lineTo(rr, bb);
+        ctx.closePath();
+      };
+      ctx.strokeStyle = colors.muted;
+      ctx.globalAlpha = 0.6 * k;
+      arch(half, rise, l, r, b);
+      ctx.stroke();
+      const hw2 = half - ARCH_INSET;
+      const ry2 = Math.max(9, rise - ARCH_INSET);
+      const l2 = l + ARCH_INSET;
+      const r2 = r - ARCH_INSET;
+      const b2 = b - ARCH_INSET;
+      ctx.strokeStyle = colors.fg;
+      ctx.globalAlpha = 0.4 * k;
+      arch(hw2, ry2, l2, r2, b2);
+      ctx.stroke();
+      ctx.strokeStyle = colors.muted;
+      ctx.globalAlpha = 0.5 * k;
+      const inwardX = cx;
+      const inwardY = sY + (b2 - sY) * 0.4;
+      const steps = Math.max(12, Math.round(Math.PI * (hw2 + ry2) * 0.5 / SCALLOP_STEP));
+      for (let i = 1; i < steps; i++) {
+        const th = Math.PI * i / steps;
+        const px2 = cx + hw2 * Math.cos(th);
+        const py2 = sY - ry2 * Math.sin(th);
+        const nx = inwardX - px2;
+        const ny = inwardY - py2;
+        const nl = Math.hypot(nx, ny) || 1;
+        const ang = Math.atan2(ny / nl, nx / nl);
+        ctx.beginPath();
+        ctx.arc(px2, py2, SCALLOP * 0.8, ang - Math.PI / 2, ang + Math.PI / 2);
+        ctx.stroke();
+      }
+      ctx.fillStyle = colors.accent;
+      ctx.globalAlpha = 0.85 * k;
+      const ay = sY - rise;
+      ctx.beginPath();
+      ctx.moveTo(cx, ay - 4);
+      ctx.lineTo(cx + 3, ay);
+      ctx.lineTo(cx, ay + 4);
+      ctx.lineTo(cx - 3, ay);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = colors.muted;
+      ctx.globalAlpha = 0.6 * k;
+      ctx.beginPath();
+      ctx.moveTo(l - 9, Math.round(b) + 0.5);
+      ctx.lineTo(l, Math.round(b) + 0.5);
+      ctx.moveTo(r, Math.round(b) + 0.5);
+      ctx.lineTo(r + 9, Math.round(b) + 0.5);
+      ctx.stroke();
+    }
+    function draw() {
+      if (dead || !ctx) return;
+      paletteWatch.refresh();
+      const W = surface.cssWidth;
+      const H = surface.cssHeight;
+      if (W < 2 || H < 2) return;
+      const narrow = W < MIN_WIDE;
+      attrs.set("data-pica-fit", narrow ? "min" : null);
+      const k = 0.35 + 0.65 * Math.min(1, Math.max(0, props.intensity));
+      ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineWidth = 1;
+      const colors = paletteWatch.colors;
+      const style = getComputedStyle(host);
+      const padT = px(style.paddingTop);
+      const padB = px(style.paddingBottom);
+      const padL = px(style.paddingLeft);
+      const padR = px(style.paddingRight);
+      const topY = Math.max(5, (padT - BAND) / 2);
+      const botY = H - padB + Math.max(5, (padB - BAND) / 2);
+      const tile = makeTile(colors, props.seed, surface.dpr, k);
+      const wide = !narrow;
+      const right = props.align !== "end";
+      if (props.bands) {
+        weave(ctx, tile, 0, topY, W, BAND);
+        ctx.strokeStyle = colors.muted;
+        ctx.globalAlpha = 0.65 * k;
+        hline(ctx, 0, topY - BAND_GAP, W);
+        hline(ctx, 0, topY + BAND + BAND_GAP, W);
+        ctx.globalAlpha = 0.5 * k;
+        for (let x = 6; x + SCALLOP < W - 4; x += SCALLOP_STEP) {
+          ctx.beginPath();
+          ctx.arc(x, topY + BAND + BAND_GAP + 0.5, SCALLOP, 0, Math.PI);
+          ctx.stroke();
+        }
+        weave(ctx, tile, 0, botY, W, BAND);
+        ctx.globalAlpha = 0.65 * k;
+        hline(ctx, 0, botY - BAND_GAP, W);
+        hline(ctx, 0, botY + BAND + BAND_GAP, W);
+        const fringe = createRng(hashSeed(props.seed, 33));
+        ctx.globalAlpha = 0.5 * k;
+        for (let x = 5; x < W - 3; x += 9) {
+          if (fringe() < 0.22) continue;
+          const len = 6 + fringe() * 6;
+          const slant = (fringe() - 0.5) * 5;
+          ctx.beginPath();
+          ctx.moveTo(x, botY + BAND + BAND_GAP + 0.5);
+          ctx.lineTo(x + slant, Math.min(botY + BAND + BAND_GAP + len, H - 3));
+          ctx.stroke();
+        }
+        if (wide) {
+          const xc = right ? W - padR / 2 : padL / 2;
+          const y0 = topY + BAND + 7;
+          const len = botY - 7 - y0;
+          if (len > 60) {
+            ctx.save();
+            ctx.translate(xc, y0);
+            ctx.rotate(Math.PI / 2);
+            const pattern = ctx.createPattern(tile, "repeat");
+            if (pattern) {
+              ctx.fillStyle = pattern;
+              ctx.fillRect(0, -RUNNER / 2, len, RUNNER);
+            }
+            ctx.restore();
+            ctx.strokeStyle = colors.muted;
+            ctx.globalAlpha = 0.6 * k;
+            vline(ctx, xc - RUNNER / 2 - BAND_GAP, y0, y0 + len);
+            vline(ctx, xc + RUNNER / 2 + BAND_GAP, y0, y0 + len);
+          }
+        }
+      }
+      const box = props.arch ? contentBox() : null;
+      const topInner = props.bands ? topY + BAND + BAND_GAP + SCALLOP : 6;
+      const bottomTop = props.bands ? botY - BAND_GAP : H;
+      const geom = box ? archGeometry(box, W, topInner, bottomTop) : null;
+      if (geom) drawArch(geom, colors, k);
+      if (props.bands && wide && geom) {
+        const xc = right ? W - padR / 2 : padL / 2;
+        const selIn = right ? xc - RUNNER / 2 - BAND_GAP : xc + RUNNER / 2 + BAND_GAP;
+        const tapeT = Math.round((topY + BAND + botY - TILE) / 2);
+        const edge = archEdgeX(geom, tapeT + TILE / 2, right ? 1 : -1);
+        const lo = right ? edge + 11 : selIn;
+        const hi = right ? selIn : edge - 11;
+        if (hi - lo > 120) {
+          weave(ctx, tile, lo, tapeT, hi - lo, TILE);
+          ctx.strokeStyle = colors.muted;
+          ctx.globalAlpha = 0.65 * k;
+          hline(ctx, lo, tapeT - BAND_GAP, hi);
+          hline(ctx, lo, tapeT + TILE + BAND_GAP, hi);
+          ctx.globalAlpha = 0.5 * k;
+          for (let x = lo + 6; x + SCALLOP < hi - 4; x += SCALLOP_STEP) {
+            ctx.beginPath();
+            ctx.arc(x, tapeT + TILE + BAND_GAP + 0.5, SCALLOP, 0, Math.PI);
+            ctx.stroke();
+          }
+          const fray = createRng(hashSeed(props.seed, 55));
+          ctx.strokeStyle = colors.fg;
+          ctx.globalAlpha = 0.5 * k;
+          const endX = right ? lo : hi;
+          const dir = right ? -1 : 1;
+          for (let y = tapeT + 4; y < tapeT + TILE - 3; y += 5.5) {
+            if (fray() < 0.3) continue;
+            const len = 3 + fray() * 7;
+            ctx.beginPath();
+            ctx.moveTo(endX, Math.round(y) + 0.5);
+            ctx.lineTo(endX + dir * len, Math.round(y + (fray() - 0.5) * 3) + 0.5);
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+    draw();
+    host.dataset.picaReady = "true";
+    const mutator = typeof MutationObserver === "function" ? new MutationObserver(() => {
+      applyRows();
+      draw();
+    }) : null;
+    mutator?.observe(host, { childList: true, subtree: true, characterData: true });
+    if (document.fonts?.ready) void document.fonts.ready.then(() => draw());
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (before.headline !== props.headline || before.subhead !== props.subhead) renderText();
+        if (!sameJson(before.actions, props.actions)) renderActions(actionsEl, props.actions);
+        if (before.align !== props.align || before.minHeight !== props.minHeight) sheet.setRules(rules(sheet.selector, props));
+        applyRows();
+        draw();
+      },
+      destroy() {
+        dead = true;
+        mutator?.disconnect();
+        paletteWatch.destroy();
+        surface.destroy();
+        under.remove();
+        typeEl.remove();
+        actionsEl.remove();
+        sheet.destroy();
+        attrs.restore();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaBohemianHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>
