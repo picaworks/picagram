@@ -1,0 +1,313 @@
+<!doctype html>
+<!--
+  Pica · Number Field · number-field
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Number Field · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaNumberField = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/number-field/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/number-field/core.ts
+  var defaults = {
+    value: null,
+    defaultValue: 8,
+    min: 0,
+    max: 64,
+    step: 1,
+    largeStep: 10,
+    label: "Columns",
+    disabled: false
+  };
+  function limits(props) {
+    const min = Number.isFinite(props.min) ? props.min : defaults.min;
+    const proposedMax = Number.isFinite(props.max) ? props.max : defaults.max;
+    return [min, Math.max(min, proposedMax)];
+  }
+  function stepSize(step) {
+    return Number.isFinite(step) && step > 0 ? step : defaults.step;
+  }
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+  function snap(value, props) {
+    const [min, max] = limits(props);
+    const step = stepSize(props.step);
+    const finite = Number.isFinite(value) ? value : min;
+    const stepped = min + Math.round((finite - min) / step) * step;
+    return clamp(Number(stepped.toPrecision(12)), min, max);
+  }
+  function rules(s) {
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    return [
+      `${s}{max-width:100%;flex-direction:column;gap:0.45em;color:${fg};vertical-align:middle}`,
+      `${s} [data-pica-label]{font:inherit;font-size:0.7em;line-height:1;text-transform:uppercase;letter-spacing:0.04em}`,
+      `${s} [data-pica-field]{display:grid;grid-template-columns:2.5em minmax(5.5em,8em) 2.5em;border:1px solid ${fg};background:transparent}`,
+      `${s} input,${s} button{box-sizing:border-box;border-radius:0;color:${fg}}`,
+      `${s} input{grid-column:2;grid-row:1;width:100%;min-width:0;appearance:none;border:0;background:transparent;padding:0.55em 0.7em;font-family:${GRID_FONT};font-size:1em;line-height:1.35;font-variant-numeric:tabular-nums;text-align:right}`,
+      `${s} button{grid-row:1;width:2.5em;min-height:2.5em;appearance:none;margin:0;border:0;background:transparent;padding:0;font-family:${GRID_FONT};font-size:1em;line-height:1;cursor:pointer}`,
+      `${s} [data-pica-decrement]{grid-column:1;border-right:1px solid ${fg}}`,
+      `${s} [data-pica-increment]{grid-column:3;border-left:1px solid ${fg}}`,
+      `${s} button:hover:not(:disabled){background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${s} input:focus-visible,${s} button:focus-visible{position:relative;z-index:1;outline:2px solid ${accent};outline-offset:2px}`,
+      `${s}[data-pica-disabled="true"]{opacity:0.45}`,
+      `${s} :disabled{cursor:not-allowed}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const emit = emitter(host);
+    const sheet = scope(host);
+    const restoreHost = styleHost(host, { display: "inline-flex" });
+    const id = nextId("pica-number-field");
+    const label = document.createElement("label");
+    const field = document.createElement("div");
+    const input = document.createElement("input");
+    const decrement = document.createElement("button");
+    const increment = document.createElement("button");
+    let current = snap(props.value ?? props.defaultValue, props);
+    label.setAttribute("data-pica", "");
+    label.setAttribute("data-pica-label", "");
+    label.htmlFor = id;
+    field.setAttribute("data-pica", "");
+    field.setAttribute("data-pica-field", "");
+    input.setAttribute("data-pica", "");
+    input.id = id;
+    input.type = "text";
+    input.inputMode = "decimal";
+    input.setAttribute("role", "spinbutton");
+    decrement.setAttribute("data-pica", "");
+    decrement.setAttribute("data-pica-decrement", "");
+    decrement.type = "button";
+    decrement.textContent = "−";
+    increment.setAttribute("data-pica", "");
+    increment.setAttribute("data-pica-increment", "");
+    increment.type = "button";
+    increment.textContent = "+";
+    field.append(input, decrement, increment);
+    host.append(label, field);
+    sheet.setRules(rules(sheet.selector));
+    function paint() {
+      const [min, max] = limits(props);
+      input.value = String(current);
+      input.setAttribute("aria-valuemin", String(min));
+      input.setAttribute("aria-valuemax", String(max));
+      input.setAttribute("aria-valuenow", String(current));
+      input.disabled = props.disabled;
+      decrement.disabled = props.disabled;
+      increment.disabled = props.disabled;
+      label.textContent = props.label;
+      decrement.setAttribute("aria-label", `Decrease ${props.label}`.trim());
+      increment.setAttribute("aria-label", `Increase ${props.label}`.trim());
+      host.toggleAttribute("data-pica-disabled", props.disabled);
+    }
+    function commit(proposed, edge) {
+      const [min, max] = limits(props);
+      const next = edge === "min" ? min : edge === "max" ? max : snap(proposed, props);
+      const changed = next !== current;
+      if (props.value === null) current = next;
+      paint();
+      if (changed) emit("valueChange", next);
+    }
+    function typedValue() {
+      const value = Number(input.value.trim());
+      return input.value.trim() && Number.isFinite(value) ? value : null;
+    }
+    function commitTyped() {
+      const value = typedValue();
+      if (value === null) paint();
+      else commit(value);
+    }
+    const onKeyDown = (event) => {
+      const typed = typedValue() ?? current;
+      const large = Number.isFinite(props.largeStep) ? Math.abs(props.largeStep) : defaults.largeStep;
+      let proposed = null;
+      let edge;
+      if (event.key === "ArrowUp") proposed = typed + stepSize(props.step);
+      else if (event.key === "ArrowDown") proposed = typed - stepSize(props.step);
+      else if (event.key === "PageUp") proposed = typed + large;
+      else if (event.key === "PageDown") proposed = typed - large;
+      else if (event.key === "Home") edge = "min";
+      else if (event.key === "End") edge = "max";
+      else if (event.key === "Enter") proposed = typedValue();
+      else return;
+      event.preventDefault();
+      if (proposed === null && edge === void 0) paint();
+      else commit(proposed ?? current, edge);
+    };
+    const onBlur = () => commitTyped();
+    const onDecrement = () => commit(current - stepSize(props.step));
+    const onIncrement = () => commit(current + stepSize(props.step));
+    input.addEventListener("keydown", onKeyDown);
+    input.addEventListener("blur", onBlur);
+    decrement.addEventListener("click", onDecrement);
+    increment.addEventListener("click", onIncrement);
+    paint();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        current = props.value === null ? snap(current, props) : snap(props.value, props);
+        paint();
+      },
+      destroy() {
+        input.removeEventListener("keydown", onKeyDown);
+        input.removeEventListener("blur", onBlur);
+        decrement.removeEventListener("click", onDecrement);
+        increment.removeEventListener("click", onIncrement);
+        label.remove();
+        field.remove();
+        sheet.destroy();
+        restoreHost();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaNumberField.mount(host, take(window.PICA_PROPS || {}));
+  ["valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

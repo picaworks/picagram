@@ -1,0 +1,323 @@
+<!doctype html>
+<!--
+  Pica · Slider · slider
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Slider · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaSlider = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/slider/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/slider/core.ts
+  var defaults = {
+    value: null,
+    defaultValue: 30,
+    min: 0,
+    max: 100,
+    step: 1,
+    largeStep: 10,
+    orientation: "horizontal",
+    label: "Volume",
+    showValue: true,
+    height: 10
+  };
+  function sliderLimits(props) {
+    return props.max >= props.min ? [props.min, props.max] : [props.min, props.min];
+  }
+  function sliderStep(props) {
+    return Number.isFinite(props.step) && props.step > 0 ? props.step : 1;
+  }
+  function sliderSnap(raw, props) {
+    const [min, max] = sliderLimits(props);
+    const step = sliderStep(props);
+    const clamped = Math.min(max, Math.max(min, raw));
+    const snapped = min + Math.round((clamped - min) / step) * step;
+    return Number(Math.min(max, Math.max(min, snapped)).toFixed(10));
+  }
+  function sliderRules(s, props) {
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    const vertical = props.orientation === "vertical";
+    const height = Math.min(30, Math.max(6, props.height));
+    const root = `${s} [data-part="root"]`;
+    const head = `${s} [data-part="head"]`;
+    const value = `${s} [data-part="value"]`;
+    const track = `${s} [data-part="track"]`;
+    const rail = `${s} [data-part="rail"]`;
+    const fill = `${s} [data-part="fill"]`;
+    const thumb = `${s} [data-part="thumb"]`;
+    return [
+      `${s}{display:inline-block;color:${fg};vertical-align:middle}`,
+      `${root}{display:grid;gap:0.35em;${vertical ? "justify-items:center" : "width:min(22rem,80vw)"}}`,
+      `${head}{display:flex;align-items:baseline;justify-content:space-between;gap:2em;width:100%;font:inherit;line-height:1.2}`,
+      `${value}{font-family:${GRID_FONT};font-variant-numeric:tabular-nums;text-align:right;min-width:4ch}`,
+      `${track}{position:relative;touch-action:none;user-select:none;cursor:pointer;${vertical ? `width:2rem;height:${height}rem` : "width:100%;height:2rem"}}`,
+      `${rail}{position:absolute;background:color-mix(in srgb, ${fg} 35%, transparent);${vertical ? "top:0.5rem;bottom:0.5rem;left:50%;width:1px" : "left:0.5rem;right:0.5rem;top:50%;height:1px"}}`,
+      `${fill}{position:absolute;background:${accent};${vertical ? "left:0;right:0;bottom:0;height:var(--slider-fill)" : "left:0;top:0;bottom:0;width:var(--slider-fill)"}}`,
+      `${thumb}{position:absolute;box-sizing:border-box;width:0.9rem;height:0.9rem;border:1px solid ${fg};border-radius:0;background:transparent;cursor:grab;${vertical ? "left:50%;bottom:var(--slider-fill);transform:translate(-50%,50%)" : "top:50%;left:var(--slider-fill);transform:translate(-50%,-50%)"}}`,
+      `${thumb}:hover,${track}[data-dragging="true"] ${thumb}{background:${accent};border-color:${accent}}`,
+      `${thumb}:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${track}[data-dragging="true"] ${thumb}{cursor:grabbing}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let current = sliderSnap(props.value ?? props.defaultValue, props);
+    let dragging = false;
+    let pointerId = -1;
+    const emit = emitter(host);
+    const sheet = scope(host);
+    const labelId = nextId("pica-slider-label");
+    const root = document.createElement("div");
+    const head = document.createElement("div");
+    const label = document.createElement("span");
+    const value = document.createElement("span");
+    const track = document.createElement("div");
+    const rail = document.createElement("div");
+    const fill = document.createElement("div");
+    const thumb = document.createElement("div");
+    for (const [node, part] of [
+      [root, "root"],
+      [head, "head"],
+      [label, "label"],
+      [value, "value"],
+      [track, "track"],
+      [rail, "rail"],
+      [fill, "fill"],
+      [thumb, "thumb"]
+    ]) {
+      node.setAttribute("data-pica", "");
+      node.setAttribute("data-part", part);
+    }
+    label.id = labelId;
+    thumb.setAttribute("role", "slider");
+    thumb.tabIndex = 0;
+    rail.append(fill, thumb);
+    track.append(rail);
+    head.append(label, value);
+    root.append(head, track);
+    host.append(root);
+    function shownValue() {
+      return sliderSnap(props.value ?? current, props);
+    }
+    function render() {
+      const [min, max] = sliderLimits(props);
+      const shown = shownValue();
+      const ratio = max === min ? 0 : (shown - min) / (max - min);
+      label.textContent = props.label;
+      value.textContent = String(shown);
+      value.hidden = !props.showValue;
+      thumb.setAttribute("aria-labelledby", labelId);
+      thumb.setAttribute("aria-valuemin", String(min));
+      thumb.setAttribute("aria-valuemax", String(max));
+      thumb.setAttribute("aria-valuenow", String(shown));
+      if (props.orientation === "vertical") thumb.setAttribute("aria-orientation", "vertical");
+      else thumb.removeAttribute("aria-orientation");
+      rail.style.setProperty("--slider-fill", `${ratio * 100}%`);
+      sheet.setRules(sliderRules(sheet.selector, props));
+    }
+    function choose(raw) {
+      const next = sliderSnap(raw, props);
+      if (props.value === null) {
+        current = next;
+        render();
+      }
+      emit("valueChange", next);
+    }
+    function chooseFromPointer(event) {
+      const rect = rail.getBoundingClientRect();
+      const [min, max] = sliderLimits(props);
+      const ratio = props.orientation === "vertical" ? (rect.bottom - event.clientY) / Math.max(1, rect.height) : (event.clientX - rect.left) / Math.max(1, rect.width);
+      choose(min + Math.min(1, Math.max(0, ratio)) * (max - min));
+    }
+    const onKeyDown = (event) => {
+      const shown = shownValue();
+      const [min, max] = sliderLimits(props);
+      const large = Number.isFinite(props.largeStep) ? Math.abs(props.largeStep) : 10;
+      let next = null;
+      if (event.key === "ArrowRight" || event.key === "ArrowUp") next = shown + sliderStep(props);
+      else if (event.key === "ArrowLeft" || event.key === "ArrowDown") next = shown - sliderStep(props);
+      else if (event.key === "PageUp") next = shown + large;
+      else if (event.key === "PageDown") next = shown - large;
+      else if (event.key === "Home") next = min;
+      else if (event.key === "End") next = max;
+      if (next === null) return;
+      event.preventDefault();
+      choose(next);
+    };
+    const onPointerDown = (event) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      dragging = true;
+      pointerId = event.pointerId;
+      track.dataset.dragging = "true";
+      thumb.focus();
+      track.setPointerCapture(event.pointerId);
+      chooseFromPointer(event);
+    };
+    const onPointerMove = (event) => {
+      if (dragging && event.pointerId === pointerId) chooseFromPointer(event);
+    };
+    const endPointer = (event) => {
+      if (event.pointerId !== pointerId) return;
+      dragging = false;
+      pointerId = -1;
+      track.removeAttribute("data-dragging");
+    };
+    thumb.addEventListener("keydown", onKeyDown);
+    track.addEventListener("pointerdown", onPointerDown);
+    track.addEventListener("pointermove", onPointerMove);
+    track.addEventListener("pointerup", endPointer);
+    track.addEventListener("pointercancel", endPointer);
+    track.addEventListener("lostpointercapture", endPointer);
+    render();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        if (next.value !== void 0 && next.value !== null) current = sliderSnap(next.value, props);
+        else current = sliderSnap(current, props);
+        render();
+      },
+      destroy() {
+        thumb.removeEventListener("keydown", onKeyDown);
+        track.removeEventListener("pointerdown", onPointerDown);
+        track.removeEventListener("pointermove", onPointerMove);
+        track.removeEventListener("pointerup", endPointer);
+        track.removeEventListener("pointercancel", endPointer);
+        track.removeEventListener("lostpointercapture", endPointer);
+        root.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaSlider.mount(host, take(window.PICA_PROPS || {}));
+  ["valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1620,6 +1620,270 @@
       }
     },
     {
+      "name": "brick-lattice",
+      "type": "registry:component",
+      "title": "Brick Lattice",
+      "description": "A quiet masonry lattice with running or stacked courses drawn behind content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/brick-lattice.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "cell-mosaic",
+      "type": "registry:component",
+      "title": "Cell Mosaic",
+      "description": "A seeded field of even polygonal cells drawn as quiet hairlines behind page content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/cell-mosaic.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Nouvelles applications des paramètres continus à la théorie des formes quadratiques. Deuxième mémoire. Recherches sur les parallélloèdres primitifs",
+            "author": "Georges Voronoi",
+            "url": "https://doi.org/10.1515/crll.1908.134.198",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
+      "name": "checkerboard",
+      "type": "registry:component",
+      "title": "Checkerboard",
+      "description": "A quiet field of alternating ink and transparent squares drawn beneath page content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/checkerboard.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "circuit-traces",
+      "type": "registry:component",
+      "title": "Circuit Traces",
+      "description": "Seeded circuit traces follow an orthogonal grid with accent pads and optional via rings.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/circuit-traces.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "diagonal-stripes",
+      "type": "registry:component",
+      "title": "Diagonal Stripes",
+      "description": "Fine diagonal rules form a quiet drafting ground behind page content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/diagonal-stripes.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "dot-lattice",
+      "type": "registry:component",
+      "title": "Dot Lattice",
+      "description": "A calm field of small ink points on a regular or staggered lattice behind page content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/dot-lattice.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "grid-paper",
+      "type": "registry:component",
+      "title": "Grid Paper",
+      "description": "A quiet square mesh with darker major rules aligned to regular minor intervals.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/grid-paper.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "hatch-lines",
+      "type": "registry:component",
+      "title": "Hatch Lines",
+      "description": "Fine crossing ink lines make a restrained engraved background for text.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/hatch-lines.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "hex-lattice",
+      "type": "registry:component",
+      "title": "Hex Lattice",
+      "description": "A regular hexagonal hairline lattice that sits quietly behind page content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/hex-lattice.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "isometric-grid",
+      "type": "registry:component",
+      "title": "Isometric Grid",
+      "description": "A quiet isometric lattice of equilateral triangles that can resolve into staggered drafting points.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/isometric-grid.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "moire-rings",
+      "type": "registry:component",
+      "title": "Moire Rings",
+      "description": "Two concentric hairline ring fields drift out of step to form a quiet radial moire behind content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/moire-rings.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "The Theory of the Moiré Phenomenon, Volume I: Periodic Layers",
+            "author": "Isaac Amidror",
+            "url": "https://doi.org/10.1007/978-1-84882-181-1",
+            "license": "Book"
+          }
+        ]
+      }
+    },
+    {
+      "name": "truchet-tiles",
+      "type": "registry:component",
+      "title": "Truchet Tiles",
+      "description": "A seeded field of connected quarter circle paths or diagonal zigzags drawn behind content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/truchet-tiles.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "The Tiling Patterns of Sebastien Truchet and the Topology of Structural Hierarchy",
+            "author": "Cyril Stanley Smith and Pauline Boucher",
+            "url": "https://doi.org/10.2307/1578535",
+            "license": "Paper"
+          }
+        ]
+      }
+    },
+    {
       "name": "bento-grid",
       "type": "registry:component",
       "title": "Bento Grid",
@@ -2726,6 +2990,130 @@
       }
     },
     {
+      "name": "accordion",
+      "type": "registry:component",
+      "title": "Accordion",
+      "description": "A keyboard navigable set of labeled panels that can open one at a time or independently.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/accordion.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Accordion pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/accordion/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "alert",
+      "type": "registry:component",
+      "title": "Alert",
+      "description": "A live status callout with a tag, title, and message in four restrained tones.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/alert.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Alert pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "avatar",
+      "type": "registry:component",
+      "title": "Avatar",
+      "description": "A square hairline avatar that shows a photo when available and centered mono initials while it loads or fails.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/avatar.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "badge",
+      "type": "registry:component",
+      "title": "Badge",
+      "description": "A compact status label with a solid, outline, or bracket frame.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/badge.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "breadcrumb",
+      "type": "registry:component",
+      "title": "Breadcrumb",
+      "description": "A hierarchy trail with native links, a distinct current page, and middle items that expand on demand.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/breadcrumb.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Breadcrumb pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
       "name": "button",
       "type": "registry:component",
       "title": "Button",
@@ -2749,6 +3137,215 @@
             "author": "W3C WAI-ARIA Authoring Practices Guide",
             "url": "https://www.w3.org/WAI/ARIA/apg/patterns/button/",
             "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "calendar",
+      "type": "registry:component",
+      "title": "Calendar",
+      "description": "A month grid with roving keyboard focus and controlled or uncontrolled single date selection.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/calendar.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Date picker dialog example",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "card",
+      "type": "registry:component",
+      "title": "Card",
+      "description": "A hairline frame gives page content an optional heading and a compact row of linked actions.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/card.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:component",
+      "title": "Checkbox",
+      "description": "A hairline checkbox with checked, unchecked, and mixed states for pointer and keyboard input.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/checkbox.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Checkbox pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:component",
+      "title": "Collapsible",
+      "description": "A native disclosure trigger that instantly shows or hides one block of page content.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/collapsible.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Disclosure pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "combobox",
+      "type": "registry:component",
+      "title": "Combobox",
+      "description": "An editable field filters a listbox while preserving typed text during suggestion navigation.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/combobox.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Combobox pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/",
+            "license": "W3C document"
+          },
+          {
+            "relation": "technique",
+            "title": "Popover API",
+            "author": "MDN",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+            "license": "CC-BY-SA documentation"
+          }
+        ]
+      }
+    },
+    {
+      "name": "command-palette",
+      "type": "registry:component",
+      "title": "Command Palette",
+      "description": "A modal command palette that filters a flat command list and supports keyboard and pointer selection.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/command-palette.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Combobox pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/",
+            "license": "W3C document"
+          },
+          {
+            "relation": "technique",
+            "title": "Dialog (modal) pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:component",
+      "title": "Context Menu",
+      "description": "A framed content region with an accessible action menu at the pointer or keyboard anchor.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/context-menu.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Menu and menubar pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/",
+            "license": "W3C document"
+          },
+          {
+            "relation": "technique",
+            "title": "Popover API",
+            "author": "MDN",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+            "license": "CC-BY-SA documentation"
           }
         ]
       }
@@ -2782,6 +3379,268 @@
       }
     },
     {
+      "name": "drawer",
+      "type": "registry:component",
+      "title": "Drawer",
+      "description": "A native modal panel pinned to the left, right, or bottom edge of the viewport.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/drawer.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Dialog (modal) pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:component",
+      "title": "Empty State",
+      "description": "A measured empty state with a box drawn mark, supporting copy, and one quiet action.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/empty-state.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "field",
+      "type": "registry:component",
+      "title": "Field",
+      "description": "A label, description, and validation message around a page-owned form control.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/field.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Labeling Controls",
+            "author": "W3C Web Accessibility Initiative",
+            "url": "https://www.w3.org/WAI/tutorials/forms/labels/",
+            "license": "W3C document"
+          },
+          {
+            "relation": "technique",
+            "title": "Validating Input",
+            "author": "W3C Web Accessibility Initiative",
+            "url": "https://www.w3.org/WAI/tutorials/forms/validation/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "input",
+      "type": "registry:component",
+      "title": "Input",
+      "description": "A native text field with controlled and uncontrolled values, accessible labeling, and keyboard event reporting.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/input.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "The text input element",
+            "author": "MDN",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text",
+            "license": "CC-BY-SA documentation"
+          }
+        ]
+      }
+    },
+    {
+      "name": "input-otp",
+      "type": "registry:component",
+      "title": "Input OTP",
+      "description": "A one-time code field with roving focus, paste distribution, and controlled or uncontrolled state.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/input-otp.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "kbd",
+      "type": "registry:component",
+      "title": "Kbd",
+      "description": "A keyboard chord drawn as physical key caps or bracketed monospace text.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/kbd.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "menu",
+      "type": "registry:component",
+      "title": "Menu",
+      "description": "A native trigger opens a keyboard navigable popover menu and reports the chosen action.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/menu.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Menu and menubar pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/",
+            "license": "W3C document"
+          },
+          {
+            "relation": "technique",
+            "title": "Popover API",
+            "author": "MDN",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+            "license": "CC-BY-SA documentation"
+          }
+        ]
+      }
+    },
+    {
+      "name": "meter",
+      "type": "registry:component",
+      "title": "Meter",
+      "description": "A labelled scalar readout drawn as block cells with an optional threshold marker.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/meter.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Meter pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/meter/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "number-field",
+      "type": "registry:component",
+      "title": "Number Field",
+      "description": "A labelled numeric input with typed entry, keyboard stepping, and square decrement and increment controls.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/number-field.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Spinbutton pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "pagination",
+      "type": "registry:component",
+      "title": "Pagination",
+      "description": "A compact navigation list that keeps nearby pages visible and folds distant ranges into quiet ellipses.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/pagination.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "popover-tooltip",
       "type": "registry:component",
       "title": "Popover Tooltip",
@@ -2811,6 +3670,130 @@
             "title": "Disclosure pattern",
             "author": "W3C WAI-ARIA Authoring Practices Guide",
             "url": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "preview-card",
+      "type": "registry:component",
+      "title": "Preview Card",
+      "description": "A link that reveals a compact reference preview after a short hover or when focused.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/preview-card.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "progress",
+      "type": "registry:component",
+      "title": "Progress",
+      "description": "A labelled determinate progress bar drawn as flat block cells with an exact accessible value.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/progress.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "progressbar role",
+            "author": "W3C",
+            "url": "https://www.w3.org/TR/wai-aria-1.2/#progressbar",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:component",
+      "title": "Radio Group",
+      "description": "A single-choice group with square marks, roving focus, and selection that follows focus.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/radio-group.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Radio group pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:component",
+      "title": "Scroll Area",
+      "description": "A native scroll container with quiet edge rules and a position marker that leave content and keyboard behavior untouched.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/scroll-area.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "segmented-control",
+      "type": "registry:component",
+      "title": "Segmented Control",
+      "description": "A single-choice radio group drawn as one ruled strip, with selection following keyboard focus.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/segmented-control.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Radio group pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/",
             "license": "W3C document"
           }
         ]
@@ -2852,6 +3835,150 @@
       }
     },
     {
+      "name": "separator",
+      "type": "registry:component",
+      "title": "Separator",
+      "description": "A quiet horizontal or vertical hairline with an optional label on the horizontal rule.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/separator.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "separator role",
+            "author": "W3C",
+            "url": "https://www.w3.org/TR/wai-aria-1.2/#separator",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:component",
+      "title": "Skeleton",
+      "description": "Ghost blocks breathe between two quiet shade glyphs while content is loading.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/skeleton.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "slider",
+      "type": "registry:component",
+      "title": "Slider",
+      "description": "A labelled slider with stepped keyboard and pointer input in horizontal and vertical orientations.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/slider.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Slider pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/slider/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "spinner",
+      "type": "registry:component",
+      "title": "Spinner",
+      "description": "An inline braille cell run that travels clockwise while work of unknown duration is under way.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/spinner.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "switch",
+      "type": "registry:component",
+      "title": "Switch",
+      "description": "An accessible on and off switch with a visible label and optional state value.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/switch.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Switch pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/switch/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "table",
+      "type": "registry:component",
+      "title": "Table",
+      "description": "A semantic data table with tabular figures, quiet row rules, and optional three-state sorting.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/table.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "tabs",
       "type": "registry:component",
       "title": "Tabs",
@@ -2874,6 +4001,145 @@
             "title": "Tabs pattern",
             "author": "W3C WAI-ARIA Authoring Practices Guide",
             "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tabs/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "textarea",
+      "type": "registry:component",
+      "title": "Textarea",
+      "description": "A labelled text field that grows with its content and reports every input.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/textarea.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "toast",
+      "type": "registry:component",
+      "title": "Toast",
+      "description": "A polite live stack of dismissible notices with pausable expiry and four corner positions.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/toast.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Alert pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+            "license": "W3C document"
+          },
+          {
+            "relation": "technique",
+            "title": "Alert and message dialogs pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:component",
+      "title": "Toggle Group",
+      "description": "A toolbar of independent buttons that can each be pressed or released.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/toggle-group.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Toolbar pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "toolbar",
+      "type": "registry:component",
+      "title": "Toolbar",
+      "description": "A labeled band of action and toggle controls with roving keyboard focus.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/toolbar.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Toolbar pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+            "license": "W3C document"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tree-view",
+      "type": "registry:component",
+      "title": "Tree View",
+      "description": "A keyboard navigable hierarchical tree with internal expansion and controllable selection.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/tree-view.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Tree view pattern",
+            "author": "W3C WAI-ARIA Authoring Practices Guide",
+            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/",
             "license": "W3C document"
           }
         ]

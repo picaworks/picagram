@@ -1,0 +1,346 @@
+<!doctype html>
+<!--
+  Pica · Toast · toast
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Toast · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaToast = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/toast/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/toast/core.ts
+  var defaults = {
+    toasts: [],
+    duration: 6e3,
+    position: "bottom-end",
+    label: "Notifications",
+    max: 3
+  };
+  function toastRules(selector, position) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const blockSide = position.startsWith("top") ? "top:1rem!important;bottom:auto!important" : "top:auto!important;bottom:1rem!important";
+    const inlineSide = position.endsWith("start") ? "left:1rem!important;right:auto!important" : "left:auto!important;right:1rem!important";
+    return [
+      `${selector}{position:fixed!important;${blockSide};${inlineSide};z-index:100;display:flex;flex-direction:column;gap:0.5rem;width:min(24rem,calc(100vw - 2rem))!important;height:auto!important;max-height:calc(100vh - 2rem);pointer-events:none}`,
+      `${selector} [data-pica-toast]{display:grid;grid-template-columns:2px minmax(0,1fr) auto;align-items:stretch;border:1px solid ${muted};border-radius:0;background:color-mix(in srgb,${fg} 6%,transparent);color:${fg};pointer-events:auto}`,
+      `${selector} [data-pica-rule]{background:${fg}}`,
+      `${selector} [data-pica-toast][data-tone="accent"] [data-pica-rule]{background:${accent}}`,
+      `${selector} [data-pica-copy]{min-width:0;padding:0.75rem 0.25rem 0.75rem 0.75rem}`,
+      `${selector} [data-pica-title]{margin:0 0 0.28rem;font-family:${GRID_FONT};font-size:0.68rem;line-height:1.2;letter-spacing:0.06em;text-transform:uppercase;color:${muted}}`,
+      `${selector} [data-pica-title][hidden]{display:none}`,
+      `${selector} [data-pica-message]{margin:0;font:inherit;font-size:0.875rem;line-height:1.45;color:${fg};overflow-wrap:anywhere}`,
+      `${selector} [data-pica-close]{appearance:none;align-self:start;width:2rem;height:2rem;margin:0.5rem;padding:0;border:1px solid ${muted};border-radius:0;background:transparent;color:${fg};font-family:${GRID_FONT};font-size:1rem;line-height:1;cursor:pointer}`,
+      `${selector} [data-pica-close]:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const emit = emitter(host);
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    const entries = /* @__PURE__ */ new Map();
+    const dismissed = /* @__PURE__ */ new Set();
+    let previousDuration = props.duration;
+    let destroyed = false;
+    attrs.set("role", "log");
+    attrs.set("aria-live", "polite");
+    attrs.set("aria-label", props.label);
+    attrs.set("aria-relevant", "additions");
+    attrs.set("aria-atomic", "false");
+    function clearTimer(entry) {
+      if (entry.timer !== null) clearTimeout(entry.timer);
+      entry.timer = null;
+    }
+    function removeEntry(entry) {
+      clearTimer(entry);
+      entry.el.remove();
+      entries.delete(entry.id);
+    }
+    function dismiss(id) {
+      const entry = entries.get(id);
+      if (!entry) return;
+      dismissed.add(id);
+      removeEntry(entry);
+      emit("dismiss", id);
+      reconcile();
+    }
+    function startTimer(entry) {
+      clearTimer(entry);
+      if (entry.remaining <= 0 || entry.hovered || entry.focused) return;
+      entry.started = Date.now();
+      entry.timer = setTimeout(() => dismiss(entry.id), entry.remaining);
+    }
+    function pauseTimer(entry) {
+      if (entry.timer === null) return;
+      entry.remaining = Math.max(0, entry.remaining - (Date.now() - entry.started));
+      clearTimer(entry);
+    }
+    function makeEntry(toast) {
+      const el = document.createElement("article");
+      const rule = document.createElement("span");
+      const copy = document.createElement("div");
+      const title = document.createElement("p");
+      const message = document.createElement("p");
+      const close = document.createElement("button");
+      for (const node of [el, rule, copy, title, message, close]) node.setAttribute("data-pica", "");
+      el.setAttribute("data-pica-toast", "");
+      rule.setAttribute("data-pica-rule", "");
+      rule.setAttribute("aria-hidden", "true");
+      copy.setAttribute("data-pica-copy", "");
+      title.setAttribute("data-pica-title", "");
+      message.setAttribute("data-pica-message", "");
+      close.setAttribute("data-pica-close", toast.id);
+      close.type = "button";
+      close.textContent = "×";
+      copy.append(title, message);
+      el.append(rule, copy, close);
+      const entry = {
+        id: toast.id,
+        el,
+        title,
+        message,
+        remaining: Math.min(2e4, Math.max(0, props.duration)),
+        started: 0,
+        timer: null,
+        hovered: false,
+        focused: false
+      };
+      close.addEventListener("click", () => dismiss(entry.id));
+      el.addEventListener("pointerenter", () => {
+        entry.hovered = true;
+        pauseTimer(entry);
+      });
+      el.addEventListener("pointerleave", () => {
+        entry.hovered = false;
+        if (!entry.focused) startTimer(entry);
+      });
+      el.addEventListener("focusin", () => {
+        entry.focused = true;
+        pauseTimer(entry);
+      });
+      el.addEventListener("focusout", (event) => {
+        if (el.contains(event.relatedTarget)) return;
+        entry.focused = false;
+        if (!entry.hovered) startTimer(entry);
+      });
+      updateEntry(entry, toast);
+      return entry;
+    }
+    function updateEntry(entry, toast) {
+      entry.el.setAttribute("data-tone", toast.tone);
+      entry.title.textContent = toast.title ?? "";
+      entry.title.hidden = !toast.title;
+      entry.message.textContent = toast.message;
+      const close = entry.el.querySelector("[data-pica-close]");
+      close?.setAttribute("aria-label", toast.title ? `Dismiss ${toast.title}` : "Dismiss notification");
+    }
+    function reconcile() {
+      const supplied = new Set(props.toasts.map((toast) => toast.id));
+      for (const id of dismissed) if (!supplied.has(id)) dismissed.delete(id);
+      const visible = [];
+      const ids = /* @__PURE__ */ new Set();
+      const limit = Math.min(6, Math.max(1, Math.round(props.max)));
+      for (const toast of props.toasts) {
+        if (visible.length >= limit) break;
+        if (!ids.has(toast.id) && !dismissed.has(toast.id)) {
+          visible.push(toast);
+          ids.add(toast.id);
+        }
+      }
+      for (const entry of entries.values()) if (!ids.has(entry.id)) removeEntry(entry);
+      for (const toast of visible) {
+        let entry = entries.get(toast.id);
+        if (!entry) {
+          entry = makeEntry(toast);
+          entries.set(toast.id, entry);
+          host.append(entry.el);
+          startTimer(entry);
+        } else {
+          updateEntry(entry, toast);
+        }
+      }
+      const desired = visible.flatMap((toast) => {
+        const entry = entries.get(toast.id);
+        return entry ? [entry.el] : [];
+      });
+      const current = Array.from(host.children).filter((node) => node.hasAttribute("data-pica-toast"));
+      if (desired.some((node, index) => node !== current[index])) {
+        for (const node of desired) host.append(node);
+      }
+    }
+    function apply(resetTimers) {
+      attrs.set("aria-label", props.label);
+      sheet.setRules(toastRules(sheet.selector, props.position));
+      reconcile();
+      if (resetTimers) {
+        const duration = Math.min(2e4, Math.max(0, props.duration));
+        for (const entry of entries.values()) {
+          entry.remaining = duration;
+          startTimer(entry);
+        }
+      }
+    }
+    apply(false);
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        const resetTimers = props.duration !== previousDuration;
+        previousDuration = props.duration;
+        apply(resetTimers);
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        for (const entry of entries.values()) removeEntry(entry);
+        sheet.destroy();
+        attrs.restore();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaToast.mount(host, take(window.PICA_PROPS || {}));
+  ["dismiss"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

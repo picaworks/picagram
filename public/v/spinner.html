@@ -1,0 +1,335 @@
+<!doctype html>
+<!--
+  Pica · Spinner · spinner
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Spinner · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaSpinner = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/spinner/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/blocks.ts
+  var BRAILLE_BASE = 10240;
+  function brailleDot(row, col) {
+    if (row === 3) return col === 0 ? 64 : 128;
+    return 1 << (col === 0 ? row : row + 3);
+  }
+  function braille(bits) {
+    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/spinner/core.ts
+  var defaults = {
+    size: 4,
+    speed: 1,
+    label: "Loading",
+    fps: 15,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var spinnerClamp = (value, low, high) => Math.max(low, Math.min(high, value));
+  function spinnerEdgeGlyph(x, y, size) {
+    let bits = 0;
+    if (y === 0) bits |= brailleDot(0, 0) | brailleDot(0, 1);
+    if (x === size - 1) for (let row = 0; row < 4; row++) bits |= brailleDot(row, 1);
+    if (y === size - 1) bits |= brailleDot(3, 0) | brailleDot(3, 1);
+    if (x === 0) for (let row = 0; row < 4; row++) bits |= brailleDot(row, 0);
+    return braille(bits);
+  }
+  function spinnerPath(size) {
+    const points = [];
+    const add = (x, y) => {
+      points.push({ x, y, glyph: spinnerEdgeGlyph(x, y, size) });
+    };
+    for (let x = 0; x < size; x++) add(x, 0);
+    for (let y = 1; y < size; y++) add(size - 1, y);
+    for (let x = size - 2; x >= 0; x--) add(x, size - 1);
+    for (let y = size - 2; y > 0; y--) add(0, y);
+    return points;
+  }
+  function spinnerRules(selector, size) {
+    return [
+      `${selector}{display:inline-block;width:${size}ch;height:${size}em;overflow:visible;vertical-align:-0.15em;font-family:${GRID_FONT};line-height:1}`,
+      `${selector}>[data-pica-spinner]{display:grid;grid-template-columns:repeat(${size},1ch);grid-template-rows:repeat(${size},1em);width:max-content;height:max-content;pointer-events:none;user-select:none;white-space:pre;font-kerning:none;font-variant-ligatures:none}`,
+      `${selector}>[data-pica-spinner]>span{display:block;width:1ch;height:1em;line-height:1;text-align:center}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let size = Math.round(spinnerClamp(props.size, 3, 9));
+    let path = [];
+    let cells = [];
+    const sheet = scope(host);
+    const view = document.createElement("span");
+    view.setAttribute("data-pica", "");
+    view.setAttribute("data-pica-spinner", "");
+    view.setAttribute("aria-hidden", "true");
+    host.appendChild(view);
+    function build() {
+      path = spinnerPath(size);
+      cells = [];
+      view.replaceChildren();
+      for (let i = 0; i < size * size; i++) {
+        const cell = document.createElement("span");
+        cell.setAttribute("data-pica", "");
+        view.appendChild(cell);
+        cells.push(cell);
+      }
+      sheet.setRules(spinnerRules(sheet.selector, size));
+    }
+    function draw(t) {
+      for (const cell of cells) cell.textContent = "";
+      const speed = spinnerClamp(props.speed, 0.25, 3);
+      const lead = Math.floor(t * speed * path.length / 2e3) % path.length;
+      const colors = [cssVar("accent"), cssVar("fg"), cssVar("muted")];
+      for (let tail = 0; tail < colors.length; tail++) {
+        const point = path[(lead - tail + path.length) % path.length];
+        if (!point) continue;
+        const cell = cells[point.y * size + point.x];
+        if (!cell) continue;
+        cell.textContent = point.glyph;
+        cell.style.color = colors[tail] ?? cssVar("muted");
+      }
+    }
+    labelHost(host, props.label, "status");
+    build();
+    const loop = createLoop({
+      el: host,
+      fps: spinnerClamp(props.fps, 1, 30),
+      paused: props.paused,
+      time: props.time,
+      still: 1200,
+      frame: draw
+    });
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const previousSize = size;
+        props = { ...props, ...next };
+        size = Math.round(spinnerClamp(props.size, 3, 9));
+        labelHost(host, props.label, "status");
+        if (size !== previousSize) build();
+        loop.update({
+          paused: props.paused,
+          time: props.time,
+          fps: spinnerClamp(props.fps, 1, 30)
+        });
+        loop.redraw();
+      },
+      destroy() {
+        loop.destroy();
+        view.remove();
+        sheet.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaSpinner.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

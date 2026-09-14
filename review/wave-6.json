@@ -1,0 +1,252 @@
+{
+  "accordion": {
+    "decision": "keep",
+    "note": "hairline rules, one accent on the open panel, prose in the page font",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "alert": {
+    "decision": "keep",
+    "note": "note badge and two lines, restrained",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "avatar": {
+    "decision": "keep",
+    "note": "initials in a hairline square",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "badge": {
+    "decision": "keep",
+    "note": "label in a hairline box, accent border used once",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "breadcrumb": {
+    "decision": "keep",
+    "note": "mono trail with a truncation ellipsis",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "calendar": {
+    "decision": "keep",
+    "note": "month grid, mono, accent on the selected day",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "card": {
+    "decision": "keep",
+    "note": "eyebrow, heading, copy, two actions, reads finished",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "checkbox": {
+    "decision": "keep",
+    "note": "accent check in a hairline box",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "collapsible": {
+    "decision": "keep",
+    "note": "disclosure marker and body, distinct from accordion",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "combobox": {
+    "decision": "keep",
+    "note": "labelled field with a chevron, grammar correct",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "command-palette": {
+    "decision": "keep",
+    "note": "filter field over a command list with shortcut hints",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "context-menu": {
+    "decision": "keep",
+    "note": "closed at rest is the honest default for this pattern",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "drawer": {
+    "decision": "keep",
+    "note": "edge panel over a dimmed page, close control present",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "empty-state": {
+    "decision": "keep",
+    "note": "glyph mark, line, and one action, does not read as failed to load",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "field": {
+    "decision": "keep",
+    "note": "second pass: hairline box in the grammar, error marked with a glyph not colour alone",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "input": {
+    "decision": "keep",
+    "note": "hairline field, mono placeholder",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "input-otp": {
+    "decision": "keep",
+    "note": "second pass: partial code so the default reads as a code field",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "kbd": {
+    "decision": "keep",
+    "note": "keys in hairline boxes",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "menu": {
+    "decision": "keep",
+    "note": "trigger with accent caret",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "meter": {
+    "decision": "keep",
+    "note": "value, figure, and a dithered bar",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "pagination": {
+    "decision": "keep",
+    "note": "page run with an accent underline on the current page",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "preview-card": {
+    "decision": "keep",
+    "note": "title, description, url, and a source link",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "progress": {
+    "decision": "keep",
+    "note": "determinate fill with a dithered remainder",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "separator": {
+    "decision": "keep",
+    "note": "hairline with a tracked mono label",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "radio-group": {
+    "decision": "keep",
+    "note": "labelled group, filled square marks the selection",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "scroll-area": {
+    "decision": "keep",
+    "note": "numbered rows with hairline rules and a scroll indicator",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "segmented-control": {
+    "decision": "keep",
+    "note": "second pass: two pixel accent rule under the active segment, no fill, matching tabs",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "skeleton": {
+    "decision": "keep",
+    "note": "dithered placeholder blocks rather than a gradient shimmer",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "slider": {
+    "decision": "keep",
+    "note": "value, figure, thin track, square handle",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "spinner": {
+    "decision": "keep",
+    "note": "small braille indicator, honest at its size",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "number-field": {
+    "decision": "keep",
+    "note": "stepper with mono tabular figures",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "switch": {
+    "decision": "keep",
+    "note": "small filled track is the standard switch affordance, not a pill",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "table": {
+    "decision": "keep",
+    "note": "hairline rules, mono tabular figures, numerics right aligned",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "textarea": {
+    "decision": "keep",
+    "note": "hairline box with a character count",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "toggle-group": {
+    "decision": "keep",
+    "note": "active item marked by a two pixel accent rule, which is what tabs asks for",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "diagonal-stripes": {
+    "decision": "keep",
+    "note": "fine diagonals, quiet enough that a headline over it stays readable",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "dot-lattice": {
+    "decision": "keep",
+    "note": "sparse dot field, sits well back from the type",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "grid-paper": {
+    "decision": "keep",
+    "note": "minor and major rules, reads as engineering paper",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "hatch-lines": {
+    "decision": "keep",
+    "note": "cross hatching with an engraved texture, stays quiet",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "hex-lattice": {
+    "decision": "keep",
+    "note": "regular hexagonal lattice, even density",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "isometric-grid": {
+    "decision": "keep",
+    "note": "three axes at thirty degrees, correct isometric construction",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "truchet-tiles": {
+    "decision": "keep",
+    "note": "arcs meet at every edge midpoint so paths continue across cells, which is the named failure mode avoided",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "toast": {
+    "decision": "keep",
+    "note": "stacked transient messages with close controls and mono labels",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "toolbar": {
+    "decision": "keep",
+    "note": "accent rule marks the active item, matching tabs",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "tree-view": {
+    "decision": "keep",
+    "note": "box drawing tree with the accent on the current node",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "brick-lattice": {
+    "decision": "keep",
+    "note": "running bond courses, quiet under type",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "cell-mosaic": {
+    "decision": "keep",
+    "note": "seeded cell mosaic with hairline edges",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "checkerboard": {
+    "decision": "keep",
+    "note": "subtle checker that leaves the words clear",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "moire-rings": {
+    "decision": "keep",
+    "note": "two ring systems producing a real interference beat",
+    "at": "2026-09-14T04:21:52.462Z"
+  },
+  "circuit-traces": {
+    "decision": "keep",
+    "note": "orthogonal routes with vias, the quietest pattern and the most open ground",
+    "at": "2026-09-14T04:21:52.462Z"
+  }
+}

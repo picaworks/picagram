@@ -59,6 +59,21 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Scanlines](https://picagram.dev/c/scanlines.md): A CRT scanline overlay in the ink color, with an optional soft band that rolls slowly down the screen.
 - [Slit Scan Image](https://picagram.dev/c/slit-scan-image.md): An image rebuilt column by column from a slit sweeping across it, streaking whatever falls behind.
 
+## Patterns
+
+- [Brick Lattice](https://picagram.dev/c/brick-lattice.md): A quiet masonry lattice with running or stacked courses drawn behind content.
+- [Cell Mosaic](https://picagram.dev/c/cell-mosaic.md): A seeded field of even polygonal cells drawn as quiet hairlines behind page content.
+- [Checkerboard](https://picagram.dev/c/checkerboard.md): A quiet field of alternating ink and transparent squares drawn beneath page content.
+- [Circuit Traces](https://picagram.dev/c/circuit-traces.md): Seeded circuit traces follow an orthogonal grid with accent pads and optional via rings.
+- [Diagonal Stripes](https://picagram.dev/c/diagonal-stripes.md): Fine diagonal rules form a quiet drafting ground behind page content.
+- [Dot Lattice](https://picagram.dev/c/dot-lattice.md): A calm field of small ink points on a regular or staggered lattice behind page content.
+- [Grid Paper](https://picagram.dev/c/grid-paper.md): A quiet square mesh with darker major rules aligned to regular minor intervals.
+- [Hatch Lines](https://picagram.dev/c/hatch-lines.md): Fine crossing ink lines make a restrained engraved background for text.
+- [Hex Lattice](https://picagram.dev/c/hex-lattice.md): A regular hexagonal hairline lattice that sits quietly behind page content.
+- [Isometric Grid](https://picagram.dev/c/isometric-grid.md): A quiet isometric lattice of equilateral triangles that can resolve into staggered drafting points.
+- [Moire Rings](https://picagram.dev/c/moire-rings.md): Two concentric hairline ring fields drift out of step to form a quiet radial moire behind content.
+- [Truchet Tiles](https://picagram.dev/c/truchet-tiles.md): A seeded field of connected quarter circle paths or diagonal zigzags drawn behind content.
+
 ## Shaders
 
 - [Aurora](https://picagram.dev/c/aurora.md): Layered curtains of accent light standing on bowed lower borders, striated by vertical rays and dithered between a few tone steps on the GPU.
@@ -94,11 +109,49 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 
 ## UI
 
+- [Accordion](https://picagram.dev/c/accordion.md): A keyboard navigable set of labeled panels that can open one at a time or independently.
+- [Alert](https://picagram.dev/c/alert.md): A live status callout with a tag, title, and message in four restrained tones.
+- [Avatar](https://picagram.dev/c/avatar.md): A square hairline avatar that shows a photo when available and centered mono initials while it loads or fails.
+- [Badge](https://picagram.dev/c/badge.md): A compact status label with a solid, outline, or bracket frame.
+- [Breadcrumb](https://picagram.dev/c/breadcrumb.md): A hierarchy trail with native links, a distinct current page, and middle items that expand on demand.
 - [Button](https://picagram.dev/c/button.md): A button in four looks, solid, outline, ghost, and monospace brackets, with a braille spinner while it loads.
+- [Calendar](https://picagram.dev/c/calendar.md): A month grid with roving keyboard focus and controlled or uncontrolled single date selection.
+- [Card](https://picagram.dev/c/card.md): A hairline frame gives page content an optional heading and a compact row of linked actions.
+- [Checkbox](https://picagram.dev/c/checkbox.md): A hairline checkbox with checked, unchecked, and mixed states for pointer and keyboard input.
+- [Collapsible](https://picagram.dev/c/collapsible.md): A native disclosure trigger that instantly shows or hides one block of page content.
+- [Combobox](https://picagram.dev/c/combobox.md): An editable field filters a listbox while preserving typed text during suggestion navigation.
+- [Command Palette](https://picagram.dev/c/command-palette.md): A modal command palette that filters a flat command list and supports keyboard and pointer selection.
+- [Context Menu](https://picagram.dev/c/context-menu.md): A framed content region with an accessible action menu at the pointer or keyboard anchor.
 - [Dialog](https://picagram.dev/c/dialog.md): A modal dialog on the native dialog element, with focus containment, Escape, and the top layer handled by the browser.
+- [Drawer](https://picagram.dev/c/drawer.md): A native modal panel pinned to the left, right, or bottom edge of the viewport.
+- [Empty State](https://picagram.dev/c/empty-state.md): A measured empty state with a box drawn mark, supporting copy, and one quiet action.
+- [Field](https://picagram.dev/c/field.md): A label, description, and validation message around a page-owned form control.
+- [Input](https://picagram.dev/c/input.md): A native text field with controlled and uncontrolled values, accessible labeling, and keyboard event reporting.
+- [Input OTP](https://picagram.dev/c/input-otp.md): A one-time code field with roving focus, paste distribution, and controlled or uncontrolled state.
+- [Kbd](https://picagram.dev/c/kbd.md): A keyboard chord drawn as physical key caps or bracketed monospace text.
+- [Menu](https://picagram.dev/c/menu.md): A native trigger opens a keyboard navigable popover menu and reports the chosen action.
+- [Meter](https://picagram.dev/c/meter.md): A labelled scalar readout drawn as block cells with an optional threshold marker.
+- [Number Field](https://picagram.dev/c/number-field.md): A labelled numeric input with typed entry, keyboard stepping, and square decrement and increment controls.
+- [Pagination](https://picagram.dev/c/pagination.md): A compact navigation list that keeps nearby pages visible and folds distant ranges into quiet ellipses.
 - [Popover Tooltip](https://picagram.dev/c/popover-tooltip.md): A trigger button that shows a tooltip on hover and focus, or toggles a popover panel on click, built on the Popover API.
+- [Preview Card](https://picagram.dev/c/preview-card.md): A link that reveals a compact reference preview after a short hover or when focused.
+- [Progress](https://picagram.dev/c/progress.md): A labelled determinate progress bar drawn as flat block cells with an exact accessible value.
+- [Radio Group](https://picagram.dev/c/radio-group.md): A single-choice group with square marks, roving focus, and selection that follows focus.
+- [Scroll Area](https://picagram.dev/c/scroll-area.md): A native scroll container with quiet edge rules and a position marker that leave content and keyboard behavior untouched.
+- [Segmented Control](https://picagram.dev/c/segmented-control.md): A single-choice radio group drawn as one ruled strip, with selection following keyboard focus.
 - [Select](https://picagram.dev/c/select.md): A single-choice select with a keyboard-driven listbox, styled after the WAI-ARIA select-only combobox pattern.
+- [Separator](https://picagram.dev/c/separator.md): A quiet horizontal or vertical hairline with an optional label on the horizontal rule.
+- [Skeleton](https://picagram.dev/c/skeleton.md): Ghost blocks breathe between two quiet shade glyphs while content is loading.
+- [Slider](https://picagram.dev/c/slider.md): A labelled slider with stepped keyboard and pointer input in horizontal and vertical orientations.
+- [Spinner](https://picagram.dev/c/spinner.md): An inline braille cell run that travels clockwise while work of unknown duration is under way.
+- [Switch](https://picagram.dev/c/switch.md): An accessible on and off switch with a visible label and optional state value.
+- [Table](https://picagram.dev/c/table.md): A semantic data table with tabular figures, quiet row rules, and optional three-state sorting.
 - [Tabs](https://picagram.dev/c/tabs.md): A tabbed view for switching between panels, with the active tab following keyboard focus.
+- [Textarea](https://picagram.dev/c/textarea.md): A labelled text field that grows with its content and reports every input.
+- [Toast](https://picagram.dev/c/toast.md): A polite live stack of dismissible notices with pausable expiry and four corner positions.
+- [Toggle Group](https://picagram.dev/c/toggle-group.md): A toolbar of independent buttons that can each be pressed or released.
+- [Toolbar](https://picagram.dev/c/toolbar.md): A labeled band of action and toggle controls with roving keyboard focus.
+- [Tree View](https://picagram.dev/c/tree-view.md): A keyboard navigable hierarchical tree with internal expansion and controllable selection.
 
 ## Sections
 

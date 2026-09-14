@@ -1,0 +1,278 @@
+<!doctype html>
+<!--
+  Pica · Scroll Area · scroll-area
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Scroll Area · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><ol data-scroll-rows>
+  <li><span aria-hidden="true">01</span>Overview</li>
+  <li><span aria-hidden="true">02</span>Principles</li>
+  <li><span aria-hidden="true">03</span>Typography</li>
+  <li><span aria-hidden="true">04</span>Spacing</li>
+  <li><span aria-hidden="true">05</span>Color</li>
+  <li><span aria-hidden="true">06</span>Structure</li>
+  <li><span aria-hidden="true">07</span>Navigation</li>
+  <li><span aria-hidden="true">08</span>Controls</li>
+  <li><span aria-hidden="true">09</span>Inputs</li>
+  <li><span aria-hidden="true">10</span>Feedback</li>
+  <li><span aria-hidden="true">11</span>States</li>
+  <li><span aria-hidden="true">12</span>Motion</li>
+  <li><span aria-hidden="true">13</span>Charts</li>
+  <li><span aria-hidden="true">14</span>Patterns</li>
+  <li><span aria-hidden="true">15</span>Shaders</li>
+  <li><span aria-hidden="true">16</span>Sections</li>
+  <li><span aria-hidden="true">17</span>Accessibility</li>
+  <li><span aria-hidden="true">18</span>Performance</li>
+  <li><span aria-hidden="true">19</span>Testing</li>
+  <li><span aria-hidden="true">20</span>Release</li>
+</ol></div>
+<script>
+"use strict";
+var PicaScrollArea = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/scroll-area/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/scroll-area/core.ts
+  var defaults = {
+    height: 14,
+    thumb: true,
+    edges: true,
+    label: "Content"
+  };
+  function scrollAreaHeight(value) {
+    if (!Number.isFinite(value)) return defaults.height;
+    return Math.min(40, Math.max(4, value));
+  }
+  function scrollAreaNode(name, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute(`data-pica-scroll-${name}`, "");
+    return el;
+  }
+  function scrollAreaRules(selector) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    return [
+      `${selector}{box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}`,
+      `${selector}::-webkit-scrollbar{display:none;width:0;height:0}`,
+      `${selector}:focus-visible{outline:2px solid ${fg};outline-offset:2px}`,
+      `${selector}>[data-pica-scroll-layer]{position:sticky;top:0;height:0;overflow:visible;pointer-events:none;z-index:1}`,
+      `${selector} [data-pica-scroll-top],${selector} [data-pica-scroll-bottom]{position:absolute;inset-inline:0;height:1px;background:${muted}}`,
+      `${selector} [data-pica-scroll-thumb]{position:absolute;inset-inline-end:3px;width:2px;background:color-mix(in srgb, ${fg} 42%, transparent)}`,
+      `${selector}>[data-scroll-rows]{list-style:none;margin:0;padding:0 12px 0 0}`,
+      `${selector}>[data-scroll-rows]>li{box-sizing:border-box;display:grid;grid-template-columns:3ch 1fr;gap:1rem;align-items:center;min-height:2rem;border-bottom:1px solid color-mix(in srgb, ${muted} 38%, transparent)}`,
+      `${selector}>[data-scroll-rows]>li>span{color:${muted};font-family:${GRID_FONT};font-size:.75em;font-variant-numeric:tabular-nums}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    const edgeLayer = scrollAreaNode("layer");
+    const topEdge = scrollAreaNode("top", "span");
+    const bottomEdge = scrollAreaNode("bottom", "span");
+    const thumbLayer = scrollAreaNode("layer");
+    const thumbMark = scrollAreaNode("thumb", "span");
+    edgeLayer.setAttribute("aria-hidden", "true");
+    thumbLayer.setAttribute("aria-hidden", "true");
+    edgeLayer.append(topEdge, bottomEdge);
+    thumbLayer.append(thumbMark);
+    host.prepend(edgeLayer, thumbLayer);
+    sheet.setRules(scrollAreaRules(sheet.selector));
+    let styledHeight = scrollAreaHeight(props.height);
+    let restoreHost = styleHost(host, { height: `${styledHeight}rem`, "min-height": "0", "overflow-y": "auto" });
+    function refresh() {
+      const viewport = host.clientHeight;
+      const content = host.scrollHeight;
+      const maxScroll = Math.max(0, content - viewport);
+      const position = Math.min(maxScroll, Math.max(0, host.scrollTop));
+      const overflowing = maxScroll > 1;
+      const name = props.label.trim();
+      attrs.set("tabindex", overflowing ? "0" : null);
+      attrs.set("role", overflowing && name ? "region" : null);
+      attrs.set("aria-label", overflowing && name ? name : null);
+      edgeLayer.hidden = !props.edges || !overflowing;
+      topEdge.style.opacity = position > 1 ? "1" : "0";
+      bottomEdge.style.top = `${Math.max(0, viewport - 1)}px`;
+      bottomEdge.style.opacity = position < maxScroll - 1 ? "1" : "0";
+      thumbLayer.hidden = !props.thumb || !overflowing;
+      const inset = 4;
+      const track = Math.max(0, viewport - inset * 2);
+      const thumbHeight = Math.min(track, Math.max(18, Math.round(track * viewport / content)));
+      const travel = Math.max(0, track - thumbHeight);
+      const thumbTop = inset + (maxScroll ? position / maxScroll * travel : 0);
+      thumbMark.style.top = `${thumbTop}px`;
+      thumbMark.style.height = `${thumbHeight}px`;
+    }
+    const observer = new ResizeObserver(refresh);
+    const onScroll = () => refresh();
+    host.addEventListener("scroll", onScroll, { passive: true });
+    observer.observe(host);
+    refresh();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        const nextHeight = scrollAreaHeight(props.height);
+        if (nextHeight !== styledHeight) {
+          restoreHost();
+          styledHeight = nextHeight;
+          restoreHost = styleHost(host, { height: `${styledHeight}rem`, "min-height": "0", "overflow-y": "auto" });
+        }
+        refresh();
+      },
+      destroy() {
+        observer.disconnect();
+        host.removeEventListener("scroll", onScroll);
+        edgeLayer.remove();
+        thumbLayer.remove();
+        sheet.destroy();
+        attrs.restore();
+        restoreHost();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaScrollArea.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

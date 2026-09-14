@@ -1,0 +1,249 @@
+<!doctype html>
+<!--
+  Pica · Meter · meter
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Meter · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaMeter = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/meter/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  // lib/blocks.ts
+  var LEFT_EIGHTHS = " ▏▎▍▌▋▊▉█";
+  var clampEighths = (n) => Math.max(0, Math.min(8, Math.round(n)));
+  function leftEighth(n) {
+    return LEFT_EIGHTHS[clampEighths(n)] ?? " ";
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/meter/core.ts
+  var defaults = {
+    value: 64,
+    min: 0,
+    max: 100,
+    label: "Storage used",
+    marker: 80,
+    valueText: "",
+    width: 24
+  };
+  function meterClamp(value, low, high) {
+    return Math.max(low, Math.min(high, value));
+  }
+  function meterRatio(value, min, max) {
+    if (max === min) return value > min ? 1 : 0;
+    return meterClamp((value - min) / (max - min), 0, 1);
+  }
+  function meterNode(tag, part) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute("data-pica-part", part);
+    return node;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const attrs = hostAttributes(host);
+    for (const name of ["role", "aria-label", "aria-hidden"]) attrs.set(name, host.getAttribute(name));
+    const restoreHost = styleHost(host, { display: "inline-block", "vertical-align": "middle" });
+    const root = meterNode("div", "root");
+    const labelLine = meterNode("div", "label-line");
+    const label = meterNode("span", "label");
+    const value = meterNode("span", "value");
+    const track = meterNode("div", "track");
+    const full = meterNode("span", "full");
+    const partial = meterNode("span", "partial");
+    const empty = meterNode("span", "empty");
+    const marker = meterNode("span", "marker");
+    root.setAttribute("aria-hidden", "true");
+    root.style.cssText = "display:inline-grid;gap:0.45em;max-width:100%";
+    labelLine.style.cssText = "display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:1em;min-width:0;line-height:1.2";
+    label.style.cssText = "min-width:0;overflow-wrap:anywhere";
+    value.style.cssText = `font-family:${GRID_FONT};font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap`;
+    track.style.cssText = `position:relative;display:block;font-family:${GRID_FONT};font-variant-numeric:tabular-nums;line-height:1;letter-spacing:0;white-space:pre`;
+    full.style.color = cssVar("fg");
+    partial.style.color = cssVar("fg");
+    empty.style.color = cssVar("muted");
+    marker.style.cssText = `position:absolute;top:0;color:${cssVar("accent")};width:1ch;text-align:center`;
+    marker.textContent = "│";
+    labelLine.append(label, value);
+    track.append(full, partial, empty, marker);
+    root.append(labelLine, track);
+    host.append(root);
+    function applyMeter() {
+      const width = meterClamp(Math.round(props.width), 8, 60);
+      const units = meterRatio(props.value, props.min, props.max) * width;
+      let fullCells = Math.floor(units);
+      let eighths = Math.round((units - fullCells) * 8);
+      if (eighths === 8) {
+        fullCells += 1;
+        eighths = 0;
+      }
+      const hasPartial = eighths > 0 && fullCells < width;
+      const emptyCells = Math.max(0, width - fullCells - (hasPartial ? 1 : 0));
+      labelHost(host, props.label, "meter");
+      attrs.set("aria-valuemin", String(props.min));
+      attrs.set("aria-valuemax", String(props.max));
+      attrs.set("aria-valuenow", String(props.value));
+      attrs.set("aria-valuetext", props.valueText ? props.valueText : null);
+      root.hidden = !props.label;
+      label.textContent = props.label;
+      value.textContent = String(props.value);
+      full.textContent = "█".repeat(fullCells);
+      partial.textContent = hasPartial ? leftEighth(eighths) : "";
+      empty.textContent = "░".repeat(emptyCells);
+      marker.hidden = props.marker === null;
+      if (props.marker !== null) {
+        const markerCell = Math.min(width - 1, Math.floor(meterRatio(props.marker, props.min, props.max) * width));
+        marker.style.left = `${markerCell}ch`;
+      }
+    }
+    applyMeter();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        applyMeter();
+      },
+      destroy() {
+        root.remove();
+        attrs.restore();
+        restoreHost();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaMeter.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>
