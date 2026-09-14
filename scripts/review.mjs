@@ -64,15 +64,15 @@ function page(list, log) {
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Pica review, wave ${wave}</title>
 <style>
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-:root { --ink: #0a0a0a; --paper: #f1f1ef; --muted: #8d8d8a; --line: #2c2c2c; --amber: #e8a020; }
+:root { --ink: #0a0a0a; --paper: #f1f1ef; --muted: #8d8d8a; --line: #2c2c2c; --accent: #13C4A3; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--ink); color: var(--paper); font: 14px/1.6 "IBM Plex Mono", ui-monospace, Menlo, monospace; }
 header { position: sticky; top: 0; z-index: 2; display: flex; gap: 24px; align-items: baseline; padding: 12px 24px; background: var(--ink); border-bottom: 1px solid var(--line); }
 h1, h2 { margin: 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-.muted { color: var(--muted); } .small { font-size: 12px; margin: 0; } .warn { color: var(--amber); }
+.muted { color: var(--muted); } .small { font-size: 12px; margin: 0; } .warn { color: var(--accent); }
 main { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1px; background: var(--line); }
 article { display: flex; flex-direction: column; gap: 8px; padding: 16px; background: var(--ink); outline: none; }
-article:focus-visible, article.active { outline: 1px solid var(--amber); outline-offset: -1px; }
+article:focus-visible, article.active { outline: 1px solid var(--accent); outline-offset: -1px; }
 article[data-decision="cut"] { opacity: 0.55; }
 p { margin: 0; }
 .shot { display: block; width: 100%; aspect-ratio: 1280 / 800; object-fit: cover; background: #000; border: 1px solid var(--line); cursor: zoom-in; }

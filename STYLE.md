@@ -30,7 +30,7 @@ Demo defaults. Every one is overridable.
 |---|---|---|
 | ink | `#0a0a0a` | dark ground |
 | paper | `#f1f1ef` | light ground, and the foreground on ink |
-| amber | `#e8a020` | the one accent |
+| mint | `#13C4A3` | the one accent. It measures 8.91:1 on ink and 1.96:1 on paper, so it fills and marks but never sets text on paper. |
 | muted | fg at 65% | secondary text. It clears 4.5:1 on both ink and paper, where the old fixed `#8d8d8a` reached only 3:1 on paper. |
 | line | `#2c2c2c` | hairlines only, never text |
 
@@ -40,7 +40,7 @@ The palette tokens map onto these:
 |---|---|
 | `--pica-fg` | the inherited text color: paper on ink, ink on paper |
 | `--pica-bg` | transparent, so the page's own ground shows |
-| `--pica-accent` | amber |
+| `--pica-accent` | mint |
 | `--pica-muted` | fg at 65% |
 
 Set the tokens on a page or a section, and every component follows. Pass `palette` to one component to set them on its host alone.
@@ -97,7 +97,7 @@ The catalog site's own controls are the model.
 
 - Cycle hues or use rainbow gradients. Hue does not carry tone here.
 - Add glow, bloom, blur, drop shadows, or neon.
-- Default to green on black. It quotes the Matrix; it is not a style.
+- Default to phosphor green on black, meaning a saturated `#00FF00` on a pure black ground. It quotes the Matrix; it is not a style. A measured green such as the mint accent is not that, and is fine.
 - Add particles, sparkles, or confetti.
 - Round the corners of anything a component draws.
 - Produce glyph soup: random characters with no tonal logic behind them.

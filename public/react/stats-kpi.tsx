@@ -680,11 +680,11 @@ const TOKENS: readonly Token[] = ["fg", "bg", "accent", "muted"];
 const TOKEN_FALLBACK: Readonly<Record<Token, string>> = {
   fg: "currentColor",
   bg: "transparent",
-  accent: "#e8a020",
+  accent: "#13C4A3",
   muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)",
 };
 
-/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #e8a020). */
+/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #13C4A3). */
 function cssVar(token: Token): string {
   return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
 }

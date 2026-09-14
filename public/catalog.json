@@ -134,7 +134,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 5014
+    "gzipBytes": 5015
   },
   {
     "slug": "ascii-morph",
@@ -790,7 +790,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2079
+    "gzipBytes": 2080
   },
   {
     "slug": "ascii-solid",
@@ -905,7 +905,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4583
+    "gzipBytes": 4582
   },
   {
     "slug": "ascii-text",
@@ -1029,7 +1029,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 5073
+    "gzipBytes": 5074
   },
   {
     "slug": "ascii-topo",
@@ -1292,7 +1292,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5747
+    "gzipBytes": 5749
   },
   {
     "slug": "ascii-waves",
@@ -1552,7 +1552,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5169
+    "gzipBytes": 5171
   },
   {
     "slug": "bullet-chart",
@@ -1702,7 +1702,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5573
+    "gzipBytes": 5575
   },
   {
     "slug": "candlestick-chart",
@@ -2017,7 +2017,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5866
+    "gzipBytes": 5867
   },
   {
     "slug": "donut-chart",
@@ -2144,7 +2144,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5241
+    "gzipBytes": 5242
   },
   {
     "slug": "gauge-chart",
@@ -2266,7 +2266,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5173
+    "gzipBytes": 5175
   },
   {
     "slug": "heatmap",
@@ -2648,7 +2648,7 @@
         "detail": "KanbanColumn[]"
       }
     },
-    "gzipBytes": 4552
+    "gzipBytes": 4553
   },
   {
     "slug": "line-chart",
@@ -2797,7 +2797,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5817
+    "gzipBytes": 5819
   },
   {
     "slug": "radar-chart",
@@ -2953,7 +2953,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5871
+    "gzipBytes": 5872
   },
   {
     "slug": "scatter-plot",
@@ -3221,7 +3221,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 6185
+    "gzipBytes": 6187
   },
   {
     "slug": "timeline-chart",
@@ -3376,7 +3376,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5910
+    "gzipBytes": 5911
   },
   {
     "slug": "waterfall-chart",
@@ -3507,7 +3507,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5725
+    "gzipBytes": 5727
   },
   {
     "slug": "dither-contours",
@@ -3916,7 +3916,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4173
+    "gzipBytes": 4174
   },
   {
     "slug": "dither-image",
@@ -4036,7 +4036,7 @@
       "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
     },
     "events": {},
-    "gzipBytes": 3882
+    "gzipBytes": 3884
   },
   {
     "slug": "dither-noise",
@@ -4329,7 +4329,7 @@
       "scale": "number"
     },
     "events": {},
-    "gzipBytes": 4557
+    "gzipBytes": 4561
   },
   {
     "slug": "dither-reveal",
@@ -4485,7 +4485,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5254
+    "gzipBytes": 5255
   },
   {
     "slug": "dither-stipple-image",
@@ -4620,7 +4620,7 @@
       "maskSize": "16 | 32 | 64"
     },
     "events": {},
-    "gzipBytes": 4430
+    "gzipBytes": 4431
   },
   {
     "slug": "dither-temporal",
@@ -4770,7 +4770,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4977
+    "gzipBytes": 4978
   },
   {
     "slug": "dither-waves",
@@ -4926,7 +4926,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4133
+    "gzipBytes": 4134
   },
   {
     "slug": "halftone-image",
@@ -5351,7 +5351,7 @@
       "overlap": "\"darken\" | \"over\""
     },
     "events": {},
-    "gzipBytes": 3915
+    "gzipBytes": 3916
   },
   {
     "slug": "duotone-image",
@@ -5449,7 +5449,7 @@
       "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
     },
     "events": {},
-    "gzipBytes": 3371
+    "gzipBytes": 3372
   },
   {
     "slug": "edge-trace-image",
@@ -5580,7 +5580,7 @@
       "invert": "boolean"
     },
     "events": {},
-    "gzipBytes": 4108
+    "gzipBytes": 4109
   },
   {
     "slug": "glitch-text",
@@ -5667,7 +5667,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2726
+    "gzipBytes": 2729
   },
   {
     "slug": "grain-overlay",
@@ -5871,7 +5871,7 @@
       "strength": "number"
     },
     "events": {},
-    "gzipBytes": 1427
+    "gzipBytes": 1428
   },
   {
     "slug": "photocopy-image",
@@ -6299,7 +6299,7 @@
       "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
     },
     "events": {},
-    "gzipBytes": 3559
+    "gzipBytes": 3562
   },
   {
     "slug": "risograph-image",
@@ -6464,7 +6464,7 @@
       "coverage": "number"
     },
     "events": {},
-    "gzipBytes": 4564
+    "gzipBytes": 4565
   },
   {
     "slug": "scan-reveal-image",
@@ -6615,7 +6615,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4678
+    "gzipBytes": 4679
   },
   {
     "slug": "scanlines",
@@ -6714,7 +6714,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2063
+    "gzipBytes": 2064
   },
   {
     "slug": "slit-scan-image",
@@ -6868,7 +6868,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4541
+    "gzipBytes": 4542
   },
   {
     "slug": "city-grid",
@@ -6995,7 +6995,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4854
+    "gzipBytes": 4855
   },
   {
     "slug": "globe",
@@ -7128,7 +7128,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 3528
+    "gzipBytes": 3530
   },
   {
     "slug": "orbit-view",
@@ -7449,7 +7449,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 3965
+    "gzipBytes": 3964
   },
   {
     "slug": "world-map",
@@ -7787,7 +7787,7 @@
       "minTile": "number"
     },
     "events": {},
-    "gzipBytes": 1500
+    "gzipBytes": 1502
   },
   {
     "slug": "bento-hero",
@@ -8207,7 +8207,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 2963
+    "gzipBytes": 2964
   },
   {
     "slug": "clay-hero",
@@ -8539,7 +8539,7 @@
       "intensity": "number"
     },
     "events": {},
-    "gzipBytes": 6316
+    "gzipBytes": 6317
   },
   {
     "slug": "editorial-hero",
@@ -8675,7 +8675,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 6203
+    "gzipBytes": 6204
   },
   {
     "slug": "ethereal-hero",
@@ -8870,7 +8870,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5961
+    "gzipBytes": 5962
   },
   {
     "slug": "glass-hero",
@@ -9371,7 +9371,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 7684
+    "gzipBytes": 7685
   },
   {
     "slug": "luxury-hero",
@@ -9479,7 +9479,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 1931
+    "gzipBytes": 1932
   },
   {
     "slug": "maximalist-hero",
@@ -9644,7 +9644,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 9342
+    "gzipBytes": 9343
   },
   {
     "slug": "minimal-hero",
@@ -9735,7 +9735,7 @@
       "align": "\"start\" | \"center\""
     },
     "events": {},
-    "gzipBytes": 1953
+    "gzipBytes": 1954
   },
   {
     "slug": "neumorphic-hero",
@@ -9869,7 +9869,7 @@
       "depth": "number"
     },
     "events": {},
-    "gzipBytes": 5880
+    "gzipBytes": 5881
   },
   {
     "slug": "pixel-art-hero",
@@ -10014,7 +10014,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 7740
+    "gzipBytes": 7742
   },
   {
     "slug": "pricing",
@@ -10177,7 +10177,7 @@
         "detail": "\"monthly\" | \"yearly\""
       }
     },
-    "gzipBytes": 3188
+    "gzipBytes": 3189
   },
   {
     "slug": "scrapbook-hero",
@@ -10346,7 +10346,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 8470
+    "gzipBytes": 8469
   },
   {
     "slug": "sketch-hero",
@@ -10944,7 +10944,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 2810
+    "gzipBytes": 2811
   },
   {
     "slug": "testimonials",
@@ -11109,7 +11109,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5001
+    "gzipBytes": 5002
   },
   {
     "slug": "victorian-hero",
@@ -11240,7 +11240,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 4540
+    "gzipBytes": 4542
   },
   {
     "slug": "wabi-sabi-hero",
@@ -11539,7 +11539,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 7195
+    "gzipBytes": 7197
   },
   {
     "slug": "aurora",
@@ -12077,7 +12077,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5165
+    "gzipBytes": 5166
   },
   {
     "slug": "liquid-metal",
@@ -12386,7 +12386,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4763
+    "gzipBytes": 4764
   },
   {
     "slug": "pixel-plasma",
@@ -12670,7 +12670,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5180
+    "gzipBytes": 5181
   },
   {
     "slug": "scan-beam",
@@ -12811,7 +12811,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5086
+    "gzipBytes": 5087
   },
   {
     "slug": "shader-flow",
@@ -12965,7 +12965,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5307
+    "gzipBytes": 5308
   },
   {
     "slug": "tunnel-grid",
@@ -13107,7 +13107,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4772
+    "gzipBytes": 4773
   },
   {
     "slug": "voronoi-drift",
@@ -13240,7 +13240,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4952
+    "gzipBytes": 4953
   },
   {
     "slug": "ascii-frame",
@@ -13346,7 +13346,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 3469
+    "gzipBytes": 3472
   },
   {
     "slug": "ascii-loader",
@@ -13444,7 +13444,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2169
+    "gzipBytes": 2171
   },
   {
     "slug": "ascii-sparkline",
@@ -13556,7 +13556,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 1514
+    "gzipBytes": 1515
   },
   {
     "slug": "ascii-terminal",
@@ -13651,7 +13651,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2631
+    "gzipBytes": 2632
   },
   {
     "slug": "block-banner",
@@ -13734,7 +13734,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 3481
+    "gzipBytes": 3482
   },
   {
     "slug": "block-image",
@@ -13995,7 +13995,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 4635
+    "gzipBytes": 4634
   },
   {
     "slug": "button",
@@ -14134,7 +14134,7 @@
         "detail": "null"
       }
     },
-    "gzipBytes": 2452
+    "gzipBytes": 2453
   },
   {
     "slug": "dialog",
@@ -14245,7 +14245,7 @@
         "detail": "boolean"
       }
     },
-    "gzipBytes": 2017
+    "gzipBytes": 2019
   },
   {
     "slug": "popover-tooltip",
@@ -14386,7 +14386,7 @@
         "detail": "boolean"
       }
     },
-    "gzipBytes": 2236
+    "gzipBytes": 2237
   },
   {
     "slug": "select",
@@ -14660,6 +14660,6 @@
         "detail": "string"
       }
     },
-    "gzipBytes": 2272
+    "gzipBytes": 2273
   }
 ]
