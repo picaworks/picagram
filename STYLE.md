@@ -98,7 +98,7 @@ The catalog site's own controls are the model.
 - Cycle hues or use rainbow gradients. Hue does not carry tone here.
 - Add glow, bloom, blur, drop shadows, or neon.
 - Default to phosphor green on black, meaning a saturated `#00FF00` on a pure black ground. It quotes the Matrix; it is not a style. A measured green such as the mint accent is not that, and is fine.
-- Add particles, sparkles, or confetti.
+- Add sparkles, confetti, or any celebratory garnish. A seeded particle system is a different thing and is fine: it draws structure rather than decoration, takes its colors from the palette, moves slowly enough to read, and never glows or blends additively.
 - Round the corners of anything a component draws.
 - Produce glyph soup: random characters with no tonal logic behind them.
 - Hand-order a density ramp in place of the measured one.
