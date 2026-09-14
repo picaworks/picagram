@@ -246,7 +246,63 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Bento Hero (`bento-hero`)
+
+Original to Picagram.
+
+## Bohemian Hero (`bohemian-hero`)
+
+Original to Picagram.
+
+## Brutalist Hero (`brutalist-hero`)
+
+Original to Picagram.
+
+## Clay Hero (`clay-hero`)
+
+Original to Picagram.
+
+## Cyberpunk Hero (`cyberpunk-hero`)
+
+Original to Picagram.
+
+## Editorial Hero (`editorial-hero`)
+
+Original to Picagram.
+
+## Ethereal Hero (`ethereal-hero`)
+
+Original to Picagram.
+
+## Glass Hero (`glass-hero`)
+
+Original to Picagram.
+
 ## Hero (`hero`)
+
+Original to Picagram.
+
+## Liquid Glass Hero (`liquid-glass-hero`)
+
+Original to Picagram.
+
+## Luxury Hero (`luxury-hero`)
+
+Original to Picagram.
+
+## Maximalist Hero (`maximalist-hero`)
+
+Original to Picagram.
+
+## Minimal Hero (`minimal-hero`)
+
+Original to Picagram.
+
+## Neumorphic Hero (`neumorphic-hero`)
+
+Original to Picagram.
+
+## Pixel Art Hero (`pixel-art-hero`)
 
 Original to Picagram.
 
@@ -254,13 +310,41 @@ Original to Picagram.
 
 - Technique from [Radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 
+## Scrapbook Hero (`scrapbook-hero`)
+
+Original to Picagram.
+
+## Sketch Hero (`sketch-hero`)
+
+Original to Picagram.
+
 ## Stats KPI (`stats-kpi`)
+
+Original to Picagram.
+
+## Surrealist Hero (`surrealist-hero`)
+
+Original to Picagram.
+
+## Swiss Hero (`swiss-hero`)
 
 Original to Picagram.
 
 ## Testimonials (`testimonials`)
 
 - Technique from [Carousel pattern](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Victorian Hero (`victorian-hero`)
+
+Original to Picagram.
+
+## Wabi Sabi Hero (`wabi-sabi-hero`)
+
+Original to Picagram.
+
+## Y2K Hero (`y2k-hero`)
+
+Original to Picagram.
 
 ## Aurora (`aurora`)
 

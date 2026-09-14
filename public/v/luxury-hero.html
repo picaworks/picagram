@@ -1,0 +1,225 @@
+<!doctype html>
+<!--
+  Pica · Luxury Hero · luxury-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Luxury Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><p>Every order is wrapped by hand and dispatched within two days.</p></div>
+<script>
+"use strict";
+var PicaLuxuryHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/luxury-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/sections/luxury-hero/core.ts
+  var defaults = {
+    headline: "Made To Last",
+    subhead: "Considered goods, produced in small runs and guaranteed for life.",
+    actions: [{ label: "Explore the collection", href: "#collection" }],
+    align: "center",
+    minHeight: 85
+  };
+  function vh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function el(tag, part) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute(`data-pica-${part}`, "");
+    return node;
+  }
+  function rules(s, p) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const centered = p.align !== "start";
+    return [
+      `:where(${s}){min-height:${vh(p.minHeight)}vh}`,
+      `${s}{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:${centered ? "center" : "start"};color:${fg};padding:clamp(4rem,14vh,10rem) clamp(1.5rem,7vw,5rem)}`,
+      `${s} > *{box-sizing:border-box;margin:0;width:min(27rem,78%)}`,
+      `${s} > :not([data-pica]){margin-top:1.7em;color:${muted};font-size:0.95em;line-height:1.8}`,
+      `${s} > [data-pica-rule]{height:1px;background:linear-gradient(${accent},${accent}) ${centered ? "center" : "left"}/3.5rem 1px no-repeat}`,
+      `${s} > [data-pica-rule] + *{margin-top:clamp(2.5rem,7vh,4.5rem)}`,
+      `${s} > [data-pica-headline]{font-size:1.1em;font-weight:500;letter-spacing:0.28em;line-height:1.6;text-transform:uppercase;overflow-wrap:break-word${centered ? ";padding-left:0.28em" : ""}}`,
+      `${s} > [data-pica-subhead]{margin-top:1.5em;max-width:23rem;color:${muted};font-size:0.95em;line-height:1.8;letter-spacing:0.015em}`,
+      `${s} > [data-pica-actions]{margin-top:clamp(2.5rem,6vh,4rem);display:flex;flex-wrap:wrap;justify-content:${centered ? "center" : "flex-start"};gap:0.9em 2.75em}`,
+      `${s} > [data-pica-actions]:empty{display:none}`,
+      `${s} > [data-pica-actions] a{appearance:none;background:transparent;border:0;border-bottom:1px solid ${muted};border-radius:0;color:${fg};cursor:pointer;font:inherit;font-size:0.75em;letter-spacing:0.24em;line-height:1.5;padding:0 0.24em 0.6em;text-decoration:none;text-transform:uppercase}`,
+      `${s} > [data-pica-actions] a:hover{border-bottom-color:${fg}}`,
+      `${s} > [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:3px}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const sheet = scope(host);
+    const rule = el("div", "rule");
+    rule.setAttribute("aria-hidden", "true");
+    const headlineEl = el("h1", "headline");
+    const subheadEl = el("p", "subhead");
+    const actions = el("div", "actions");
+    host.append(actions);
+    function syncTop() {
+      headlineEl.textContent = props.headline;
+      subheadEl.textContent = props.subhead;
+      const top = [rule];
+      if (props.headline.trim()) top.push(headlineEl);
+      else headlineEl.remove();
+      if (props.subhead.trim()) top.push(subheadEl);
+      else subheadEl.remove();
+      host.prepend(...top);
+    }
+    function renderActions() {
+      actions.replaceChildren();
+      for (const action of props.actions.slice(0, 3)) {
+        const a = document.createElement("a");
+        a.setAttribute("data-pica", "");
+        a.href = action.href || "#";
+        a.textContent = action.label;
+        actions.append(a);
+      }
+    }
+    sheet.setRules(rules(sheet.selector, props));
+    syncTop();
+    renderActions();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.align !== before.align || props.minHeight !== before.minHeight) sheet.setRules(rules(sheet.selector, props));
+        if (props.headline !== before.headline || props.subhead !== before.subhead) syncTop();
+        if (!sameJson(before.actions, props.actions)) renderActions();
+      },
+      destroy() {
+        for (const node of [rule, headlineEl, subheadEl, actions]) node.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaLuxuryHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

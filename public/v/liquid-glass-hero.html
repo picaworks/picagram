@@ -1,0 +1,1112 @@
+<!doctype html>
+<!--
+  Pica · Liquid Glass Hero · liquid-glass-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Liquid Glass Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><h1>Light, bent through a slab.</h1><p>A thick lens drifts over a printed field and displaces what lies beneath its curved edge, drawn in screened ink behind the page's own content.</p></div>
+<script>
+"use strict";
+var PicaLiquidGlassHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/liquid-glass-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/dither.ts
+  function bayerMatrix(size) {
+    let m = [0];
+    let n = 1;
+    while (n < size) {
+      const next = new Array(4 * n * n).fill(0);
+      for (let y = 0; y < n; y++) {
+        for (let x = 0; x < n; x++) {
+          const v = 4 * (m[y * n + x] ?? 0);
+          next[y * 2 * n + x] = v;
+          next[y * 2 * n + x + n] = v + 2;
+          next[(y + n) * 2 * n + x] = v + 3;
+          next[(y + n) * 2 * n + x + n] = v + 1;
+        }
+      }
+      m = next;
+      n *= 2;
+    }
+    const out = new Float32Array(size * size);
+    for (let i = 0; i < out.length; i++) out[i] = ((m[i] ?? 0) + 0.5) / (size * size);
+    return out;
+  }
+  var KERNELS = {
+    "floyd-steinberg": [[1, 0, 7 / 16], [-1, 1, 3 / 16], [0, 1, 5 / 16], [1, 1, 1 / 16]],
+    // Atkinson spreads three quarters of the error, which keeps highlights and shadows cleaner.
+    atkinson: [[1, 0, 1 / 8], [2, 0, 1 / 8], [-1, 1, 1 / 8], [0, 1, 1 / 8], [1, 1, 1 / 8], [0, 2, 1 / 8]]
+  };
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
+
+  // lib/dither-mask.ts
+  var VOID_SIGMA = 1.5;
+  var blueNoiseCache = /* @__PURE__ */ new Map();
+  function blueNoiseMatrix(size) {
+    const kept = blueNoiseCache.get(size);
+    if (kept) return kept;
+    const n = size * size;
+    const pattern = new Uint8Array(n);
+    const energy = new Float32Array(n);
+    const radius = Math.min(Math.ceil(VOID_SIGMA * 3), (size >> 1) - 1);
+    const span = radius * 2 + 1;
+    const kernel = new Float32Array(span * span);
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        kernel[(dy + radius) * span + dx + radius] = Math.exp(-(dx * dx + dy * dy) / (2 * VOID_SIGMA * VOID_SIGMA));
+      }
+    }
+    const spread = (index, sign) => {
+      const cx = index % size;
+      const cy = (index - cx) / size;
+      for (let dy = -radius; dy <= radius; dy++) {
+        const row = ((cy + dy) % size + size) % size * size;
+        const krow = (dy + radius) * span;
+        for (let dx = -radius; dx <= radius; dx++) {
+          const x = ((cx + dx) % size + size) % size;
+          energy[row + x] = (energy[row + x] ?? 0) + sign * (kernel[krow + dx + radius] ?? 0);
+        }
+      }
+    };
+    const peak = (want, most) => {
+      let best = 0;
+      let bestEnergy = Number.NaN;
+      for (let i = 0; i < n; i++) {
+        if (pattern[i] !== want) continue;
+        const e = energy[i] ?? 0;
+        if (Number.isNaN(bestEnergy) || (most ? e > bestEnergy : e < bestEnergy)) {
+          best = i;
+          bestEnergy = e;
+        }
+      }
+      return best;
+    };
+    const ones = Math.max(1, Math.round(n / 10));
+    const scatter = createRng(size);
+    for (let placed = 0; placed < ones; ) {
+      const i = Math.floor(scatter() * n);
+      if (pattern[i] === 0) {
+        pattern[i] = 1;
+        spread(i, 1);
+        placed++;
+      }
+    }
+    for (let pass = 0; pass < n; pass++) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      const hole = peak(0, false);
+      if (hole === cluster) {
+        pattern[cluster] = 1;
+        spread(cluster, 1);
+        break;
+      }
+      pattern[hole] = 1;
+      spread(hole, 1);
+    }
+    const rank = new Int32Array(n);
+    const settled = pattern.slice();
+    for (let r = ones - 1; r >= 0; r--) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      rank[cluster] = r;
+    }
+    pattern.set(settled);
+    energy.fill(0);
+    for (let i = 0; i < n; i++) if (pattern[i] === 1) spread(i, 1);
+    for (let r = ones; r < n; r++) {
+      const hole = peak(0, false);
+      pattern[hole] = 1;
+      spread(hole, 1);
+      rank[hole] = r;
+    }
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i++) out[i] = ((rank[i] ?? 0) + 0.5) / n;
+    blueNoiseCache.set(size, out);
+    return out;
+  }
+  function maskAt(mask, size, x, y) {
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return mask[my * size + mx] ?? 0.5;
+  }
+  function ditherLevels(values, width, height, levels, mask, size) {
+    const top = Math.max(1, Math.min(255, Math.floor(levels) - 1));
+    const out = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const i = y * width + x;
+        const scaled = Math.min(1, Math.max(0, values[i] ?? 0)) * top;
+        const band = Math.floor(scaled);
+        out[i] = Math.min(top, band + (scaled - band >= maskAt(mask, size, x, y) ? 1 : 0));
+      }
+    }
+    return out;
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/noise.ts
+  var SIMPLEX_GRAD = [
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1,
+    0,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    -1,
+    0,
+    -1,
+    0,
+    1,
+    1,
+    0,
+    -1,
+    1,
+    0,
+    1,
+    -1,
+    0,
+    -1,
+    -1
+  ];
+  var SIMPLEX_F2 = 0.5 * (Math.sqrt(3) - 1);
+  var SIMPLEX_G2 = (3 - Math.sqrt(3)) / 6;
+  var SIMPLEX_F3 = 1 / 3;
+  var SIMPLEX_G3 = 1 / 6;
+  function createNoise(seed = 1) {
+    const random = createRng(seed);
+    const p = [];
+    for (let i = 0; i < 256; i++) p.push(i);
+    for (let i = 255; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      const swap = p[i];
+      p[i] = p[j];
+      p[j] = swap;
+    }
+    const perm = [];
+    const grad = [];
+    for (let i = 0; i < 512; i++) {
+      const v = p[i & 255];
+      perm.push(v);
+      grad.push(v % 12 * 3);
+    }
+    function corner2(g, x, y) {
+      let t = 0.5 - x * x - y * y;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y);
+    }
+    function corner3(g, x, y, z) {
+      let t = 0.6 - x * x - y * y - z * z;
+      if (t < 0) return 0;
+      t *= t;
+      return t * t * (SIMPLEX_GRAD[g] * x + SIMPLEX_GRAD[g + 1] * y + SIMPLEX_GRAD[g + 2] * z);
+    }
+    function noise2(xin, yin) {
+      const s = (xin + yin) * SIMPLEX_F2;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const t = (i + j) * SIMPLEX_G2;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const i1 = x0 > y0 ? 1 : 0;
+      const j1 = 1 - i1;
+      const ii = i & 255;
+      const jj = j & 255;
+      return 70 * (corner2(grad[ii + perm[jj]], x0, y0) + corner2(grad[ii + i1 + perm[jj + j1]], x0 - i1 + SIMPLEX_G2, y0 - j1 + SIMPLEX_G2) + corner2(grad[ii + 1 + perm[jj + 1]], x0 - 1 + 2 * SIMPLEX_G2, y0 - 1 + 2 * SIMPLEX_G2));
+    }
+    function noise3(xin, yin, zin) {
+      const s = (xin + yin + zin) * SIMPLEX_F3;
+      const i = Math.floor(xin + s);
+      const j = Math.floor(yin + s);
+      const k = Math.floor(zin + s);
+      const t = (i + j + k) * SIMPLEX_G3;
+      const x0 = xin - (i - t);
+      const y0 = yin - (j - t);
+      const z0 = zin - (k - t);
+      let i1 = 0, j1 = 0, k1 = 0, i2 = 0, j2 = 0, k2 = 0;
+      if (x0 >= y0) {
+        if (y0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          j2 = 1;
+        } else if (x0 >= z0) {
+          i1 = 1;
+          i2 = 1;
+          k2 = 1;
+        } else {
+          k1 = 1;
+          i2 = 1;
+          k2 = 1;
+        }
+      } else if (y0 < z0) {
+        k1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else if (x0 < z0) {
+        j1 = 1;
+        j2 = 1;
+        k2 = 1;
+      } else {
+        j1 = 1;
+        i2 = 1;
+        j2 = 1;
+      }
+      const ii = i & 255;
+      const jj = j & 255;
+      const kk = k & 255;
+      const g = SIMPLEX_G3;
+      return 32 * (corner3(grad[ii + perm[jj + perm[kk]]], x0, y0, z0) + corner3(grad[ii + i1 + perm[jj + j1 + perm[kk + k1]]], x0 - i1 + g, y0 - j1 + g, z0 - k1 + g) + corner3(grad[ii + i2 + perm[jj + j2 + perm[kk + k2]]], x0 - i2 + 2 * g, y0 - j2 + 2 * g, z0 - k2 + 2 * g) + corner3(grad[ii + 1 + perm[jj + 1 + perm[kk + 1]]], x0 - 1 + 3 * g, y0 - 1 + 3 * g, z0 - 1 + 3 * g));
+    }
+    return { noise2, noise3 };
+  }
+
+  // registry/sections/liquid-glass-hero/core.ts
+  var defaults = {
+    headline: "Glass that bends, never blurs.",
+    subhead: "A thick lens drifts over a printed field and displaces what lies beneath its curved edge, drawn in screened ink.",
+    actions: [
+      { label: "Get started", href: "#start" },
+      { label: "How it bends", href: "#how" }
+    ],
+    align: "start",
+    minHeight: 72,
+    size: 0.34,
+    bend: 0.6,
+    spacing: 30,
+    intensity: 0.6,
+    drift: 0.5,
+    levels: 4,
+    mask: "blue",
+    pixel: 3,
+    fps: 30,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL_TIME = 1200;
+  var BLUE_SIZE = 32;
+  var BAYER_SIZE = 8;
+  var TILE = 32;
+  var NOISE_PX = 96;
+  var NOISE_CYCLES = 3;
+  var SQUASH = 0.86;
+  var LIGHT_LEN = Math.hypot(0.68, 0.73);
+  var LIGHT_X = -0.68 / LIGHT_LEN;
+  var LIGHT_Y = -0.73 / LIGHT_LEN;
+  var ARC = 0.74;
+  var LINE_TONE = 0.85;
+  var KNEE = 0.58;
+  var NOISE_GAIN = 0.5;
+  var LIFT = 0.04;
+  var LIFT_EDGE = 0.64;
+  var EDGE = 0.92;
+  var EDGE_IN = 0.965;
+  var SPEC1_IN = 0.968;
+  var SPEC2_IN = 0.928;
+  var SPEC2_OUT = 0.958;
+  var SPEC_HI = 1;
+  var SPEC_LO = 0.45;
+  var VEIL_MAX = 0.65;
+  var BEND_PX = 20;
+  var MARGIN = 40;
+  var CLEAR = 36;
+  var FIELD_IN2 = 1.15 * 1.15;
+  var FIELD_OUT2 = 2.6 * 2.6;
+  var FIELD_FLOOR = 0.06;
+  var PERIOD_X = 34e3;
+  var PERIOD_Y = 43e3;
+  var TAU = Math.PI * 2;
+  function clamp(v, lo, hi) {
+    return Math.min(hi, Math.max(lo, v));
+  }
+  function smoothstep(e0, e1, v) {
+    const t = clamp((v - e0) / (e1 - e0), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+  function vh(minHeight) {
+    return clamp(minHeight, 0, 100);
+  }
+  function noiseSum(noise, x, y, octaves) {
+    let amplitude = 0.5;
+    let frequency = 1;
+    let sum = 0;
+    let total = 0;
+    for (let o = 0; o < octaves; o++) {
+      sum += amplitude * noise.noise2(x * frequency, y * frequency);
+      total += amplitude;
+      amplitude *= 0.5;
+      frequency *= 2;
+    }
+    return total > 0 ? sum / total : 0;
+  }
+  function tileAt(noise, nx, ny, scale, octaves) {
+    const sx = nx * scale;
+    const sy = ny * scale;
+    const a = noiseSum(noise, sx, sy, octaves);
+    const b = noiseSum(noise, sx - scale, sy, octaves);
+    const c = noiseSum(noise, sx, sy - scale, octaves);
+    const d = noiseSum(noise, sx - scale, sy - scale, octaves);
+    return a * (1 - nx) * (1 - ny) + b * nx * (1 - ny) + c * (1 - nx) * ny + d * nx * ny;
+  }
+  function readTile(tile, x, y) {
+    const wx = (x % TILE + TILE) % TILE;
+    const wy = (y % TILE + TILE) % TILE;
+    const x0 = Math.floor(wx);
+    const y0 = Math.floor(wy);
+    const x1 = (x0 + 1) % TILE;
+    const y1 = (y0 + 1) % TILE;
+    const tx = wx - x0;
+    const ty = wy - y0;
+    const v00 = tile[y0 * TILE + x0] ?? 0;
+    const v10 = tile[y0 * TILE + x1] ?? 0;
+    const v01 = tile[y1 * TILE + x0] ?? 0;
+    const v11 = tile[y1 * TILE + x1] ?? 0;
+    return v00 * (1 - tx) * (1 - ty) + v10 * tx * (1 - ty) + v01 * (1 - tx) * ty + v11 * tx * ty;
+  }
+  function rules(s, p) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const onFg = cssOn("fg");
+    const center = p.align === "center";
+    const edge = center ? "center" : "flex-start";
+    const textAlign = center ? "center" : "start";
+    const tint = `color-mix(in srgb, ${fg} 10%, transparent)`;
+    return [
+      `:where(${s}){min-height:${vh(p.minHeight)}vh}`,
+      `${s}{box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:${edge};gap:0.9em;padding:clamp(1.5rem,6vw,5rem);color:${fg};text-align:${textAlign}}`,
+      `${s} > :not([data-pica]){margin-block:0;text-align:${textAlign}}`,
+      `${s} > :not([data-pica]):not(:is(h1,h2,h3)){max-width:44rem}`,
+      `${s} > p:not([data-pica]){color:${muted}}`,
+      `${s} > :is(h1,h2,h3){margin-block:0;max-width:14em;font-size:clamp(2.4rem,6vw,4.6rem);line-height:1.05;font-weight:600;letter-spacing:-0.02em;color:${fg};text-wrap:balance;overflow-wrap:break-word}`,
+      `${s} > :is(h1,h2,h3):empty{display:none}`,
+      `${s} > [data-pica-subhead]{margin-block:0;max-width:52ch;font-size:clamp(1rem,1.4vw,1.15rem);line-height:1.55;color:${muted};overflow-wrap:break-word}`,
+      `${s} > [data-pica-subhead]:empty{display:none}`,
+      `${s} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;margin-top:0.8em;justify-content:${edge}}`,
+      `${s} > [data-pica-actions]:empty{display:none}`,
+      `${s} > [data-pica-actions] a{appearance:none;margin:0;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.65em 1.3em;display:inline-flex;align-items:center;border:1px solid ${muted};border-radius:0;color:${fg};background:transparent;cursor:pointer}`,
+      `${s} > [data-pica-actions] a[data-variant="solid"]{background:currentColor;color:${fg};border-color:transparent}`,
+      `${s} > [data-pica-actions] a[data-variant="solid"] > [data-pica-label]{color:${onFg}}`,
+      `${s} > [data-pica-actions] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${fg} 86%, transparent)}`,
+      `${s} > [data-pica-actions] a[data-variant="outline"]:hover{background:${tint};border-color:${fg}}`,
+      `${s} > [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const sheet = scope(host);
+    const under = layer(host, "under");
+    const headlineEl = document.createElement("h1");
+    headlineEl.setAttribute("data-pica", "");
+    const subheadEl = document.createElement("p");
+    subheadEl.setAttribute("data-pica", "");
+    subheadEl.setAttribute("data-pica-subhead", "");
+    const actionsEl = document.createElement("div");
+    actionsEl.setAttribute("data-pica", "");
+    actionsEl.setAttribute("data-pica-actions", "");
+    host.append(headlineEl, subheadEl, actionsEl);
+    let cols = 1;
+    let rows = 1;
+    let values = new Float32Array(1);
+    let spec = new Uint8Array(1);
+    let veils = new Float32Array(1);
+    let imageData = null;
+    let tile = new Float32Array(1);
+    let builtSeed = Number.NaN;
+    let phaseX = 0;
+    let phaseY = 0;
+    let fgC = [0, 0, 0, 0];
+    let specC = [0, 0, 0, 0];
+    let bgC = [0, 0, 0, 0];
+    const surface = createCanvas(under.el, {
+      autoSize: false,
+      css: "image-rendering:pixelated",
+      onResize: () => {
+        if (layout()) loop.redraw();
+      }
+    });
+    const canvas = surface.canvas;
+    const ctx = canvas.getContext("2d");
+    const palette = watchPalette(host, () => {
+      readColors();
+      loop.redraw();
+    });
+    function readColors() {
+      fgC = parseColor(palette.colors.fg);
+      specC = parseColor(palette.colors.accent);
+      bgC = parseColor(palette.colors.bg);
+    }
+    function layout() {
+      const cell = Math.max(1, props.pixel);
+      const w = Math.max(1, Math.round(surface.cssWidth / cell));
+      const h = Math.max(1, Math.round(surface.cssHeight / cell));
+      if (w === cols && h === rows && imageData) return false;
+      cols = w;
+      rows = h;
+      canvas.width = cols;
+      canvas.height = rows;
+      imageData = ctx ? ctx.createImageData(cols, rows) : null;
+      values = new Float32Array(cols * rows);
+      spec = new Uint8Array(cols * rows);
+      veils = new Float32Array(cols * rows);
+      return true;
+    }
+    function contentBox() {
+      const hr = host.getBoundingClientRect();
+      let l = Number.POSITIVE_INFINITY;
+      let t = Number.POSITIVE_INFINITY;
+      let r = Number.NEGATIVE_INFINITY;
+      let b = Number.NEGATIVE_INFINITY;
+      const kids = host.children;
+      for (let k = 0; k < kids.length; k++) {
+        const el = kids.item(k);
+        if (!el || el === under.el) continue;
+        const q = el.getBoundingClientRect();
+        if (q.width === 0 || q.height === 0) continue;
+        if (q.left < l) l = q.left;
+        if (q.top < t) t = q.top;
+        if (q.right > r) r = q.right;
+        if (q.bottom > b) b = q.bottom;
+      }
+      if (r < l) return null;
+      return { l: l - hr.left, t: t - hr.top, r: r - hr.left, b: b - hr.top };
+    }
+    function rebuildField() {
+      const noise = createNoise(hashSeed(props.seed, 3));
+      const octaves = 3;
+      tile = new Float32Array(TILE * TILE);
+      let min = Number.POSITIVE_INFINITY;
+      let max = Number.NEGATIVE_INFINITY;
+      for (let y = 0; y < TILE; y++) {
+        for (let x = 0; x < TILE; x++) {
+          const v = tileAt(noise, (x + 0.5) / TILE, (y + 0.5) / TILE, NOISE_CYCLES, octaves);
+          tile[y * TILE + x] = v;
+          if (v < min) min = v;
+          if (v > max) max = v;
+        }
+      }
+      const span = max > min ? max - min : 1;
+      for (let i = 0; i < tile.length; i++) tile[i] = ((tile[i] ?? 0) - min) / span;
+      const rng = createRng(hashSeed(props.seed, 17));
+      phaseX = rng() * TAU;
+      phaseY = rng() * TAU;
+      builtSeed = props.seed;
+    }
+    function renderActions() {
+      actionsEl.replaceChildren();
+      for (const [i, action] of props.actions.slice(0, 3).entries()) {
+        const a = document.createElement("a");
+        a.setAttribute("data-pica", "");
+        a.href = action.href;
+        if (i === 0) {
+          a.dataset.variant = "solid";
+          const label = document.createElement("span");
+          label.setAttribute("data-pica", "");
+          label.setAttribute("data-pica-label", "");
+          label.textContent = action.label;
+          a.append(label);
+        } else {
+          a.dataset.variant = "outline";
+          a.textContent = action.label;
+        }
+        actionsEl.append(a);
+      }
+    }
+    function draw(t) {
+      if (!ctx || !imageData) {
+        host.dataset.picaReady = "true";
+        return;
+      }
+      const cell = Math.max(1, props.pixel);
+      const w = surface.cssWidth;
+      const h = surface.cssHeight;
+      const inkMax = clamp(props.intensity, 0, 1);
+      const r = Math.min(w, h) * clamp(props.size, 0.2, 0.8) * 0.5;
+      const rx = Math.max(8, r);
+      const ry = rx * SQUASH;
+      const xl = MARGIN + rx;
+      const xr = Math.max(xl, w - MARGIN - rx);
+      const yt = MARGIN + ry;
+      const yb = Math.max(yt, h - MARGIN - ry);
+      const drift = clamp(props.drift, 0, 1);
+      let cx = (xl + xr) * 0.5 + (xr - xl) * 0.5 * Math.cos(TAU * drift * t / PERIOD_X + phaseX);
+      let cy = (yt + yb) * 0.5 + (yb - yt) * 0.5 * Math.sin(TAU * drift * t / PERIOD_Y + phaseY);
+      const box = contentBox();
+      if (box) {
+        const kl = box.l - CLEAR - rx;
+        const kr = box.r + CLEAR + rx;
+        const kt = box.t - CLEAR - ry;
+        const kb = box.b + CLEAR + ry;
+        if (cx > kl && cx < kr && cy > kt && cy < kb) {
+          let bestD = Number.POSITIVE_INFINITY;
+          let bx = cx;
+          let by = cy;
+          let slid = false;
+          for (const [fx, fy, fd] of [
+            [kl, cy, cx - kl],
+            [kr, cy, kr - cx],
+            [cx, kt, cy - kt],
+            [cx, kb, kb - cy]
+          ]) {
+            if (fx < xl || fx > xr || fy < yt || fy > yb) continue;
+            if (fd < bestD) {
+              bestD = fd;
+              bx = fx;
+              by = fy;
+              slid = true;
+            }
+          }
+          if (slid) {
+            cx = bx;
+            cy = by;
+          } else {
+            const midX = (box.l + box.r) * 0.5;
+            const midY = (box.t + box.b) * 0.5;
+            cx = midX < (xl + xr) * 0.5 ? xr : xl;
+            cy = midY < (yt + yb) * 0.5 ? yb : yt;
+          }
+        }
+      }
+      const bendPx = clamp(props.bend, 0, 1) * BEND_PX;
+      const pitch = Math.max(8, props.spacing);
+      const lineW = cell * 0.55;
+      const invRx = 1 / rx;
+      const invRy = 1 / ry;
+      const nRx = 1 / (rx * rx);
+      const nRy = 1 / (ry * ry);
+      const invNoise = 1 / NOISE_PX;
+      let i = 0;
+      for (let y = 0; y < rows; y++) {
+        const py = (y + 0.5) * cell;
+        const qy = (py - cy) * invRy;
+        for (let x = 0; x < cols; x++, i++) {
+          const px = (x + 0.5) * cell;
+          const qx = (px - cx) * invRx;
+          const d2 = qx * qx + qy * qy;
+          let sx = px;
+          let sy = py;
+          let lift = 0;
+          let edge = 0;
+          let sp = 0;
+          let vl = 0;
+          if (d2 < 1) {
+            const d = Math.sqrt(d2);
+            const len = Math.hypot(px - cx, py - cy);
+            if (len > 1e-3) {
+              const off = bendPx * d * d * d;
+              sx = px - (px - cx) / len * off;
+              sy = py - (py - cy) / len * off;
+            }
+            lift = LIFT + LIFT_EDGE * smoothstep(0.8, 0.94, d);
+            if (d >= EDGE_IN) edge = EDGE;
+            const nx = (px - cx) * nRx;
+            const ny = (py - cy) * nRy;
+            const nl = Math.hypot(nx, ny) || 1;
+            const facing = (nx * LIGHT_X + ny * LIGHT_Y) / nl;
+            if (facing > ARC && d >= SPEC2_IN && d <= 1) {
+              sp = d >= SPEC1_IN ? 2 : d <= SPEC2_OUT ? 1 : 0;
+            }
+            vl = 0.8 + 0.2 * d * d;
+          }
+          const gain = FIELD_FLOOR + (1 - FIELD_FLOOR) * (1 - smoothstep(FIELD_IN2, FIELD_OUT2, d2));
+          const mx = (sx % pitch + pitch) % pitch;
+          const my = (sy % pitch + pitch) % pitch;
+          const dx = Math.min(mx, pitch - mx);
+          const dy = Math.min(my, pitch - my);
+          const ld = Math.min(dx, dy);
+          const line = ld >= lineW ? 0 : (lineW - ld) / lineW;
+          const broad = readTile(tile, sx * invNoise, sy * invNoise);
+          let v = (line * LINE_TONE + Math.max(0, broad - KNEE) * NOISE_GAIN) * gain;
+          if (lift > v) v = lift;
+          if (edge > v) v = edge;
+          values[i] = v > 1 ? 1 : v;
+          spec[i] = sp;
+          veils[i] = vl;
+        }
+      }
+      const lv = Math.max(2, Math.min(6, Math.round(props.levels)));
+      const maskSize = props.mask === "bayer" ? BAYER_SIZE : BLUE_SIZE;
+      const screen = props.mask === "bayer" ? bayerMatrix(BAYER_SIZE) : blueNoiseMatrix(BLUE_SIZE);
+      const bands = ditherLevels(values, cols, rows, lv, screen, maskSize);
+      const top = lv - 1;
+      const [fr, fgv, fb, fa] = fgC;
+      const [ar, ag, ab, aa] = specC;
+      const [br, bgv, bb, ba] = bgC;
+      const fgA = fa / 255;
+      const acA = aa / 255;
+      const bgA = ba / 255;
+      const data = imageData.data;
+      for (let k = 0; k < i; k++) {
+        const j = k * 4;
+        let ir = fr;
+        let ig = fgv;
+        let ib = fb;
+        let a1 = (bands[k] ?? 0) / top * inkMax * fgA;
+        const sp = spec[k];
+        if (sp !== 0) {
+          ir = ar;
+          ig = ag;
+          ib = ab;
+          a1 = (sp === 2 ? SPEC_HI : SPEC_LO) * inkMax * acA;
+        }
+        const a2 = (veils[k] ?? 0) * VEIL_MAX * bgA;
+        const a = a1 + a2 * (1 - a1);
+        if (a <= 0) {
+          data[j + 3] = 0;
+          continue;
+        }
+        data[j] = Math.round((ir * a1 + br * a2 * (1 - a1)) / a);
+        data[j + 1] = Math.round((ig * a1 + bgv * a2 * (1 - a1)) / a);
+        data[j + 2] = Math.round((ib * a1 + bb * a2 * (1 - a1)) / a);
+        data[j + 3] = Math.round(a * 255);
+      }
+      ctx.putImageData(imageData, 0, 0);
+      host.dataset.picaReady = "true";
+    }
+    sheet.setRules(rules(sheet.selector, props));
+    headlineEl.textContent = props.headline;
+    subheadEl.textContent = props.subhead;
+    renderActions();
+    readColors();
+    rebuildField();
+    layout();
+    const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL_TIME, frame: draw });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.headline !== before.headline) headlineEl.textContent = props.headline;
+        if (props.subhead !== before.subhead) subheadEl.textContent = props.subhead;
+        if (!sameJson(before.actions, props.actions)) renderActions();
+        if (props.align !== before.align || props.minHeight !== before.minHeight) sheet.setRules(rules(sheet.selector, props));
+        if (palette.refresh()) readColors();
+        if (props.seed !== before.seed || Number.isNaN(builtSeed)) rebuildField();
+        layout();
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+        loop.redraw();
+      },
+      destroy() {
+        loop.destroy();
+        surface.destroy();
+        palette.destroy();
+        under.remove();
+        headlineEl.remove();
+        subheadEl.remove();
+        actionsEl.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaLiquidGlassHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

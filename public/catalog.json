@@ -7790,6 +7790,1250 @@
     "gzipBytes": 1500
   },
   {
+    "slug": "bento-hero",
+    "title": "Bento Hero",
+    "category": "sections",
+    "description": "A hero laid out as a bento tray: a lead cell for the headline and calls to action over a content cell, beside a column of smaller fact and field cells.",
+    "tags": [
+      "hero",
+      "bento",
+      "landing",
+      "section",
+      "grid",
+      "facts"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "background"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "children": "<p>Every component ships as one file: a React wrapper, or a plain HTML page that needs nothing.</p><p class=\"note\">Free for personal projects.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "facts": {
+        "type": "json"
+      },
+      "trend": {
+        "type": "numbers"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "field": {
+        "type": "select",
+        "options": [
+          "noise",
+          "none"
+        ]
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "BentoHero",
+    "defaults": {
+      "headline": "Components drawn in text.",
+      "subhead": "A library of text-mode components for React and plain HTML, each one generated as a single file.",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "facts": [
+        {
+          "label": "Components",
+          "value": "70+"
+        },
+        {
+          "label": "Median size",
+          "value": "4.6 KB"
+        },
+        {
+          "label": "Dependencies",
+          "value": "0"
+        }
+      ],
+      "trend": [
+        14,
+        16,
+        18,
+        19,
+        21,
+        23,
+        26,
+        29,
+        27,
+        31,
+        34,
+        38
+      ],
+      "align": "start",
+      "field": "noise",
+      "intensity": 0.25,
+      "minHeight": 60,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "Headline drawn in the lead cell. Empty draws nothing.",
+      "subhead": "Supporting line under the headline. Empty draws nothing.",
+      "actions": "Calls to action, drawn as links at the foot of the lead cell. The first draws solid in the accent, the rest outline. At most three are drawn.",
+      "facts": "Facts for the smaller cells, in order. At most four are drawn; the cells left over hold drawn fields.",
+      "trend": "Series for the trend cell's sparkline, oldest first. Empty removes the trend cell.",
+      "align": "Horizontal alignment of the lead cell's copy.",
+      "field": "What the flexible cells draw: a drifting noise field, or nothing, which leaves every cell content sized.",
+      "intensity": "How strongly the noise fields show, from 0 to 1, mapped onto their contrast and density.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly BentoHeroAction[]",
+      "facts": "readonly BentoHeroFact[]",
+      "trend": "readonly number[]",
+      "align": "\"start\" | \"center\"",
+      "field": "\"noise\" | \"none\"",
+      "intensity": "number",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 8629
+  },
+  {
+    "slug": "bohemian-hero",
+    "title": "Bohemian Hero",
+    "category": "sections",
+    "description": "A hero dressed like a weaving: seeded thread bands, a scalloped hairline arch, and copy offset against a selvedge joined by a woven crossband.",
+    "tags": [
+      "hero",
+      "bohemian",
+      "woven",
+      "textile",
+      "arch",
+      "border",
+      "section"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "background",
+      "canvas"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "children": "<p>Every band is generated from the seed: a counted thread border, a scalloped edge, and a fringe, with the prose kept in front of all of it.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "end"
+        ]
+      },
+      "bands": {
+        "type": "boolean"
+      },
+      "arch": {
+        "type": "boolean"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "BohemianHero",
+    "defaults": {
+      "headline": "Woven at the edges, open in the middle.",
+      "subhead": "Counted thread bands frame the field, an arch shelters the copy, and the prose always sits in front of the work.",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "align": "start",
+      "bands": true,
+      "arch": true,
+      "intensity": 0.8,
+      "minHeight": 62,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for the woven motif, so the same seed always draws the same tile.",
+      "headline": "The headline inside the arch, set large in the page's own font. Empty hides it.",
+      "subhead": "Supporting copy under the headline. Empty hides it.",
+      "actions": "Calls to action, drawn as links in source order. The first draws solid in the accent, the rest draw hairline. At most three are drawn.",
+      "align": "Which side of the field the enclosure leans toward: \"start\" hangs it on the left, \"end\" mirrors the whole composition.",
+      "bands": "Draw the woven bands along the top and bottom edges, the fringe, the selvedge, and the crossband tied between it and the arch.",
+      "arch": "Draw the arched boundary around the content.",
+      "intensity": "How strongly the drawn work shows, from 0 to 1.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly BohemianHeroAction[]",
+      "align": "\"start\" | \"end\"",
+      "bands": "boolean",
+      "arch": "boolean",
+      "intensity": "number",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 5761
+  },
+  {
+    "slug": "brutalist-hero",
+    "title": "Brutalist Hero",
+    "category": "sections",
+    "description": "A hero section that shows its structure: bordered blocks that collide, mono labels, and the accent as flat fill.",
+    "tags": [
+      "hero",
+      "brutalist",
+      "section",
+      "borders",
+      "cta",
+      "landing"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "demo": {
+      "children": "<h2>Every block shows its edges.</h2><p>Content the page wraps lands in its own bordered box, colliding with the rest.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "kicker": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "background": {
+        "type": "select",
+        "options": [
+          "grid",
+          "rules",
+          "none"
+        ]
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "BrutalistHero",
+    "defaults": {
+      "headline": "Structure, laid bare.",
+      "subhead": "Every box shows its edges. Borders run thick, corners stay square, and the accent fills a whole block.",
+      "kicker": "Spec / 09",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "background": "grid",
+      "intensity": 0.6,
+      "align": "start",
+      "minHeight": 80
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The headline, set heavy and uppercase inside its own bordered block. Empty hides it.",
+      "subhead": "The line under the headline, in a second bordered block shifted off the headline's edge. Empty hides it.",
+      "kicker": "A short label on the accent block that overlaps the headline's top edge. Empty hides it.",
+      "actions": "Calls to action, drawn as bordered links. At most three show, and the first fills with the accent.",
+      "background": "What the underlay draws behind everything: a faint square grid, ruled lines, or nothing.",
+      "intensity": "How strongly the underlay shows, from 0 to 1.",
+      "align": "Horizontal alignment of the content blocks within the host.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "kicker": "string",
+      "actions": "readonly BrutalistHeroAction[]",
+      "background": "\"grid\" | \"rules\" | \"none\"",
+      "intensity": "number",
+      "align": "\"start\" | \"center\"",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 2963
+  },
+  {
+    "slug": "clay-hero",
+    "title": "Clay Hero",
+    "category": "sections",
+    "description": "Soft inflated forms settle behind the page's own content, shaded in screened tone bands.",
+    "tags": [
+      "hero",
+      "clay",
+      "landing",
+      "section",
+      "dither",
+      "background"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "background",
+      "canvas",
+      "dither"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent",
+      "bg"
+    ],
+    "demo": {
+      "props": {
+        "headline": "",
+        "subhead": "Soft solids, screened into tone bands. The type and the calls to action belong to the page."
+      },
+      "children": "<h1>Clay, drawn in flat ink.</h1>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "forms": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1
+      },
+      "scale": {
+        "type": "number",
+        "min": 0.4,
+        "max": 1.6,
+        "step": 0.05
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1
+      },
+      "depth": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "mask": {
+        "type": "select",
+        "options": [
+          "blue",
+          "cluster",
+          "bayer"
+        ]
+      },
+      "pixel": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 3,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 5,
+        "max": 30,
+        "step": 1,
+        "label": "Frames per second"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "ClayHero",
+    "defaults": {
+      "headline": "Soft shapes, hard edges.",
+      "subhead": "Inflated forms settle behind the type, each shaded in a handful of screened tone bands.",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "align": "start",
+      "minHeight": 72,
+      "forms": 4,
+      "scale": 1,
+      "levels": 4,
+      "depth": 0.75,
+      "mask": "blue",
+      "pixel": 4,
+      "speed": 1,
+      "fps": 15,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The headline, set large in the page's own typeface. Empty hides it.",
+      "subhead": "Support under the headline, drawn in the muted color. Empty hides it.",
+      "actions": "Calls to action, drawn as links. At most three show, and the first fills with the accent.",
+      "align": "Horizontal alignment of the content column within the host.",
+      "minHeight": "The host's minimum height, in percent of the viewport height.",
+      "forms": "How many clay forms settle behind the content, from 2 to 6.",
+      "scale": "Radius multiplier on every form.",
+      "levels": "Tone bands each form is screened into, from 2 to 4.",
+      "depth": "Contrast between the darkest and the lightest band, from 0 to 1.",
+      "mask": "The screen the bands are dithered with: \"blue\" noise, a \"cluster\" dot screen, or a \"bayer\" matrix.",
+      "pixel": "CSS pixels each screened cell covers before the canvas is scaled up.",
+      "speed": "How fast the forms drift and deform. 0 holds them still.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly ClayHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "minHeight": "number",
+      "forms": "number",
+      "scale": "number",
+      "levels": "number",
+      "depth": "number",
+      "mask": "\"blue\" | \"cluster\" | \"bayer\"",
+      "pixel": "number",
+      "speed": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 6744
+  },
+  {
+    "slug": "cyberpunk-hero",
+    "title": "Cyberpunk Hero",
+    "category": "sections",
+    "description": "A hero that reads as a terminal held open too long, with scanlines over everything, a headline that tears in rare bursts, and readouts in the corners.",
+    "tags": [
+      "hero",
+      "cyberpunk",
+      "terminal",
+      "scanlines",
+      "glitch",
+      "section",
+      "cta",
+      "landing"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "overlay"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "demo": {
+      "children": "<p>The page's own copy lands here, between the lead and the links.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "kicker": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "telemetry": {
+        "type": "boolean"
+      },
+      "scanlines": {
+        "type": "boolean"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "CyberpunkHero",
+    "defaults": {
+      "headline": "Still transmitting.",
+      "subhead": "The session has been open for 47 days. Every line still answers.",
+      "kicker": "TERM 09 // UPLINK HELD",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "align": "start",
+      "minHeight": 68,
+      "telemetry": true,
+      "scanlines": true,
+      "intensity": 0.55,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The headline, which the composed glitch text tears sideways in rare short bursts. Empty hides it.",
+      "subhead": "The line under the headline, set in the page's own font. Empty hides it.",
+      "kicker": "The mono status line above the headline, which a blinking block cursor ends. Empty hides it.",
+      "actions": "Calls to action, drawn as links. At most three show, and the first fills with the foreground.",
+      "align": "Horizontal alignment of the content column within the host.",
+      "minHeight": "The host's minimum height, in percent of the viewport height.",
+      "telemetry": "Mono readouts stacked in the corners, ticking once a second with the session clock.",
+      "scanlines": "The scanline overlay drawn over the whole section, with a slow roll band.",
+      "intensity": "How strongly the scanlines show, from 0 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "kicker": "string",
+      "actions": "readonly CyberpunkHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "minHeight": "number",
+      "telemetry": "boolean",
+      "scanlines": "boolean",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6316
+  },
+  {
+    "slug": "editorial-hero",
+    "title": "Editorial Hero",
+    "category": "sections",
+    "description": "A magazine opening spread: a deck, a large headline, a measured standfirst with a drop capital, and a byline between hairlines.",
+    "tags": [
+      "editorial",
+      "hero",
+      "magazine",
+      "article",
+      "spread",
+      "drop cap",
+      "section"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "text"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "props": {
+        "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22500%22%20viewBox%3D%220%200%20400%20500%22%3E%3Crect%20width%3D%22400%22%20height%3D%22500%22%20fill%3D%22dimgray%22%2F%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22185%22%20r%3D%22120%22%20fill%3D%22whitesmoke%22%2F%3E%3Crect%20x%3D%2255%22%20y%3D%22355%22%20width%3D%22290%22%20height%3D%2295%22%20fill%3D%22silver%22%2F%3E%3C%2Fsvg%3E",
+        "alt": "A dithered plate of a circle over a plinth."
+      },
+      "children": "<h2>The measure of a page</h2><p>Sixty characters is where a line stops being a guess and starts being a measure, and everything after the standfirst answers to it.</p>"
+    },
+    "controls": {
+      "deck": {
+        "type": "string"
+      },
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "byline": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Image alt text"
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "EditorialHero",
+    "defaults": {
+      "deck": "Notes on the craft",
+      "headline": "The enduring craft of the printed page.",
+      "subhead": "What a magazine knows that a feed forgets: the eye wants a way in, a measure it can hold, and ink that trusts the paper it sits on, all of it decided before the first word is read.",
+      "byline": "By the Picagram desk",
+      "date": "September 2026",
+      "actions": [
+        {
+          "label": "Read the story",
+          "href": "#story"
+        },
+        {
+          "label": "Subscribe",
+          "href": "#subscribe"
+        }
+      ],
+      "align": "start",
+      "src": "",
+      "alt": "",
+      "minHeight": 60
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "deck": "The deck, a small line under the top rule and above the headline. Empty hides it and its rule.",
+      "headline": "The headline, set far larger than anything around it. Empty hides it.",
+      "subhead": "The standfirst, held to about sixty characters a line and opened by a drop capital. Empty hides it.",
+      "byline": "Who wrote the piece, set in mono at the left of the byline rules. Empty hides that half.",
+      "date": "When the piece ran, set in mono at the right of the byline rules. Empty hides that half.",
+      "actions": "Calls to action, drawn as links. At most three show: the first solid in the accent, the rest outline.",
+      "align": "Horizontal alignment of the text column.",
+      "src": "Image URL or data URI for the dithered plate beside the text. Empty shows no plate.",
+      "alt": "Text alternative for the plate. Empty marks it decorative.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "deck": "string",
+      "headline": "string",
+      "subhead": "string",
+      "byline": "string",
+      "date": "string",
+      "actions": "readonly EditorialHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "src": "string",
+      "alt": "string",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 6203
+  },
+  {
+    "slug": "ethereal-hero",
+    "title": "Ethereal Hero",
+    "category": "sections",
+    "description": "A hero that floats its copy in clear air while sparse blue noise grain rises from the ground below.",
+    "tags": [
+      "hero",
+      "landing",
+      "section",
+      "cta",
+      "grain",
+      "blue noise"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "background",
+      "interactive",
+      "canvas",
+      "dither"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "bg"
+    ],
+    "demo": {
+      "props": {
+        "headline": "",
+        "subhead": "The depth below is a screen, not a shadow: sparse grain that thickens as it falls.",
+        "actions": [
+          {
+            "label": "Enter the catalog",
+            "href": "#catalog"
+          },
+          {
+            "label": "Read the method",
+            "href": "#method"
+          }
+        ]
+      },
+      "children": "<h1>Air, drawn honestly.</h1>"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "density": {
+        "type": "number",
+        "min": 0,
+        "max": 0.5,
+        "step": 0.01
+      },
+      "horizon": {
+        "type": "number",
+        "min": 0,
+        "max": 0.9,
+        "step": 0.05
+      },
+      "rise": {
+        "type": "number",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "label": "Rise (cells/s)"
+      },
+      "sway": {
+        "type": "number",
+        "min": 0,
+        "max": 12,
+        "step": 1
+      },
+      "pixel": {
+        "type": "number",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "Grain size (px)"
+      },
+      "fps": {
+        "type": "number",
+        "min": 5,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "EtherealHero",
+    "defaults": {
+      "headline": "Atmosphere without haze.",
+      "subhead": "Depth drawn as grain: blue noise that rises and thins until it reads as air.",
+      "actions": [
+        {
+          "label": "Enter",
+          "href": "#"
+        },
+        {
+          "label": "How it works",
+          "href": "#"
+        }
+      ],
+      "align": "center",
+      "minHeight": 80,
+      "density": 0.12,
+      "horizon": 0.45,
+      "rise": 6,
+      "sway": 4,
+      "pixel": 2,
+      "fps": 15,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The one idea, drawn as a large heading after anything the page wraps. Empty draws none.",
+      "subhead": "Support under the headline, drawn in the muted color. Empty draws none.",
+      "actions": "Calls to action, drawn as links. At most three: the first solid, the rest outline.",
+      "align": "Horizontal alignment of the content column within the host.",
+      "minHeight": "The host's minimum height, in percent of the viewport height.",
+      "density": "Share of cells carrying grain at the bottom edge, thinning to nothing at the horizon.",
+      "horizon": "How far down the frame the grain begins, as a share of its height. Above it is clear ground.",
+      "rise": "Cells per second the grain climbs.",
+      "sway": "Cells the field wanders sideways as it climbs.",
+      "pixel": "CSS pixels each grain cell covers before the canvas is scaled up.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly EtherealHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "minHeight": "number",
+      "density": "number",
+      "horizon": "number",
+      "rise": "number",
+      "sway": "number",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5961
+  },
+  {
+    "slug": "glass-hero",
+    "title": "Glass Hero",
+    "category": "sections",
+    "description": "A hero that floats a frosted pane of screened dots over a field drifting behind it.",
+    "tags": [
+      "hero",
+      "glass",
+      "landing",
+      "section",
+      "dither",
+      "background"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "background",
+      "canvas",
+      "dither"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent",
+      "bg"
+    ],
+    "demo": {
+      "props": {
+        "headline": ""
+      },
+      "children": "<h1>A pane you can read through.</h1>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "frost": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "scale": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "GlassHero",
+    "defaults": {
+      "headline": "Glass, without the blur.",
+      "subhead": "A frosted pane screened in dots, over a field that drifts.",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "align": "center",
+      "minHeight": 68,
+      "intensity": 0.7,
+      "frost": 0.75,
+      "scale": 3,
+      "speed": 0.6,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The heading drawn after anything the page wraps. Empty draws none.",
+      "subhead": "One line of support under the headline, drawn in the muted color. Empty draws none.",
+      "actions": "Calls to action, drawn as links. At most three: the first draws solid in the accent, the rest outline.",
+      "align": "Horizontal alignment of the content block within the host.",
+      "minHeight": "The host's minimum height, in percent of the viewport height.",
+      "intensity": "How strongly the drifting field shows, from 0 to 1.",
+      "frost": "How strongly the pane screens the field down, from 0 (the field passes through) to 1 (almost none gets through).",
+      "scale": "CSS pixels each screened dot covers before the canvas is scaled up.",
+      "speed": "How fast the field drifts. 0 holds it still.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly GlassHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "minHeight": "number",
+      "intensity": "number",
+      "frost": "number",
+      "scale": "number",
+      "speed": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 6487
+  },
+  {
     "slug": "hero",
     "title": "Hero",
     "category": "sections",
@@ -7916,6 +9160,861 @@
     },
     "events": {},
     "gzipBytes": 9219
+  },
+  {
+    "slug": "liquid-glass-hero",
+    "title": "Liquid Glass Hero",
+    "category": "sections",
+    "description": "A hero behind a drifting lens slab that bends the printed field beneath its curved edge, screened into tone steps.",
+    "tags": [
+      "hero",
+      "liquid glass",
+      "lens",
+      "refraction",
+      "dither",
+      "section",
+      "landing"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "background",
+      "canvas",
+      "dither"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent",
+      "bg"
+    ],
+    "demo": {
+      "props": {
+        "headline": "",
+        "subhead": "",
+        "actions": [
+          {
+            "label": "Get started",
+            "href": "#start"
+          },
+          {
+            "label": "How it bends",
+            "href": "#how"
+          }
+        ]
+      },
+      "children": "<h1>Light, bent through a slab.</h1><p>A thick lens drifts over a printed field and displaces what lies beneath its curved edge, drawn in screened ink behind the page's own content.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "size": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.8,
+        "step": 0.02,
+        "label": "Slab diameter"
+      },
+      "bend": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "spacing": {
+        "type": "number",
+        "min": 12,
+        "max": 80,
+        "step": 2,
+        "label": "Lattice spacing (px)"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "drift": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1
+      },
+      "mask": {
+        "type": "select",
+        "options": [
+          "blue",
+          "bayer"
+        ]
+      },
+      "pixel": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1
+      },
+      "fps": {
+        "type": "number",
+        "min": 5,
+        "max": 60,
+        "step": 5
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "LiquidGlassHero",
+    "defaults": {
+      "headline": "Glass that bends, never blurs.",
+      "subhead": "A thick lens drifts over a printed field and displaces what lies beneath its curved edge, drawn in screened ink.",
+      "actions": [
+        {
+          "label": "Get started",
+          "href": "#start"
+        },
+        {
+          "label": "How it bends",
+          "href": "#how"
+        }
+      ],
+      "align": "start",
+      "minHeight": 72,
+      "size": 0.34,
+      "bend": 0.6,
+      "spacing": 30,
+      "intensity": 0.6,
+      "drift": 0.5,
+      "levels": 4,
+      "mask": "blue",
+      "pixel": 3,
+      "fps": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The headline, set large in the page's own font after anything the page wraps. Empty hides it.",
+      "subhead": "Supporting copy under the headline, in the muted color. Empty hides it.",
+      "actions": "Calls to action, drawn as links in source order. At most three: the first draws solid, the rest outline.",
+      "align": "Horizontal alignment of the content column within the host.",
+      "minHeight": "The host's minimum height, in percent of the viewport height.",
+      "size": "The slab's diameter as a share of the host's shorter side, 0.2 to 0.8.",
+      "bend": "How far the slab's curved edge bends what lies behind it, from 0 (a flat sheet) to 1 (a strong lens).",
+      "spacing": "Spacing of the printed lattice the slab drifts over, in CSS pixels.",
+      "intensity": "How strongly the whole drawing inks, from 0 (the ground alone) to 1.",
+      "drift": "How fast the slab drifts across the field. 0 holds it still.",
+      "levels": "Tone steps the field is screened into: 2 is one-bit, 6 reads as nearly smooth.",
+      "mask": "The screen the field is dithered through: \"blue\" scatters the ink, \"bayer\" orders it.",
+      "pixel": "CSS pixels each screened cell covers before the canvas is scaled up.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly LiquidGlassHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "minHeight": "number",
+      "size": "number",
+      "bend": "number",
+      "spacing": "number",
+      "intensity": "number",
+      "drift": "number",
+      "levels": "number",
+      "mask": "\"blue\" | \"bayer\"",
+      "pixel": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 7684
+  },
+  {
+    "slug": "luxury-hero",
+    "title": "Luxury Hero",
+    "category": "sections",
+    "description": "A hero built from space alone: a small tracked headline, one accent hairline, and text links with rules beneath them.",
+    "tags": [
+      "hero",
+      "landing",
+      "section",
+      "luxury",
+      "minimal",
+      "cta"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "props": {
+        "headline": "Spring, Numbered",
+        "subhead": "Sixty pieces, each one signed, dated, and guaranteed for life.",
+        "actions": [
+          {
+            "label": "View the lookbook",
+            "href": "#lookbook"
+          },
+          {
+            "label": "Book an appointment",
+            "href": "#appointments"
+          }
+        ]
+      },
+      "children": "<p>Every order is wrapped by hand and dispatched within two days.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "center",
+          "start"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "LuxuryHero",
+    "defaults": {
+      "headline": "Made To Last",
+      "subhead": "Considered goods, produced in small runs and guaranteed for life.",
+      "actions": [
+        {
+          "label": "Explore the collection",
+          "href": "#collection"
+        }
+      ],
+      "align": "center",
+      "minHeight": 85
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The heading, set small in the page's own face with wide tracking. An empty string hides it.",
+      "subhead": "One or two lines of quiet copy under the headline, in the muted ink. An empty string hides it.",
+      "actions": "Calls to action, drawn as text links with a hairline under each. At most three are shown.",
+      "align": "Text alignment inside the centered column.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly LuxuryHeroAction[]",
+      "align": "\"center\" | \"start\"",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 1931
+  },
+  {
+    "slug": "maximalist-hero",
+    "title": "Maximalist Hero",
+    "category": "sections",
+    "description": "A maximalist page hero that packs two beating fields, an index and a boxed figure, and edge bands around a headline and copy.",
+    "tags": [
+      "hero",
+      "landing",
+      "section",
+      "cta",
+      "maximalist",
+      "marquee",
+      "dither",
+      "background"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "background"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent",
+      "bg"
+    ],
+    "demo": {
+      "children": "<p>Seventy components drawn in text and counting, from glyph grids to WebGL fields, all reading the same four tones.</p><ul><li>React and single file HTML builds</li><li>No runtime dependencies</li><li>One palette, everywhere</li></ul>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "kicker": {
+        "type": "string"
+      },
+      "ticker": {
+        "type": "string"
+      },
+      "figure": {
+        "type": "string"
+      },
+      "caption": {
+        "type": "string"
+      },
+      "index": {
+        "type": "json"
+      },
+      "indexTitle": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "MaximalistHero",
+    "defaults": {
+      "headline": "More is more.",
+      "subhead": "Two fields deep, four tones wide, and every edge of the frame working.",
+      "kicker": "Components drawn in text",
+      "ticker": "ASCII / Dither / Shader / Grid / Type",
+      "figure": "70+",
+      "caption": "Components · one palette · four tones",
+      "index": [
+        "ASCII",
+        "Dither",
+        "Shaders",
+        "Motion",
+        "Sections"
+      ],
+      "indexTitle": "Index",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "align": "start",
+      "intensity": 0.55,
+      "minHeight": 84,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The largest type in the frame, drawn as dark text on foreground chips.",
+      "subhead": "The middle size, a line or two of copy under the headline.",
+      "kicker": "The smallest size, a mono label row above the headline. Empty hides the row.",
+      "ticker": "The text the top and bottom bands scroll. Empty hides both bands.",
+      "figure": "The boxed figure on the right, the frame's second large type block. Empty hides it.",
+      "caption": "The mono line under the figure. Empty hides it.",
+      "index": "Rows of the index list beside the headline, numbered automatically. Empty hides the list.",
+      "indexTitle": "The header the index box carries.",
+      "actions": "Calls to action, drawn as links. At most three show; the first draws solid in the accent, the rest outline.",
+      "align": "Horizontal alignment of the content column within the host.",
+      "intensity": "How strongly the two background fields show, from 0 to 1.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "kicker": "string",
+      "ticker": "string",
+      "figure": "string",
+      "caption": "string",
+      "index": "readonly string[]",
+      "indexTitle": "string",
+      "actions": "readonly MaximalistAction[]",
+      "align": "\"start\" | \"center\"",
+      "intensity": "number",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 9342
+  },
+  {
+    "slug": "minimal-hero",
+    "title": "Minimal Hero",
+    "category": "sections",
+    "description": "A hero reduced to one large headline, a line of support, and a single call to action.",
+    "tags": [
+      "hero",
+      "minimal",
+      "landing",
+      "section",
+      "cta"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "demo": {
+      "props": {
+        "headline": "",
+        "subhead": "Everything on this page earns its place.",
+        "actions": [
+          {
+            "label": "Read the manual",
+            "href": "#docs"
+          }
+        ]
+      },
+      "children": "<h1>One idea, set large.</h1>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "MinimalHero",
+    "defaults": {
+      "headline": "Less, but better.",
+      "subhead": "A headline, one line of support, and a single way forward.",
+      "actions": [
+        {
+          "label": "Get started",
+          "href": "#"
+        }
+      ],
+      "align": "start"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The one idea, drawn as a large heading after anything the page wraps. Empty draws none.",
+      "subhead": "At most one line of support, drawn in the muted color under the headline. Empty draws none.",
+      "actions": "Calls to action, drawn as links. At most three: the first draws solid, the rest outline.",
+      "align": "Horizontal alignment of the content block within the host."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly MinimalHeroAction[]",
+      "align": "\"start\" | \"center\""
+    },
+    "events": {},
+    "gzipBytes": 1953
+  },
+  {
+    "slug": "neumorphic-hero",
+    "title": "Neumorphic Hero",
+    "category": "sections",
+    "description": "A soft UI hero that trades blur for screens: a slab and a rail of stat tiles rise from the ground on dithered bevels, and the call to action presses in.",
+    "tags": [
+      "hero",
+      "neumorphic",
+      "soft ui",
+      "bevel",
+      "dither",
+      "section",
+      "landing"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "bg"
+    ],
+    "demo": {
+      "children": "<p>Every component is one source: a framework-free core, a React file, and a single HTML file.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "actions": {
+        "type": "json"
+      },
+      "facts": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "depth": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "NeumorphicHero",
+    "defaults": {
+      "headline": "Raised out of the same ground.",
+      "subhead": "A soft UI hero whose relief is screened, not blurred: each edge is two dithered tone steps, and every face keeps the ground color.",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "facts": [
+        {
+          "label": "Tone steps",
+          "value": "2"
+        },
+        {
+          "label": "Screen",
+          "value": "32 × 32"
+        },
+        {
+          "label": "Blur",
+          "value": "0 px"
+        }
+      ],
+      "align": "start",
+      "minHeight": 60,
+      "depth": 0.8,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Shifts the dither screen's placement, so two instances need not share a grain.",
+      "headline": "The headline, set large on the raised slab. Empty hides it.",
+      "subhead": "Supporting copy under the headline, in the muted token. Empty hides it.",
+      "actions": "Calls to action, drawn as links in source order. The first presses into the slab, the rest rise from it. At most three show.",
+      "facts": "Facts for the stat tiles standing beside the slab, each a mono label and a figure in source order. At most three show; empty draws no rail.",
+      "align": "Horizontal alignment of the content column within the host.",
+      "minHeight": "The host's minimum height, in percent of the viewport height.",
+      "depth": "How much ink the screened tone steps lay down, from 0 (a bare hairline) to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly NeumorphicHeroAction[]",
+      "facts": "readonly NeumorphicHeroFact[]",
+      "align": "\"start\" | \"center\"",
+      "minHeight": "number",
+      "depth": "number"
+    },
+    "events": {},
+    "gzipBytes": 5880
+  },
+  {
+    "slug": "pixel-art-hero",
+    "title": "Pixel Art Hero",
+    "category": "sections",
+    "description": "A hero drawn as one low resolution screen: pixel type, snapped frames, and a field that shimmers a cell at a time.",
+    "tags": [
+      "hero",
+      "pixel",
+      "lattice",
+      "section",
+      "cta",
+      "landing"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "canvas"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "demo": {
+      "children": "<h2>The rest of the page keeps its own type.</h2><p>Wrapped copy lands under the actions in the page's font, snapped to the same lattice.</p>"
+    },
+    "capture": 4400,
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "kicker": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "columns": {
+        "type": "number",
+        "min": 24,
+        "max": 160,
+        "step": 1
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "speed": {
+        "type": "number",
+        "min": 1,
+        "max": 20,
+        "step": 1
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "PixelArtHero",
+    "defaults": {
+      "headline": "PIXEL ART",
+      "subhead": "Type, rules, and field all snapped to one coarse lattice, with a seeded shimmer crossing it a cell at a time.",
+      "kicker": "LOW RES // HIGH SIGNAL",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "align": "start",
+      "columns": 64,
+      "intensity": 0.7,
+      "speed": 9,
+      "minHeight": 72,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The headline, drawn in a five row pixel font on the lattice. Letters are uppercased, and any character the font has no shape for draws blank. Empty hides it.",
+      "subhead": "Supporting copy under the headline, in the page's own typeface on lattice snapped lines. Empty hides it.",
+      "kicker": "A short mono label above the headline. Empty hides it.",
+      "actions": "Calls to action, drawn as links inside pixel frames. At most three show, and the first fills with the accent.",
+      "align": "Horizontal alignment of the composition: \"start\" hangs it on the content's edge, \"center\" centers each part.",
+      "columns": "Lattice columns across the host. One lattice pixel is one column wide and half a glyph row tall.",
+      "intensity": "How much of the field shimmers behind the type, from 0 (empty) to 1.",
+      "speed": "Wavefront steps per second. Each step moves the shimmer exactly one lattice pixel, never part of one.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "kicker": "string",
+      "actions": "readonly PixelArtHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "columns": "number",
+      "intensity": "number",
+      "speed": "number",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 7740
   },
   {
     "slug": "pricing",
@@ -8081,6 +10180,333 @@
     "gzipBytes": 3188
   },
   {
+    "slug": "scrapbook-hero",
+    "title": "Scrapbook Hero",
+    "category": "sections",
+    "description": "A hero assembled like a scrapbook page, with seeded tilts, torn deckle edges, taped corners, and a pasted photocopy print around the page's own copy.",
+    "tags": [
+      "hero",
+      "scrapbook",
+      "paper",
+      "torn",
+      "tape",
+      "photocopy",
+      "landing",
+      "section"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "props": {
+        "headline": "Assembled by hand.",
+        "subhead": "Torn slips, taped corners, and a photocopied study, all placed by one seed that remembers where everything landed.",
+        "actions": [
+          {
+            "label": "Browse components",
+            "href": "#components"
+          },
+          {
+            "label": "Read the docs",
+            "href": "#docs"
+          },
+          {
+            "label": "See the source",
+            "href": "#source"
+          }
+        ]
+      },
+      "children": "<p>The page's own copy drops into the same layout, a little off the axis like everything else.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "caption": {
+        "type": "string"
+      },
+      "note": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "stub": {
+        "type": "string"
+      },
+      "footline": {
+        "type": "string"
+      },
+      "tilt": {
+        "type": "number",
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "label": "Tilt (deg)"
+      },
+      "tear": {
+        "type": "number",
+        "min": 0,
+        "max": 16,
+        "step": 0.5,
+        "label": "Tear depth (px)"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "ScrapbookHero",
+    "defaults": {
+      "headline": "Pasted together on purpose.",
+      "subhead": "Torn edges, taped corners, and a photocopied study — every one of them drawn from a single seed.",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "align": "start",
+      "caption": "fig. 01 · the built-in study, copied and pasted",
+      "note": "Field notes\nEvery tilt, tear and tape strip on this page comes from one seed.",
+      "stub": "no. 09",
+      "footline": "picagram · sheet 09 of 12 · assembled by hand",
+      "seed": 1,
+      "tilt": 2,
+      "tear": 8,
+      "minHeight": 80
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed behind every rotation, tear, and tape placement, so the same seed lays out the same page.",
+      "headline": "The headline, set largest on its own torn and taped slip. Empty hides the slip.",
+      "subhead": "Supporting copy on a second slip, set smaller and offset from the headline. Empty hides it.",
+      "actions": "Calls to action, drawn as links. At most three: the first draws solid in the accent, the rest outline.",
+      "align": "Horizontal alignment of the slips within the host.",
+      "caption": "The caption set under the pasted photocopy print, in small mono. Empty hides the caption line.",
+      "note": "The note written on the ruled index-card scrap. Newlines start a new line. Empty hides the card.",
+      "stub": "The tiny label under the barcode stub tucked behind the photo. Empty hides the stub.",
+      "footline": "The metadata line on the long slip pinned along the bottom edge. Empty hides the strip.",
+      "tilt": "The most a slip may tilt, in degrees. Each slip draws its own angle inside the range.",
+      "tear": "The deepest a torn edge may bite into a slip, in pixels. Zero cuts every slip clean.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly ScrapbookHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "caption": "string",
+      "note": "string",
+      "stub": "string",
+      "footline": "string",
+      "tilt": "number",
+      "tear": "number",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 8470
+  },
+  {
+    "slug": "sketch-hero",
+    "title": "Sketch Hero",
+    "category": "sections",
+    "description": "A hero still being drawn, with hatched fills, overshot construction lines, and working annotations behind the content.",
+    "tags": [
+      "hero",
+      "sketch",
+      "construction",
+      "crosshatch",
+      "section",
+      "landing"
+    ],
+    "facets": [
+      "animated",
+      "image",
+      "text",
+      "canvas"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "props": {
+        "headline": "",
+        "subhead": "",
+        "actions": [
+          {
+            "label": "See the method",
+            "href": "#method"
+          },
+          {
+            "label": "All components",
+            "href": "#components"
+          }
+        ]
+      },
+      "children": "<p class=\"kicker\">Figure study 09</p><h1>A page still being drawn.</h1><p>Hatched fills, overshot construction lines, and notes in a working hand, wrapped around real content.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "alt": {
+        "type": "string",
+        "label": "Alt text"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "cover",
+          "contain"
+        ]
+      },
+      "density": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "SketchHero",
+    "defaults": {
+      "headline": "Still being drawn.",
+      "subhead": "Hatched fills, overshot construction lines, and notes in a working hand, behind the page's own content.",
+      "actions": [
+        {
+          "label": "See the method",
+          "href": "#method"
+        },
+        {
+          "label": "All components",
+          "href": "#components"
+        }
+      ],
+      "align": "start",
+      "minHeight": 72,
+      "src": "",
+      "alt": "",
+      "fit": "cover",
+      "density": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The headline, set large in the page's own font. Empty hides it.",
+      "subhead": "Supporting copy under the headline, in the muted color. Empty hides it.",
+      "actions": "Calls to action, drawn as links in source order. At most three: the first draws solid, the rest outline.",
+      "align": "Horizontal alignment of the content column within the host.",
+      "minHeight": "The host's minimum height, in percent of the viewport height.",
+      "src": "Image URL or data URI for the figure, hatched by a composed crosshatch image. Empty draws a built-in sphere study.",
+      "alt": "Text alternative for the figure image. Empty marks it decorative.",
+      "fit": "How the figure image fits its square: \"cover\" fills and crops, \"contain\" fits whole.",
+      "density": "How densely the hatching is worked, from 0 open to 1 tight."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly SketchHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "minHeight": "number",
+      "src": "string",
+      "alt": "string",
+      "fit": "\"cover\" | \"contain\"",
+      "density": "number"
+    },
+    "events": {},
+    "gzipBytes": 8052
+  },
+  {
     "slug": "stats-kpi",
     "title": "Stats KPI",
     "category": "sections",
@@ -8239,6 +10665,286 @@
     },
     "events": {},
     "gzipBytes": 4261
+  },
+  {
+    "slug": "surrealist-hero",
+    "title": "Surrealist Hero",
+    "category": "sections",
+    "description": "A hero behind which a dithered sea stands at two heights, under a sun reflected in the wrong shape.",
+    "tags": [
+      "hero",
+      "landing",
+      "section",
+      "surreal",
+      "dither",
+      "sea",
+      "horizon"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "background",
+      "canvas"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "children": "<p class=\"lede\">Eleven primitives for the top of a page, drawn in the library's own grammar and set in the page's own type.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "horizon": {
+        "type": "number",
+        "min": 40,
+        "max": 85,
+        "step": 1,
+        "label": "Lower waterline (%)"
+      },
+      "step": {
+        "type": "number",
+        "min": 8,
+        "max": 40,
+        "step": 1,
+        "label": "Wall height (%)"
+      },
+      "seam": {
+        "type": "number",
+        "min": 30,
+        "max": 75,
+        "step": 1,
+        "label": "Wall position (%)"
+      },
+      "scale": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1,
+        "label": "Dither cell (px)"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "SurrealistHero",
+    "defaults": {
+      "headline": "The sea stands at two heights.",
+      "subhead": "The same water meets the sky at two levels, and the sun reflects in the wrong shape.",
+      "actions": [
+        {
+          "label": "See the components",
+          "href": "#components"
+        },
+        {
+          "label": "How it is built",
+          "href": "#docs"
+        }
+      ],
+      "align": "start",
+      "minHeight": 78,
+      "intensity": 0.45,
+      "horizon": 66,
+      "step": 22,
+      "seam": 58,
+      "scale": 4,
+      "speed": 0.45,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The large line at the top of the section. Empty leaves it out.",
+      "subhead": "The smaller line under the headline. Empty leaves it out.",
+      "actions": "Calls to action, drawn as links. The first draws solid in the accent, the rest draw outline.",
+      "align": "Horizontal alignment of the content column within the host.",
+      "minHeight": "The host's minimum height, in percent of the viewport height.",
+      "intensity": "How strongly the dithered sea shows, from 0 to 1.",
+      "horizon": "Height of the lower waterline, in percent of the host's height.",
+      "step": "Height of the wall of water, in percent of the host's height. The upper waterline sits this far above the lower.",
+      "seam": "Where the wall of water stands, in percent of the host's width.",
+      "scale": "CSS pixels each dithered cell covers, passed to the sea.",
+      "speed": "How fast the sea drifts, passed through to its own speed. 0 holds it still."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly SurrealistHeroAction[]",
+      "align": "\"start\" | \"center\"",
+      "minHeight": "number",
+      "intensity": "number",
+      "horizon": "number",
+      "step": "number",
+      "seam": "number",
+      "scale": "number",
+      "speed": "number"
+    },
+    "events": {},
+    "gzipBytes": 6515
+  },
+  {
+    "slug": "swiss-hero",
+    "title": "Swiss Hero",
+    "category": "sections",
+    "description": "A hero set on a strict twelve column grid: flush left type, hairline rules, white space, and one accent.",
+    "tags": [
+      "hero",
+      "swiss",
+      "grid",
+      "typography",
+      "international style",
+      "section"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "children": "<p>Every component is one source: a framework-free core, a React file, and a single HTML file.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "kicker": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "end"
+        ]
+      },
+      "guides": {
+        "type": "boolean"
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "SwissHero",
+    "defaults": {
+      "headline": "Set on a strict grid.",
+      "subhead": "Twelve columns, one gutter, and nothing placed off it. Type does the ordering; white space does the rest.",
+      "kicker": "Picagram · component library",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "align": "start",
+      "guides": true,
+      "minHeight": 60
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The headline, set large and flush left across eight of the twelve columns. Empty hides it.",
+      "subhead": "Supporting copy under the headline, in a narrower measure offset a few columns. Empty hides it.",
+      "kicker": "The small mono metadata block at the top, tracked and uppercase. Newlines start a new line. Empty hides it.",
+      "actions": "Calls to action, drawn as links in source order. The first is the section's one accent, the rest draw hairline.",
+      "align": "Which side of the grid the composition sits on: \"start\" hangs it on the left edge, \"end\" mirrors it to the right. Text stays flush left either way.",
+      "guides": "Draw the twelve column guides behind the content at a low strength.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "kicker": "string",
+      "actions": "readonly SwissHeroAction[]",
+      "align": "\"start\" | \"end\"",
+      "guides": "boolean",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 2810
   },
   {
     "slug": "testimonials",
@@ -8404,6 +11110,436 @@
     },
     "events": {},
     "gzipBytes": 5001
+  },
+  {
+    "slug": "victorian-hero",
+    "title": "Victorian Hero",
+    "category": "sections",
+    "description": "A playbill hero: a doubled ruled border with fleuron corners, stacked lines in many sizes, and rules between them.",
+    "tags": [
+      "hero",
+      "landing",
+      "section",
+      "victorian",
+      "playbill",
+      "border",
+      "cta"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "props": {
+        "kicker": "Picagram, by special arrangement",
+        "headline": "A Grand Exhibition of Drawn Type",
+        "subhead": "being a library of components rendered in text, for one night and every night",
+        "actions": [
+          {
+            "label": "Take a seat",
+            "href": "#seats"
+          },
+          {
+            "label": "Read the programme",
+            "href": "#programme"
+          }
+        ]
+      },
+      "children": "<p>Doors at seven. The management begs patience for any delay in the machinery.</p>"
+    },
+    "controls": {
+      "kicker": {
+        "type": "string"
+      },
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "center",
+          "start"
+        ]
+      },
+      "frame": {
+        "type": "select",
+        "options": [
+          "double",
+          "single",
+          "none"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "VictorianHero",
+    "defaults": {
+      "kicker": "Picagram presents",
+      "headline": "The Victorian Hero",
+      "subhead": "A playbill for the printed web, drawn in type and rules alone.",
+      "actions": [
+        {
+          "label": "See the bill",
+          "href": "#bill"
+        },
+        {
+          "label": "Book seats",
+          "href": "#seats"
+        }
+      ],
+      "align": "center",
+      "frame": "double",
+      "minHeight": 80
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "kicker": "The small line at the top of the stack, set in tracked mono capitals. Empty hides it.",
+      "headline": "The largest line of the bill, set in the page's own face at display size. Empty hides it.",
+      "subhead": "The medium line under the headline, set in italics. Empty hides it.",
+      "actions": "Calls to action, drawn as ruled links. At most three show, and the first takes a doubled rule.",
+      "align": "Text alignment inside the bill.",
+      "frame": "The border: a heavy outer rule doubled by a thin inner frame with fleuron corners, the heavy rule alone, or none.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "kicker": "string",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly VictorianHeroAction[]",
+      "align": "\"center\" | \"start\"",
+      "frame": "\"double\" | \"single\" | \"none\"",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 4540
+  },
+  {
+    "slug": "wabi-sabi-hero",
+    "title": "Wabi Sabi Hero",
+    "category": "sections",
+    "description": "A hero worn like a handled page: a frame missing one side, rules that stop short, and grain that gathers at the edges.",
+    "tags": [
+      "hero",
+      "wabi-sabi",
+      "imperfection",
+      "grain",
+      "frame",
+      "wear",
+      "section"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "overlay"
+    ],
+    "wave": 9,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "demo": {
+      "children": "<p>What remains is what matters: a boundary that never closes, lines that end early, and wear where hands have been.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "end"
+        ]
+      },
+      "frame": {
+        "type": "boolean"
+      },
+      "wear": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "WabiSabiHero",
+    "defaults": {
+      "headline": "Left unfinished on purpose.",
+      "subhead": "An off centre hero whose boundary never closes, whose rules stop short, and whose wear gathers where hands would go.",
+      "actions": [
+        {
+          "label": "Browse components",
+          "href": "#components"
+        },
+        {
+          "label": "Read the docs",
+          "href": "#docs"
+        }
+      ],
+      "align": "start",
+      "frame": true,
+      "wear": 0.8,
+      "intensity": 0.8,
+      "minHeight": 72,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every irregularity, so the same seed always finds the same imperfections.",
+      "headline": "The headline, set large in the page's own font. Empty hides it.",
+      "subhead": "Supporting copy under the headline, drawn in the muted color. Empty hides it.",
+      "actions": "Calls to action, drawn as links in source order. The first draws solid in the foreground color, the rest draw hairline. At most three are drawn.",
+      "align": "Which side the content leans toward: \"start\" opens the void on the right, \"end\" mirrors the whole composition.",
+      "frame": "Draw the enclosing frame, one side of it missing and every drawn side stopping short of its corner.",
+      "wear": "How much speckle and staining the ground carries, from none at 0 to full wear at 1.",
+      "intensity": "How strongly the drawn work shows, from 0 to 1.",
+      "minHeight": "The host's minimum height, in percent of the viewport height."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly WabiSabiHeroAction[]",
+      "align": "\"start\" | \"end\"",
+      "frame": "boolean",
+      "wear": "number",
+      "intensity": "number",
+      "minHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 6229
+  },
+  {
+    "slug": "y2k-hero",
+    "title": "Y2K Hero",
+    "category": "sections",
+    "description": "A centered turn of the millennium hero with banded chrome rails, seeded starbursts, a scrolling ticker, and real calls to action.",
+    "tags": [
+      "y2k",
+      "hero",
+      "section",
+      "chrome",
+      "starburst",
+      "ticker",
+      "cta"
+    ],
+    "facets": [
+      "animated",
+      "text",
+      "background",
+      "canvas",
+      "dither"
+    ],
+    "wave": 9,
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "accent",
+      "bg"
+    ],
+    "demo": {
+      "props": {
+        "headline": "The Year Three Thousand",
+        "subhead": "Chrome plated components for the modern web."
+      },
+      "children": "<p>Hand assembled, seeded fresh on every visit, and best viewed at any resolution.</p>"
+    },
+    "controls": {
+      "headline": {
+        "type": "string"
+      },
+      "subhead": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "actions": {
+        "type": "json"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "center",
+          "start"
+        ]
+      },
+      "minHeight": {
+        "type": "number",
+        "min": 30,
+        "max": 100,
+        "step": 5,
+        "label": "Min height (vh)"
+      },
+      "ticker": {
+        "type": "string"
+      },
+      "scanlines": {
+        "type": "boolean"
+      },
+      "rails": {
+        "type": "boolean"
+      },
+      "stars": {
+        "type": "number",
+        "min": 0,
+        "max": 4,
+        "step": 1
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "sheen": {
+        "type": "boolean"
+      },
+      "fps": {
+        "type": "number",
+        "min": 5,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Y2kHero",
+    "defaults": {
+      "headline": "Welcome To The Future",
+      "subhead": "Everything here is chrome plated, hand assembled, and best viewed at any resolution.",
+      "actions": [
+        {
+          "label": "Enter",
+          "href": "#enter"
+        },
+        {
+          "label": "Guestbook",
+          "href": "#guestbook"
+        }
+      ],
+      "align": "center",
+      "minHeight": 78,
+      "ticker": "EST. 2000",
+      "scanlines": true,
+      "rails": true,
+      "stars": 2,
+      "intensity": 0.9,
+      "sheen": true,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "headline": "The big line drawn above the wrapped content. An empty string hides it.",
+      "subhead": "A quieter line under the headline, in the muted ink. An empty string hides it.",
+      "actions": "Calls to action, drawn as real beveled links. At most three are shown.",
+      "align": "Text alignment inside the column: centered, the way of the era, or flush to the start edge.",
+      "minHeight": "The host's minimum height, in percent of the viewport height.",
+      "ticker": "Text for the scrolling strip pinned to the top edge. An empty string removes the strip.",
+      "scanlines": "A fine line screen over the whole section, mounted from the scanlines core.",
+      "rails": "The two chrome bars framing the content.",
+      "stars": "Starbursts the seed scatters behind the content, from 0 to 4.",
+      "intensity": "How strongly the drawn frame inks, from 0 to 1.",
+      "sheen": "The bright band that sweeps along the chrome while the clock runs.",
+      "fps": "Frames drawn per second while animating."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "headline": "string",
+      "subhead": "string",
+      "actions": "readonly Y2kAction[]",
+      "align": "\"center\" | \"start\"",
+      "minHeight": "number",
+      "ticker": "string",
+      "scanlines": "boolean",
+      "rails": "boolean",
+      "stars": "number",
+      "intensity": "number",
+      "sheen": "boolean",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 7195
   },
   {
     "slug": "aurora",

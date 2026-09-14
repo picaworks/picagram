@@ -1,0 +1,240 @@
+<!doctype html>
+<!--
+  Pica · Minimal Hero · minimal-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Minimal Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><h1>One idea, set large.</h1></div>
+<script>
+"use strict";
+var PicaMinimalHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/minimal-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+
+  // registry/sections/minimal-hero/core.ts
+  var defaults = {
+    headline: "Less, but better.",
+    subhead: "A headline, one line of support, and a single way forward.",
+    actions: [{ label: "Get started", href: "#" }],
+    align: "start"
+  };
+  function rules(s, p) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const onFg = cssOn("fg");
+    const center = p.align === "center";
+    const edge = center ? "center" : "flex-start";
+    const textAlign = center ? "center" : "start";
+    const tint = `color-mix(in srgb, ${fg} 10%, transparent)`;
+    return [
+      `:where(${s}){min-height:72vh}`,
+      `${s}{box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;align-items:${edge};gap:1em;padding:clamp(1.5rem,6vw,5rem);padding-block-start:clamp(4rem,28vh,22rem);color:${fg};text-align:${textAlign}}`,
+      `${s} > :not([data-pica]){margin-block:0;text-align:${textAlign}}`,
+      `${s} > :not([data-pica]):not(:is(h1,h2,h3)){max-width:44rem}`,
+      `${s} > p:not([data-pica]){color:${muted}}`,
+      `${s} > :is(h1,h2,h3){margin-block:0;max-width:14em;font-size:clamp(2.5rem,6.5vw,4.75rem);line-height:1.04;font-weight:600;letter-spacing:-0.02em;color:${fg};text-wrap:balance;overflow-wrap:break-word}`,
+      `${s} > :is(h1,h2,h3):empty{display:none}`,
+      `${s} > [data-part="subhead"]{margin-block:0;max-width:52ch;font-size:clamp(1.05rem,1.4vw,1.2rem);line-height:1.5;color:${muted};overflow-wrap:break-word}`,
+      `${s} > [data-part="subhead"]:empty{display:none}`,
+      `${s} > [data-part="actions"]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;margin-top:1.5em;justify-content:${edge}}`,
+      `${s} > [data-part="actions"]:empty{display:none}`,
+      `${s} > [data-part="actions"] a{appearance:none;margin:0;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.65em 1.3em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
+      // The solid link paints its background from currentColor and carries the fg itself, so the fallback
+      // for --pica-fg resolves to the link's own color rather than its inverted text. Its label sits in a
+      // span, where the same fallback resolves to the inherited fg and inverts it back for the text.
+      `${s} > [data-part="actions"] a[data-variant="solid"]{background:currentColor;color:${fg}}`,
+      `${s} > [data-part="actions"] a[data-variant="solid"] > [data-part="label"]{color:${onFg}}`,
+      `${s} > [data-part="actions"] a[data-variant="outline"]{background:transparent;color:${fg};border-color:${fg}}`,
+      `${s} > [data-part="actions"] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${fg} 88%, transparent)}`,
+      `${s} > [data-part="actions"] a[data-variant="outline"]:hover{background:${tint}}`,
+      `${s} > [data-part="actions"] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const sheet = scope(host);
+    const headline = document.createElement("h1");
+    headline.setAttribute("data-pica", "");
+    headline.setAttribute("data-part", "headline");
+    const subhead = document.createElement("p");
+    subhead.setAttribute("data-pica", "");
+    subhead.setAttribute("data-part", "subhead");
+    const actions = document.createElement("div");
+    actions.setAttribute("data-pica", "");
+    actions.setAttribute("data-part", "actions");
+    host.append(headline, subhead, actions);
+    function renderText() {
+      headline.textContent = props.headline;
+      subhead.textContent = props.subhead;
+    }
+    function renderActions() {
+      actions.replaceChildren();
+      for (const [i, action] of props.actions.slice(0, 3).entries()) {
+        const a = document.createElement("a");
+        a.setAttribute("data-pica", "");
+        a.href = action.href;
+        if (i === 0) {
+          a.dataset.variant = "solid";
+          const label = document.createElement("span");
+          label.setAttribute("data-pica", "");
+          label.setAttribute("data-part", "label");
+          label.textContent = action.label;
+          a.append(label);
+        } else {
+          a.dataset.variant = "outline";
+          a.textContent = action.label;
+        }
+        actions.append(a);
+      }
+    }
+    sheet.setRules(rules(sheet.selector, props));
+    renderText();
+    renderActions();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.headline !== before.headline || props.subhead !== before.subhead) renderText();
+        if (!sameJson(before.actions, props.actions)) renderActions();
+        if (props.align !== before.align) sheet.setRules(rules(sheet.selector, props));
+      },
+      destroy() {
+        headline.remove();
+        subhead.remove();
+        actions.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaMinimalHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

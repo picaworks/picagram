@@ -1,0 +1,36 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "glass-hero",
+  title: "Glass Hero",
+  category: "sections",
+  description: "A hero that floats a frosted pane of screened dots over a field drifting behind it.",
+  tags: ["hero", "glass", "landing", "section", "dither", "background"],
+  facets: ["animated", "text", "background", "canvas", "dither"],
+  wave: 9,
+  animated: true,
+  decorative: false,
+  wraps: "content",
+  stage: "flow",
+  palette: ["fg", "muted", "accent", "bg"],
+  demo: {
+    props: { headline: "" },
+    children: "<h1>A pane you can read through.</h1>",
+  },
+  controls: {
+    headline: { type: "string" },
+    subhead: { type: "string" },
+    actions: { type: "json" },
+    align: { type: "select", options: ["start", "center"] },
+    minHeight: { type: "number", min: 30, max: 100, step: 5, label: "Min height (vh)" },
+    intensity: { type: "number", min: 0, max: 1, step: 0.05 },
+    frost: { type: "number", min: 0, max: 1, step: 0.05 },
+    scale: { type: "number", min: 2, max: 6, step: 1 },
+    speed: { type: "number", min: 0, max: 2, step: 0.05 },
+    fps: { type: "number", min: 1, max: 30, step: 1 },
+    paused: { type: "boolean" },
+    seed: { type: "number", min: 0, max: 9999, step: 1 },
+  },
+  original: true,
+  credits: [],
+};

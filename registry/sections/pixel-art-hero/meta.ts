@@ -1,0 +1,35 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "pixel-art-hero",
+  title: "Pixel Art Hero",
+  category: "sections",
+  description: "A hero drawn as one low resolution screen: pixel type, snapped frames, and a field that shimmers a cell at a time.",
+  tags: ["hero", "pixel", "lattice", "section", "cta", "landing"],
+  facets: ["animated", "text", "canvas"],
+  wave: 9,
+  animated: true,
+  decorative: false,
+  wraps: "content",
+  stage: "flow",
+  palette: ["fg", "accent", "bg"],
+  demo: {
+    children: "<h2>The rest of the page keeps its own type.</h2><p>Wrapped copy lands under the actions in the page's font, snapped to the same lattice.</p>",
+  },
+  capture: 4400,
+  controls: {
+    headline: { type: "string" },
+    subhead: { type: "textarea", rows: 2 },
+    kicker: { type: "string" },
+    actions: { type: "json" },
+    align: { type: "select", options: ["start", "center"] },
+    columns: { type: "number", min: 24, max: 160, step: 1 },
+    intensity: { type: "number", min: 0, max: 1, step: 0.05 },
+    speed: { type: "number", min: 1, max: 20, step: 1 },
+    minHeight: { type: "number", min: 30, max: 100, step: 5, label: "Min height (vh)" },
+    paused: { type: "boolean" },
+    seed: { type: "number", min: 0, max: 9999, step: 1 },
+  },
+  original: true,
+  credits: [],
+};

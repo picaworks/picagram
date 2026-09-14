@@ -1,0 +1,42 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "clay-hero",
+  title: "Clay Hero",
+  category: "sections",
+  description: "Soft inflated forms settle behind the page's own content, shaded in screened tone bands.",
+  tags: ["hero", "clay", "landing", "section", "dither", "background"],
+  facets: ["animated", "text", "background", "canvas", "dither"],
+  wave: 9,
+  animated: true,
+  decorative: false,
+  wraps: "content",
+  stage: "flow",
+  palette: ["fg", "muted", "accent", "bg"],
+  demo: {
+    props: {
+      headline: "",
+      subhead: "Soft solids, screened into tone bands. The type and the calls to action belong to the page.",
+    },
+    children: "<h1>Clay, drawn in flat ink.</h1>",
+  },
+  controls: {
+    headline: { type: "string" },
+    subhead: { type: "string" },
+    actions: { type: "json" },
+    align: { type: "select", options: ["start", "center"] },
+    minHeight: { type: "number", min: 30, max: 100, step: 5, label: "Min height (vh)" },
+    forms: { type: "number", min: 2, max: 6, step: 1 },
+    scale: { type: "number", min: 0.4, max: 1.6, step: 0.05 },
+    levels: { type: "number", min: 2, max: 4, step: 1 },
+    depth: { type: "number", min: 0, max: 1, step: 0.05 },
+    mask: { type: "select", options: ["blue", "cluster", "bayer"] },
+    pixel: { type: "number", min: 2, max: 8, step: 1 },
+    speed: { type: "number", min: 0, max: 3, step: 0.05 },
+    fps: { type: "number", min: 5, max: 30, step: 1, label: "Frames per second" },
+    paused: { type: "boolean" },
+    seed: { type: "number", min: 0, max: 9999, step: 1 },
+  },
+  original: true,
+  credits: [],
+};

@@ -1,0 +1,945 @@
+<!doctype html>
+<!--
+  Pica · Surrealist Hero · surrealist-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Surrealist Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><p class="lede">Eleven primitives for the top of a page, drawn in the library's own grammar and set in the page's own type.</p></div>
+<script>
+"use strict";
+var PicaSurrealistHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/surrealist-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults2,
+    mount: () => mount2
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // lib/dither-mask.ts
+  var VOID_SIGMA = 1.5;
+  var blueNoiseCache = /* @__PURE__ */ new Map();
+  function blueNoiseMatrix(size) {
+    const kept = blueNoiseCache.get(size);
+    if (kept) return kept;
+    const n = size * size;
+    const pattern = new Uint8Array(n);
+    const energy = new Float32Array(n);
+    const radius = Math.min(Math.ceil(VOID_SIGMA * 3), (size >> 1) - 1);
+    const span = radius * 2 + 1;
+    const kernel = new Float32Array(span * span);
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        kernel[(dy + radius) * span + dx + radius] = Math.exp(-(dx * dx + dy * dy) / (2 * VOID_SIGMA * VOID_SIGMA));
+      }
+    }
+    const spread = (index, sign) => {
+      const cx = index % size;
+      const cy = (index - cx) / size;
+      for (let dy = -radius; dy <= radius; dy++) {
+        const row = ((cy + dy) % size + size) % size * size;
+        const krow = (dy + radius) * span;
+        for (let dx = -radius; dx <= radius; dx++) {
+          const x = ((cx + dx) % size + size) % size;
+          energy[row + x] = (energy[row + x] ?? 0) + sign * (kernel[krow + dx + radius] ?? 0);
+        }
+      }
+    };
+    const peak = (want, most) => {
+      let best = 0;
+      let bestEnergy = Number.NaN;
+      for (let i = 0; i < n; i++) {
+        if (pattern[i] !== want) continue;
+        const e = energy[i] ?? 0;
+        if (Number.isNaN(bestEnergy) || (most ? e > bestEnergy : e < bestEnergy)) {
+          best = i;
+          bestEnergy = e;
+        }
+      }
+      return best;
+    };
+    const ones = Math.max(1, Math.round(n / 10));
+    const scatter = createRng(size);
+    for (let placed = 0; placed < ones; ) {
+      const i = Math.floor(scatter() * n);
+      if (pattern[i] === 0) {
+        pattern[i] = 1;
+        spread(i, 1);
+        placed++;
+      }
+    }
+    for (let pass = 0; pass < n; pass++) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      const hole = peak(0, false);
+      if (hole === cluster) {
+        pattern[cluster] = 1;
+        spread(cluster, 1);
+        break;
+      }
+      pattern[hole] = 1;
+      spread(hole, 1);
+    }
+    const rank = new Int32Array(n);
+    const settled = pattern.slice();
+    for (let r = ones - 1; r >= 0; r--) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      rank[cluster] = r;
+    }
+    pattern.set(settled);
+    energy.fill(0);
+    for (let i = 0; i < n; i++) if (pattern[i] === 1) spread(i, 1);
+    for (let r = ones; r < n; r++) {
+      const hole = peak(0, false);
+      pattern[hole] = 1;
+      spread(hole, 1);
+      rank[hole] = r;
+    }
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i++) out[i] = ((rank[i] ?? 0) + 0.5) / n;
+    blueNoiseCache.set(size, out);
+    return out;
+  }
+  var clusterCache = /* @__PURE__ */ new Map();
+  function clusterMatrix(size) {
+    const kept = clusterCache.get(size);
+    if (kept) return kept;
+    const n = size * size;
+    const turn = Math.PI * 2 / size;
+    const spot = new Float32Array(n);
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) spot[y * size + x] = Math.cos(turn * (x + y)) + Math.cos(turn * (y - x));
+    }
+    const order = Array.from({ length: n }, (_, i) => i);
+    order.sort((a, b) => (spot[b] ?? 0) - (spot[a] ?? 0) || a - b);
+    const out = new Float32Array(n);
+    order.forEach((index, r) => {
+      out[index] = (r + 0.5) / n;
+    });
+    clusterCache.set(size, out);
+    return out;
+  }
+  function maskAt(mask, size, x, y) {
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return mask[my * size + mx] ?? 0.5;
+  }
+  function ditherLevels(values, width, height, levels, mask, size) {
+    const top = Math.max(1, Math.min(255, Math.floor(levels) - 1));
+    const out = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const i = y * width + x;
+        const scaled = Math.min(1, Math.max(0, values[i] ?? 0)) * top;
+        const band = Math.floor(scaled);
+        out[i] = Math.min(top, band + (scaled - band >= maskAt(mask, size, x, y) ? 1 : 0));
+      }
+    }
+    return out;
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // registry/dither/dither-waves/core.ts
+  var defaults = {
+    trains: 3,
+    period: 34,
+    spread: 27,
+    angle: 0,
+    levels: 2,
+    mask: "cluster",
+    pixel: 2,
+    speed: 0.12,
+    fps: 15,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL_TIME = 1200;
+  var MAX_TRAINS = 4;
+  var BLUE_SIZE = 32;
+  var CLUSTER_SIZE = 8;
+  var BASE_RATE = 0.4;
+  var TRAIN_RATE = [0.37, 0.53, 0.29, 0.61];
+  function maskFor(kind) {
+    return kind === "blue" ? { mask: blueNoiseMatrix(BLUE_SIZE), size: BLUE_SIZE } : { mask: clusterMatrix(CLUSTER_SIZE), size: CLUSTER_SIZE };
+  }
+  function seedPhases(seed) {
+    const rng = createRng(seed);
+    return Array.from({ length: MAX_TRAINS }, () => rng() * Math.PI * 2);
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let cols = 1;
+    let rows = 1;
+    let imageData = null;
+    let colCos = new Float32Array(0);
+    let colSin = new Float32Array(0);
+    let rowCos = new Float32Array(0);
+    let rowSin = new Float32Array(0);
+    let field = new Float32Array(0);
+    let inkR = 0;
+    let inkG = 0;
+    let inkB = 0;
+    let inkA = 255;
+    let cachedSeed = props.seed;
+    let phase0 = seedPhases(props.seed);
+    const surface = createCanvas(host, {
+      autoSize: false,
+      css: "image-rendering:pixelated",
+      onResize: () => {
+        if (layout()) loop.redraw();
+      }
+    });
+    const canvas = surface.canvas;
+    const ctx = canvas.getContext("2d");
+    function syncInk() {
+      const [r, g, b, a] = parseColor(palette.colors.fg);
+      inkR = r;
+      inkG = g;
+      inkB = b;
+      inkA = a;
+    }
+    const palette = watchPalette(host, () => {
+      syncInk();
+      loop.redraw();
+    });
+    syncInk();
+    function layout() {
+      const pixelSize = Math.max(1, props.pixel);
+      const w = Math.max(1, Math.round(surface.cssWidth / pixelSize));
+      const h = Math.max(1, Math.round(surface.cssHeight / pixelSize));
+      if (w === cols && h === rows && imageData) return false;
+      cols = w;
+      rows = h;
+      canvas.width = cols;
+      canvas.height = rows;
+      imageData = ctx ? ctx.createImageData(cols, rows) : null;
+      colCos = new Float32Array(MAX_TRAINS * cols);
+      colSin = new Float32Array(MAX_TRAINS * cols);
+      rowCos = new Float32Array(MAX_TRAINS * rows);
+      rowSin = new Float32Array(MAX_TRAINS * rows);
+      field = new Float32Array(cols * rows);
+      return true;
+    }
+    function draw(t) {
+      const context = ctx;
+      const data = imageData;
+      if (!context || !data) {
+        host.dataset.picaReady = "true";
+        return;
+      }
+      if (props.seed !== cachedSeed) {
+        cachedSeed = props.seed;
+        phase0 = seedPhases(cachedSeed);
+      }
+      const trainCount = Math.max(2, Math.min(MAX_TRAINS, Math.round(props.trains)));
+      const periodCells = Math.max(1, props.period);
+      const k = 2 * Math.PI / periodCells;
+      const angleBase = props.angle * Math.PI / 180;
+      const spreadRad = props.spread * Math.PI / 180;
+      const timeS = t * 1e-3 * props.speed;
+      for (let i = 0; i < trainCount; i++) {
+        const theta = angleBase + i * spreadRad;
+        const kx = k * Math.cos(theta);
+        const ky = k * Math.sin(theta);
+        const phase = (phase0[i] ?? 0) + timeS * BASE_RATE * (TRAIN_RATE[i] ?? 1);
+        const colBase = i * cols;
+        for (let x = 0; x < cols; x++) {
+          const a = kx * x;
+          colCos[colBase + x] = Math.cos(a);
+          colSin[colBase + x] = Math.sin(a);
+        }
+        const rowBase = i * rows;
+        for (let y = 0; y < rows; y++) {
+          const b = ky * y + phase;
+          rowCos[rowBase + y] = Math.cos(b);
+          rowSin[rowBase + y] = Math.sin(b);
+        }
+      }
+      let idx = 0;
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          let sum = 0;
+          for (let i = 0; i < trainCount; i++) {
+            const cc = colCos[i * cols + x] ?? 0;
+            const cs = colSin[i * cols + x] ?? 0;
+            const rc = rowCos[i * rows + y] ?? 0;
+            const rs = rowSin[i * rows + y] ?? 0;
+            sum += cc * rc - cs * rs;
+          }
+          field[idx] = sum / trainCount * 0.5 + 0.5;
+          idx++;
+        }
+      }
+      const { mask, size } = maskFor(props.mask);
+      const levels = Math.max(2, Math.min(4, Math.round(props.levels)));
+      const bands = ditherLevels(field, cols, rows, levels, mask, size);
+      const top = levels - 1;
+      const buf = data.data;
+      for (let p = 0; p < bands.length; p++) {
+        const o = p * 4;
+        const band = bands[p] ?? 0;
+        const alpha = top > 0 ? Math.round(band / top * inkA) : inkA;
+        buf[o] = inkR;
+        buf[o + 1] = inkG;
+        buf[o + 2] = inkB;
+        buf[o + 3] = alpha;
+      }
+      context.putImageData(data, 0, 0);
+      host.dataset.picaReady = "true";
+    }
+    labelHost(host, "");
+    layout();
+    const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL_TIME, frame: draw });
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        palette.refresh();
+        syncInk();
+        layout();
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+      },
+      destroy() {
+        loop.destroy();
+        surface.destroy();
+        palette.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // registry/sections/surrealist-hero/core.ts
+  var defaults2 = {
+    headline: "The sea stands at two heights.",
+    subhead: "The same water meets the sky at two levels, and the sun reflects in the wrong shape.",
+    actions: [
+      { label: "See the components", href: "#components" },
+      { label: "How it is built", href: "#docs" }
+    ],
+    align: "start",
+    minHeight: 78,
+    intensity: 0.45,
+    horizon: 66,
+    step: 22,
+    seam: 58,
+    scale: 4,
+    speed: 0.45,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var SURREAL_STILL = 1200;
+  var SUN_PERIOD_X = 97;
+  var SUN_PERIOD_Y = 71;
+  var SUN_DRIFT_X = 0.016;
+  var SUN_DRIFT_Y = 0.02;
+  function share(value, lo, hi) {
+    const v = value / 100;
+    return v < lo ? lo : v > hi ? hi : v;
+  }
+  function geometry(p) {
+    const lowerY = share(p.horizon, 0.3, 0.9);
+    const upperY = Math.max(0.06, lowerY - share(p.step, 0.05, 0.6));
+    return { seamX: share(p.seam, 0.25, 0.8), upperY, lowerY };
+  }
+  function seaClip(geo) {
+    const seam = geo.seamX * 100;
+    const upper = geo.upperY * 100;
+    const lower = geo.lowerY * 100;
+    return `polygon(0% ${lower}%, ${seam}% ${lower}%, ${seam}% ${upper}%, 100% ${upper}%, 100% 100%, 0% 100%)`;
+  }
+  function seaProps(p) {
+    return {
+      paused: p.paused,
+      time: p.time,
+      seed: p.seed,
+      trains: 3,
+      period: 60,
+      spread: 7,
+      angle: 90,
+      levels: 3,
+      mask: "cluster",
+      pixel: p.scale,
+      speed: p.speed,
+      fps: 15
+    };
+  }
+  function seaOpacity(intensity) {
+    return (0.05 + Math.min(1, Math.max(0, intensity)) * 0.25).toFixed(3);
+  }
+  function sunAt(t, phase, geo) {
+    const cx = geo.seamX * 0.5;
+    const cy = Math.max(0.08, geo.lowerY - 0.11);
+    const angle = t * 1e-3;
+    return {
+      x: cx + SUN_DRIFT_X * Math.sin(angle / SUN_PERIOD_X * Math.PI * 2 + phase * 5.1),
+      y: cy + SUN_DRIFT_Y * Math.sin(angle / SUN_PERIOD_Y * Math.PI * 2 + phase * 9.7)
+    };
+  }
+  function surrealRules(selector, p) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const edge = p.align === "center" ? "center" : "flex-start";
+    const textAlign = p.align === "center" ? "center" : "start";
+    const vh = Math.min(100, Math.max(30, p.minHeight));
+    return [
+      `:where(${selector}){min-height:${vh}vh}`,
+      `${selector}{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;align-items:${edge};padding:clamp(1.5rem,5vw,4rem);padding-top:clamp(2.5rem,8vh,5rem)}`,
+      `${selector} > :not([data-pica]){max-width:38rem;text-align:${textAlign}}`,
+      `${selector} > [data-pica-lede]{display:flex;flex-direction:column;gap:0.55em;max-width:38rem;text-align:${textAlign};align-items:${edge};margin-bottom:0.8em}`,
+      `${selector} > [data-pica-lede] [data-pica-headline]{margin:0;font-size:clamp(2rem,5.2vw,3.6rem);line-height:1.05;font-weight:600;letter-spacing:-0.015em;max-width:15em}`,
+      `${selector} > [data-pica-lede] [data-pica-headline]:empty{display:none}`,
+      `${selector} > [data-pica-lede] [data-pica-subhead]{margin:0;font-size:clamp(0.95rem,1.3vw,1.1rem);line-height:1.5;color:${muted};max-width:32em}`,
+      `${selector} > [data-pica-lede] [data-pica-subhead]:empty{display:none}`,
+      `${selector} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;max-width:38rem;margin-top:1em;justify-content:${edge}}`,
+      `${selector} > [data-pica-actions]:empty{display:none}`,
+      `${selector} > [data-pica-actions] a{appearance:none;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.6em 1.25em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
+      `${selector} > [data-pica-actions] a[data-variant="solid"]{background:${accent};color:${cssOn("accent")}}`,
+      `${selector} > [data-pica-actions] a[data-variant="outline"]{background:transparent;color:${fg};border-color:${fg}}`,
+      `${selector} > [data-pica-actions] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${accent} 85%, ${fg})}`,
+      `${selector} > [data-pica-actions] a[data-variant="outline"]:hover{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${selector} > [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+    ].join("\n");
+  }
+  function renderSurrealActions(container, actions) {
+    container.replaceChildren();
+    for (const [i, action] of actions.entries()) {
+      const a = document.createElement("a");
+      a.setAttribute("data-pica", "");
+      a.dataset.variant = i === 0 ? "solid" : "outline";
+      a.href = action.href;
+      a.textContent = action.label;
+      container.append(a);
+    }
+  }
+  var mount2 = (host, initial = {}) => {
+    let props = { ...defaults2, ...initial };
+    const sheet = scope(host);
+    const drawLayer = layer(host, "under");
+    const seaLayer = layer(host, "under");
+    seaLayer.el.style.clipPath = seaClip(geometry(props));
+    seaLayer.el.style.opacity = seaOpacity(props.intensity);
+    const sea = mount(seaLayer.el, seaProps(props));
+    const lede = document.createElement("div");
+    lede.setAttribute("data-pica", "");
+    lede.setAttribute("data-pica-lede", "");
+    const headlineEl = document.createElement("p");
+    headlineEl.setAttribute("data-pica", "");
+    headlineEl.setAttribute("data-pica-headline", "");
+    const subheadEl = document.createElement("p");
+    subheadEl.setAttribute("data-pica", "");
+    subheadEl.setAttribute("data-pica-subhead", "");
+    lede.append(headlineEl, subheadEl);
+    host.prepend(lede);
+    const actions = document.createElement("div");
+    actions.setAttribute("data-pica", "");
+    actions.setAttribute("data-pica-actions", "");
+    host.append(actions);
+    let phase = 0;
+    let phaseSeed = Number.NaN;
+    function sunPhase() {
+      if (phaseSeed !== props.seed) {
+        phaseSeed = props.seed;
+        phase = createRng(props.seed)() * Math.PI * 2;
+      }
+      return phase;
+    }
+    function drawSurrealFrame(t) {
+      const context = ctx;
+      if (!context) {
+        host.dataset.picaReady = "true";
+        return;
+      }
+      const w = surface.cssWidth;
+      const h = surface.cssHeight;
+      const dpr = surface.dpr;
+      const geo = geometry(props);
+      const seamX = geo.seamX * w;
+      const upperY = geo.upperY * h;
+      const lowerY = geo.lowerY * h;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      context.clearRect(0, 0, w, h);
+      context.fillStyle = palette.colors.fg;
+      const line = Math.max(1, Math.round(dpr)) / dpr;
+      context.fillRect(0, Math.round(lowerY * dpr) / dpr, seamX, line);
+      context.fillRect(Math.round(seamX * dpr) / dpr, Math.round(upperY * dpr) / dpr, line, lowerY - upperY);
+      context.fillRect(seamX, Math.round(upperY * dpr) / dpr, w - seamX, line);
+      const sun = sunAt(t, sunPhase(), geo);
+      const r = Math.min(34, Math.max(14, Math.min(w, h) * 0.042));
+      const sunX = sun.x * w;
+      const sunY = sun.y * h;
+      context.fillStyle = palette.colors.accent;
+      context.beginPath();
+      context.arc(sunX, sunY, r, 0, Math.PI * 2);
+      context.fill();
+      const side = r * 1.5;
+      const sqTop = Math.round((2 * lowerY - sunY - side / 2) * dpr) / dpr;
+      const sqLeft = Math.round((sunX - side / 2) * dpr) / dpr;
+      context.fillStyle = palette.colors.muted;
+      context.fillRect(Math.round(sunX * dpr) / dpr, sunY + r, line, Math.max(0, sqTop - (sunY + r)));
+      context.fillRect(sqLeft, sqTop, side, side);
+      context.fillStyle = palette.colors.fg;
+      context.fillRect(sqLeft, sqTop, side, line);
+      context.fillRect(sqLeft, sqTop + side - line, side, line);
+      context.fillRect(sqLeft, sqTop, line, side);
+      context.fillRect(sqLeft + side - line, sqTop, line, side);
+      host.dataset.picaReady = "true";
+    }
+    const surface = createCanvas(drawLayer.el, {
+      onResize: () => loop.redraw()
+    });
+    const ctx = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => loop.redraw());
+    sheet.setRules(surrealRules(sheet.selector, props));
+    headlineEl.textContent = props.headline;
+    subheadEl.textContent = props.subhead;
+    renderSurrealActions(actions, props.actions);
+    const loop = createLoop({ el: host, fps: 15, paused: props.paused, time: props.time, still: SURREAL_STILL, frame: drawSurrealFrame });
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (changed(before, props, ["paused", "time", "seed", "scale", "speed"])) {
+          sea.update(seaProps(props));
+        }
+        if (props.intensity !== before.intensity) {
+          seaLayer.el.style.opacity = seaOpacity(props.intensity);
+        }
+        if (changed(before, props, ["horizon", "step", "seam", "seed"])) {
+          seaLayer.el.style.clipPath = seaClip(geometry(props));
+          loop.redraw();
+        }
+        if (props.paused !== before.paused || props.time !== before.time) {
+          loop.update({ paused: props.paused, time: props.time });
+        }
+        if (props.align !== before.align || props.minHeight !== before.minHeight) {
+          sheet.setRules(surrealRules(sheet.selector, props));
+        }
+        if (props.headline !== before.headline) headlineEl.textContent = props.headline;
+        if (props.subhead !== before.subhead) subheadEl.textContent = props.subhead;
+        if (!sameJson(before.actions, props.actions)) renderSurrealActions(actions, props.actions);
+        palette.refresh();
+      },
+      destroy() {
+        loop.destroy();
+        sea.destroy();
+        surface.destroy();
+        palette.destroy();
+        seaLayer.remove();
+        drawLayer.remove();
+        lede.remove();
+        actions.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaSurrealistHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

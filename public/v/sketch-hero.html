@@ -1,0 +1,1120 @@
+<!doctype html>
+<!--
+  Pica · Sketch Hero · sketch-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Sketch Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><p class="kicker">Figure study 09</p><h1>A page still being drawn.</h1><p>Hatched fills, overshot construction lines, and notes in a working hand, wrapped around real content.</p></div>
+<script>
+"use strict";
+var PicaSketchHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/sketch-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults2,
+    mount: () => mount2
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+  function relativeLuminance(color) {
+    const [r, g, b] = parseColor(color);
+    const linear = (v) => {
+      const c = v / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+  }
+  function inkColor(host) {
+    return readPalette(host).fg;
+  }
+  function hostTone(host) {
+    const fg = relativeLuminance(inkColor(host));
+    let bg = 1;
+    for (let el = host; el; el = el.parentElement) {
+      const background = getComputedStyle(el).backgroundColor;
+      if (parseColor(background)[3] > 0) {
+        bg = relativeLuminance(background);
+        break;
+      }
+    }
+    return fg > bg ? "light-on-dark" : "dark-on-light";
+  }
+
+  // lib/sample.ts
+  function fitRect(sourceW, sourceH, boxW, boxH, fit, alignX = 0.5, alignY = 0.5) {
+    const scale = fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+    const w = sourceW * scale;
+    const h = sourceH * scale;
+    return { x: (boxW - w) * alignX, y: (boxH - h) * alignY, w, h };
+  }
+  function createSampler() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    let ink = new Float32Array(0);
+    return {
+      sample(source, sourceW, sourceH, host, o) {
+        const ny = o.ny ?? o.n;
+        const sw = o.cols * o.n;
+        const sh = o.rows * ny;
+        if (ink.length !== sw * sh) ink = new Float32Array(sw * sh);
+        if (!ctx || sourceW <= 0 || sourceH <= 0) return ink.fill(0);
+        if (canvas.width !== sw) canvas.width = sw;
+        if (canvas.height !== sh) canvas.height = sh;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, sw, sh);
+        if (o.mirror) ctx.setTransform(-1, 0, 0, 1, sw, 0);
+        const box = fitRect(sourceW, sourceH, o.cols * o.aspect, o.rows, o.fit, o.alignX, o.alignY);
+        const toX = o.n / o.aspect;
+        ctx.drawImage(source, box.x * toX, box.y * ny, box.w * toX, box.h * ny);
+        const data = ctx.getImageData(0, 0, sw, sh).data;
+        const lightOnDark = (o.tone === "auto" ? hostTone(host) : o.tone) === "light-on-dark";
+        for (let p = 0; p < sw * sh; p++) {
+          const i = p * 4;
+          const alpha = (data[i + 3] ?? 0) / 255;
+          const luma = (0.2126 * (data[i] ?? 0) + 0.7152 * (data[i + 1] ?? 0) + 0.0722 * (data[i + 2] ?? 0)) / 255;
+          const linear = Math.min(1, Math.max(0, (luma - 0.5) * o.contrast + 0.5)) ** 2.2;
+          ink[p] = alpha * (lightOnDark ? linear : 1 - linear);
+        }
+        return ink;
+      }
+    };
+  }
+
+  // lib/subject.ts
+  function litSphere(size = 256, lightX = 0.36, lightY = 0.34) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const light = ctx.createRadialGradient(size * lightX, size * lightY, size * 0.02, size * 0.5, size * 0.5, size * 0.46);
+      light.addColorStop(0, "#ffffff");
+      light.addColorStop(0.55, "#8a8a8a");
+      light.addColorStop(1, "#141414");
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return canvas;
+  }
+
+  // lib/source.ts
+  function loadSource(src, ready, fail) {
+    if (!src) {
+      const sphere = litSphere();
+      ready({ image: sphere, width: sphere.width, height: sphere.height, builtIn: true });
+      return () => void 0;
+    }
+    let live = true;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "async";
+    img.onload = () => {
+      if (live) ready({ image: img, width: img.naturalWidth, height: img.naturalHeight, builtIn: false });
+    };
+    img.onerror = () => {
+      if (live) fail();
+    };
+    img.src = src;
+    return () => {
+      live = false;
+    };
+  }
+  function fitFor(source, fit) {
+    return source.builtIn ? "contain" : fit;
+  }
+  function fitHostAspect(host, width, height) {
+    if (host.clientHeight >= 2 || width <= 0 || height <= 0) return () => void 0;
+    return styleHost(host, { "aspect-ratio": `${width} / ${height}` });
+  }
+  function showNote(host, text2) {
+    const note2 = document.createElement("span");
+    note2.setAttribute("data-pica", "");
+    note2.setAttribute("aria-hidden", "true");
+    note2.textContent = text2;
+    note2.style.cssText = [
+      "position:absolute",
+      "inset:0",
+      "display:flex",
+      "align-items:center",
+      "justify-content:center",
+      "pointer-events:none",
+      `color:${cssVar("muted")}`
+    ].join(";");
+    const restore = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    host.appendChild(note2);
+    return () => {
+      note2.remove();
+      restore();
+    };
+  }
+
+  // registry/dither/dither-crosshatch-image/core.ts
+  var defaults = {
+    src: "",
+    alt: "",
+    fit: "cover",
+    tone: "auto",
+    contrast: 1.1,
+    layers: 3,
+    spacing: 6,
+    angles: [45, 135, 0, 90],
+    weight: 1,
+    jitter: 0.3,
+    seed: 1
+  };
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let source = null;
+    let failed = false;
+    let cancel = () => void 0;
+    let undoAspect = () => void 0;
+    let removeNote = null;
+    const sampler = createSampler();
+    const surface = createCanvas(host, { onResize: () => draw() });
+    const canvas = surface.canvas;
+    const ctx = canvas.getContext("2d");
+    const palette = watchPalette(host, () => draw());
+    function load() {
+      cancel();
+      failed = false;
+      cancel = loadSource(props.src, use, () => {
+        source = null;
+        failed = true;
+        draw();
+      });
+    }
+    function use(next) {
+      source = next;
+      undoAspect();
+      undoAspect = fitHostAspect(host, next.width, next.height);
+      draw();
+    }
+    function setNote(on) {
+      if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+      if (!on && removeNote) {
+        removeNote();
+        removeNote = null;
+      }
+    }
+    function draw() {
+      const w = surface.cssWidth;
+      const h = surface.cssHeight;
+      if (ctx) {
+        ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+      }
+      setNote(failed);
+      if (ctx && source && !failed) {
+        const spacing = props.spacing > 0 ? props.spacing : 1;
+        const cell = Math.max(1, spacing / 2);
+        const cols = Math.max(1, Math.round(w / cell));
+        const rows = Math.max(1, Math.round(h / cell));
+        const ink = sampler.sample(source.image, source.width, source.height, host, {
+          cols,
+          rows,
+          aspect: 1,
+          n: 1,
+          fit: fitFor(source, props.fit),
+          tone: props.tone,
+          contrast: props.contrast,
+          mirror: false
+        });
+        const toneAt = (x, y) => {
+          const bx = Math.min(cols - 1, Math.max(0, x / cell));
+          const by = Math.min(rows - 1, Math.max(0, y / cell));
+          const x0 = Math.floor(bx);
+          const y0 = Math.floor(by);
+          const x1 = Math.min(cols - 1, x0 + 1);
+          const y1 = Math.min(rows - 1, y0 + 1);
+          const tx = bx - x0;
+          const ty = by - y0;
+          const v00 = ink[y0 * cols + x0] ?? 0;
+          const v10 = ink[y0 * cols + x1] ?? 0;
+          const v01 = ink[y1 * cols + x0] ?? 0;
+          const v11 = ink[y1 * cols + x1] ?? 0;
+          return (v00 * (1 - tx) + v10 * tx) * (1 - ty) + (v01 * (1 - tx) + v11 * tx) * ty;
+        };
+        const count = Math.min(4, Math.max(1, Math.round(props.layers)));
+        const angleList = props.angles.length > 0 ? props.angles : defaults.angles;
+        const weight = props.weight > 0 ? props.weight : 1;
+        const amount = Math.min(1, Math.max(0, props.jitter));
+        const step = Math.max(1.5, spacing / 3);
+        const corners = [[0, 0], [w, 0], [0, h], [w, h]];
+        ctx.strokeStyle = palette.colors.fg;
+        ctx.lineWidth = weight;
+        ctx.lineCap = "round";
+        for (let i = 0; i < count; i++) {
+          const band = (i + 1) / (count + 1);
+          const angle = (angleList[i % angleList.length] ?? 0) * Math.PI / 180;
+          const cosA = Math.cos(angle);
+          const sinA = Math.sin(angle);
+          let uMin = Infinity;
+          let uMax = -Infinity;
+          let vMin = Infinity;
+          let vMax = -Infinity;
+          for (const [cx, cy] of corners) {
+            const pu = cx * cosA + cy * sinA;
+            const pv = -cx * sinA + cy * cosA;
+            if (pu < uMin) uMin = pu;
+            if (pu > uMax) uMax = pu;
+            if (pv < vMin) vMin = pv;
+            if (pv > vMax) vMax = pv;
+          }
+          const kMin = Math.floor(vMin / spacing) - 1;
+          const kMax = Math.ceil(vMax / spacing) + 1;
+          ctx.beginPath();
+          for (let k = kMin; k <= kMax; k++) {
+            const rng = createRng(hashSeed(props.seed, i, k));
+            const freq = 0.01 + rng() * 0.015;
+            const phase = rng() * Math.PI * 2;
+            const amp = amount * spacing * 0.3;
+            const v = k * spacing;
+            let drawing = false;
+            for (let u = uMin; u <= uMax + step; u += step) {
+              const wobble = amp > 0 ? Math.sin(u * freq + phase) * amp : 0;
+              const vv = v + wobble;
+              const x = u * cosA - vv * sinA;
+              const y = u * sinA + vv * cosA;
+              const on = x >= 0 && x <= w && y >= 0 && y <= h && toneAt(x, y) >= band;
+              if (on) {
+                if (drawing) ctx.lineTo(x, y);
+                else {
+                  ctx.moveTo(x, y);
+                  drawing = true;
+                }
+              } else {
+                drawing = false;
+              }
+            }
+          }
+          ctx.stroke();
+        }
+      }
+      if (source || failed) host.dataset.picaReady = "true";
+    }
+    labelHost(host, props.alt);
+    load();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        palette.refresh();
+        labelHost(host, props.alt);
+        if (props.src !== before.src) load();
+        else draw();
+      },
+      destroy() {
+        cancel();
+        setNote(false);
+        surface.destroy();
+        undoAspect();
+        palette.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // registry/sections/sketch-hero/core.ts
+  var defaults2 = {
+    headline: "Still being drawn.",
+    subhead: "Hatched fills, overshot construction lines, and notes in a working hand, behind the page's own content.",
+    actions: [
+      { label: "See the method", href: "#method" },
+      { label: "All components", href: "#components" }
+    ],
+    align: "start",
+    minHeight: 72,
+    src: "",
+    alt: "",
+    fit: "cover",
+    density: 0.5,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL_TIME = 1200;
+  var BOIL_MS = 140;
+  var JITTER = 1.1;
+  var BOIL_FPS = 7;
+  function clamp(v, lo, hi) {
+    return Math.min(hi, Math.max(lo, v));
+  }
+  function elementRng(seed, boil, index) {
+    return createRng(hashSeed(seed, boil, index));
+  }
+  function stroke(c, x1, y1, x2, y2, rng, amp = JITTER) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len;
+    const ny = dx / len;
+    const steps = Math.max(2, Math.round(len / 18));
+    c.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const p = i / steps;
+      const off = (rng() * 2 - 1) * amp;
+      const along = (rng() * 2 - 1) * amp * 0.7;
+      const x = x1 + dx * p + nx * off + dx / len * along;
+      const y = y1 + dy * p + ny * off + dy / len * along;
+      if (i === 0) c.moveTo(x, y);
+      else c.lineTo(x, y);
+    }
+    c.stroke();
+  }
+  function trace(c, cx, cy, rx, ry, rng, amp, a0 = 0, a1 = Math.PI * 2) {
+    const span = a1 - a0;
+    const steps = Math.max(16, Math.round(Math.max(rx, ry) * Math.abs(span) / 9));
+    c.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const a = a0 + span * i / steps;
+      const x = cx + Math.cos(a) * rx + (rng() * 2 - 1) * amp;
+      const y = cy + Math.sin(a) * ry + (rng() * 2 - 1) * amp;
+      if (i === 0) c.moveTo(x, y);
+      else c.lineTo(x, y);
+    }
+    c.stroke();
+  }
+  function hatch(c, angleDeg, spacing, bounds, on, rng, amp) {
+    const angle = angleDeg * Math.PI / 180;
+    const ca = Math.cos(angle);
+    const sa = Math.sin(angle);
+    let uMin = Infinity;
+    let uMax = -Infinity;
+    let vMin = Infinity;
+    let vMax = -Infinity;
+    const corners = [
+      [bounds.x0, bounds.y0],
+      [bounds.x1, bounds.y0],
+      [bounds.x0, bounds.y1],
+      [bounds.x1, bounds.y1]
+    ];
+    for (const [px, py] of corners) {
+      const u = px * ca + py * sa;
+      const v = -px * sa + py * ca;
+      if (u < uMin) uMin = u;
+      if (u > uMax) uMax = u;
+      if (v < vMin) vMin = v;
+      if (v > vMax) vMax = v;
+    }
+    const step = Math.max(1.5, spacing / 3);
+    c.beginPath();
+    for (let k = Math.floor(vMin / spacing) - 1; k <= Math.ceil(vMax / spacing) + 1; k++) {
+      const freq = 6e-3 + rng() * 0.014;
+      const phase = rng() * Math.PI * 2;
+      const wob = amp * spacing * 0.22;
+      let drawing = false;
+      for (let u = uMin; u <= uMax + step; u += step) {
+        const v = k * spacing + Math.sin(u * freq + phase) * wob;
+        const x = u * ca - v * sa + (rng() * 2 - 1) * amp * 0.5;
+        const y = u * sa + v * ca + (rng() * 2 - 1) * amp * 0.5;
+        if (x >= bounds.x0 && x <= bounds.x1 && y >= bounds.y0 && y <= bounds.y1 && on(x, y)) {
+          if (drawing) c.lineTo(x, y);
+          else {
+            c.moveTo(x, y);
+            drawing = true;
+          }
+        } else {
+          drawing = false;
+        }
+      }
+    }
+    c.stroke();
+  }
+  function text(c, s, x, y, rng) {
+    c.fillText(s, x + (rng() - 0.5) * 0.9, y + (rng() - 0.5) * 0.9);
+  }
+  function note(c, s, lx, ly, tx, ty, rng) {
+    c.globalAlpha = 0.7;
+    stroke(c, lx - 5, ly - 3, tx, ty, rng, 0.5);
+    trace(c, tx, ty, 1.8, 1.8, rng, 0.25);
+    c.globalAlpha = 1;
+    text(c, s, lx, ly, rng);
+  }
+  function vh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function rules(s, p) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const onFg = cssOn("fg");
+    const center = p.align === "center";
+    const edge = center ? "center" : "flex-start";
+    const textAlign = center ? "center" : "start";
+    const tint = `color-mix(in srgb, ${fg} 10%, transparent)`;
+    return [
+      `:where(${s}){min-height:${vh(p.minHeight)}vh}`,
+      `${s}{box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:${edge};gap:0.9em;padding:clamp(1.5rem,6vw,5rem);color:${fg};text-align:${textAlign}}`,
+      `${s} > :not([data-pica]){margin-block:0;text-align:${textAlign}}`,
+      `${s} > :not([data-pica]):not(:is(h1,h2,h3)){max-width:44rem}`,
+      `${s} > p:not([data-pica]){color:${muted}}`,
+      `${s} > :is(h1,h2,h3){margin-block:0;max-width:14em;font-size:clamp(2.4rem,6vw,4.6rem);line-height:1.05;font-weight:600;letter-spacing:-0.02em;color:${fg};text-wrap:balance;overflow-wrap:break-word}`,
+      `${s} > :is(h1,h2,h3):empty{display:none}`,
+      `${s} > [data-pica-subhead]{margin-block:0;max-width:52ch;font-size:clamp(1rem,1.4vw,1.15rem);line-height:1.55;color:${muted};overflow-wrap:break-word}`,
+      `${s} > [data-pica-subhead]:empty{display:none}`,
+      `${s} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;margin-top:0.8em;justify-content:${edge}}`,
+      `${s} > [data-pica-actions]:empty{display:none}`,
+      `${s} > [data-pica-actions] a{appearance:none;margin:0;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.65em 1.3em;display:inline-flex;align-items:center;border:1px solid ${muted};border-radius:0;color:${fg};background:transparent;cursor:pointer}`,
+      `${s} > [data-pica-actions] a[data-variant="solid"]{background:currentColor;color:${fg};border-color:transparent}`,
+      `${s} > [data-pica-actions] a[data-variant="solid"] > [data-pica-label]{color:${onFg}}`,
+      `${s} > [data-pica-actions] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${fg} 86%, transparent)}`,
+      `${s} > [data-pica-actions] a[data-variant="outline"]:hover{background:${tint};border-color:${fg}}`,
+      `${s} > [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+    ].join("\n");
+  }
+  var mount2 = (host, initial = {}) => {
+    let props = { ...defaults2, ...initial };
+    const sheet = scope(host);
+    const under = layer(host, "under");
+    const figure = document.createElement("div");
+    figure.setAttribute("data-pica", "");
+    figure.style.cssText = "position:absolute;display:none";
+    under.el.append(figure);
+    let w = 1;
+    let h = 1;
+    let m = 24;
+    let cx = 0;
+    let cy = 0;
+    let radius = 60;
+    function layout() {
+      w = Math.max(1, surface.cssWidth);
+      h = Math.max(1, surface.cssHeight);
+      m = clamp(Math.min(w, h) * 0.05, 18, 44);
+      const wide = w >= 700;
+      radius = clamp(Math.min(w, h) * (wide ? 0.16 : 0.13), 34, 150);
+      cx = wide ? w * 0.7 : w * 0.68;
+      cy = wide ? h * 0.52 : h * 0.76;
+      cx = clamp(cx, m + radius + 6, w - m - radius - 6);
+      cy = clamp(cy, m + radius + 6, h - m - radius * 1.5);
+      figure.style.left = `${cx - radius}px`;
+      figure.style.top = `${cy - radius}px`;
+      figure.style.width = `${radius * 2}px`;
+      figure.style.height = `${radius * 2}px`;
+    }
+    const surface = createCanvas(under.el, {
+      onResize: () => {
+        layout();
+        loop.redraw();
+      }
+    });
+    const ctx = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => loop.redraw());
+    const headlineEl = document.createElement("h1");
+    headlineEl.setAttribute("data-pica", "");
+    const subheadEl = document.createElement("p");
+    subheadEl.setAttribute("data-pica", "");
+    subheadEl.setAttribute("data-pica-subhead", "");
+    const actionsEl = document.createElement("div");
+    actionsEl.setAttribute("data-pica", "");
+    actionsEl.setAttribute("data-pica-actions", "");
+    host.append(headlineEl, subheadEl, actionsEl);
+    let child = null;
+    function figureProps() {
+      return {
+        src: props.src,
+        alt: props.alt,
+        fit: props.fit,
+        seed: props.seed,
+        spacing: 10.5 - clamp(props.density, 0, 1) * 5,
+        jitter: 0.45,
+        layers: 3,
+        contrast: 1.05
+      };
+    }
+    function renderFigure() {
+      if (props.src.trim() !== "") {
+        figure.style.display = "";
+        if (child) child.update(figureProps());
+        else child = mount(figure, figureProps());
+      } else {
+        if (child) {
+          child.destroy();
+          child = null;
+        }
+        figure.style.display = "none";
+      }
+    }
+    function renderActions() {
+      actionsEl.replaceChildren();
+      for (const [i, action] of props.actions.slice(0, 3).entries()) {
+        const a = document.createElement("a");
+        a.setAttribute("data-pica", "");
+        a.href = action.href;
+        if (i === 0) {
+          a.dataset.variant = "solid";
+          const label = document.createElement("span");
+          label.setAttribute("data-pica", "");
+          label.setAttribute("data-pica-label", "");
+          label.textContent = action.label;
+          a.append(label);
+        } else {
+          a.dataset.variant = "outline";
+          a.textContent = action.label;
+        }
+        actionsEl.append(a);
+      }
+    }
+    function draw(t) {
+      const c = ctx;
+      if (!c || w < 8 || h < 8) {
+        host.dataset.picaReady = "true";
+        return;
+      }
+      const boil = Math.floor(Math.max(0, t) / BOIL_MS);
+      const rng = (i) => elementRng(props.seed, boil, i);
+      const colors = palette.colors;
+      const image = child !== null;
+      const spacing = 9.5 - clamp(props.density, 0, 1) * 5;
+      const skew = (rng(0)() - 0.5) * 6;
+      let el = 1;
+      const box = { x0: cx - radius, y0: cy - radius, x1: cx + radius, y1: cy + radius };
+      c.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+      c.clearRect(0, 0, w, h);
+      c.lineWidth = 1;
+      c.lineCap = "round";
+      c.lineJoin = "round";
+      const over = clamp(m * 0.7, 10, 26);
+      c.strokeStyle = colors.muted;
+      c.globalAlpha = 0.85;
+      stroke(c, m - over, m, w - m + over, m, rng(el++));
+      stroke(c, w - m, m - over, w - m, h - m + over, rng(el++));
+      stroke(c, w - m + over, h - m, m - over, h - m, rng(el++));
+      stroke(c, m, h - m + over, m, m - over, rng(el++));
+      c.globalAlpha = 0.3;
+      stroke(c, m - over * 0.6, m + 2.5, w - m + over * 0.6, m + 2.5, rng(el++));
+      stroke(c, m + 2.5, h - m + over * 0.6, m + 2.5, m - over * 0.6, rng(el++));
+      const ob = Math.min(18, radius * 0.18);
+      c.globalAlpha = 0.55;
+      stroke(c, box.x0 - ob, box.y0, box.x1 + ob, box.y0, rng(el++));
+      stroke(c, box.x1, box.y0 - ob, box.x1, box.y1 + ob, rng(el++));
+      stroke(c, box.x1 + ob, box.y1, box.x0 - ob, box.y1, rng(el++));
+      stroke(c, box.x0, box.y1 + ob, box.x0, box.y0 - ob, rng(el++));
+      c.globalAlpha = 0.4;
+      stroke(c, cx, box.y0 - radius * 0.5, cx, box.y1 + radius * 0.5, rng(el++));
+      stroke(c, box.x0 - radius * 0.5, cy, box.x1 + radius * 0.5, cy, rng(el++));
+      stroke(c, box.x0 - radius * 0.25, box.y1 + radius * 0.25, box.x1 + radius * 0.25, box.y0 - radius * 0.25, rng(el++));
+      if (!image) {
+        const sx = cx + radius * 0.42;
+        const sy = cy + radius * 1.18;
+        const srx = radius * 1.02;
+        const sry = radius * 0.26;
+        const inSphere = (x, y) => {
+          const nx = (x - cx) / radius;
+          const ny = (y - cy) / radius;
+          return nx * nx + ny * ny <= 1;
+        };
+        const tone = (x, y) => {
+          const nx = (x - cx) / radius;
+          const ny = (y - cy) / radius;
+          return clamp(0.58 + nx * 0.46 + ny * 0.5, 0, 1);
+        };
+        const shadowBounds = { x0: box.x0 - radius * 0.2, y0: box.y0, x1: box.x1 + radius * 0.5, y1: box.y1 + radius * 0.55 };
+        c.strokeStyle = colors.fg;
+        c.globalAlpha = 0.5;
+        hatch(c, -38 + skew, spacing * 1.2, shadowBounds, (x, y) => {
+          const ex = (x - sx) / srx;
+          const ey = (y - sy) / sry;
+          const e = ex * ex + ey * ey;
+          return e <= 1 && 0.78 - e * 0.55 >= 0.4;
+        }, rng(el++), 0.8);
+        c.globalAlpha = 0.78;
+        hatch(c, -38 + skew, spacing, box, (x, y) => inSphere(x, y) && tone(x, y) >= 0.4, rng(el++), 1);
+        c.globalAlpha = 0.85;
+        hatch(c, 52 + skew, spacing, box, (x, y) => inSphere(x, y) && tone(x, y) >= 0.66, rng(el++), 1);
+        c.strokeStyle = colors.muted;
+        c.globalAlpha = 0.55;
+        trace(c, sx, sy, srx, sry, rng(el++), 0.8);
+      }
+      c.strokeStyle = colors.fg;
+      c.globalAlpha = 0.9;
+      trace(c, cx, cy, radius * 0.98, radius * 0.98, rng(el++), 0.9);
+      c.globalAlpha = 0.35;
+      trace(c, cx, cy, radius * 1.015, radius * 1.015, rng(el++), 0.9, -0.5, Math.PI * 1.15);
+      const ax = cx - radius * 1.55;
+      const ay = cy - radius * 1.38;
+      const ax2 = cx - radius * 1.08;
+      const ay2 = cy - radius * 0.9;
+      c.strokeStyle = colors.accent;
+      c.globalAlpha = 1;
+      stroke(c, ax, ay, ax2, ay2, rng(el++), 0.8);
+      const head = Math.atan2(ay2 - ay, ax2 - ax);
+      const hl = Math.min(15, radius * 0.18);
+      stroke(c, ax2, ay2, ax2 - Math.cos(head - 0.5) * hl, ay2 - Math.sin(head - 0.5) * hl, rng(el++), 0.4);
+      stroke(c, ax2, ay2, ax2 - Math.cos(head + 0.5) * hl, ay2 - Math.sin(head + 0.5) * hl, rng(el++), 0.4);
+      c.font = `10px ${GRID_FONT}`;
+      c.fillStyle = colors.accent;
+      text(c, "light", ax - 4, ay - 9, rng(el++));
+      c.fillStyle = colors.muted;
+      c.strokeStyle = colors.muted;
+      const notes = [
+        ["fig.01", cx - radius * 0.35, box.y1 + radius * 0.66 + 12, cx - radius * 0.1, box.y1],
+        ["tone", box.x1 + radius * 0.3, cy + radius * 0.75, cx + radius * 0.62, cy + radius * 0.62],
+        ["edge", w - m - 40, m + 18, w - m - 2, m + 3]
+      ];
+      for (const [s, lx0, ly0, tx, ty] of notes) {
+        const lx = clamp(lx0, m + 8, w - m - 8 - s.length * 6.5);
+        const ly = clamp(ly0, m + 16, h - m - 6);
+        note(c, s, lx, ly, tx, ty, rng(el++));
+      }
+      c.globalAlpha = 1;
+      host.dataset.picaReady = "true";
+    }
+    layout();
+    renderFigure();
+    sheet.setRules(rules(sheet.selector, props));
+    headlineEl.textContent = props.headline;
+    subheadEl.textContent = props.subhead;
+    renderActions();
+    const loop = createLoop({ el: host, fps: BOIL_FPS, paused: props.paused, time: props.time, still: STILL_TIME, frame: draw });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.align !== before.align || props.minHeight !== before.minHeight) {
+          sheet.setRules(rules(sheet.selector, props));
+        }
+        if (props.headline !== before.headline) headlineEl.textContent = props.headline;
+        if (props.subhead !== before.subhead) subheadEl.textContent = props.subhead;
+        if (!sameJson(before.actions, props.actions)) renderActions();
+        palette.refresh();
+        if (props.src !== before.src || props.alt !== before.alt || props.fit !== before.fit || props.density !== before.density || props.seed !== before.seed) {
+          renderFigure();
+        }
+        loop.update({ paused: props.paused, time: props.time });
+        if (props.seed !== before.seed || props.density !== before.density || props.src !== before.src) loop.redraw();
+      },
+      destroy() {
+        child?.destroy();
+        child = null;
+        loop.destroy();
+        surface.destroy();
+        palette.destroy();
+        under.remove();
+        headlineEl.remove();
+        subheadEl.remove();
+        actionsEl.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaSketchHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

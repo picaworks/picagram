@@ -1,0 +1,888 @@
+<!doctype html>
+<!--
+  Pica · Clay Hero · clay-hero
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Clay Hero · Pica</title>
+<style>:root { --pica-accent: #e8a020; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><h1>Clay, drawn in flat ink.</h1></div>
+<script>
+"use strict";
+var PicaClayHero = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/clay-hero/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#e8a020",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+  function relativeLuminance(color) {
+    const [r, g, b] = parseColor(color);
+    const linear = (v) => {
+      const c = v / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+  }
+  function inkColor(host) {
+    return readPalette(host).fg;
+  }
+  function hostTone(host) {
+    const fg = relativeLuminance(inkColor(host));
+    let bg = 1;
+    for (let el = host; el; el = el.parentElement) {
+      const background = getComputedStyle(el).backgroundColor;
+      if (parseColor(background)[3] > 0) {
+        bg = relativeLuminance(background);
+        break;
+      }
+    }
+    return fg > bg ? "light-on-dark" : "dark-on-light";
+  }
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/dither.ts
+  function bayerMatrix(size) {
+    let m = [0];
+    let n = 1;
+    while (n < size) {
+      const next = new Array(4 * n * n).fill(0);
+      for (let y = 0; y < n; y++) {
+        for (let x = 0; x < n; x++) {
+          const v = 4 * (m[y * n + x] ?? 0);
+          next[y * 2 * n + x] = v;
+          next[y * 2 * n + x + n] = v + 2;
+          next[(y + n) * 2 * n + x] = v + 3;
+          next[(y + n) * 2 * n + x + n] = v + 1;
+        }
+      }
+      m = next;
+      n *= 2;
+    }
+    const out = new Float32Array(size * size);
+    for (let i = 0; i < out.length; i++) out[i] = ((m[i] ?? 0) + 0.5) / (size * size);
+    return out;
+  }
+  var KERNELS = {
+    "floyd-steinberg": [[1, 0, 7 / 16], [-1, 1, 3 / 16], [0, 1, 5 / 16], [1, 1, 1 / 16]],
+    // Atkinson spreads three quarters of the error, which keeps highlights and shadows cleaner.
+    atkinson: [[1, 0, 1 / 8], [2, 0, 1 / 8], [-1, 1, 1 / 8], [0, 1, 1 / 8], [1, 1, 1 / 8], [0, 2, 1 / 8]]
+  };
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
+
+  // lib/dither-mask.ts
+  var VOID_SIGMA = 1.5;
+  var blueNoiseCache = /* @__PURE__ */ new Map();
+  function blueNoiseMatrix(size) {
+    const kept = blueNoiseCache.get(size);
+    if (kept) return kept;
+    const n = size * size;
+    const pattern = new Uint8Array(n);
+    const energy = new Float32Array(n);
+    const radius = Math.min(Math.ceil(VOID_SIGMA * 3), (size >> 1) - 1);
+    const span = radius * 2 + 1;
+    const kernel = new Float32Array(span * span);
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        kernel[(dy + radius) * span + dx + radius] = Math.exp(-(dx * dx + dy * dy) / (2 * VOID_SIGMA * VOID_SIGMA));
+      }
+    }
+    const spread = (index, sign) => {
+      const cx = index % size;
+      const cy = (index - cx) / size;
+      for (let dy = -radius; dy <= radius; dy++) {
+        const row = ((cy + dy) % size + size) % size * size;
+        const krow = (dy + radius) * span;
+        for (let dx = -radius; dx <= radius; dx++) {
+          const x = ((cx + dx) % size + size) % size;
+          energy[row + x] = (energy[row + x] ?? 0) + sign * (kernel[krow + dx + radius] ?? 0);
+        }
+      }
+    };
+    const peak = (want, most) => {
+      let best = 0;
+      let bestEnergy = Number.NaN;
+      for (let i = 0; i < n; i++) {
+        if (pattern[i] !== want) continue;
+        const e = energy[i] ?? 0;
+        if (Number.isNaN(bestEnergy) || (most ? e > bestEnergy : e < bestEnergy)) {
+          best = i;
+          bestEnergy = e;
+        }
+      }
+      return best;
+    };
+    const ones = Math.max(1, Math.round(n / 10));
+    const scatter = createRng(size);
+    for (let placed = 0; placed < ones; ) {
+      const i = Math.floor(scatter() * n);
+      if (pattern[i] === 0) {
+        pattern[i] = 1;
+        spread(i, 1);
+        placed++;
+      }
+    }
+    for (let pass = 0; pass < n; pass++) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      const hole = peak(0, false);
+      if (hole === cluster) {
+        pattern[cluster] = 1;
+        spread(cluster, 1);
+        break;
+      }
+      pattern[hole] = 1;
+      spread(hole, 1);
+    }
+    const rank = new Int32Array(n);
+    const settled = pattern.slice();
+    for (let r = ones - 1; r >= 0; r--) {
+      const cluster = peak(1, true);
+      pattern[cluster] = 0;
+      spread(cluster, -1);
+      rank[cluster] = r;
+    }
+    pattern.set(settled);
+    energy.fill(0);
+    for (let i = 0; i < n; i++) if (pattern[i] === 1) spread(i, 1);
+    for (let r = ones; r < n; r++) {
+      const hole = peak(0, false);
+      pattern[hole] = 1;
+      spread(hole, 1);
+      rank[hole] = r;
+    }
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i++) out[i] = ((rank[i] ?? 0) + 0.5) / n;
+    blueNoiseCache.set(size, out);
+    return out;
+  }
+  var clusterCache = /* @__PURE__ */ new Map();
+  function clusterMatrix(size) {
+    const kept = clusterCache.get(size);
+    if (kept) return kept;
+    const n = size * size;
+    const turn = Math.PI * 2 / size;
+    const spot = new Float32Array(n);
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) spot[y * size + x] = Math.cos(turn * (x + y)) + Math.cos(turn * (y - x));
+    }
+    const order = Array.from({ length: n }, (_, i) => i);
+    order.sort((a, b) => (spot[b] ?? 0) - (spot[a] ?? 0) || a - b);
+    const out = new Float32Array(n);
+    order.forEach((index, r) => {
+      out[index] = (r + 0.5) / n;
+    });
+    clusterCache.set(size, out);
+    return out;
+  }
+  function maskAt(mask, size, x, y) {
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return mask[my * size + mx] ?? 0.5;
+  }
+  function ditherLevels(values, width, height, levels, mask, size) {
+    const top = Math.max(1, Math.min(255, Math.floor(levels) - 1));
+    const out = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const i = y * width + x;
+        const scaled = Math.min(1, Math.max(0, values[i] ?? 0)) * top;
+        const band = Math.floor(scaled);
+        out[i] = Math.min(top, band + (scaled - band >= maskAt(mask, size, x, y) ? 1 : 0));
+      }
+    }
+    return out;
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // registry/sections/clay-hero/core.ts
+  var defaults = {
+    headline: "Soft shapes, hard edges.",
+    subhead: "Inflated forms settle behind the type, each shaded in a handful of screened tone bands.",
+    actions: [
+      { label: "Browse components", href: "#components" },
+      { label: "Read the docs", href: "#docs" }
+    ],
+    align: "start",
+    minHeight: 72,
+    forms: 4,
+    scale: 1,
+    levels: 4,
+    depth: 0.75,
+    mask: "blue",
+    pixel: 4,
+    speed: 1,
+    fps: 15,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STILL_TIME = 1200;
+  var BLUE_SIZE = 32;
+  var CLUSTER_SIZE = 8;
+  var BAYER_SIZE = 8;
+  var LIGHT = [-0.5, -0.55, 0.45];
+  var LIGHT_LEN = Math.hypot(LIGHT[0], LIGHT[1], LIGHT[2]);
+  var LIGHT_X = LIGHT[0] / LIGHT_LEN;
+  var LIGHT_Y = LIGHT[1] / LIGHT_LEN;
+  var LIGHT_Z = LIGHT[2] / LIGHT_LEN;
+  var SHADE_MID = 0.55;
+  var SHADE_BIAS = 0.35;
+  var SHADE_GAIN = 0.5;
+  var MUTED_ALPHA_DARK = 0.4;
+  var MUTED_ALPHA_LIGHT = 0.6;
+  var ACCENT_ALPHA_DARK = 0.55;
+  var ACCENT_ALPHA_LIGHT = 0.65;
+  var FORM_SPECS = [
+    { x: 0.72, y: 0.46, r: 0.34, accent: false },
+    { x: 0.24, y: 0.8, r: 0.14, accent: true },
+    { x: 0.91, y: 0.18, r: 0.16, accent: false },
+    { x: 0.08, y: 0.2, r: 0.1, accent: false },
+    { x: 0.46, y: 0.09, r: 0.08, accent: false },
+    { x: 0.94, y: 0.74, r: 0.12, accent: false }
+  ];
+  function clamp01(value) {
+    return value < 0 ? 0 : value > 1 ? 1 : value;
+  }
+  function vh(minHeight) {
+    return Math.min(100, Math.max(0, minHeight));
+  }
+  function dimRgba(color, k) {
+    return [color[0], color[1], color[2], color[3] * k];
+  }
+  function mixRgba(a, b, t) {
+    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t];
+  }
+  function rampOf(base, fg, lightOnDark, levels) {
+    const stops = lightOnDark ? [dimRgba(base, 0.35), dimRgba(base, 0.65), base, mixRgba(base, fg, 0.45)] : [mixRgba(base, fg, 0.45), dimRgba(base, 0.9), dimRgba(base, 0.7), dimRgba(base, 0.4)];
+    const top = stops.length - 1;
+    const out = [];
+    for (let k = 0; k < levels; k++) {
+      const pos = (levels === 1 ? 0 : k / (levels - 1)) * top;
+      const i0 = Math.min(top - 1, Math.floor(pos));
+      out.push(mixRgba(stops[i0] ?? base, stops[i0 + 1] ?? base, pos - i0));
+    }
+    return out;
+  }
+  function buildLiveForms(seed, count) {
+    const turn = Math.PI * 2;
+    return FORM_SPECS.slice(0, Math.max(2, Math.min(FORM_SPECS.length, Math.round(count)))).map((spec, i) => {
+      const rng = createRng(hashSeed(seed, i));
+      const slow = (lo, hi) => (lo + rng() * (hi - lo)) * (rng() < 0.5 ? -1 : 1);
+      return {
+        spec,
+        driftX: 0.012 + rng() * 0.02,
+        driftY: 0.012 + rng() * 0.02,
+        rateX: slow(25e-5, 6e-4),
+        rateY: slow(25e-5, 6e-4),
+        phaseX: rng() * turn,
+        phaseY: rng() * turn,
+        breathe: 0.02 + rng() * 0.035,
+        breatheRate: slow(4e-4, 9e-4),
+        breathePhase: rng() * turn,
+        amp: [0.05 + rng() * 0.09, 0.03 + rng() * 0.07, 0.02 + rng() * 0.05],
+        order: [2 + Math.floor(rng() * 3), 3 + Math.floor(rng() * 3), 4 + Math.floor(rng() * 3)],
+        phase: [rng() * turn, rng() * turn, rng() * turn],
+        rate: [slow(5e-4, 13e-4), slow(5e-4, 13e-4), slow(5e-4, 13e-4)]
+      };
+    });
+  }
+  function part(tag, name) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute(`data-pica-${name}`, "");
+    return node;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const sheet = scope(host);
+    const under = layer(host, "under");
+    const surface = createCanvas(under.el, {
+      autoSize: false,
+      css: "image-rendering:pixelated",
+      onResize: () => {
+        if (layout()) loop.redraw();
+      }
+    });
+    const canvas = surface.canvas;
+    const ctx = canvas.getContext("2d");
+    const pal = watchPalette(host, () => {
+      buildRamps();
+      loop.redraw();
+    });
+    const headline = part("h1", "headline");
+    const subhead = part("p", "subhead");
+    const actions = part("div", "actions");
+    host.append(headline, subhead, actions);
+    let cols = 1;
+    let rows = 1;
+    let values = new Float32Array(1);
+    let owner = new Int8Array(1);
+    let imageData = null;
+    let liveForms = [];
+    let ramps = [];
+    let ground = [0, 0, 0, 0];
+    function rulesText() {
+      const s = sheet.selector;
+      const fg = cssVar("fg");
+      const muted = cssVar("muted");
+      const accent = cssVar("accent");
+      const center = props.align === "center";
+      const edge = center ? "center" : "flex-start";
+      const textAlign = center ? "center" : "start";
+      return [
+        `:where(${s}){min-height:${vh(props.minHeight)}vh}`,
+        `${s}{box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:${edge};gap:0.9em;padding:clamp(1.5rem,6vw,5rem);color:${fg};text-align:${textAlign}}`,
+        `${s} > :not([data-pica]){margin-block:0;max-width:44rem;text-align:${textAlign}}`,
+        `${s} > :is(h1,h2,h3){margin-block:0;max-width:14em;font-size:clamp(2.5rem,6.5vw,4.75rem);line-height:1.04;font-weight:600;letter-spacing:-0.02em;color:${fg};text-wrap:balance;overflow-wrap:break-word}`,
+        `${s} > p:not([data-pica]){color:${muted}}`,
+        `${s} > [data-pica-subhead]{margin-block:0;max-width:52ch;font-size:clamp(1.02rem,1.35vw,1.18rem);line-height:1.5;color:${muted};overflow-wrap:break-word}`,
+        `${s} > :is(h1,h2,h3):empty,${s} > [data-pica-subhead]:empty{display:none}`,
+        `${s} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;margin-top:0.7em;max-width:44rem;justify-content:${edge}}`,
+        `${s} > [data-pica-actions]:empty{display:none}`,
+        `${s} > [data-pica-actions] a{appearance:none;margin:0;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.65em 1.3em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
+        `${s} > [data-pica-actions] a[data-variant="solid"]{background:${accent};color:${cssOn("accent")}}`,
+        `${s} > [data-pica-actions] a[data-variant="outline"]{background:transparent;color:${fg};border-color:${fg}}`,
+        `${s} > [data-pica-actions] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${accent} 85%, ${fg})}`,
+        `${s} > [data-pica-actions] a[data-variant="outline"]:hover{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+        `${s} > [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+      ].join("\n");
+    }
+    function renderText() {
+      headline.textContent = props.headline;
+      subhead.textContent = props.subhead;
+    }
+    function renderActions() {
+      actions.replaceChildren();
+      for (const [i, action] of props.actions.slice(0, 3).entries()) {
+        const a = document.createElement("a");
+        a.setAttribute("data-pica", "");
+        a.dataset.variant = i === 0 ? "solid" : "outline";
+        a.href = action.href || "#";
+        a.textContent = action.label;
+        actions.append(a);
+      }
+    }
+    function layout() {
+      const cell = Math.max(1, props.pixel);
+      const w = Math.max(1, Math.round(surface.cssWidth / cell));
+      const h = Math.max(1, Math.round(surface.cssHeight / cell));
+      if (w === cols && h === rows && imageData) return false;
+      cols = w;
+      rows = h;
+      canvas.width = cols;
+      canvas.height = rows;
+      imageData = ctx ? ctx.createImageData(cols, rows) : null;
+      values = new Float32Array(cols * rows);
+      owner = new Int8Array(cols * rows);
+      return true;
+    }
+    function buildForms() {
+      liveForms = buildLiveForms(props.seed, props.forms);
+    }
+    function buildRamps() {
+      const colors = pal.colors;
+      ground = parseColor(colors.bg);
+      const fg = parseColor(colors.fg);
+      const muted = parseColor(colors.muted);
+      const accent = parseColor(colors.accent);
+      const lightOnDark = ground[3] > 0 ? relativeLuminance(colors.fg) > relativeLuminance(colors.bg) : hostTone(host) === "light-on-dark";
+      const bandCount = Math.max(2, Math.min(4, Math.round(props.levels)));
+      const mutedBase = [muted[0], muted[1], muted[2], 255 * (lightOnDark ? MUTED_ALPHA_DARK : MUTED_ALPHA_LIGHT)];
+      const accentBase = [accent[0], accent[1], accent[2], 255 * (lightOnDark ? ACCENT_ALPHA_DARK : ACCENT_ALPHA_LIGHT)];
+      ramps = liveForms.map((f) => rampOf(f.spec.accent ? accentBase : mutedBase, fg, lightOnDark, bandCount));
+    }
+    function draw(t) {
+      if (!ctx || !imageData) {
+        host.dataset.picaReady = "true";
+        return;
+      }
+      const n = cols * rows;
+      owner.fill(-1);
+      values.fill(0);
+      const span = Math.min(cols, rows);
+      const speed = Math.max(0, props.speed);
+      const gain = 0.25 + 0.95 * clamp01(props.depth);
+      for (let fi = 0; fi < liveForms.length; fi++) {
+        const f = liveForms[fi];
+        if (!f) continue;
+        const r0 = f.spec.r * span * Math.max(0.05, props.scale) * (1 + f.breathe * Math.sin(f.breathePhase + f.breatheRate * speed * t));
+        if (r0 < 1) continue;
+        const cx = f.spec.x * cols + f.driftX * span * Math.sin(f.phaseX + f.rateX * speed * t);
+        const cy = f.spec.y * rows + f.driftY * span * Math.cos(f.phaseY + f.rateY * speed * t);
+        const w0 = f.phase[0] + f.rate[0] * speed * t;
+        const w1 = f.phase[1] + f.rate[1] * speed * t;
+        const w2 = f.phase[2] + f.rate[2] * speed * t;
+        const rmax = r0 * (1 + f.amp[0] + f.amp[1] + f.amp[2]) + 1;
+        const x0 = Math.max(0, Math.floor(cx - rmax));
+        const x1 = Math.min(cols, Math.ceil(cx + rmax));
+        const y0 = Math.max(0, Math.floor(cy - rmax));
+        const y1 = Math.min(rows, Math.ceil(cy + rmax));
+        for (let y = y0; y < y1; y++) {
+          const dy = y + 0.5 - cy;
+          for (let x = x0; x < x1; x++) {
+            const dx = x + 0.5 - cx;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d >= rmax) continue;
+            const th = Math.atan2(dy, dx);
+            const rth = r0 * (1 + f.amp[0] * Math.sin(f.order[0] * th + w0) + f.amp[1] * Math.sin(f.order[1] * th + w1) + f.amp[2] * Math.sin(f.order[2] * th + w2));
+            if (d >= rth) continue;
+            const ux = dx / rth;
+            const uy = dy / rth;
+            const z = Math.sqrt(Math.max(0, 1 - ux * ux - uy * uy));
+            const raw = SHADE_MID + SHADE_GAIN * (ux * LIGHT_X + uy * LIGHT_Y + z * LIGHT_Z - SHADE_BIAS);
+            const i = y * cols + x;
+            values[i] = clamp01(0.5 + (raw - 0.5) * gain);
+            owner[i] = fi;
+          }
+        }
+      }
+      const bandCount = Math.max(2, Math.min(4, Math.round(props.levels)));
+      const mask = props.mask === "cluster" ? clusterMatrix(CLUSTER_SIZE) : props.mask === "bayer" ? bayerMatrix(BAYER_SIZE) : blueNoiseMatrix(BLUE_SIZE);
+      const maskSize = props.mask === "cluster" ? CLUSTER_SIZE : props.mask === "bayer" ? BAYER_SIZE : BLUE_SIZE;
+      const bands = ditherLevels(values, cols, rows, bandCount, mask, maskSize);
+      const data = imageData.data;
+      for (let i = 0; i < n; i++) {
+        const o = owner[i] ?? -1;
+        const c = o < 0 ? ground : ramps[o]?.[bands[i] ?? 0] ?? ground;
+        const j = i * 4;
+        data[j] = c[0];
+        data[j + 1] = c[1];
+        data[j + 2] = c[2];
+        data[j + 3] = c[3];
+      }
+      ctx.putImageData(imageData, 0, 0);
+      host.dataset.picaReady = "true";
+    }
+    sheet.setRules(rulesText());
+    renderText();
+    renderActions();
+    layout();
+    buildForms();
+    buildRamps();
+    const loop = createLoop({ el: host, fps: props.fps, paused: props.paused, time: props.time, still: STILL_TIME, frame: draw });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (pal.refresh()) buildRamps();
+        if (props.headline !== before.headline || props.subhead !== before.subhead) renderText();
+        if (!sameJson(before.actions, props.actions)) renderActions();
+        if (props.align !== before.align || props.minHeight !== before.minHeight) sheet.setRules(rulesText());
+        if (props.seed !== before.seed || props.forms !== before.forms) {
+          buildForms();
+          buildRamps();
+        } else if (props.levels !== before.levels) {
+          buildRamps();
+        }
+        if (props.pixel !== before.pixel) layout();
+        loop.update({ paused: props.paused, time: props.time, fps: props.fps });
+        loop.redraw();
+      },
+      destroy() {
+        loop.destroy();
+        surface.destroy();
+        pal.destroy();
+        under.remove();
+        headline.remove();
+        subhead.remove();
+        actions.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaClayHero.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

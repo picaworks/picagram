@@ -103,14 +103,29 @@ export function facetCounts(list: readonly CatalogItem[]): Readonly<Record<Facet
   return counts;
 }
 
+/** The words the search box reads for one item. Exported so a check can decide what a search will find by
+ *  asking the same question the site asks, rather than keeping a second copy of the field list that drifts
+ *  away from this one. It takes the fields it reads rather than a whole CatalogItem, so a caller holding
+ *  only the catalog's public shape can use it. */
+export function searchText(item: {
+  readonly title: string;
+  readonly slug: string;
+  readonly description: string;
+  readonly category: string;
+  readonly tags: readonly string[];
+  readonly facets: readonly string[];
+}): string {
+  return [item.title, item.slug, item.description, item.category, ...item.tags, ...item.facets]
+    .join(" ")
+    .toLowerCase();
+}
+
 /** Whether an item survives the search box and the active facet chips. Every active facet must be present, and
  *  the search reads an item's tags and facets as well as its words. */
 export function matches(item: CatalogItem, query: string, facets: readonly Facet[]): boolean {
   if (!facets.every((facet) => item.facets.includes(facet))) return false;
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const haystack = [item.title, item.slug, item.description, item.category, ...item.tags, ...item.facets]
-    .join(" ")
-    .toLowerCase();
+  const haystack = searchText(item);
   return q.split(/\s+/).every((word) => haystack.includes(word));
 }

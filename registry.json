@@ -1640,6 +1640,166 @@
       }
     },
     {
+      "name": "bento-hero",
+      "type": "registry:component",
+      "title": "Bento Hero",
+      "description": "A hero laid out as a bento tray: a lead cell for the headline and calls to action over a content cell, beside a column of smaller fact and field cells.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/bento-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "bohemian-hero",
+      "type": "registry:component",
+      "title": "Bohemian Hero",
+      "description": "A hero dressed like a weaving: seeded thread bands, a scalloped hairline arch, and copy offset against a selvedge joined by a woven crossband.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/bohemian-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "brutalist-hero",
+      "type": "registry:component",
+      "title": "Brutalist Hero",
+      "description": "A hero section that shows its structure: bordered blocks that collide, mono labels, and the accent as flat fill.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/brutalist-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "clay-hero",
+      "type": "registry:component",
+      "title": "Clay Hero",
+      "description": "Soft inflated forms settle behind the page's own content, shaded in screened tone bands.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/clay-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "cyberpunk-hero",
+      "type": "registry:component",
+      "title": "Cyberpunk Hero",
+      "description": "A hero that reads as a terminal held open too long, with scanlines over everything, a headline that tears in rare bursts, and readouts in the corners.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/cyberpunk-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "editorial-hero",
+      "type": "registry:component",
+      "title": "Editorial Hero",
+      "description": "A magazine opening spread: a deck, a large headline, a measured standfirst with a drop capital, and a byline between hairlines.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/editorial-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ethereal-hero",
+      "type": "registry:component",
+      "title": "Ethereal Hero",
+      "description": "A hero that floats its copy in clear air while sparse blue noise grain rises from the ground below.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/ethereal-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "glass-hero",
+      "type": "registry:component",
+      "title": "Glass Hero",
+      "description": "A hero that floats a frosted pane of screened dots over a field drifting behind it.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/glass-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "hero",
       "type": "registry:component",
       "title": "Hero",
@@ -1650,6 +1810,126 @@
       "files": [
         {
           "path": "public/react/hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "liquid-glass-hero",
+      "type": "registry:component",
+      "title": "Liquid Glass Hero",
+      "description": "A hero behind a drifting lens slab that bends the printed field beneath its curved edge, screened into tone steps.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/liquid-glass-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "luxury-hero",
+      "type": "registry:component",
+      "title": "Luxury Hero",
+      "description": "A hero built from space alone: a small tracked headline, one accent hairline, and text links with rules beneath them.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/luxury-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "maximalist-hero",
+      "type": "registry:component",
+      "title": "Maximalist Hero",
+      "description": "A maximalist page hero that packs two beating fields, an index and a boxed figure, and edge bands around a headline and copy.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/maximalist-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "minimal-hero",
+      "type": "registry:component",
+      "title": "Minimal Hero",
+      "description": "A hero reduced to one large headline, a line of support, and a single call to action.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/minimal-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "neumorphic-hero",
+      "type": "registry:component",
+      "title": "Neumorphic Hero",
+      "description": "A soft UI hero that trades blur for screens: a slab and a rail of stat tiles rise from the ground on dithered bevels, and the call to action presses in.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/neumorphic-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pixel-art-hero",
+      "type": "registry:component",
+      "title": "Pixel Art Hero",
+      "description": "A hero drawn as one low resolution screen: pixel type, snapped frames, and a field that shimmers a cell at a time.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-art-hero.tsx",
           "type": "registry:component"
         }
       ],
@@ -1688,6 +1968,46 @@
       }
     },
     {
+      "name": "scrapbook-hero",
+      "type": "registry:component",
+      "title": "Scrapbook Hero",
+      "description": "A hero assembled like a scrapbook page, with seeded tilts, torn deckle edges, taped corners, and a pasted photocopy print around the page's own copy.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/scrapbook-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "sketch-hero",
+      "type": "registry:component",
+      "title": "Sketch Hero",
+      "description": "A hero still being drawn, with hatched fills, overshot construction lines, and working annotations behind the content.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/sketch-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "stats-kpi",
       "type": "registry:component",
       "title": "Stats KPI",
@@ -1698,6 +2018,46 @@
       "files": [
         {
           "path": "public/react/stats-kpi.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "surrealist-hero",
+      "type": "registry:component",
+      "title": "Surrealist Hero",
+      "description": "A hero behind which a dithered sea stands at two heights, under a sun reflected in the wrong shape.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/surrealist-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "swiss-hero",
+      "type": "registry:component",
+      "title": "Swiss Hero",
+      "description": "A hero set on a strict twelve column grid: flush left type, hairline rules, white space, and one accent.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/swiss-hero.tsx",
           "type": "registry:component"
         }
       ],
@@ -1733,6 +2093,66 @@
             "license": "W3C document"
           }
         ]
+      }
+    },
+    {
+      "name": "victorian-hero",
+      "type": "registry:component",
+      "title": "Victorian Hero",
+      "description": "A playbill hero: a doubled ruled border with fleuron corners, stacked lines in many sizes, and rules between them.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/victorian-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "wabi-sabi-hero",
+      "type": "registry:component",
+      "title": "Wabi Sabi Hero",
+      "description": "A hero worn like a handled page: a frame missing one side, rules that stop short, and grain that gathers at the edges.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/wabi-sabi-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "y2k-hero",
+      "type": "registry:component",
+      "title": "Y2K Hero",
+      "description": "A centered turn of the millennium hero with banded chrome rails, seeded starbursts, a scrolling ticker, and real calls to action.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/y2k-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
