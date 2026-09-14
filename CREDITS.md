@@ -627,10 +627,6 @@ Original to Picagram.
 
 Original to Picagram.
 
-## Switch (`switch`)
-
-- Technique from [Switch pattern](https://www.w3.org/WAI/ARIA/apg/patterns/switch/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
-
 ## Table (`table`)
 
 Original to Picagram.

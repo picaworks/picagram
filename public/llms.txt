@@ -144,7 +144,6 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Skeleton](https://picagram.dev/c/skeleton.md): Ghost blocks breathe between two quiet shade glyphs while content is loading.
 - [Slider](https://picagram.dev/c/slider.md): A labelled slider with stepped keyboard and pointer input in horizontal and vertical orientations.
 - [Spinner](https://picagram.dev/c/spinner.md): An inline braille cell run that travels clockwise while work of unknown duration is under way.
-- [Switch](https://picagram.dev/c/switch.md): An accessible on and off switch with a visible label and optional state value.
 - [Table](https://picagram.dev/c/table.md): A semantic data table with tabular figures, quiet row rules, and optional three-state sorting.
 - [Tabs](https://picagram.dev/c/tabs.md): A tabbed view for switching between panels, with the active tab following keyboard focus.
 - [Textarea](https://picagram.dev/c/textarea.md): A labelled text field that grows with its content and reports every input.

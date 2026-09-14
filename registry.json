@@ -3931,34 +3931,6 @@
       }
     },
     {
-      "name": "switch",
-      "type": "registry:component",
-      "title": "Switch",
-      "description": "An accessible on and off switch with a visible label and optional state value.",
-      "categories": [
-        "ui"
-      ],
-      "files": [
-        {
-          "path": "public/react/switch.tsx",
-          "type": "registry:component"
-        }
-      ],
-      "meta": {
-        "license": "MIT + Commons Clause",
-        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
-        "credits": [
-          {
-            "relation": "technique",
-            "title": "Switch pattern",
-            "author": "W3C WAI-ARIA Authoring Practices Guide",
-            "url": "https://www.w3.org/WAI/ARIA/apg/patterns/switch/",
-            "license": "W3C document"
-          }
-        ]
-      }
-    },
-    {
       "name": "table",
       "type": "registry:component",
       "title": "Table",
