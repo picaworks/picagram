@@ -56,7 +56,7 @@ export const defaults: OrbitViewProps = {
 };
 
 const DEG = Math.PI / 180;
-/** Depth along the camera axis below which a point sits behind the camera and clamps off the frame. */
+/** Depth along the view axis below which a point sits behind the camera and clamps off the frame. */
 const DEN_EPS = 0.02;
 /** Atmosphere shell radii in Earth radii, about 40, 100, and 190 km up. */
 const SHELLS = [1.006, 1.016, 1.03];
@@ -128,29 +128,32 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
       const rY = tZ * sX - tX * sZ;
       const rZ = tX * sY - tY * sX;
 
-      // Framing: the limb's peak lands on the upper third and the land band below it fills the
-      // middle of the frame. A projected unit is the tangent of the angle off the camera axis,
-      // so one scale fits every altitude.
+      // Framing: the image plane stays perpendicular to the camera-to-centre axis, so the planet
+      // sits at the principal point and its limb projects as a circle of limbR px. Setting cy
+      // limbR below the upper third puts the limb's peak there: a lens shift, which slides the
+      // picture inside the frame where tilting the plane would stretch it. The clamp keeps the
+      // principal point inside the frame at every altitude and tilt.
       const ha = Math.acos(invP) + tiltR;
       const denTop = P * cosT - Math.cos(ha);
       const topN = denTop > DEN_EPS ? (Math.sin(ha) - P * sinT) / denTop : 3;
       const focal = (0.42 * cssHeight) / Math.max(0.08, topN + Math.tan(tiltR));
+      const limbR = focal / Math.sqrt(P * P - 1);
       const cx = cssWidth / 2;
-      const cy = 0.3 * cssHeight + topN * focal;
+      const cy = Math.min(cssHeight, Math.max(0, 0.3 * cssHeight + limbR));
 
-      /** Snyder's tilted perspective in the {R, S, T} frame: depth toward the sub-point sets the
-       *  horizon, distance along the camera axis the near clip. A kept point lands in px, py. */
+      /** Depths in the {R, S, T} frame: depth toward the sub-point sets the horizon, depth along
+       *  the tilted view axis the clip that keeps only the part the camera faces. */
       let px = 0, py = 0, pen = false;
       const plot = (): void => {
         ctx[pen ? "lineTo" : "moveTo"](px, py);
         pen = true;
       };
-      /** The shared Snyder tail: a point qs along S, qt along T, qr along R at depth den lands in
-       *  px, py scaled by focal over den. Callers pass a clamped den when they want the off-frame
-       *  projection of a point behind the camera. */
+      /** A point qs along S, qt along T, qr along R lands in px, py scaled by focal over den, its
+       *  depth along the camera-to-centre axis. A caller passes the clip depth to send a culled
+       *  sample far off the frame along its true ray. */
       const place = (qs: number, qt: number, qr: number, den: number): void => {
         px = cx + (qr * focal) / den;
-        py = cy - ((qt * cosT + (qs - P) * sinT) * focal) / den;
+        py = cy - (qt * focal) / den;
       };
       const project = (qx: number, qy: number, qz: number): boolean => {
         const qs = qx * sX + qy * sY + qz * sZ;
@@ -158,14 +161,14 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
         const den = qt * sinT + (P - qs) * cosT;
         // Sit a hair inside the horizon so a dot never touches the drawn limb curve.
         if (qs < invP + 0.0015 || den <= DEN_EPS) return false;
-        place(qs, qt, qx * rX + qy * rY + qz * rZ, den);
+        place(qs, qt, qx * rX + qy * rY + qz * rZ, P - qs);
         return true;
       };
 
       /** One point on the limb circle of a sphere of `radius` seen from P radii out: the limb sits at
        *  angle c with cos c = radius / P, so the circle is qs along S with radius rs in the R, T plane.
-       *  Positions are clamped so a sample behind the camera lands far off frame, and the returned
-       *  depth says which side it is on. */
+       *  A sample past the clip is placed at the clip depth so it lands far off frame, and the
+       *  returned depth says which side of the clip the sample is on. */
       const limbPt = (radius: number, i: number): number => {
         const c = radius * invP;
         const qs = radius * c;
@@ -173,7 +176,7 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
         const th = Math.PI * (1 + (2 * i) / ARC_N);
         const qt = rs * Math.cos(th);
         const den = qt * sinT + (P - qs) * cosT;
-        place(qs, qt, -rs * Math.sin(th), Math.max(DEN_EPS, den));
+        place(qs, qt, -rs * Math.sin(th), den > DEN_EPS ? P - qs : DEN_EPS);
         return den;
       };
       const radii = [1, ...SHELLS.filter((r) => r < P * 0.999)];
