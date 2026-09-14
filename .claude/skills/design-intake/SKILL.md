@@ -1,6 +1,6 @@
 ---
 name: design-intake
-description: Take a design source or a list of component ideas all the way to a merged pull request — harvest, deconflict, brief, fan out to builder sessions, verify, review, ship
+description: Take a design source or a list of component ideas all the way to a merged Picagram pull request — harvest, deconflict, brief, fan out to builder sessions, verify, review, ship. Use only in the picagram repository.
 trigger: /design-intake
 ---
 
@@ -56,11 +56,27 @@ If the intake needs that trail, stop at the shortlist row and say so. Do not sta
 
 ---
 
+## Where the scripts are
+
+This skill ships three scripts beside this file, and it is installed in two places: in the repository at
+`.claude/skills/design-intake/`, and at user level in `~/.claude/skills/design-intake/`. Resolve which copy
+you are running once, in every shell that calls one:
+
+```bash
+SK=$(ls -d .claude/skills/design-intake ~/.claude/skills/design-intake 2>/dev/null | head -1)
+```
+
+The repository copy wins when it exists, so a branch that changes a script takes effect immediately. The
+scripts themselves read `registry/` and `sources/` relative to the working directory, so run them from the
+repository root or from a worktree root, never from the skill directory.
+
+---
+
 ## Stage 2 — Deconflict, and this is a hard stop
 
 ```bash
-node .claude/skills/design-intake/deconflict.mjs <slug> [<slug> ...]
-node .claude/skills/design-intake/deconflict.mjs --list   # every reserved name
+node "$SK/deconflict.mjs" <slug> [<slug> ...]
+node "$SK/deconflict.mjs" --list   # every reserved name
 ```
 
 It checks directories under `registry/`, every slug briefed in `sources/wave-*.json` whether built or not,
@@ -92,7 +108,7 @@ one does more work than anything else in the brief.
 Then generate the per-component briefs:
 
 ```bash
-node .claude/skills/design-intake/brief.mjs sources/wave-<N>.json <worktree> .pica/briefs
+node "$SK/brief.mjs" sources/wave-<N>.json <worktree> .pica/briefs
 ```
 
 That generator carries a **House faults** section listing every fault that has come back from review more
@@ -114,7 +130,7 @@ cd .pica/wt/<batch> && npm ci          # a real install, ~90s
 filesystem root") and `next build` dies partway through the gate.
 
 ```bash
-.claude/skills/design-intake/launch.sh \
+"$SK/launch.sh" \
   /abs/path/.pica/wt/<batch> /abs/path/.pica/briefs /abs/path/.pica/logs \
   <slug> <slug> ...
 ```
