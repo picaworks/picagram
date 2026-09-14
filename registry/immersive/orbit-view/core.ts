@@ -244,18 +244,26 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
           const outer = radii[b + 1]!;
           const cut = BAND_DENSITY[b]! * props.atmosphere * 16;
           if (cut <= 0.16) continue;
-          for (let i = 0; i <= ARC_N; i++) {
-            if (limbPt(inner, i) <= DEN_EPS) continue;
+          // Keep samples close along the arc even when the limb fills a wide frame.
+          limbPt(outer, ARC_N / 2);
+          const arcSteps = Math.max(ARC_N, Math.ceil((Math.abs(py - cy) * Math.PI * 2) / 3));
+          for (let i = 0; i < arcSteps; i++) {
+            const arc = (i * ARC_N) / arcSteps;
+            if (limbPt(inner, arc) <= DEN_EPS) continue;
             const ix = px;
             const iy = py;
-            limbPt(outer, i);
+            if (limbPt(outer, arc) <= DEN_EPS) continue;
             const dx = px - ix;
             const dy = py - iy;
-            const steps = Math.max(2, (((Math.abs(dx) + Math.abs(dy)) / 3) | 0) + 1);
-            for (let j = 0; j <= steps; j++) {
-              const gx = ((ix + (dx * j) / steps) / 3) | 0;
-              const gy = ((iy + (dy * j) / steps) / 3) | 0;
-              if (BAYER4[((gy + oy) & 3) * 4 + ((gx + ox) & 3)]! + 0.5 < cut) ctx.fillRect(gx * 3 - 0.7, gy * 3 - 0.7, 1.4, 1.4);
+            const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy) / 3));
+            for (let j = 0; j < steps; j++) {
+              // Seeded tile phases break repeating columns while each tile retains Bayer tone.
+              let h = Math.imul((i >> 2) ^ Math.imul((j >> 2) + b * 97, 374761393) ^ props.seed, 0x9e3779b1);
+              h = Math.imul(h ^ (h >>> 16), 0x85ebca6b) >>> 0;
+              const threshold = BAYER4[((j + oy + (h >>> 2)) & 3) * 4 + ((i + ox + h) & 3)]!;
+              if (threshold + 0.5 >= cut) continue;
+              const step = (j + 0.5) / steps;
+              ctx.fillRect(ix + dx * step - 0.7, iy + dy * step - 0.7, 1.4, 1.4);
             }
           }
         }
@@ -266,10 +274,17 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
         const la = Math.asin(Math.max(-1, Math.min(1, sY))) / DEG;
         const lo = Math.atan2(sX, sZ) / DEG;
         ctx.font = `11px ${props.fontFamily}`;
+        const lines = [
+          `ALT ${Math.round(props.altitude)} KM`,
+          `SUB ${Math.abs(la).toFixed(1)}${la < 0 ? "S" : "N"} ${Math.abs(lo).toFixed(1)}${lo < 0 ? "W" : "E"}`,
+          `T+ ${(sec / 60) | 0}:${(sec % 60).toFixed(1)}`,
+        ];
+        // Reserve bare ground for the readout, including padding beyond the measured glyphs.
+        const textWidth = Math.max(...lines.map((line) => ctx.measureText(line).width));
+        ctx.clearRect(10, cssHeight - 59, textWidth + 8, 51);
+        ctx.globalAlpha = 1;
         ctx.fillStyle = palette.colors.muted;
-        ctx.fillText(`ALT ${Math.round(props.altitude)} KM`, 14, cssHeight - 44);
-        ctx.fillText(`SUB ${Math.abs(la).toFixed(1)}${la < 0 ? "S" : "N"} ${Math.abs(lo).toFixed(1)}${lo < 0 ? "W" : "E"}`, 14, cssHeight - 29);
-        ctx.fillText(`T+ ${(sec / 60) | 0}:${(sec % 60).toFixed(1)}`, 14, cssHeight - 14);
+        lines.forEach((line, i) => ctx.fillText(line, 14, cssHeight - 44 + i * 15));
       }
     }
     host.dataset.picaReady = "true";

@@ -41,10 +41,10 @@ export const defaults: GaugeChartProps = {
 };
 
 /* Every angle here is in the one convention arcPath and polarPoint draw in: radians clockwise from
- * twelve o'clock. The arc's ends sit thirty degrees either side of straight down, so the ring sweeps
- * three hundred degrees over the top and the gap stays centred on six o'clock. */
-const ARC_START = (210 * Math.PI) / 180;
-const ARC_SWEEP = (300 * Math.PI) / 180;
+ * twelve o'clock. The arc's ends sit sixty degrees either side of straight down, so the ring sweeps
+ * two hundred forty degrees over the top and the gap stays centred on six o'clock. */
+const ARC_START = (240 * Math.PI) / 180;
+const ARC_SWEEP = (240 * Math.PI) / 180;
 
 export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
   let props: GaugeChartProps = { ...defaults, ...initial };
@@ -99,18 +99,24 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
     view.setAttribute("font-family", props.fontFamily);
     view.setAttribute("font-size", String(fontSize));
 
-    const { radius, inner, outer } = band(Math.min(w, h) * 0.36);
+    const margin = Math.max(16, parseFloat(getComputedStyle(host).fontSize) || 16);
+    const { radius, inner, outer } = band(Math.max(1, Math.min(Math.min(w, h) * 0.32, Math.min(w, h) / 2 - margin)));
     const centerX = w / 2;
-    const centerY = h * 0.52;
+    const centerY = h / 2;
     const arcEnd = ARC_START + ARC_SWEEP;
+    const trackHalf = (outer - inner) * 0.1;
+    const valueSize = Math.min(34, Math.max(16, Math.floor(radius * 0.22)));
+    const blockGap = labelSize * 0.8;
+    const valueY = centerY - (props.label ? (labelSize + blockGap) / 2 : 0);
+    const labelY = centerY + (valueSize + blockGap) / 2;
 
-    // The muted track is the whole ring; the accent refills the value's share of the same band.
+    // The full muted track is a narrow groove on the fill's centerline, with no transparency.
     view.appendChild(
-      svg("path", { d: arcPath(centerX, centerY, inner, outer, ARC_START, arcEnd), fill: cssVar("muted") })
+      svg("path", { d: arcPath(centerX, centerY, radius - trackHalf, radius + trackHalf, ARC_START, arcEnd), fill: cssVar("muted") })
     );
 
     if (!ranged()) {
-      view.appendChild(svgLabel("no range", centerX, centerY, { anchor: "middle", middle: true, size: fontSize, font: props.fontFamily }));
+      view.appendChild(svgLabel("no range", centerX, valueY, { anchor: "middle", middle: true, size: fontSize, font: props.fontFamily }));
     } else {
       const valueAngle = angleOf(props.value);
       if (valueAngle > ARC_START) {
@@ -133,10 +139,10 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
       }
 
       const valueText = `${formatNumber(props.value)}${props.unit}`;
-      const valueLabel = svgLabel(valueText, centerX, centerY - radius * 0.08, {
+      const valueLabel = svgLabel(valueText, centerX, valueY, {
         anchor: "middle",
         middle: true,
-        size: Math.min(34, Math.max(16, Math.floor(radius * 0.22))),
+        size: valueSize,
         token: "fg",
         font: props.fontFamily,
       });
@@ -146,7 +152,7 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
 
     if (props.label) {
       view.appendChild(
-        svgLabel(props.label, centerX, centerY + radius * 0.32, { anchor: "middle", middle: true, size: labelSize, font: props.fontFamily })
+        svgLabel(props.label, centerX, labelY, { anchor: "middle", middle: true, size: labelSize, font: props.fontFamily })
       );
     }
 
@@ -160,19 +166,23 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
     const { cols, rows } = g;
     const colors = readPalette(host);
 
-    // The top row holds the gauge's name and the bottom row its min and max, so the dial sits between them.
-    const inset: ChartInset = { top: 1, bottom: 1 };
+    // Keep at least one host em around the drawing, including the glyph cells at its edge.
+    const margin = Math.max(16, parseFloat(getComputedStyle(host).fontSize) || 16);
+    const inset: ChartInset = {
+      top: Math.ceil(margin / g.cellHeight), bottom: Math.ceil(margin / g.cellHeight),
+      left: Math.ceil(margin / g.cellWidth), right: Math.ceil(margin / g.cellWidth),
+    };
     const area = chartCells({ cols, rows }, inset);
     const track = chartDots(area, g.aspect);
     const fill = chartDots(area, g.aspect);
 
     const physicalWidth = track.wide * track.aspect;
     const physicalHeight = track.tall;
-    // The dial's bounding box is the outer radius across and one radius plus the gap's rise down the ends,
-    // so it fills the area with the ends near its floor and the twelve o'clock point near its top.
-    const { radius, inner, outer } = band(Math.min(physicalWidth * 0.46, physicalHeight * 0.48));
+    const { radius, inner, outer } = band(Math.min(physicalWidth, physicalHeight) * 0.34);
+    const trackHalf = (outer - inner) * 0.1;
     const centerFx = 0.5;
-    const centerFy = 0.5 - (outer / physicalHeight) * 0.07;
+    const centerFy = 0.5;
+    const valueRow = area.rowAt(centerFy) - (props.label ? 1 : 0);
 
     /* A point on the dial at `angle` in the same convention drawSvg uses: radians clockwise from twelve
      * o'clock. The sine term scales by the dot grid's physical width and the cosine by its physical height,
@@ -182,23 +192,27 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
     }
 
     /* The band is drawn as radial spokes, about one per dot around the sweep, so `thickness` sets a real
-     * width here rather than the single dot a lone centerline would give. The track covers the whole
-     * sweep in muted; the fill stops where the value sits, and `paint` leaves the track's dots alone. */
+     * width here rather than the single dot a lone centerline would give. The narrow track covers the
+     * whole sweep in muted; the fill stops where the value sits. */
     const steps = Math.max(64, Math.ceil((outer * ARC_SWEEP) / 1.1));
     const valueAngle = ranged() ? angleOf(props.value) : ARC_START;
     for (let i = 0; i <= steps; i++) {
       const a = ARC_START + ARC_SWEEP * (i / steps);
-      const [x0, y0] = pointAt(a, inner);
-      const [x1, y1] = pointAt(a, outer);
+      const [x0, y0] = pointAt(a, radius - trackHalf);
+      const [x1, y1] = pointAt(a, radius + trackHalf);
       track.stroke(x0, y0, x1, y1);
-      if (a <= valueAngle) fill.stroke(x0, y0, x1, y1);
+      if (valueAngle > ARC_START && a <= valueAngle) {
+        const [fx0, fy0] = pointAt(a, inner);
+        const [fx1, fy1] = pointAt(a, outer);
+        fill.stroke(fx0, fy0, fx1, fy1);
+      }
     }
 
     if (ranged()) {
       // Each tick is a short spoke out from the band's edge, on the arc at its own value.
       for (const tick of tickValues()) {
         const a = ARC_START + ARC_SWEEP * ((tick - props.min) / (props.max - props.min));
-        const [x0, y0] = pointAt(a, outer);
+        const [x0, y0] = pointAt(a, radius - trackHalf);
         const [x1, y1] = pointAt(a, outer + 3);
         track.stroke(x0, y0, x1, y1);
       }
@@ -209,7 +223,7 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
 
     if (!ranged()) {
       const note = "no range";
-      g.write(Math.max(0, area.colAt(0.5) - Math.floor(note.length / 2)), area.rowAt(centerFy), note, colors.muted);
+      g.write(Math.max(0, area.colAt(0.5) - Math.floor(note.length / 2)), valueRow, note, colors.muted);
     } else {
       // Min and max sit on the row under the dial's two ends, each beneath the end it names.
       const minLabel = formatNumber(props.min);
@@ -226,12 +240,12 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
       // The value sits at the dial's own center, the one spot the ring never draws over.
       const valueText = `${formatNumber(props.value)}${props.unit}`;
       const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
-      g.write(textCol, area.rowAt(centerFy), valueText, colors.fg);
+      g.write(textCol, valueRow, valueText, colors.fg);
     }
 
     if (props.label) {
       const name = props.label.slice(0, cols);
-      g.write(Math.max(0, Math.floor((cols - name.length) / 2)), 0, name, colors.muted);
+      g.write(Math.max(0, Math.floor((cols - name.length) / 2)), valueRow + 1, name, colors.muted);
     }
 
     g.flush();
