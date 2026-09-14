@@ -1,4 +1,15 @@
-# Wave 5 reference shortlist
+# Wave 5 reference shortlist, unused
+
+This is history, not a target. No component was ever built from it.
+
+The heroes it lists ship in wave 8 as public idioms, originated within a page archetype the way wave 9's
+heroes were originated within a design movement, so they carry `original: true` and empty credits and no
+capture was ever taken. Nothing here was cited and nothing here was seen: the Direction column was written
+from titles and archetypes alone, which the original note below says outright.
+
+It moved out of `sources/shortlists/` because a shortlist there is a live reservation. It was holding eight
+hero names against a wave 5 that will not exist, which made `deconflict.mjs` report a collision for every
+name wave 8 legitimately owns.
 
 This file lists candidate Dribbble shots for the wave 5 hero sections, recorded as metadata only. Rish picks at most one row per hero by writing yes in the Pick column. He then captures each pick himself into sources/inbox/.
 

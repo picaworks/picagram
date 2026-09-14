@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Gauge Chart · Pica</title>
-<style>:root { --pica-accent: #e8a020; }
+<style>:root { --pica-accent: #13C4A3; }
 html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 @media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
@@ -127,6 +127,64 @@ var PicaGaugeChart = (() => {
       });
     }
     return table;
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+
+  // lib/chart-marks.ts
+  function svgLabel(text, x, y, options = {}) {
+    const { anchor = "start", middle = false, size = 10, token = "muted", font = GRID_FONT } = options;
+    const node = svg("text", { x, y, "text-anchor": anchor, fill: cssVar(token), "font-family": font, "font-size": size });
+    if (middle) node.setAttribute("dominant-baseline", "middle");
+    node.style.fontVariantNumeric = "tabular-nums";
+    node.textContent = text;
+    return node;
+  }
+  function polarPoint(cx, cy, r, angle) {
+    return [cx + r * Math.sin(angle), cy - r * Math.cos(angle)];
   }
 
   // lib/blocks.ts
@@ -250,9 +308,6 @@ var PicaGaugeChart = (() => {
     };
   }
 
-  // lib/font.ts
-  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
-
   // lib/host.ts
   var unstyled = /* @__PURE__ */ new WeakMap();
   function styleHost(host, styles) {
@@ -271,48 +326,6 @@ var PicaGaugeChart = (() => {
       }
       if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
     };
-  }
-
-  // lib/palette.ts
-  var TOKEN_FALLBACK = {
-    fg: "currentColor",
-    bg: "transparent",
-    accent: "#e8a020",
-    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
-  };
-  function cssVar(token) {
-    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
-  }
-  function createProbe(host) {
-    const probe = document.createElement("span");
-    probe.setAttribute("data-pica", "");
-    probe.setAttribute("aria-hidden", "true");
-    probe.style.cssText = [
-      "position:absolute",
-      "width:0",
-      "height:0",
-      "overflow:hidden",
-      "visibility:hidden",
-      "pointer-events:none",
-      `color:${cssVar("fg")}`,
-      `background-color:${cssVar("bg")}`,
-      `border-top:0 solid ${cssVar("accent")}`,
-      `outline:0 solid ${cssVar("muted")}`,
-      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
-      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
-    ].join(";");
-    host.appendChild(probe);
-    return probe;
-  }
-  function probeColors(probe) {
-    const style = getComputedStyle(probe);
-    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
-  }
-  function readPalette(host) {
-    const probe = createProbe(host);
-    const colors = probeColors(probe);
-    probe.remove();
-    return colors;
   }
 
   // lib/glyph-grid.ts
@@ -549,8 +562,8 @@ var PicaGaugeChart = (() => {
     look: "svg",
     fontFamily: GRID_FONT
   };
-  var ARC_DEGREES = 240;
-  var ARC_START_ANGLE = 150;
+  var ARC_START = 240 * Math.PI / 180;
+  var ARC_SWEEP = 240 * Math.PI / 180;
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
     let root = null;
@@ -562,6 +575,25 @@ var PicaGaugeChart = (() => {
       table = dataTable(props.label || "Gauge chart", ["Value"], [[props.value]]);
       host.appendChild(table);
     }
+    function ranged() {
+      return Number.isFinite(props.min) && Number.isFinite(props.max) && props.max > props.min;
+    }
+    function angleOf(v) {
+      const share = Math.max(0, Math.min(1, (v - props.min) / (props.max - props.min)));
+      return ARC_START + ARC_SWEEP * share;
+    }
+    function band(outer) {
+      const thickness = Math.max(0.05, Math.min(0.4, props.thickness));
+      const radius = outer / (1 + thickness / 2);
+      return { radius, inner: radius * (1 - thickness / 2), outer };
+    }
+    function tickValues() {
+      const span = props.max - props.min;
+      return Array.from(/* @__PURE__ */ new Set([props.min, props.max, ...props.thresholds])).filter((t) => {
+        const share = (t - props.min) / span;
+        return share >= 0 && share <= 1;
+      });
+    }
     function drawSvg() {
       const view = root;
       if (!view) return;
@@ -569,86 +601,58 @@ var PicaGaugeChart = (() => {
       const w = Math.max(1, host.clientWidth);
       const h = Math.max(1, host.clientHeight);
       const fontSize = 11;
+      const labelSize = Math.max(9, fontSize - 1);
       view.setAttribute("viewBox", `0 0 ${w} ${h}`);
       view.setAttribute("font-family", props.fontFamily);
       view.setAttribute("font-size", String(fontSize));
-      const radius = Math.min(w, h) * 0.35;
+      const margin = Math.max(16, parseFloat(getComputedStyle(host).fontSize) || 16);
+      const { radius, inner, outer } = band(Math.max(1, Math.min(Math.min(w, h) * 0.32, Math.min(w, h) / 2 - margin)));
       const centerX = w / 2;
-      const centerY = h * 0.6;
-      const arcRadius = radius * 0.8;
-      const valueText = `${formatNumber(props.value)}${props.unit}`;
-      const valueTextSize = Math.min(24, Math.max(14, Math.floor(h * 0.15)));
-      const startAngleRad = ARC_START_ANGLE * Math.PI / 180;
-      const endAngleRad = (ARC_START_ANGLE + ARC_DEGREES) * Math.PI / 180;
-      const bgArc = svg("path", {
-        d: arcPath(centerX, centerY, arcRadius, arcRadius, startAngleRad, endAngleRad),
-        fill: "none",
-        stroke: cssVar("muted"),
-        "stroke-width": Math.max(1, arcRadius * props.thickness * 0.3),
-        opacity: "0.3"
-      });
-      view.appendChild(bgArc);
-      const normalized = (props.value - props.min) / (props.max - props.min);
-      const clampedNorm = Math.max(0, Math.min(1, normalized));
-      const valueAngleRad = startAngleRad + (endAngleRad - startAngleRad) * clampedNorm;
-      const valueArc = svg("path", {
-        d: arcPath(centerX, centerY, arcRadius, arcRadius, startAngleRad, valueAngleRad),
-        fill: "none",
-        stroke: cssVar("accent"),
-        "stroke-width": arcRadius * props.thickness,
-        "stroke-linecap": "round"
-      });
-      view.appendChild(valueArc);
-      const allTicks = [props.min, props.max, ...props.thresholds];
-      const uniqueTicks = Array.from(new Set(allTicks)).sort((a, b) => a - b);
-      for (const tick of uniqueTicks) {
-        const tickNorm = (tick - props.min) / (props.max - props.min);
-        if (tickNorm < 0 || tickNorm > 1) continue;
-        const tickAngleRad = startAngleRad + (endAngleRad - startAngleRad) * tickNorm;
-        const tickInnerRadius = arcRadius * 0.85;
-        const tickOuterRadius = arcRadius * 1.1;
-        const tickX1 = centerX + tickInnerRadius * Math.cos(tickAngleRad);
-        const tickY1 = centerY + tickInnerRadius * Math.sin(tickAngleRad);
-        const tickX2 = centerX + tickOuterRadius * Math.cos(tickAngleRad);
-        const tickY2 = centerY + tickOuterRadius * Math.sin(tickAngleRad);
-        view.appendChild(
-          svg("line", {
-            x1: tickX1,
-            y1: tickY1,
-            x2: tickX2,
-            y2: tickY2,
-            stroke: cssVar("muted"),
-            "stroke-width": 1
-          })
-        );
-        if (tick === props.min || tick === props.max) {
-          const labelRadius = arcRadius * 1.25;
-          const labelX = centerX + labelRadius * Math.cos(tickAngleRad);
-          const labelY = centerY + labelRadius * Math.sin(tickAngleRad);
-          const label = svg("text", {
-            x: labelX,
-            y: labelY,
-            "text-anchor": "middle",
-            "dominant-baseline": "middle",
-            fill: cssVar("muted"),
-            "font-size": Math.max(9, fontSize - 2)
-          });
-          label.textContent = formatNumber(tick);
-          view.appendChild(label);
+      const centerY = h / 2;
+      const arcEnd = ARC_START + ARC_SWEEP;
+      const trackHalf = (outer - inner) * 0.1;
+      const valueSize = Math.min(34, Math.max(16, Math.floor(radius * 0.22)));
+      const blockGap = labelSize * 0.8;
+      const valueY = centerY - (props.label ? (labelSize + blockGap) / 2 : 0);
+      const labelY = centerY + (valueSize + blockGap) / 2;
+      view.appendChild(
+        svg("path", { d: arcPath(centerX, centerY, radius - trackHalf, radius + trackHalf, ARC_START, arcEnd), fill: cssVar("muted") })
+      );
+      if (!ranged()) {
+        view.appendChild(svgLabel("no range", centerX, valueY, { anchor: "middle", middle: true, size: fontSize, font: props.fontFamily }));
+      } else {
+        const valueAngle = angleOf(props.value);
+        if (valueAngle > ARC_START) {
+          view.appendChild(
+            svg("path", { d: arcPath(centerX, centerY, inner, outer, ARC_START, valueAngle), fill: cssVar("accent") })
+          );
         }
+        for (const tick of tickValues()) {
+          const a = ARC_START + ARC_SWEEP * ((tick - props.min) / (props.max - props.min));
+          const [x1, y1] = polarPoint(centerX, centerY, Math.max(1, inner - 2), a);
+          const [x2, y2] = polarPoint(centerX, centerY, outer + 5, a);
+          view.appendChild(svg("line", { x1, y1, x2, y2, stroke: cssVar("muted"), "stroke-width": 1 }));
+          if (tick === props.min || tick === props.max) {
+            const [lx, ly] = polarPoint(centerX, centerY, outer + labelSize * 1.2, a);
+            view.appendChild(svgLabel(formatNumber(tick), lx, ly, { anchor: "middle", middle: true, size: labelSize, font: props.fontFamily }));
+          }
+        }
+        const valueText = `${formatNumber(props.value)}${props.unit}`;
+        const valueLabel = svgLabel(valueText, centerX, valueY, {
+          anchor: "middle",
+          middle: true,
+          size: valueSize,
+          token: "fg",
+          font: props.fontFamily
+        });
+        valueLabel.style.fontWeight = "bold";
+        view.appendChild(valueLabel);
       }
-      const valueLabel = svg("text", {
-        x: centerX,
-        y: centerY - radius * 0.15,
-        "text-anchor": "middle",
-        "dominant-baseline": "middle",
-        fill: cssVar("fg"),
-        "font-size": valueTextSize,
-        "font-weight": "bold",
-        "font-family": props.fontFamily
-      });
-      valueLabel.textContent = valueText;
-      view.appendChild(valueLabel);
+      if (props.label) {
+        view.appendChild(
+          svgLabel(props.label, centerX, labelY, { anchor: "middle", middle: true, size: labelSize, font: props.fontFamily })
+        );
+      }
       host.dataset.picaReady = "true";
     }
     function drawGlyph() {
@@ -657,47 +661,71 @@ var PicaGaugeChart = (() => {
       g.clear();
       const { cols, rows } = g;
       const colors = readPalette(host);
-      const valueText = `${formatNumber(props.value)}${props.unit}`;
-      const normalized = (props.value - props.min) / (props.max - props.min);
-      const clampedNorm = Math.max(0, Math.min(1, normalized));
-      const inset = { bottom: 1 };
+      const margin = Math.max(16, parseFloat(getComputedStyle(host).fontSize) || 16);
+      const inset = {
+        top: Math.ceil(margin / g.cellHeight),
+        bottom: Math.ceil(margin / g.cellHeight),
+        left: Math.ceil(margin / g.cellWidth),
+        right: Math.ceil(margin / g.cellWidth)
+      };
       const area = chartCells({ cols, rows }, inset);
       const track = chartDots(area, g.aspect);
       const fill = chartDots(area, g.aspect);
       const physicalWidth = track.wide * track.aspect;
       const physicalHeight = track.tall;
-      const radius = Math.min(physicalWidth, physicalHeight) * 0.28;
+      const { radius, inner, outer } = band(Math.min(physicalWidth, physicalHeight) * 0.34);
+      const trackHalf = (outer - inner) * 0.1;
       const centerFx = 0.5;
-      const centerFy = 0.4;
-      function pointAt(angleDeg) {
-        const angleRad = angleDeg * Math.PI / 180;
-        const fx = centerFx + radius * Math.cos(angleRad) / physicalWidth;
-        const fy = centerFy - radius * Math.sin(angleRad) / physicalHeight;
-        return [fx, fy];
+      const centerFy = 0.5;
+      const valueRow = area.rowAt(centerFy) - (props.label ? 1 : 0);
+      function pointAt(angle, r) {
+        return [centerFx + r * Math.sin(angle) / physicalWidth, centerFy + r * Math.cos(angle) / physicalHeight];
       }
-      const arcSteps = 48;
-      let prev = pointAt(ARC_START_ANGLE);
-      for (let i = 1; i <= arcSteps; i++) {
-        const t = i / arcSteps;
-        const next = pointAt(ARC_START_ANGLE + ARC_DEGREES * t);
-        track.stroke(prev[0], prev[1], next[0], next[1]);
-        if (t <= clampedNorm) fill.stroke(prev[0], prev[1], next[0], next[1]);
-        prev = next;
+      const steps = Math.max(64, Math.ceil(outer * ARC_SWEEP / 1.1));
+      const valueAngle = ranged() ? angleOf(props.value) : ARC_START;
+      for (let i = 0; i <= steps; i++) {
+        const a = ARC_START + ARC_SWEEP * (i / steps);
+        const [x0, y0] = pointAt(a, radius - trackHalf);
+        const [x1, y1] = pointAt(a, radius + trackHalf);
+        track.stroke(x0, y0, x1, y1);
+        if (valueAngle > ARC_START && a <= valueAngle) {
+          const [fx0, fy0] = pointAt(a, inner);
+          const [fx1, fy1] = pointAt(a, outer);
+          fill.stroke(fx0, fy0, fx1, fy1);
+        }
+      }
+      if (ranged()) {
+        for (const tick of tickValues()) {
+          const a = ARC_START + ARC_SWEEP * ((tick - props.min) / (props.max - props.min));
+          const [x0, y0] = pointAt(a, radius - trackHalf);
+          const [x1, y1] = pointAt(a, outer + 3);
+          track.stroke(x0, y0, x1, y1);
+        }
       }
       track.paint(g, colors.muted);
       fill.paint(g, colors.accent);
-      const labelRow = rows - 1;
-      const minLabel = formatNumber(props.min);
-      const maxLabel = formatNumber(props.max);
-      const [minFx] = pointAt(ARC_START_ANGLE);
-      const [maxFx] = pointAt(ARC_START_ANGLE + ARC_DEGREES);
-      const minCol = Math.max(0, area.colAt(minFx) - Math.floor(minLabel.length / 2));
-      const maxCol = Math.min(cols - maxLabel.length, area.colAt(maxFx) - Math.floor(maxLabel.length / 2));
-      g.write(minCol, labelRow, minLabel, colors.muted);
-      if (maxCol > minCol + minLabel.length) g.write(maxCol, labelRow, maxLabel, colors.muted);
-      const textRow = area.rowAt(centerFy);
-      const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
-      g.write(textCol, textRow, valueText, colors.fg);
+      if (!ranged()) {
+        const note = "no range";
+        g.write(Math.max(0, area.colAt(0.5) - Math.floor(note.length / 2)), valueRow, note, colors.muted);
+      } else {
+        const minLabel = formatNumber(props.min);
+        const maxLabel = formatNumber(props.max);
+        const [minFx] = pointAt(ARC_START, radius);
+        const [maxFx] = pointAt(ARC_START + ARC_SWEEP, radius);
+        const endFy = pointAt(ARC_START, outer)[1];
+        const labelRow = Math.min(rows - 1, area.rowAt(endFy) + 1);
+        const minCol = Math.max(0, area.colAt(minFx) - Math.floor(minLabel.length / 2));
+        const maxCol = Math.min(cols - maxLabel.length, area.colAt(maxFx) - Math.floor(maxLabel.length / 2));
+        g.write(minCol, labelRow, minLabel, colors.muted);
+        if (maxCol > minCol + minLabel.length) g.write(maxCol, labelRow, maxLabel, colors.muted);
+        const valueText = `${formatNumber(props.value)}${props.unit}`;
+        const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
+        g.write(textCol, valueRow, valueText, colors.fg);
+      }
+      if (props.label) {
+        const name = props.label.slice(0, cols);
+        g.write(Math.max(0, Math.floor((cols - name.length) / 2)), valueRow + 1, name, colors.muted);
+      }
       g.flush();
       host.dataset.picaReady = "true";
     }

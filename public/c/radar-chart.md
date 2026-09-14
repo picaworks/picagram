@@ -607,11 +607,11 @@ const TOKENS: readonly Token[] = ["fg", "bg", "accent", "muted"];
 const TOKEN_FALLBACK: Readonly<Record<Token, string>> = {
   fg: "currentColor",
   bg: "transparent",
-  accent: "#e8a020",
+  accent: "#13C4A3",
   muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)",
 };
 
-/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #e8a020). */
+/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #13C4A3). */
 function cssVar(token: Token): string {
   return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
 }
@@ -1659,7 +1659,7 @@ export function RadarChart({ className, style, palette, ...props }: RadarChartCo
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Radar Chart · Pica</title>
-<style>:root { --pica-accent: #e8a020; }
+<style>:root { --pica-accent: #13C4A3; }
 html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 @media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
@@ -1906,7 +1906,7 @@ var PicaRadarChart = (() => {
   var TOKEN_FALLBACK = {
     fg: "currentColor",
     bg: "transparent",
-    accent: "#e8a020",
+    accent: "#13C4A3",
     muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
   };
   function cssVar(token) {

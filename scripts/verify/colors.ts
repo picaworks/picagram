@@ -8,7 +8,11 @@ import { compare } from "./render";
 import type { Ctx } from "./types";
 
 /** Loud test colors, far from the defaults and from each other. */
-const TEST: Readonly<Record<Token, string>> = { fg: "#ff2d6f", bg: "#123456", accent: "#20c4ff", muted: "#9cff3a" };
+// Each stand-in has to be far from every real token, or a component that blends one broadly into a
+// field changes too little to measure and the check reads that as the token doing nothing. The accent
+// stand-in was cyan while the accent was amber; the accent is mint now, so cyan is a near miss and it
+// moves to violet, which no palette token sits near.
+const TEST: Readonly<Record<Token, string>> = { fg: "#ff2d6f", bg: "#123456", accent: "#a64dff", muted: "#9cff3a" };
 
 async function shot(ctx: Ctx, context: BrowserContext, options: OpenOptions): Promise<Buffer> {
   const page = await open(context, ctx.url("vanilla"), options, ctx.errors);

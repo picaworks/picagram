@@ -2,7 +2,7 @@
 
 > The Earth's limb seen from a spacecraft, with dotted land below the horizon and a stepped dithered atmosphere.
 
-Category: immersive. Tags: 3d, map, earth, horizon, space, canvas. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 7.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
+Category: immersive. Tags: 3d, map, earth, horizon, space, canvas. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 7.3 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
@@ -841,11 +841,11 @@ const TOKENS: readonly Token[] = ["fg", "bg", "accent", "muted"];
 const TOKEN_FALLBACK: Readonly<Record<Token, string>> = {
   fg: "currentColor",
   bg: "transparent",
-  accent: "#e8a020",
+  accent: "#13C4A3",
   muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)",
 };
 
-/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #e8a020). */
+/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #13C4A3). */
 function cssVar(token: Token): string {
   return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
 }
@@ -990,7 +990,7 @@ export const defaults: OrbitViewProps = {
 };
 
 const DEG = Math.PI / 180;
-/** Depth along the camera axis below which a point sits behind the camera and clamps off the frame. */
+/** Depth along the view axis below which a point sits behind the camera and clamps off the frame. */
 const DEN_EPS = 0.02;
 /** Atmosphere shell radii in Earth radii, about 40, 100, and 190 km up. */
 const SHELLS = [1.006, 1.016, 1.03];
@@ -1062,29 +1062,32 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
       const rY = tZ * sX - tX * sZ;
       const rZ = tX * sY - tY * sX;
 
-      // Framing: the limb's peak lands on the upper third and the land band below it fills the
-      // middle of the frame. A projected unit is the tangent of the angle off the camera axis,
-      // so one scale fits every altitude.
+      // Framing: the image plane stays perpendicular to the camera-to-centre axis, so the planet
+      // sits at the principal point and its limb projects as a circle of limbR px. Setting cy
+      // limbR below the upper third puts the limb's peak there: a lens shift, which slides the
+      // picture inside the frame where tilting the plane would stretch it. The clamp keeps the
+      // principal point inside the frame at every altitude and tilt.
       const ha = Math.acos(invP) + tiltR;
       const denTop = P * cosT - Math.cos(ha);
       const topN = denTop > DEN_EPS ? (Math.sin(ha) - P * sinT) / denTop : 3;
       const focal = (0.42 * cssHeight) / Math.max(0.08, topN + Math.tan(tiltR));
+      const limbR = focal / Math.sqrt(P * P - 1);
       const cx = cssWidth / 2;
-      const cy = 0.3 * cssHeight + topN * focal;
+      const cy = Math.min(cssHeight, Math.max(0, 0.3 * cssHeight + limbR));
 
-      /** Snyder's tilted perspective in the {R, S, T} frame: depth toward the sub-point sets the
-       *  horizon, distance along the camera axis the near clip. A kept point lands in px, py. */
+      /** Depths in the {R, S, T} frame: depth toward the sub-point sets the horizon, depth along
+       *  the tilted view axis the clip that keeps only the part the camera faces. */
       let px = 0, py = 0, pen = false;
       const plot = (): void => {
         ctx[pen ? "lineTo" : "moveTo"](px, py);
         pen = true;
       };
-      /** The shared Snyder tail: a point qs along S, qt along T, qr along R at depth den lands in
-       *  px, py scaled by focal over den. Callers pass a clamped den when they want the off-frame
-       *  projection of a point behind the camera. */
+      /** A point qs along S, qt along T, qr along R lands in px, py scaled by focal over den, its
+       *  depth along the camera-to-centre axis. A caller passes the clip depth to send a culled
+       *  sample far off the frame along its true ray. */
       const place = (qs: number, qt: number, qr: number, den: number): void => {
         px = cx + (qr * focal) / den;
-        py = cy - ((qt * cosT + (qs - P) * sinT) * focal) / den;
+        py = cy - (qt * focal) / den;
       };
       const project = (qx: number, qy: number, qz: number): boolean => {
         const qs = qx * sX + qy * sY + qz * sZ;
@@ -1092,14 +1095,14 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
         const den = qt * sinT + (P - qs) * cosT;
         // Sit a hair inside the horizon so a dot never touches the drawn limb curve.
         if (qs < invP + 0.0015 || den <= DEN_EPS) return false;
-        place(qs, qt, qx * rX + qy * rY + qz * rZ, den);
+        place(qs, qt, qx * rX + qy * rY + qz * rZ, P - qs);
         return true;
       };
 
       /** One point on the limb circle of a sphere of `radius` seen from P radii out: the limb sits at
        *  angle c with cos c = radius / P, so the circle is qs along S with radius rs in the R, T plane.
-       *  Positions are clamped so a sample behind the camera lands far off frame, and the returned
-       *  depth says which side it is on. */
+       *  A sample past the clip is placed at the clip depth so it lands far off frame, and the
+       *  returned depth says which side of the clip the sample is on. */
       const limbPt = (radius: number, i: number): number => {
         const c = radius * invP;
         const qs = radius * c;
@@ -1107,7 +1110,7 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
         const th = Math.PI * (1 + (2 * i) / ARC_N);
         const qt = rs * Math.cos(th);
         const den = qt * sinT + (P - qs) * cosT;
-        place(qs, qt, -rs * Math.sin(th), Math.max(DEN_EPS, den));
+        place(qs, qt, -rs * Math.sin(th), den > DEN_EPS ? P - qs : DEN_EPS);
         return den;
       };
       const radii = [1, ...SHELLS.filter((r) => r < P * 0.999)];
@@ -1175,18 +1178,26 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
           const outer = radii[b + 1]!;
           const cut = BAND_DENSITY[b]! * props.atmosphere * 16;
           if (cut <= 0.16) continue;
-          for (let i = 0; i <= ARC_N; i++) {
-            if (limbPt(inner, i) <= DEN_EPS) continue;
+          // Keep samples close along the arc even when the limb fills a wide frame.
+          limbPt(outer, ARC_N / 2);
+          const arcSteps = Math.max(ARC_N, Math.ceil((Math.abs(py - cy) * Math.PI * 2) / 3));
+          for (let i = 0; i < arcSteps; i++) {
+            const arc = (i * ARC_N) / arcSteps;
+            if (limbPt(inner, arc) <= DEN_EPS) continue;
             const ix = px;
             const iy = py;
-            limbPt(outer, i);
+            if (limbPt(outer, arc) <= DEN_EPS) continue;
             const dx = px - ix;
             const dy = py - iy;
-            const steps = Math.max(2, (((Math.abs(dx) + Math.abs(dy)) / 3) | 0) + 1);
-            for (let j = 0; j <= steps; j++) {
-              const gx = ((ix + (dx * j) / steps) / 3) | 0;
-              const gy = ((iy + (dy * j) / steps) / 3) | 0;
-              if (BAYER4[((gy + oy) & 3) * 4 + ((gx + ox) & 3)]! + 0.5 < cut) ctx.fillRect(gx * 3 - 0.7, gy * 3 - 0.7, 1.4, 1.4);
+            const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy) / 3));
+            for (let j = 0; j < steps; j++) {
+              // Seeded tile phases break repeating columns while each tile retains Bayer tone.
+              let h = Math.imul((i >> 2) ^ Math.imul((j >> 2) + b * 97, 374761393) ^ props.seed, 0x9e3779b1);
+              h = Math.imul(h ^ (h >>> 16), 0x85ebca6b) >>> 0;
+              const threshold = BAYER4[((j + oy + (h >>> 2)) & 3) * 4 + ((i + ox + h) & 3)]!;
+              if (threshold + 0.5 >= cut) continue;
+              const step = (j + 0.5) / steps;
+              ctx.fillRect(ix + dx * step - 0.7, iy + dy * step - 0.7, 1.4, 1.4);
             }
           }
         }
@@ -1197,10 +1208,17 @@ export const mount: Mount<OrbitViewProps> = (host, initial = {}) => {
         const la = Math.asin(Math.max(-1, Math.min(1, sY))) / DEG;
         const lo = Math.atan2(sX, sZ) / DEG;
         ctx.font = `11px ${props.fontFamily}`;
+        const lines = [
+          `ALT ${Math.round(props.altitude)} KM`,
+          `SUB ${Math.abs(la).toFixed(1)}${la < 0 ? "S" : "N"} ${Math.abs(lo).toFixed(1)}${lo < 0 ? "W" : "E"}`,
+          `T+ ${(sec / 60) | 0}:${(sec % 60).toFixed(1)}`,
+        ];
+        // Reserve bare ground for the readout, including padding beyond the measured glyphs.
+        const textWidth = Math.max(...lines.map((line) => ctx.measureText(line).width));
+        ctx.clearRect(10, cssHeight - 59, textWidth + 8, 51);
+        ctx.globalAlpha = 1;
         ctx.fillStyle = palette.colors.muted;
-        ctx.fillText(`ALT ${Math.round(props.altitude)} KM`, 14, cssHeight - 44);
-        ctx.fillText(`SUB ${Math.abs(la).toFixed(1)}${la < 0 ? "S" : "N"} ${Math.abs(lo).toFixed(1)}${lo < 0 ? "W" : "E"}`, 14, cssHeight - 29);
-        ctx.fillText(`T+ ${(sec / 60) | 0}:${(sec % 60).toFixed(1)}`, 14, cssHeight - 14);
+        lines.forEach((line, i) => ctx.fillText(line, 14, cssHeight - 44 + i * 15));
       }
     }
     host.dataset.picaReady = "true";
@@ -1252,7 +1270,7 @@ export function OrbitView({ className, style, palette, ...props }: OrbitViewComp
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Orbit View · Pica</title>
-<style>:root { --pica-accent: #e8a020; }
+<style>:root { --pica-accent: #13C4A3; }
 html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
 @media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
 html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
@@ -1570,7 +1588,7 @@ var PicaOrbitView = (() => {
   var TOKEN_FALLBACK = {
     fg: "currentColor",
     bg: "transparent",
-    accent: "#e8a020",
+    accent: "#13C4A3",
     muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
   };
   function cssVar(token) {
@@ -1705,8 +1723,9 @@ var PicaOrbitView = (() => {
         const denTop = P * cosT - Math.cos(ha);
         const topN = denTop > DEN_EPS ? (Math.sin(ha) - P * sinT) / denTop : 3;
         const focal = 0.42 * cssHeight / Math.max(0.08, topN + Math.tan(tiltR));
+        const limbR = focal / Math.sqrt(P * P - 1);
         const cx = cssWidth / 2;
-        const cy = 0.3 * cssHeight + topN * focal;
+        const cy = Math.min(cssHeight, Math.max(0, 0.3 * cssHeight + limbR));
         let px = 0, py = 0, pen = false;
         const plot = () => {
           ctx[pen ? "lineTo" : "moveTo"](px, py);
@@ -1714,14 +1733,14 @@ var PicaOrbitView = (() => {
         };
         const place = (qs, qt, qr, den) => {
           px = cx + qr * focal / den;
-          py = cy - (qt * cosT + (qs - P) * sinT) * focal / den;
+          py = cy - qt * focal / den;
         };
         const project = (qx, qy, qz) => {
           const qs = qx * sX + qy * sY + qz * sZ;
           const qt = qx * tX + qy * tY + qz * tZ;
           const den = qt * sinT + (P - qs) * cosT;
           if (qs < invP + 15e-4 || den <= DEN_EPS) return false;
-          place(qs, qt, qx * rX + qy * rY + qz * rZ, den);
+          place(qs, qt, qx * rX + qy * rY + qz * rZ, P - qs);
           return true;
         };
         const limbPt = (radius, i) => {
@@ -1731,7 +1750,7 @@ var PicaOrbitView = (() => {
           const th = Math.PI * (1 + 2 * i / ARC_N);
           const qt = rs * Math.cos(th);
           const den = qt * sinT + (P - qs) * cosT;
-          place(qs, qt, -rs * Math.sin(th), Math.max(DEN_EPS, den));
+          place(qs, qt, -rs * Math.sin(th), den > DEN_EPS ? P - qs : DEN_EPS);
           return den;
         };
         const radii = [1, ...SHELLS.filter((r) => r < P * 0.999)];
@@ -1788,18 +1807,24 @@ var PicaOrbitView = (() => {
             const outer = radii[b + 1];
             const cut = BAND_DENSITY[b] * props.atmosphere * 16;
             if (cut <= 0.16) continue;
-            for (let i = 0; i <= ARC_N; i++) {
-              if (limbPt(inner, i) <= DEN_EPS) continue;
+            limbPt(outer, ARC_N / 2);
+            const arcSteps = Math.max(ARC_N, Math.ceil(Math.abs(py - cy) * Math.PI * 2 / 3));
+            for (let i = 0; i < arcSteps; i++) {
+              const arc = i * ARC_N / arcSteps;
+              if (limbPt(inner, arc) <= DEN_EPS) continue;
               const ix = px;
               const iy = py;
-              limbPt(outer, i);
+              if (limbPt(outer, arc) <= DEN_EPS) continue;
               const dx = px - ix;
               const dy = py - iy;
-              const steps = Math.max(2, ((Math.abs(dx) + Math.abs(dy)) / 3 | 0) + 1);
-              for (let j = 0; j <= steps; j++) {
-                const gx = (ix + dx * j / steps) / 3 | 0;
-                const gy = (iy + dy * j / steps) / 3 | 0;
-                if (BAYER4[(gy + oy & 3) * 4 + (gx + ox & 3)] + 0.5 < cut) ctx.fillRect(gx * 3 - 0.7, gy * 3 - 0.7, 1.4, 1.4);
+              const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy) / 3));
+              for (let j = 0; j < steps; j++) {
+                let h = Math.imul(i >> 2 ^ Math.imul((j >> 2) + b * 97, 374761393) ^ props.seed, 2654435761);
+                h = Math.imul(h ^ h >>> 16, 2246822507) >>> 0;
+                const threshold = BAYER4[(j + oy + (h >>> 2) & 3) * 4 + (i + ox + h & 3)];
+                if (threshold + 0.5 >= cut) continue;
+                const step = (j + 0.5) / steps;
+                ctx.fillRect(ix + dx * step - 0.7, iy + dy * step - 0.7, 1.4, 1.4);
               }
             }
           }
@@ -1808,10 +1833,16 @@ var PicaOrbitView = (() => {
           const la = Math.asin(Math.max(-1, Math.min(1, sY))) / DEG;
           const lo = Math.atan2(sX, sZ) / DEG;
           ctx.font = `11px ${props.fontFamily}`;
+          const lines = [
+            `ALT ${Math.round(props.altitude)} KM`,
+            `SUB ${Math.abs(la).toFixed(1)}${la < 0 ? "S" : "N"} ${Math.abs(lo).toFixed(1)}${lo < 0 ? "W" : "E"}`,
+            `T+ ${sec / 60 | 0}:${(sec % 60).toFixed(1)}`
+          ];
+          const textWidth = Math.max(...lines.map((line) => ctx.measureText(line).width));
+          ctx.clearRect(10, cssHeight - 59, textWidth + 8, 51);
+          ctx.globalAlpha = 1;
           ctx.fillStyle = palette.colors.muted;
-          ctx.fillText(`ALT ${Math.round(props.altitude)} KM`, 14, cssHeight - 44);
-          ctx.fillText(`SUB ${Math.abs(la).toFixed(1)}${la < 0 ? "S" : "N"} ${Math.abs(lo).toFixed(1)}${lo < 0 ? "W" : "E"}`, 14, cssHeight - 29);
-          ctx.fillText(`T+ ${sec / 60 | 0}:${(sec % 60).toFixed(1)}`, 14, cssHeight - 14);
+          lines.forEach((line, i) => ctx.fillText(line, 14, cssHeight - 44 + i * 15));
         }
       }
       host.dataset.picaReady = "true";

@@ -1,0 +1,423 @@
+<!doctype html>
+<!--
+  Pica · Command Palette · command-palette
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Command Palette · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<dialog id="pica"></dialog>
+<script>
+"use strict";
+var PicaCommandPalette = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/command-palette/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/command-palette/core.ts
+  var defaults = {
+    commands: [
+      { id: "new-component", label: "New component", hint: "⌘N", keywords: "create" },
+      { id: "open-catalog", label: "Open catalog", hint: "⌘O", keywords: "browse" },
+      { id: "toggle-theme", label: "Toggle theme", hint: "⌘T", keywords: "dark light" },
+      { id: "copy-url", label: "Copy page URL", keywords: "link" },
+      { id: "restart", label: "Restart dev server", hint: "⌘R", keywords: "serve" }
+    ],
+    open: null,
+    defaultOpen: false,
+    placeholder: "Type a command",
+    emptyText: "No matching commands",
+    label: "Command palette",
+    width: 30,
+    dismissOnBackdrop: true
+  };
+  function commandPaletteRules(selector, width) {
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    const muted = cssVar("muted");
+    const measure = Math.min(48, Math.max(20, width));
+    return [
+      `${selector}{appearance:none;position:fixed;top:20vh;right:0;bottom:auto;left:0;margin:0 auto;width:min(calc(100vw - 2rem),${measure}rem)!important;height:auto!important;max-height:calc(80vh - 1rem);padding:0;overflow:hidden;box-sizing:border-box;border:1px solid color-mix(in srgb,${fg} 30%,transparent);border-radius:0;box-shadow:none;color:${fg};background:color-mix(in srgb,${fg} 4%,${cssVar("bg")})}`,
+      `${selector}::backdrop{background:color-mix(in srgb,${fg} 16%,transparent)}`,
+      `${selector} [data-pica-part="frame"]{display:flex;min-width:0;max-height:inherit;flex-direction:column}`,
+      `${selector} [data-pica-part="prompt"]{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:0.75rem;padding:0.8rem 1rem;border-bottom:1px solid color-mix(in srgb,${fg} 24%,transparent)}`,
+      `${selector} [data-pica-part="glyph"]{color:${accent};font-family:${GRID_FONT};font-weight:700;line-height:1}`,
+      `${selector} [data-pica-part="input"]{width:100%;min-width:0;margin:0;padding:0;border:0;border-radius:0;outline:0;box-sizing:border-box;background:transparent;color:${fg};font:inherit;line-height:1.4;caret-color:${accent}}`,
+      `${selector} [data-pica-part="input"]::placeholder{color:${muted};opacity:1}`,
+      `${selector} [data-pica-part="input"]:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${selector} [data-pica-part="list"]{min-height:0;overflow:auto;overscroll-behavior:contain;padding:0.35rem 0}`,
+      `${selector} [data-pica-part="option"]{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:1rem;padding:0.65rem 1rem;cursor:default}`,
+      `${selector} [data-pica-part="option"][aria-selected="true"]{background:color-mix(in srgb,${fg} 10%,transparent)}`,
+      `${selector} [data-pica-part="command-label"]{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}`,
+      `${selector} [data-pica-part="hint"]{color:${muted};font-family:${GRID_FONT};font-size:0.8em;white-space:nowrap}`,
+      `${selector} [data-pica-part="empty"]{padding:0.8rem 1rem;color:${muted}}`
+    ].join("\n");
+  }
+  function commandPaletteNode(tag, part) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute("data-pica-part", part);
+    return node;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let uncontrolledOpen = props.defaultOpen;
+    let visible = props.commands;
+    let active = -1;
+    const dialog = host;
+    const emit = emitter(host);
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    const listId = nextId("pica-command-list");
+    const frame = commandPaletteNode("div", "frame");
+    const prompt = commandPaletteNode("div", "prompt");
+    const glyph = commandPaletteNode("span", "glyph");
+    const input = commandPaletteNode("input", "input");
+    const list = commandPaletteNode("div", "list");
+    glyph.textContent = "›";
+    glyph.setAttribute("aria-hidden", "true");
+    input.type = "text";
+    input.setAttribute("role", "combobox");
+    input.setAttribute("autocomplete", "off");
+    input.setAttribute("aria-autocomplete", "list");
+    input.setAttribute("aria-controls", listId);
+    list.id = listId;
+    list.setAttribute("role", "listbox");
+    prompt.append(glyph, input);
+    frame.append(prompt, list);
+    host.append(frame);
+    function isOpen() {
+      return props.open ?? uncontrolledOpen;
+    }
+    function setActive(next) {
+      active = next;
+      const options = list.querySelectorAll('[data-pica-part="option"]');
+      options.forEach((option, index) => option.setAttribute("aria-selected", index === active ? "true" : "false"));
+      const selected = options.item(active);
+      if (selected) {
+        input.setAttribute("aria-activedescendant", selected.id);
+        selected.scrollIntoView({ block: "nearest" });
+      } else {
+        input.removeAttribute("aria-activedescendant");
+      }
+    }
+    function renderList() {
+      list.replaceChildren();
+      if (visible.length === 0) {
+        const empty = commandPaletteNode("div", "empty");
+        empty.textContent = props.emptyText;
+        list.append(empty);
+        setActive(-1);
+        return;
+      }
+      visible.forEach((command, index) => {
+        const option = commandPaletteNode("div", "option");
+        const commandLabel = commandPaletteNode("span", "command-label");
+        option.id = `${listId}-${index}`;
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected", index === active ? "true" : "false");
+        option.dataset.index = String(index);
+        commandLabel.textContent = command.label;
+        option.append(commandLabel);
+        if (command.hint) {
+          const hint = commandPaletteNode("span", "hint");
+          hint.textContent = command.hint;
+          option.append(hint);
+        }
+        list.append(option);
+      });
+      if (active >= visible.length) active = -1;
+      setActive(active);
+    }
+    function filterCommands() {
+      const query = input.value.trim().toLocaleLowerCase();
+      visible = query ? props.commands.filter((command) => `${command.label} ${command.keywords ?? ""}`.toLocaleLowerCase().includes(query)) : props.commands;
+      active = -1;
+      renderList();
+    }
+    function resetFilter() {
+      input.value = "";
+      visible = props.commands;
+      active = -1;
+      renderList();
+    }
+    function syncOpen() {
+      const open = isOpen();
+      input.setAttribute("aria-expanded", String(open));
+      if (open && !dialog.open) {
+        resetFilter();
+        dialog.showModal();
+        input.focus();
+      } else if (!open && dialog.open) {
+        resetFilter();
+        dialog.close();
+      }
+    }
+    function requestOpen(next) {
+      emit("openChange", next);
+      if (props.open === null) {
+        uncontrolledOpen = next;
+        syncOpen();
+      }
+    }
+    function runActive() {
+      const command = visible[active];
+      if (!command) return;
+      emit("command", command.id);
+      requestOpen(false);
+    }
+    const onInput = () => filterCommands();
+    const onKeyDown = (event) => {
+      if (visible.length === 0) return;
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setActive((active + 1) % visible.length);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setActive(active < 0 ? visible.length - 1 : (active - 1 + visible.length) % visible.length);
+      } else if (event.key === "Home") {
+        event.preventDefault();
+        setActive(0);
+      } else if (event.key === "End") {
+        event.preventDefault();
+        setActive(visible.length - 1);
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        runActive();
+      }
+    };
+    const optionFromEvent = (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return null;
+      const option = target.closest('[data-pica-part="option"]');
+      return option?.parentElement === list ? option : null;
+    };
+    const onPointerMove = (event) => {
+      const option = optionFromEvent(event);
+      if (option) setActive(Number(option.dataset.index));
+    };
+    const onPointerDown = (event) => {
+      if (optionFromEvent(event)) event.preventDefault();
+    };
+    const onListClick = (event) => {
+      const option = optionFromEvent(event);
+      if (!option) return;
+      setActive(Number(option.dataset.index));
+      runActive();
+    };
+    const onCancel = (event) => {
+      event.preventDefault();
+      requestOpen(false);
+    };
+    const onBackdropClick = (event) => {
+      if (!props.dismissOnBackdrop || event.target !== dialog) return;
+      const rect = dialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+        requestOpen(false);
+      }
+    };
+    input.addEventListener("input", onInput);
+    input.addEventListener("keydown", onKeyDown);
+    list.addEventListener("pointermove", onPointerMove);
+    list.addEventListener("pointerdown", onPointerDown);
+    list.addEventListener("click", onListClick);
+    dialog.addEventListener("cancel", onCancel);
+    dialog.addEventListener("click", onBackdropClick);
+    function apply() {
+      attrs.set("aria-label", props.label);
+      attrs.set("aria-modal", "true");
+      input.setAttribute("aria-label", props.label);
+      input.placeholder = props.placeholder;
+      list.setAttribute("aria-label", props.label);
+      sheet.setRules(commandPaletteRules(sheet.selector, props.width));
+      renderList();
+      syncOpen();
+    }
+    attrs.set("open", host.getAttribute("open"));
+    apply();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (before.open !== null && props.open === null) uncontrolledOpen = dialog.open;
+        if (!sameJson(before.commands, props.commands)) resetFilter();
+        apply();
+      },
+      destroy() {
+        input.removeEventListener("input", onInput);
+        input.removeEventListener("keydown", onKeyDown);
+        list.removeEventListener("pointermove", onPointerMove);
+        list.removeEventListener("pointerdown", onPointerDown);
+        list.removeEventListener("click", onListClick);
+        dialog.removeEventListener("cancel", onCancel);
+        dialog.removeEventListener("click", onBackdropClick);
+        if (dialog.open) dialog.close();
+        frame.remove();
+        sheet.destroy();
+        attrs.restore();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaCommandPalette.mount(host, take(window.PICA_PROPS || {}));
+  ["command","openChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

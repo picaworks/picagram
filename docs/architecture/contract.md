@@ -87,7 +87,7 @@ Components draw with four tokens, which only `lib/palette.ts` reads.
 |---|---|---|---|
 | fg | the inherited text color | `cssVar("fg")` | `watchPalette(host, redraw).colors.fg` |
 | bg | transparent | `cssVar("bg")` | `.colors.bg` |
-| accent | amber `#e8a020` | `cssVar("accent")` | `.colors.accent` |
+| accent | mint `#13C4A3` | `cssVar("accent")` | `.colors.accent` |
 | muted | fg at 65% | `cssVar("muted")` | `.colors.muted` |
 
 - `cssOn(token)` gives black or white text that stays readable on a token's color.

@@ -134,7 +134,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 5014
+    "gzipBytes": 5015
   },
   {
     "slug": "ascii-morph",
@@ -790,7 +790,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2079
+    "gzipBytes": 2080
   },
   {
     "slug": "ascii-solid",
@@ -905,7 +905,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4583
+    "gzipBytes": 4582
   },
   {
     "slug": "ascii-text",
@@ -1029,7 +1029,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 5073
+    "gzipBytes": 5074
   },
   {
     "slug": "ascii-topo",
@@ -1292,7 +1292,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5747
+    "gzipBytes": 5749
   },
   {
     "slug": "ascii-waves",
@@ -1552,7 +1552,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5169
+    "gzipBytes": 5171
   },
   {
     "slug": "bullet-chart",
@@ -1702,7 +1702,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5573
+    "gzipBytes": 5575
   },
   {
     "slug": "candlestick-chart",
@@ -2017,7 +2017,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5866
+    "gzipBytes": 5867
   },
   {
     "slug": "donut-chart",
@@ -2144,7 +2144,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5241
+    "gzipBytes": 5242
   },
   {
     "slug": "gauge-chart",
@@ -2244,10 +2244,10 @@
       "value": "The current value to display.",
       "min": "The minimum value of the range.",
       "max": "The maximum value of the range.",
-      "label": "Name for the gauge, read by assistive technology and used as the hidden data table's caption.",
+      "label": "Name for the gauge: drawn under the value, read by assistive technology, and used as the hidden data table's caption.",
       "unit": "Unit to display after the value (e.g., \"%\", \"°C\").",
       "thresholds": "Threshold values to mark on the arc as ticks.",
-      "thickness": "Thickness of the arc as a fraction of the radius (0.05 to 0.4).",
+      "thickness": "Ring thickness as a fraction of its radius (0.05 to 0.4).",
       "look": "\"svg\" draws an SVG arc with labels. \"glyph\" draws the same arc in a braille grid.",
       "fontFamily": "CSS font-family stack for every label. Must be monospace."
     },
@@ -2266,7 +2266,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5173
+    "gzipBytes": 5610
   },
   {
     "slug": "heatmap",
@@ -2648,7 +2648,7 @@
         "detail": "KanbanColumn[]"
       }
     },
-    "gzipBytes": 4552
+    "gzipBytes": 4553
   },
   {
     "slug": "line-chart",
@@ -2797,7 +2797,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5817
+    "gzipBytes": 5819
   },
   {
     "slug": "radar-chart",
@@ -2953,7 +2953,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5871
+    "gzipBytes": 5872
   },
   {
     "slug": "scatter-plot",
@@ -3221,7 +3221,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 6185
+    "gzipBytes": 6187
   },
   {
     "slug": "timeline-chart",
@@ -3376,7 +3376,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5910
+    "gzipBytes": 5911
   },
   {
     "slug": "waterfall-chart",
@@ -3507,7 +3507,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5725
+    "gzipBytes": 5727
   },
   {
     "slug": "dither-contours",
@@ -3916,7 +3916,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4173
+    "gzipBytes": 4174
   },
   {
     "slug": "dither-image",
@@ -4036,7 +4036,7 @@
       "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
     },
     "events": {},
-    "gzipBytes": 3882
+    "gzipBytes": 3884
   },
   {
     "slug": "dither-noise",
@@ -4329,7 +4329,7 @@
       "scale": "number"
     },
     "events": {},
-    "gzipBytes": 4557
+    "gzipBytes": 4561
   },
   {
     "slug": "dither-reveal",
@@ -4485,7 +4485,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5254
+    "gzipBytes": 5255
   },
   {
     "slug": "dither-stipple-image",
@@ -4620,7 +4620,7 @@
       "maskSize": "16 | 32 | 64"
     },
     "events": {},
-    "gzipBytes": 4430
+    "gzipBytes": 4431
   },
   {
     "slug": "dither-temporal",
@@ -4770,7 +4770,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4977
+    "gzipBytes": 4978
   },
   {
     "slug": "dither-waves",
@@ -4926,7 +4926,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4133
+    "gzipBytes": 4134
   },
   {
     "slug": "halftone-image",
@@ -5351,7 +5351,7 @@
       "overlap": "\"darken\" | \"over\""
     },
     "events": {},
-    "gzipBytes": 3915
+    "gzipBytes": 3916
   },
   {
     "slug": "duotone-image",
@@ -5449,7 +5449,7 @@
       "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
     },
     "events": {},
-    "gzipBytes": 3371
+    "gzipBytes": 3372
   },
   {
     "slug": "edge-trace-image",
@@ -5580,7 +5580,7 @@
       "invert": "boolean"
     },
     "events": {},
-    "gzipBytes": 4108
+    "gzipBytes": 4109
   },
   {
     "slug": "glitch-text",
@@ -5667,7 +5667,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2726
+    "gzipBytes": 2729
   },
   {
     "slug": "grain-overlay",
@@ -5871,7 +5871,7 @@
       "strength": "number"
     },
     "events": {},
-    "gzipBytes": 1427
+    "gzipBytes": 1428
   },
   {
     "slug": "photocopy-image",
@@ -6299,7 +6299,7 @@
       "tone": "\"auto\" | \"light-on-dark\" | \"dark-on-light\""
     },
     "events": {},
-    "gzipBytes": 3559
+    "gzipBytes": 3562
   },
   {
     "slug": "risograph-image",
@@ -6464,7 +6464,7 @@
       "coverage": "number"
     },
     "events": {},
-    "gzipBytes": 4564
+    "gzipBytes": 4565
   },
   {
     "slug": "scan-reveal-image",
@@ -6615,7 +6615,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4678
+    "gzipBytes": 4679
   },
   {
     "slug": "scanlines",
@@ -6714,7 +6714,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2063
+    "gzipBytes": 2064
   },
   {
     "slug": "slit-scan-image",
@@ -6868,7 +6868,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4541
+    "gzipBytes": 4542
   },
   {
     "slug": "city-grid",
@@ -6995,7 +6995,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4854
+    "gzipBytes": 4855
   },
   {
     "slug": "globe",
@@ -7128,7 +7128,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 3528
+    "gzipBytes": 3530
   },
   {
     "slug": "orbit-view",
@@ -7305,7 +7305,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 7359
+    "gzipBytes": 7505
   },
   {
     "slug": "terrain-field",
@@ -7449,7 +7449,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 3965
+    "gzipBytes": 3964
   },
   {
     "slug": "world-map",
@@ -7699,6 +7699,1033 @@
     "gzipBytes": 2190
   },
   {
+    "slug": "brick-lattice",
+    "title": "Brick Lattice",
+    "category": "patterns",
+    "description": "A quiet masonry lattice with running or stacked courses drawn behind content.",
+    "tags": [
+      "brick",
+      "masonry",
+      "lattice",
+      "background",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "bond": {
+        "type": "select",
+        "options": [
+          "running",
+          "stack"
+        ]
+      },
+      "width": {
+        "type": "number",
+        "min": 24,
+        "max": 120,
+        "step": 1,
+        "label": "Brick width (px)"
+      },
+      "course": {
+        "type": "number",
+        "min": 8,
+        "max": 40,
+        "step": 1,
+        "label": "Course height (px)"
+      },
+      "mortar": {
+        "type": "number",
+        "min": 0,
+        "max": 8,
+        "step": 1,
+        "label": "Mortar (px)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "demo": {
+      "children": "<h2>Built in courses</h2><p>A measured pattern gives the page quiet structure.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "BrickLattice",
+    "defaults": {
+      "bond": "running",
+      "width": 48,
+      "course": 16,
+      "mortar": 3,
+      "strength": 0.35
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "bond": "Course bond, either half pitch offset or vertically aligned.",
+      "width": "Width of each brick, in pixels.",
+      "course": "Height of each masonry course, in pixels.",
+      "mortar": "Ground left between adjacent bricks, in pixels.",
+      "strength": "Opacity of the lattice, from quiet to fully visible."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "bond": "\"running\" | \"stack\"",
+      "width": "number",
+      "course": "number",
+      "mortar": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1487
+  },
+  {
+    "slug": "cell-mosaic",
+    "title": "Cell Mosaic",
+    "category": "patterns",
+    "description": "A seeded field of even polygonal cells drawn as quiet hairlines behind page content.",
+    "tags": [
+      "voronoi",
+      "cells",
+      "mosaic",
+      "geometry",
+      "background"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "cells": {
+        "type": "number",
+        "min": 8,
+        "max": 160,
+        "step": 1
+      },
+      "gap": {
+        "type": "number",
+        "min": 0,
+        "max": 6,
+        "step": 0.5,
+        "label": "Gap (px)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "seed": {
+        "type": "number",
+        "min": -2147483648,
+        "max": 2147483647,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Nouvelles applications des paramètres continus à la théorie des formes quadratiques. Deuxième mémoire. Recherches sur les parallélloèdres primitifs",
+        "author": "Georges Voronoi",
+        "url": "https://doi.org/10.1515/crll.1908.134.198",
+        "license": "Paper"
+      }
+    ],
+    "demo": {
+      "children": "<div><h2>Measured variation</h2><p>Forty eight quiet cells repeat from a single seed.</p></div>"
+    },
+    "exportName": "CellMosaic",
+    "defaults": {
+      "cells": 48,
+      "gap": 0,
+      "strength": 0.4,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Integer seed used to place every cell point.",
+      "cells": "Number of polygonal cells in the mosaic.",
+      "gap": "Inset from each cell wall toward its centroid, in pixels.",
+      "strength": "Opacity of the cell hairlines."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "cells": "number",
+      "gap": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 2018
+  },
+  {
+    "slug": "checkerboard",
+    "title": "Checkerboard",
+    "category": "patterns",
+    "description": "A quiet field of alternating ink and transparent squares drawn beneath page content.",
+    "tags": [
+      "checkerboard",
+      "squares",
+      "grid",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "size": {
+        "type": "number",
+        "min": 8,
+        "max": 96,
+        "step": 1,
+        "label": "Cell size (px)"
+      },
+      "angle": {
+        "type": "number",
+        "min": 0,
+        "max": 45,
+        "step": 1,
+        "label": "Angle (deg)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "demo": {
+      "children": "<div><h2>Quiet geometry</h2><p>A measured field leaves every word clear.</p></div>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "Checkerboard",
+    "defaults": {
+      "size": 32,
+      "angle": 0,
+      "strength": 0.08
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "size": "Width and height of each square, in pixels.",
+      "angle": "Clockwise tilt of the board, in degrees.",
+      "strength": "Opacity of the inked squares."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "size": "number",
+      "angle": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1422
+  },
+  {
+    "slug": "circuit-traces",
+    "title": "Circuit Traces",
+    "category": "patterns",
+    "description": "Seeded circuit traces follow an orthogonal grid with accent pads and optional via rings.",
+    "tags": [
+      "circuit",
+      "traces",
+      "grid",
+      "pcb",
+      "background"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "pitch": {
+        "type": "number",
+        "min": 8,
+        "max": 48,
+        "step": 1,
+        "label": "Pitch (px)"
+      },
+      "traces": {
+        "type": "number",
+        "min": 4,
+        "max": 60,
+        "step": 1
+      },
+      "vias": {
+        "type": "boolean"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "seed": {
+        "type": "number",
+        "min": -2147483648,
+        "max": 2147483647,
+        "step": 1
+      }
+    },
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "demo": {
+      "children": "<h2>Signal paths</h2><p>Orthogonal routes leave open ground for the message.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "CircuitTraces",
+    "defaults": {
+      "pitch": 16,
+      "traces": 28,
+      "vias": true,
+      "strength": 0.4,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Integer seed that determines every route and mark.",
+      "pitch": "Distance between grid points, from 8 to 48 pixels.",
+      "traces": "Number of routed traces, from 4 to 60.",
+      "vias": "Adds open accent rings at a seeded selection of bends.",
+      "strength": "Opacity of the complete pattern, from 0 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "pitch": "number",
+      "traces": "number",
+      "vias": "boolean",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 2278
+  },
+  {
+    "slug": "diagonal-stripes",
+    "title": "Diagonal Stripes",
+    "category": "patterns",
+    "description": "Fine diagonal rules form a quiet drafting ground behind page content.",
+    "tags": [
+      "stripes",
+      "diagonal",
+      "rules",
+      "background",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "angle": {
+        "type": "number",
+        "min": -75,
+        "max": 75,
+        "step": 1,
+        "label": "Angle (deg)"
+      },
+      "spacing": {
+        "type": "number",
+        "min": 6,
+        "max": 64,
+        "step": 1,
+        "label": "Spacing (px)"
+      },
+      "thickness": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Thickness (px)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "demo": {
+      "children": "<h2>Field Notes</h2><p>Measured diagonals establish a quiet ground.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "DiagonalStripes",
+    "defaults": {
+      "angle": 45,
+      "spacing": 14,
+      "thickness": 1,
+      "strength": 0.35
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "angle": "Angle of the rules, in degrees.",
+      "spacing": "Distance from the start of one rule to the next, in pixels.",
+      "thickness": "Thickness of each rule, in pixels. Never drawn thicker than half the spacing.",
+      "strength": "Opacity of the stripe layer, from quiet to full strength."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "angle": "number",
+      "spacing": "number",
+      "thickness": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1261
+  },
+  {
+    "slug": "dot-lattice",
+    "title": "Dot Lattice",
+    "category": "patterns",
+    "description": "A calm field of small ink points on a regular or staggered lattice behind page content.",
+    "tags": [
+      "dots",
+      "lattice",
+      "grid",
+      "background",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "palette": [
+      "fg"
+    ],
+    "demo": {
+      "children": "<h2>Measured points</h2><p>A quiet lattice keeps the page in order.</p>"
+    },
+    "controls": {
+      "spacing": {
+        "type": "number",
+        "min": 8,
+        "max": 64,
+        "step": 1,
+        "label": "Spacing (px)"
+      },
+      "angle": {
+        "type": "number",
+        "min": 0,
+        "max": 90,
+        "step": 1,
+        "label": "Angle (deg)"
+      },
+      "offset": {
+        "type": "boolean"
+      },
+      "dot": {
+        "type": "number",
+        "min": 0.5,
+        "max": 2,
+        "step": 0.1,
+        "label": "Dot radius (px)"
+      },
+      "fade": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "DotLattice",
+    "defaults": {
+      "spacing": 24,
+      "angle": 0,
+      "offset": false,
+      "dot": 1,
+      "fade": 0,
+      "strength": 0.35
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "spacing": "Distance between neighboring lattice points, in pixels.",
+      "angle": "Rotation of the lattice, in degrees.",
+      "offset": "Staggers alternate rows by half of the spacing.",
+      "dot": "Radius of each lattice point, in pixels.",
+      "fade": "Portion of the field that fades toward the edges.",
+      "strength": "Opacity of the lattice layer."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "spacing": "number",
+      "angle": "number",
+      "offset": "boolean",
+      "dot": "number",
+      "fade": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1564
+  },
+  {
+    "slug": "grid-paper",
+    "title": "Grid Paper",
+    "category": "patterns",
+    "description": "A quiet square mesh with darker major rules aligned to regular minor intervals.",
+    "tags": [
+      "grid",
+      "graph paper",
+      "engineering",
+      "background",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "spacing": {
+        "type": "number",
+        "min": 4,
+        "max": 32,
+        "step": 1,
+        "label": "Spacing (px)"
+      },
+      "major": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 1,
+        "label": "Major interval"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "credits": [],
+    "original": true,
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "demo": {
+      "children": "<div><h2>Working Grid</h2><p>Measured notes for careful construction.</p></div>"
+    },
+    "exportName": "GridPaper",
+    "defaults": {
+      "spacing": 8,
+      "major": 5,
+      "strength": 0.4
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "spacing": "Width and height of each minor cell, in pixels.",
+      "major": "Number of minor cells between major rules.",
+      "strength": "Opacity of the complete grid, from quiet to fully visible."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "spacing": "number",
+      "major": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1314
+  },
+  {
+    "slug": "hatch-lines",
+    "title": "Hatch Lines",
+    "category": "patterns",
+    "description": "Fine crossing ink lines make a restrained engraved background for text.",
+    "tags": [
+      "hatch",
+      "crosshatch",
+      "engraving",
+      "lines",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "angle": {
+        "type": "number",
+        "min": 0,
+        "max": 90,
+        "step": 1,
+        "label": "Angle (deg)"
+      },
+      "density": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Line families"
+      },
+      "spacing": {
+        "type": "number",
+        "min": 4,
+        "max": 32,
+        "step": 1,
+        "label": "Spacing (px)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "demo": {
+      "children": "<div><h2>Field notes</h2><p>Fine lines give the page a measured, engraved texture.</p></div>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "HatchLines",
+    "defaults": {
+      "angle": 45,
+      "density": 2,
+      "spacing": 10,
+      "strength": 0.3
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "angle": "Angle of the first line family, from 0 to 90 degrees.",
+      "density": "Number of crossing line families, from one to three.",
+      "spacing": "Distance between parallel lines in each family, in pixels.",
+      "strength": "Opacity of the complete hatch layer, from quiet to strong."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "angle": "number",
+      "density": "number",
+      "spacing": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1317
+  },
+  {
+    "slug": "hex-lattice",
+    "title": "Hex Lattice",
+    "category": "patterns",
+    "description": "A regular hexagonal hairline lattice that sits quietly behind page content.",
+    "tags": [
+      "hexagon",
+      "honeycomb",
+      "lattice",
+      "geometric",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "size": {
+        "type": "number",
+        "min": 12,
+        "max": 64,
+        "step": 1,
+        "label": "Radius (px)"
+      },
+      "orientation": {
+        "type": "select",
+        "options": [
+          "flat",
+          "pointy"
+        ]
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "demo": {
+      "children": "<h2>Measured structure</h2><p>A quiet lattice gives the page a precise underlying rhythm.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "HexLattice",
+    "defaults": {
+      "size": 20,
+      "orientation": "flat",
+      "strength": 0.35
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "size": "Radius of each hexagon from its center to a vertex, in pixels.",
+      "orientation": "Places either a flat edge or a vertex at the top of each hexagon.",
+      "strength": "Opacity of the lattice from invisible to full ink."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "size": "number",
+      "orientation": "\"flat\" | \"pointy\"",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1576
+  },
+  {
+    "slug": "isometric-grid",
+    "title": "Isometric Grid",
+    "category": "patterns",
+    "description": "A quiet isometric lattice of equilateral triangles that can resolve into staggered drafting points.",
+    "tags": [
+      "isometric",
+      "grid",
+      "lattice",
+      "dots",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "spacing": {
+        "type": "number",
+        "min": 8,
+        "max": 64,
+        "step": 1,
+        "label": "Spacing (px)"
+      },
+      "dots": {
+        "type": "boolean"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "demo": {
+      "children": "<h2>ISOMETRIC FIELD</h2><p>Three measured axes form one quiet structure.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "IsometricGrid",
+    "defaults": {
+      "spacing": 24,
+      "dots": false,
+      "strength": 0.35
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "spacing": "Perpendicular distance between parallel rules, in pixels.",
+      "dots": "Draws points at the lattice vertices instead of rules.",
+      "strength": "Opacity of the pattern layer, from quiet to full ink."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "spacing": "number",
+      "dots": "boolean",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1337
+  },
+  {
+    "slug": "moire-rings",
+    "title": "Moire Rings",
+    "category": "patterns",
+    "description": "Two concentric hairline ring fields drift out of step to form a quiet radial moire behind content.",
+    "tags": [
+      "moire",
+      "rings",
+      "radial",
+      "interference",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "spacing": {
+        "type": "number",
+        "min": 4,
+        "max": 16,
+        "step": 1,
+        "label": "Spacing (px)"
+      },
+      "step": {
+        "type": "number",
+        "min": 1.02,
+        "max": 1.25,
+        "step": 0.01
+      },
+      "thickness": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 0.25,
+        "label": "Thickness (px)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "demo": {
+      "children": "<h2>Interference field</h2><p>Two ring systems resolve into a slow radial beat.</p>"
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "The Theory of the Moiré Phenomenon, Volume I: Periodic Layers",
+        "author": "Isaac Amidror",
+        "url": "https://doi.org/10.1007/978-1-84882-181-1",
+        "license": "Book"
+      }
+    ],
+    "exportName": "MoireRings",
+    "defaults": {
+      "spacing": 7,
+      "step": 1.07,
+      "thickness": 1,
+      "strength": 0.3
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "spacing": "Distance from one ring to the next in the first field, in pixels.",
+      "step": "Period of the second field as a fraction of the first field.",
+      "thickness": "Width of each ring, in pixels.",
+      "strength": "Opacity of the complete ring field."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "spacing": "number",
+      "step": "number",
+      "thickness": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1323
+  },
+  {
+    "slug": "truchet-tiles",
+    "title": "Truchet Tiles",
+    "category": "patterns",
+    "description": "A seeded field of connected quarter circle paths or diagonal zigzags drawn behind content.",
+    "tags": [
+      "truchet",
+      "tiling",
+      "maze",
+      "svg",
+      "seeded"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "cell": {
+        "type": "number",
+        "min": 16,
+        "max": 64,
+        "step": 1,
+        "label": "Cell (px)"
+      },
+      "tile": {
+        "type": "select",
+        "options": [
+          "arcs",
+          "diagonals"
+        ]
+      },
+      "thickness": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 0.1,
+        "label": "Thickness (px)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "seed": {
+        "type": "number",
+        "min": -2147483648,
+        "max": 2147483647,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "The Tiling Patterns of Sebastien Truchet and the Topology of Structural Hierarchy",
+        "author": "Cyril Stanley Smith and Pauline Boucher",
+        "url": "https://doi.org/10.2307/1578535",
+        "license": "Paper"
+      }
+    ],
+    "demo": {
+      "children": "<h2>Wandering paths</h2><p>Seeded arcs connect across a field of square tiles.</p>"
+    },
+    "exportName": "TruchetTiles",
+    "defaults": {
+      "cell": 32,
+      "tile": "arcs",
+      "thickness": 1.5,
+      "strength": 0.4,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Integer seed used to choose every tile orientation.",
+      "cell": "Width and height of each square tile, in pixels.",
+      "tile": "Geometry drawn in each tile.",
+      "thickness": "Width of each stroke, in pixels.",
+      "strength": "Opacity of the strokes."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "cell": "number",
+      "tile": "\"arcs\" | \"diagonals\"",
+      "thickness": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1675
+  },
+  {
     "slug": "bento-grid",
     "title": "Bento Grid",
     "category": "sections",
@@ -7787,7 +8814,7 @@
       "minTile": "number"
     },
     "events": {},
-    "gzipBytes": 1500
+    "gzipBytes": 1502
   },
   {
     "slug": "bento-hero",
@@ -8207,7 +9234,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 2963
+    "gzipBytes": 2964
   },
   {
     "slug": "clay-hero",
@@ -8539,7 +9566,7 @@
       "intensity": "number"
     },
     "events": {},
-    "gzipBytes": 6316
+    "gzipBytes": 6317
   },
   {
     "slug": "editorial-hero",
@@ -8675,7 +9702,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 6203
+    "gzipBytes": 6204
   },
   {
     "slug": "ethereal-hero",
@@ -8870,7 +9897,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5961
+    "gzipBytes": 5962
   },
   {
     "slug": "glass-hero",
@@ -9371,7 +10398,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 7684
+    "gzipBytes": 7685
   },
   {
     "slug": "luxury-hero",
@@ -9479,7 +10506,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 1931
+    "gzipBytes": 1932
   },
   {
     "slug": "maximalist-hero",
@@ -9644,7 +10671,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 9342
+    "gzipBytes": 9343
   },
   {
     "slug": "minimal-hero",
@@ -9735,7 +10762,7 @@
       "align": "\"start\" | \"center\""
     },
     "events": {},
-    "gzipBytes": 1953
+    "gzipBytes": 1954
   },
   {
     "slug": "neumorphic-hero",
@@ -9869,7 +10896,7 @@
       "depth": "number"
     },
     "events": {},
-    "gzipBytes": 5880
+    "gzipBytes": 5881
   },
   {
     "slug": "pixel-art-hero",
@@ -10014,7 +11041,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 7740
+    "gzipBytes": 7742
   },
   {
     "slug": "pricing",
@@ -10177,7 +11204,7 @@
         "detail": "\"monthly\" | \"yearly\""
       }
     },
-    "gzipBytes": 3188
+    "gzipBytes": 3189
   },
   {
     "slug": "scrapbook-hero",
@@ -10346,7 +11373,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 8470
+    "gzipBytes": 8469
   },
   {
     "slug": "sketch-hero",
@@ -10944,7 +11971,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 2810
+    "gzipBytes": 2811
   },
   {
     "slug": "testimonials",
@@ -11109,7 +12136,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5001
+    "gzipBytes": 5002
   },
   {
     "slug": "victorian-hero",
@@ -11240,7 +12267,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 4540
+    "gzipBytes": 4542
   },
   {
     "slug": "wabi-sabi-hero",
@@ -11539,7 +12566,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 7195
+    "gzipBytes": 7197
   },
   {
     "slug": "aurora",
@@ -12077,7 +13104,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5165
+    "gzipBytes": 5166
   },
   {
     "slug": "liquid-metal",
@@ -12386,7 +13413,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4763
+    "gzipBytes": 4764
   },
   {
     "slug": "pixel-plasma",
@@ -12670,7 +13697,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5180
+    "gzipBytes": 5181
   },
   {
     "slug": "scan-beam",
@@ -12811,7 +13838,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5086
+    "gzipBytes": 5087
   },
   {
     "slug": "shader-flow",
@@ -12965,7 +13992,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5307
+    "gzipBytes": 5308
   },
   {
     "slug": "tunnel-grid",
@@ -13107,7 +14134,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4772
+    "gzipBytes": 4773
   },
   {
     "slug": "voronoi-drift",
@@ -13240,7 +14267,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4952
+    "gzipBytes": 4953
   },
   {
     "slug": "ascii-frame",
@@ -13346,7 +14373,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 3469
+    "gzipBytes": 3472
   },
   {
     "slug": "ascii-loader",
@@ -13444,7 +14471,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2169
+    "gzipBytes": 2171
   },
   {
     "slug": "ascii-sparkline",
@@ -13556,7 +14583,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 1514
+    "gzipBytes": 1515
   },
   {
     "slug": "ascii-terminal",
@@ -13651,7 +14678,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 2631
+    "gzipBytes": 2632
   },
   {
     "slug": "block-banner",
@@ -13734,7 +14761,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 3481
+    "gzipBytes": 3482
   },
   {
     "slug": "block-image",
@@ -13995,7 +15022,476 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 4635
+    "gzipBytes": 4634
+  },
+  {
+    "slug": "accordion",
+    "title": "Accordion",
+    "category": "ui",
+    "description": "A keyboard navigable set of labeled panels that can open one at a time or independently.",
+    "tags": [
+      "accordion",
+      "disclosure",
+      "panels",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "wraps": "panels",
+    "controlled": {
+      "open": "openChange"
+    },
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "demo": {
+      "children": "<section><p>Picagram draws text mode effects, patterns, controls, charts, and page sections.</p></section><section><p>A framework free core holds the behavior, while a thin wrapper connects it to React.</p></section><section><p>One source generates matching React and HTML files for the catalog.</p></section>"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "openChange",
+          "detail": [
+            "runtime"
+          ]
+        },
+        {
+          "step": "expectAttr",
+          "selector": "h3:nth-of-type(2) button",
+          "name": "aria-expanded",
+          "value": "true"
+        }
+      ]
+    ],
+    "controls": {
+      "items": {
+        "type": "json"
+      },
+      "defaultOpen": {
+        "type": "json"
+      },
+      "multiple": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Accordion pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/accordion/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Accordion",
+    "defaults": {
+      "items": [
+        {
+          "id": "what",
+          "label": "What Picagram draws",
+          "disabled": false
+        },
+        {
+          "id": "runtime",
+          "label": "Where the runtime lives",
+          "disabled": false
+        },
+        {
+          "id": "catalog",
+          "label": "How the catalog builds",
+          "disabled": false
+        }
+      ],
+      "open": null,
+      "defaultOpen": [
+        "what"
+      ],
+      "multiple": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "items": "The headers for the host's direct child panels, in matching order.",
+      "open": "The open panel ids, or null to let the accordion manage them.",
+      "defaultOpen": "The initially open panel ids when open is null.",
+      "multiple": "Allows more than one panel to remain open."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "items": "readonly AccordionItem[]",
+      "open": "readonly string[] | null",
+      "defaultOpen": "readonly string[]",
+      "multiple": "boolean"
+    },
+    "events": {
+      "openChange": {
+        "doc": "The open panel ids requested by pointer or keyboard input.",
+        "detail": "readonly string[]"
+      }
+    },
+    "gzipBytes": 2765
+  },
+  {
+    "slug": "alert",
+    "title": "Alert",
+    "category": "ui",
+    "description": "A live status callout with a tag, title, and message in four restrained tones.",
+    "tags": [
+      "alert",
+      "status",
+      "live region",
+      "notification",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "tag": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "message": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "neutral",
+          "muted",
+          "accent",
+          "filled"
+        ]
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Alert pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Alert",
+    "defaults": {
+      "tag": "note",
+      "title": "Build finished",
+      "message": "All 24 components verified on both grounds.",
+      "tone": "accent"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "tag": "The short label shown above the alert text.",
+      "title": "The alert heading announced to assistive technology.",
+      "message": "The supporting status message announced to assistive technology.",
+      "tone": "The treatment of the tag or the complete callout."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "tag": "string",
+      "title": "string",
+      "message": "string",
+      "tone": "\"neutral\" | \"muted\" | \"accent\" | \"filled\""
+    },
+    "events": {},
+    "gzipBytes": 1648
+  },
+  {
+    "slug": "avatar",
+    "title": "Avatar",
+    "category": "ui",
+    "description": "A square hairline avatar that shows a photo when available and centered mono initials while it loads or fails.",
+    "tags": [
+      "avatar",
+      "profile",
+      "image",
+      "initials",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas",
+      "dither"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "inline",
+    "palette": [
+      "fg"
+    ],
+    "demo": {
+      "props": {
+        "size": 128
+      }
+    },
+    "controls": {
+      "src": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "size": {
+        "type": "number",
+        "min": 24,
+        "max": 128,
+        "step": 1
+      },
+      "dither": {
+        "type": "boolean"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Avatar",
+    "defaults": {
+      "src": "",
+      "name": "Ada Lin",
+      "size": 48,
+      "dither": true
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "The image URL or data URI. An empty value keeps the initials visible.",
+      "name": "The accessible name and the source of the first two initials.",
+      "size": "The square frame size in pixels, from 24 through 128.",
+      "dither": "Screens a loaded image into foreground ink and the exposed ground."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "name": "string",
+      "size": "number",
+      "dither": "boolean"
+    },
+    "events": {},
+    "gzipBytes": 3365
+  },
+  {
+    "slug": "badge",
+    "title": "Badge",
+    "category": "ui",
+    "description": "A compact status label with a solid, outline, or bracket frame.",
+    "tags": [
+      "badge",
+      "status",
+      "label",
+      "version",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "span",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "controls": {
+      "text": {
+        "type": "string"
+      },
+      "variant": {
+        "type": "select",
+        "options": [
+          "outline",
+          "solid",
+          "brackets"
+        ]
+      },
+      "tone": {
+        "type": "select",
+        "options": [
+          "fg",
+          "muted",
+          "accent"
+        ]
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Badge",
+    "defaults": {
+      "text": "STABLE",
+      "variant": "outline",
+      "tone": "accent"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "text": "The status text shown by the badge.",
+      "variant": "The frame drawn around the status text.",
+      "tone": "The palette tone used for the frame or fill."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "text": "string",
+      "variant": "\"outline\" | \"solid\" | \"brackets\"",
+      "tone": "\"fg\" | \"muted\" | \"accent\""
+    },
+    "events": {},
+    "gzipBytes": 1247
+  },
+  {
+    "slug": "breadcrumb",
+    "title": "Breadcrumb",
+    "category": "ui",
+    "description": "A hierarchy trail with native links, a distinct current page, and middle items that expand on demand.",
+    "tags": [
+      "breadcrumb",
+      "navigation",
+      "hierarchy",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-pica-ellipsis]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-pica-ellipsis]",
+          "name": "aria-expanded",
+          "value": "true"
+        }
+      ]
+    ],
+    "controls": {
+      "items": {
+        "type": "json"
+      },
+      "maxItems": {
+        "type": "number",
+        "min": 3,
+        "max": 8,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Breadcrumb pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Breadcrumb",
+    "defaults": {
+      "items": [
+        {
+          "label": "Home",
+          "href": "#"
+        },
+        {
+          "label": "Catalog",
+          "href": "#"
+        },
+        {
+          "label": "Wave 6",
+          "href": "#"
+        },
+        {
+          "label": "UI",
+          "href": "#"
+        },
+        {
+          "label": "Breadcrumb",
+          "href": "#"
+        }
+      ],
+      "maxItems": 4,
+      "label": "Breadcrumb"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "items": "The hierarchy to show, with the final item treated as the current page.",
+      "maxItems": "The greatest number of entries shown before the middle is collapsed behind an ellipsis.",
+      "label": "The accessible name of the navigation landmark. An empty label hides the component."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "items": "readonly BreadcrumbItem[]",
+      "maxItems": "number",
+      "label": "string"
+    },
+    "events": {},
+    "gzipBytes": 1818
   },
   {
     "slug": "button",
@@ -14134,7 +15630,900 @@
         "detail": "null"
       }
     },
-    "gzipBytes": 2452
+    "gzipBytes": 2453
+  },
+  {
+    "slug": "calendar",
+    "title": "Calendar",
+    "category": "ui",
+    "description": "A month grid with roving keyboard focus and controlled or uncontrolled single date selection.",
+    "tags": [
+      "calendar",
+      "date",
+      "picker",
+      "form",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "demo": {
+      "props": {
+        "defaultValue": "2026-09-15"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "button[data-calendar-date][tabindex=\"0\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange"
+        }
+      ]
+    ],
+    "controls": {
+      "defaultValue": {
+        "type": "string"
+      },
+      "weekStartsOn": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Date picker dialog example",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Calendar",
+    "defaults": {
+      "value": null,
+      "defaultValue": "",
+      "month": null,
+      "weekStartsOn": 1,
+      "label": "Calendar"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "The selected ISO date, or null to let the calendar manage its selection.",
+      "defaultValue": "The initially selected ISO date when value is null.",
+      "month": "The initially visible month as YYYY-MM, or null to derive it from the selection or today.",
+      "weekStartsOn": "The first day of each week, where 0 is Sunday and 1 is Monday.",
+      "label": "The accessible name of the calendar group."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "string | null",
+      "defaultValue": "string",
+      "month": "string | null",
+      "weekStartsOn": "0 | 1",
+      "label": "string"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "A day was chosen, as an ISO date string.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 3507
+  },
+  {
+    "slug": "card",
+    "title": "Card",
+    "category": "ui",
+    "description": "A hairline frame gives page content an optional heading and a compact row of linked actions.",
+    "tags": [
+      "card",
+      "content",
+      "links",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "wraps": "content",
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "demo": {
+      "children": "<p>Keep the details close, then choose what should happen next.</p>"
+    },
+    "interactions": [
+      [
+        {
+          "step": "hover",
+          "selector": "[data-pica-card-action=\"1\"]"
+        }
+      ]
+    ],
+    "controls": {
+      "kicker": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "actions": {
+        "type": "json"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Card",
+    "defaults": {
+      "kicker": "WAVE 6",
+      "title": "Ship the draft",
+      "actions": [
+        {
+          "label": "Review",
+          "href": "#"
+        },
+        {
+          "label": "History",
+          "href": "#"
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "kicker": "A short label above the title. An empty value removes the label.",
+      "title": "The card heading. An empty value removes the heading.",
+      "actions": "Footer links. An empty list removes the footer."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "kicker": "string",
+      "title": "string",
+      "actions": "readonly CardAction[]"
+    },
+    "events": {},
+    "gzipBytes": 1887
+  },
+  {
+    "slug": "checkbox",
+    "title": "Checkbox",
+    "category": "ui",
+    "description": "A hairline checkbox with checked, unchecked, and mixed states for pointer and keyboard input.",
+    "tags": [
+      "checkbox",
+      "form",
+      "selection",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "controlled": {
+      "checked": "checkedChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": ""
+        },
+        {
+          "step": "press",
+          "key": "Space"
+        },
+        {
+          "step": "expectEvent",
+          "name": "checkedChange",
+          "detail": "unchecked"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "",
+          "name": "aria-checked",
+          "value": "false"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "[data-pica-box]"
+        }
+      ]
+    ],
+    "controls": {
+      "defaultChecked": {
+        "type": "boolean"
+      },
+      "label": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Checkbox pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Checkbox",
+    "defaults": {
+      "checked": null,
+      "defaultChecked": true,
+      "label": "Include archived builds",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "checked": "The controlled state. Null uses the state read from defaultChecked at mount.",
+      "defaultChecked": "The initial state when checked is null.",
+      "label": "Text shown beside the box and used as its accessible name.",
+      "disabled": "Blocks input and dims the checkbox."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "checked": "boolean | \"mixed\" | null",
+      "defaultChecked": "boolean | \"mixed\"",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "checkedChange": {
+        "doc": "The state requested by pointer or keyboard input.",
+        "detail": "\"checked\" | \"unchecked\" | \"mixed\""
+      }
+    },
+    "gzipBytes": 1789
+  },
+  {
+    "slug": "collapsible",
+    "title": "Collapsible",
+    "category": "ui",
+    "description": "A native disclosure trigger that instantly shows or hides one block of page content.",
+    "tags": [
+      "collapsible",
+      "disclosure",
+      "details",
+      "toggle",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "wraps": "panels",
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "controlled": {
+      "open": "openChange"
+    },
+    "demo": {
+      "props": {
+        "defaultOpen": true
+      },
+      "children": "<p>Supporting information stays close at hand without crowding the page.</p>"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "openChange",
+          "detail": false
+        },
+        {
+          "step": "expectAttr",
+          "selector": "button",
+          "name": "aria-expanded",
+          "value": "false"
+        }
+      ]
+    ],
+    "controls": {
+      "defaultOpen": {
+        "type": "boolean"
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Disclosure pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Collapsible",
+    "defaults": {
+      "open": null,
+      "defaultOpen": false,
+      "label": "Details"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "open": "The shown state when controlled, or null to let the component manage it.",
+      "defaultOpen": "The initial shown state when open is null. It is read only when the component mounts.",
+      "label": "The text beside the disclosure glyph."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "open": "boolean | null",
+      "defaultOpen": "boolean",
+      "label": "string"
+    },
+    "events": {
+      "openChange": {
+        "doc": "The trigger requested this new shown state.",
+        "detail": "boolean"
+      }
+    },
+    "gzipBytes": 1764
+  },
+  {
+    "slug": "combobox",
+    "title": "Combobox",
+    "category": "ui",
+    "description": "An editable field filters a listbox while preserving typed text during suggestion navigation.",
+    "tags": [
+      "combobox",
+      "listbox",
+      "search",
+      "form",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "press",
+          "key": "d"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "dither-field"
+        }
+      ]
+    ],
+    "controls": {
+      "options": {
+        "type": "json"
+      },
+      "defaultValue": {
+        "type": "string"
+      },
+      "placeholder": {
+        "type": "string"
+      },
+      "emptyText": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Combobox pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/",
+        "license": "W3C document"
+      },
+      {
+        "relation": "technique",
+        "title": "Popover API",
+        "author": "MDN",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+        "license": "CC-BY-SA documentation"
+      }
+    ],
+    "exportName": "Combobox",
+    "defaults": {
+      "options": [
+        {
+          "value": "dither-field",
+          "label": "Dither Field"
+        },
+        {
+          "value": "mesh-gradient",
+          "label": "Mesh Gradient"
+        },
+        {
+          "value": "scanlines",
+          "label": "Scanlines"
+        },
+        {
+          "value": "bar-chart",
+          "label": "Bar Chart"
+        },
+        {
+          "value": "tabs",
+          "label": "Tabs"
+        },
+        {
+          "value": "select",
+          "label": "Select"
+        }
+      ],
+      "value": null,
+      "defaultValue": "",
+      "placeholder": "Search components",
+      "emptyText": "No matches",
+      "label": "Component",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "options": "The suggestions available to filter and choose.",
+      "value": "The chosen value, or null to let the component manage its own value.",
+      "defaultValue": "The initial chosen value when value is null.",
+      "placeholder": "The hint shown while the editable field is empty.",
+      "emptyText": "The message shown when no option matches the typed text.",
+      "label": "The visible and accessible name of the editable field.",
+      "disabled": "Blocks editing and selection, and dims the control."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "options": "readonly ComboboxOption[]",
+      "value": "string | null",
+      "defaultValue": "string",
+      "placeholder": "string",
+      "emptyText": "string",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "An option was chosen through the keyboard or pointer.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 3470
+  },
+  {
+    "slug": "command-palette",
+    "title": "Command Palette",
+    "category": "ui",
+    "description": "A modal command palette that filters a flat command list and supports keyboard and pointer selection.",
+    "tags": [
+      "command",
+      "palette",
+      "combobox",
+      "dialog",
+      "filter",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "dialog",
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "open": "openChange"
+    },
+    "demo": {
+      "props": {
+        "defaultOpen": true
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "command",
+          "detail": "new-component"
+        }
+      ],
+      [
+        {
+          "step": "press",
+          "key": "Escape"
+        },
+        {
+          "step": "expectEvent",
+          "name": "openChange",
+          "detail": false
+        }
+      ]
+    ],
+    "controls": {
+      "commands": {
+        "type": "json"
+      },
+      "defaultOpen": {
+        "type": "boolean"
+      },
+      "placeholder": {
+        "type": "string"
+      },
+      "emptyText": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "width": {
+        "type": "number",
+        "min": 20,
+        "max": 48,
+        "step": 1
+      },
+      "dismissOnBackdrop": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Combobox pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/",
+        "license": "W3C document"
+      },
+      {
+        "relation": "technique",
+        "title": "Dialog (modal) pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "CommandPalette",
+    "defaults": {
+      "commands": [
+        {
+          "id": "new-component",
+          "label": "New component",
+          "hint": "⌘N",
+          "keywords": "create"
+        },
+        {
+          "id": "open-catalog",
+          "label": "Open catalog",
+          "hint": "⌘O",
+          "keywords": "browse"
+        },
+        {
+          "id": "toggle-theme",
+          "label": "Toggle theme",
+          "hint": "⌘T",
+          "keywords": "dark light"
+        },
+        {
+          "id": "copy-url",
+          "label": "Copy page URL",
+          "keywords": "link"
+        },
+        {
+          "id": "restart",
+          "label": "Restart dev server",
+          "hint": "⌘R",
+          "keywords": "serve"
+        }
+      ],
+      "open": null,
+      "defaultOpen": false,
+      "placeholder": "Type a command",
+      "emptyText": "No matching commands",
+      "label": "Command palette",
+      "width": 30,
+      "dismissOnBackdrop": true
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "commands": "The flat list of commands available to filter and run.",
+      "open": "Whether the palette is open. Null leaves its state uncontrolled.",
+      "defaultOpen": "Whether an uncontrolled palette starts open.",
+      "placeholder": "The prompt shown in the empty input.",
+      "emptyText": "The message shown when the filter has no matches.",
+      "label": "The accessible name for the dialog, input, and command list.",
+      "width": "The palette width in rem.",
+      "dismissOnBackdrop": "Whether a pointer press outside the dialog closes it."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "commands": "readonly CommandPaletteCommand[]",
+      "open": "boolean | null",
+      "defaultOpen": "boolean",
+      "placeholder": "string",
+      "emptyText": "string",
+      "label": "string",
+      "width": "number",
+      "dismissOnBackdrop": "boolean"
+    },
+    "events": {
+      "command": {
+        "doc": "A command was run by keyboard or pointer.",
+        "detail": "string"
+      },
+      "openChange": {
+        "doc": "The user requested a change to the open state.",
+        "detail": "boolean"
+      }
+    },
+    "gzipBytes": 3259
+  },
+  {
+    "slug": "context-menu",
+    "title": "Context Menu",
+    "category": "ui",
+    "description": "A framed content region with an accessible action menu at the pointer or keyboard anchor.",
+    "tags": [
+      "context menu",
+      "menu",
+      "popover",
+      "actions",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "wraps": "content",
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "demo": {
+      "children": "<p>Review this draft and choose an action when you are ready.</p>"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "press",
+          "key": "Shift+F10"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "select",
+          "detail": "rename"
+        }
+      ]
+    ],
+    "controls": {
+      "items": {
+        "type": "json"
+      },
+      "hint": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Menu and menubar pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/",
+        "license": "W3C document"
+      },
+      {
+        "relation": "technique",
+        "title": "Popover API",
+        "author": "MDN",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+        "license": "CC-BY-SA documentation"
+      }
+    ],
+    "exportName": "ContextMenu",
+    "defaults": {
+      "items": [
+        {
+          "id": "duplicate",
+          "label": "Duplicate",
+          "shortcut": "⌘D",
+          "disabled": false
+        },
+        {
+          "id": "rename",
+          "label": "Rename",
+          "shortcut": "",
+          "disabled": false
+        },
+        {
+          "id": "archive",
+          "label": "Archive",
+          "shortcut": "⌘E",
+          "disabled": false
+        },
+        {
+          "id": "delete",
+          "label": "Delete",
+          "shortcut": "⌫",
+          "disabled": false
+        }
+      ],
+      "hint": "Right-click for actions",
+      "label": "Context actions"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "items": "The actions shown in the menu.",
+      "hint": "The instruction below the content. An empty string hides it.",
+      "label": "The accessible name of the menu."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "items": "readonly ContextMenuItem[]",
+      "hint": "string",
+      "label": "string"
+    },
+    "events": {
+      "select": {
+        "doc": "A menu item was chosen, carrying its id.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 3157
   },
   {
     "slug": "dialog",
@@ -14245,7 +16634,1181 @@
         "detail": "boolean"
       }
     },
-    "gzipBytes": 2017
+    "gzipBytes": 2019
+  },
+  {
+    "slug": "drawer",
+    "title": "Drawer",
+    "category": "ui",
+    "description": "A native modal panel pinned to the left, right, or bottom edge of the viewport.",
+    "tags": [
+      "drawer",
+      "dialog",
+      "modal",
+      "panel",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "dialog",
+    "wraps": "content",
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controlled": {
+      "open": "openChange"
+    },
+    "demo": {
+      "props": {
+        "defaultOpen": true
+      },
+      "children": "<p>Review the spacing, palette, and export settings before publishing.</p>"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Escape"
+        },
+        {
+          "step": "expectEvent",
+          "name": "openChange",
+          "detail": false
+        }
+      ]
+    ],
+    "controls": {
+      "defaultOpen": {
+        "type": "boolean"
+      },
+      "edge": {
+        "type": "select",
+        "options": [
+          "left",
+          "right",
+          "bottom"
+        ]
+      },
+      "size": {
+        "type": "number",
+        "min": 16,
+        "max": 40,
+        "step": 1
+      },
+      "title": {
+        "type": "string"
+      },
+      "closable": {
+        "type": "boolean"
+      },
+      "dismissOnBackdrop": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Dialog (modal) pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Drawer",
+    "defaults": {
+      "open": null,
+      "defaultOpen": false,
+      "edge": "right",
+      "size": 22,
+      "title": "Build settings",
+      "closable": true,
+      "dismissOnBackdrop": true
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "open": "The controlled open state. Null lets the drawer manage its own state.",
+      "defaultOpen": "The initial open state when open is null. It is read only when the drawer mounts.",
+      "edge": "The viewport edge that holds the drawer.",
+      "size": "The panel width or height in rem, depending on its edge.",
+      "title": "The visible heading that labels the dialog.",
+      "closable": "Shows a button that requests the drawer to close.",
+      "dismissOnBackdrop": "Lets a click outside the panel request the drawer to close."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "open": "boolean | null",
+      "defaultOpen": "boolean",
+      "edge": "\"left\" | \"right\" | \"bottom\"",
+      "size": "number",
+      "title": "string",
+      "closable": "boolean",
+      "dismissOnBackdrop": "boolean"
+    },
+    "events": {
+      "openChange": {
+        "doc": "The user requested a change to the open state.",
+        "detail": "boolean"
+      }
+    },
+    "gzipBytes": 2090
+  },
+  {
+    "slug": "empty-state",
+    "title": "Empty State",
+    "category": "ui",
+    "description": "A measured empty state with a box drawn mark, supporting copy, and one quiet action.",
+    "tags": [
+      "empty",
+      "placeholder",
+      "message",
+      "action",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "mark": {
+        "type": "select",
+        "options": [
+          "tray",
+          "magnifier",
+          "orbit"
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "message": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "action": {
+        "type": "json"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "EmptyState",
+    "defaults": {
+      "mark": "tray",
+      "title": "Nothing here yet",
+      "message": "Components you add will show up in this list.",
+      "action": {
+        "label": "Add a component",
+        "href": "#"
+      }
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "mark": "The box drawn figure shown above the title.",
+      "title": "The primary empty state message.",
+      "message": "The supporting text shown below the title.",
+      "action": "The optional link shown below the message."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "mark": "\"tray\" | \"magnifier\" | \"orbit\"",
+      "title": "string",
+      "message": "string",
+      "action": "EmptyStateAction | null"
+    },
+    "events": {},
+    "gzipBytes": 1962
+  },
+  {
+    "slug": "field",
+    "title": "Field",
+    "category": "ui",
+    "description": "A label, description, and validation message around a page-owned form control.",
+    "tags": [
+      "field",
+      "form",
+      "label",
+      "description",
+      "validation",
+      "error"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "demo": {
+      "props": {
+        "error": "Branch main is protected."
+      },
+      "children": "<style>.pica-field-demo-control{appearance:none;-webkit-appearance:none;box-sizing:border-box;width:100%;min-width:0;margin:0;padding:.55em .7em;border:1px solid currentColor;border-radius:0;background:transparent;color:inherit;font-family:\"JetBrains Mono\",\"IBM Plex Mono\",ui-monospace,\"SFMono-Regular\",Menlo,monospace;font-size:1em;line-height:1.25}.pica-field-demo-control:focus-visible{outline:2px solid var(--pica-accent,currentColor);outline-offset:2px}</style><input class=\"pica-field-demo-control\" id=\"pica-field-control\" type=\"text\" value=\"feature/field-repair\" aria-labelledby=\"pica-field-control-label\" aria-describedby=\"pica-field-control-description pica-field-control-error\" aria-invalid=\"true\">"
+    },
+    "controls": {
+      "label": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "error": {
+        "type": "string"
+      },
+      "required": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Labeling Controls",
+        "author": "W3C Web Accessibility Initiative",
+        "url": "https://www.w3.org/WAI/tutorials/forms/labels/",
+        "license": "W3C document"
+      },
+      {
+        "relation": "technique",
+        "title": "Validating Input",
+        "author": "W3C Web Accessibility Initiative",
+        "url": "https://www.w3.org/WAI/tutorials/forms/validation/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Field",
+    "defaults": {
+      "label": "Branch name",
+      "description": "Use a short name that describes the change.",
+      "error": "",
+      "required": false,
+      "controlId": "pica-field-control"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "The visible name for the page-owned control.",
+      "description": "Supporting text shown below the control.",
+      "error": "Validation text shown after the description.",
+      "required": "Marks the label as required.",
+      "controlId": "The id of the page-owned control this field labels."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "description": "string",
+      "error": "string",
+      "required": "boolean",
+      "controlId": "string"
+    },
+    "events": {},
+    "gzipBytes": 1392
+  },
+  {
+    "slug": "input",
+    "title": "Input",
+    "category": "ui",
+    "description": "A native text field with controlled and uncontrolled values, accessible labeling, and keyboard event reporting.",
+    "tags": [
+      "input",
+      "text field",
+      "form",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "controlled": {
+      "value": "valueChange"
+    },
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "press",
+          "key": "m"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "m"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "enter",
+          "detail": "m"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "input"
+        }
+      ]
+    ],
+    "controls": {
+      "defaultValue": {
+        "type": "string"
+      },
+      "type": {
+        "type": "select",
+        "options": [
+          "text",
+          "email",
+          "password",
+          "search",
+          "url"
+        ]
+      },
+      "placeholder": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "The text input element",
+        "author": "MDN",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text",
+        "license": "CC-BY-SA documentation"
+      }
+    ],
+    "exportName": "Input",
+    "defaults": {
+      "value": null,
+      "defaultValue": "",
+      "type": "text",
+      "placeholder": "Search components",
+      "label": "Search",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "The displayed value. Null leaves the field uncontrolled.",
+      "defaultValue": "The initial value when the field is uncontrolled. It is read only when mounted.",
+      "type": "The kind of text the field accepts.",
+      "placeholder": "The hint shown while the field is empty.",
+      "label": "The accessible name announced for the field.",
+      "disabled": "Blocks editing and dims the field."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "string | null",
+      "defaultValue": "string",
+      "type": "\"text\" | \"email\" | \"password\" | \"search\" | \"url\"",
+      "placeholder": "string",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The complete field value after a user edit.",
+        "detail": "string"
+      },
+      "enter": {
+        "doc": "The complete field value when the user presses Enter.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 1466
+  },
+  {
+    "slug": "input-otp",
+    "title": "Input OTP",
+    "category": "ui",
+    "description": "A one-time code field with roving focus, paste distribution, and controlled or uncontrolled state.",
+    "tags": [
+      "input",
+      "otp",
+      "code",
+      "form",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "demo": {
+      "props": {
+        "defaultValue": "37"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "press",
+          "key": "4"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "374"
+        },
+        {
+          "step": "press",
+          "key": "2"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "3742"
+        }
+      ]
+    ],
+    "controls": {
+      "length": {
+        "type": "number",
+        "min": 4,
+        "max": 8,
+        "step": 1
+      },
+      "defaultValue": {
+        "type": "string"
+      },
+      "pattern": {
+        "type": "select",
+        "options": [
+          "numeric",
+          "alphanumeric"
+        ]
+      },
+      "label": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "InputOtp",
+    "defaults": {
+      "length": 6,
+      "value": null,
+      "defaultValue": "",
+      "pattern": "numeric",
+      "label": "One-time code",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "length": "The number of character cells, from four through eight.",
+      "value": "The controlled code, or null to let the component keep its own value.",
+      "defaultValue": "The code used once when the component mounts uncontrolled.",
+      "pattern": "The characters accepted from typing and paste.",
+      "label": "The accessible name of the group.",
+      "disabled": "Blocks input and dims the group."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "length": "number",
+      "value": "string | null",
+      "defaultValue": "string",
+      "pattern": "\"numeric\" | \"alphanumeric\"",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The complete code after a cell changes.",
+        "detail": "string"
+      },
+      "complete": {
+        "doc": "The code after every cell becomes filled.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 2474
+  },
+  {
+    "slug": "kbd",
+    "title": "Kbd",
+    "category": "ui",
+    "description": "A keyboard chord drawn as physical key caps or bracketed monospace text.",
+    "tags": [
+      "keyboard",
+      "shortcut",
+      "keys",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "span",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "controls": {
+      "keys": {
+        "type": "json"
+      },
+      "variant": {
+        "type": "select",
+        "options": [
+          "caps",
+          "brackets"
+        ]
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Kbd",
+    "defaults": {
+      "keys": [
+        "⌘",
+        "K"
+      ],
+      "variant": "caps"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "keys": "The key names in the chord, shown in order.",
+      "variant": "The look: \"caps\" draws physical key caps and \"brackets\" sets one bracketed monospace run."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "keys": "readonly string[]",
+      "variant": "\"caps\" | \"brackets\""
+    },
+    "events": {},
+    "gzipBytes": 1271
+  },
+  {
+    "slug": "menu",
+    "title": "Menu",
+    "category": "ui",
+    "description": "A native trigger opens a keyboard navigable popover menu and reports the chosen action.",
+    "tags": [
+      "menu",
+      "popover",
+      "actions",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "button",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "select",
+          "detail": "rename"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "",
+          "name": "aria-expanded",
+          "value": "false"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": ""
+        }
+      ]
+    ],
+    "controls": {
+      "items": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Menu and menubar pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/",
+        "license": "W3C document"
+      },
+      {
+        "relation": "technique",
+        "title": "Popover API",
+        "author": "MDN",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+        "license": "CC-BY-SA documentation"
+      }
+    ],
+    "exportName": "Menu",
+    "defaults": {
+      "items": [
+        {
+          "id": "duplicate",
+          "label": "Duplicate",
+          "shortcut": "⌘D",
+          "disabled": false
+        },
+        {
+          "id": "rename",
+          "label": "Rename",
+          "shortcut": "",
+          "disabled": false
+        },
+        {
+          "id": "archive",
+          "label": "Archive",
+          "shortcut": "⌘E",
+          "disabled": false
+        },
+        {
+          "id": "delete",
+          "label": "Delete",
+          "shortcut": "⌫",
+          "disabled": false
+        }
+      ],
+      "label": "Actions",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "items": "The actions shown when the trigger opens the menu.",
+      "label": "The trigger button text.",
+      "disabled": "Blocks input and dims the trigger."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "items": "readonly MenuItem[]",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "select": {
+        "doc": "An enabled item was activated.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 3156
+  },
+  {
+    "slug": "meter",
+    "title": "Meter",
+    "category": "ui",
+    "description": "A labelled scalar readout drawn as block cells with an optional threshold marker.",
+    "tags": [
+      "meter",
+      "value",
+      "range",
+      "status",
+      "ui"
+    ],
+    "facets": [
+      "static"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "controls": {
+      "value": {
+        "type": "number",
+        "min": -100000,
+        "max": 100000,
+        "step": 1
+      },
+      "min": {
+        "type": "number",
+        "min": -100000,
+        "max": 100000,
+        "step": 1
+      },
+      "max": {
+        "type": "number",
+        "min": -100000,
+        "max": 100000,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      },
+      "marker": {
+        "type": "number",
+        "min": -100000,
+        "max": 100000,
+        "step": 1
+      },
+      "valueText": {
+        "type": "string"
+      },
+      "width": {
+        "type": "number",
+        "min": 8,
+        "max": 60,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Meter pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/meter/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Meter",
+    "defaults": {
+      "value": 64,
+      "min": 0,
+      "max": 100,
+      "label": "Storage used",
+      "marker": 80,
+      "valueText": "",
+      "width": 24
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "The current value shown by the meter.",
+      "min": "The lower bound of the range.",
+      "max": "The upper bound of the range.",
+      "label": "The visible and accessible name of the meter. An empty label hides it.",
+      "marker": "A threshold marked on the track, or null for no marker.",
+      "valueText": "Text read by assistive technology instead of the raw value.",
+      "width": "The width of the track in monospace cells."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "number",
+      "min": "number",
+      "max": "number",
+      "label": "string",
+      "marker": "number | null",
+      "valueText": "string",
+      "width": "number"
+    },
+    "events": {},
+    "gzipBytes": 1861
+  },
+  {
+    "slug": "number-field",
+    "title": "Number Field",
+    "category": "ui",
+    "description": "A labelled numeric input with typed entry, keyboard stepping, and square decrement and increment controls.",
+    "tags": [
+      "number",
+      "spinbutton",
+      "input",
+      "form",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "input"
+        },
+        {
+          "step": "press",
+          "key": "ArrowUp"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 9
+        },
+        {
+          "step": "expectAttr",
+          "selector": "input",
+          "name": "aria-valuenow",
+          "value": "9"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-pica-increment]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 9
+        },
+        {
+          "step": "expectAttr",
+          "selector": "input",
+          "name": "aria-valuenow",
+          "value": "9"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "[data-pica-increment]"
+        }
+      ]
+    ],
+    "controls": {
+      "defaultValue": {
+        "type": "number",
+        "min": -1024,
+        "max": 1024,
+        "step": 1
+      },
+      "min": {
+        "type": "number",
+        "min": -1024,
+        "max": 1024,
+        "step": 1
+      },
+      "max": {
+        "type": "number",
+        "min": -1024,
+        "max": 1024,
+        "step": 1
+      },
+      "step": {
+        "type": "number",
+        "min": 0.01,
+        "max": 64,
+        "step": 0.01
+      },
+      "largeStep": {
+        "type": "number",
+        "min": 0.01,
+        "max": 256,
+        "step": 0.01
+      },
+      "label": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Spinbutton pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "NumberField",
+    "defaults": {
+      "value": null,
+      "defaultValue": 8,
+      "min": 0,
+      "max": 64,
+      "step": 1,
+      "largeStep": 10,
+      "label": "Columns",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "The current number. Null lets the field manage its own value.",
+      "defaultValue": "The number shown initially when value is null.",
+      "min": "The smallest value the field accepts.",
+      "max": "The largest value the field accepts.",
+      "step": "The amount added or subtracted by the arrow keys and stepper buttons.",
+      "largeStep": "The amount added or subtracted by Page Up and Page Down.",
+      "label": "The visible name of the field.",
+      "disabled": "Blocks input and dims the field."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "number | null",
+      "defaultValue": "number",
+      "min": "number",
+      "max": "number",
+      "step": "number",
+      "largeStep": "number",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The user committed a different number.",
+        "detail": "number"
+      }
+    },
+    "gzipBytes": 2455
+  },
+  {
+    "slug": "pagination",
+    "title": "Pagination",
+    "category": "ui",
+    "description": "A compact navigation list that keeps nearby pages visible and folds distant ranges into quiet ellipses.",
+    "tags": [
+      "pagination",
+      "navigation",
+      "pages",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "controlled": {
+      "page": "pageChange"
+    },
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-pica-link][aria-label=\"Next page\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "pageChange",
+          "detail": 5
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-pica-page=\"5\"]",
+          "name": "aria-current",
+          "value": "page"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "a[data-pica-page=\"3\"]"
+        },
+        {
+          "step": "click",
+          "selector": "a[data-pica-page=\"3\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "pageChange",
+          "detail": 3
+        }
+      ]
+    ],
+    "controls": {
+      "defaultPage": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1
+      },
+      "pages": {
+        "type": "number",
+        "min": 2,
+        "max": 99,
+        "step": 1
+      },
+      "siblings": {
+        "type": "number",
+        "min": 0,
+        "max": 3,
+        "step": 1
+      },
+      "base": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Pagination",
+    "defaults": {
+      "page": null,
+      "defaultPage": 4,
+      "pages": 9,
+      "siblings": 1,
+      "base": "",
+      "label": "Pages"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "page": "The current page. Null lets the component manage its own page.",
+      "defaultPage": "The initial page when page is null. It is read once when the component mounts.",
+      "pages": "The total number of pages, from 2 to 99.",
+      "siblings": "The number of pages kept on each side of the current page, from 0 to 3.",
+      "base": "A URL prefix joined to each destination page number. An empty prefix keeps navigation in place.",
+      "label": "The accessible name of the pagination navigation."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "page": "number | null",
+      "defaultPage": "number",
+      "pages": "number",
+      "siblings": "number",
+      "base": "string",
+      "label": "string"
+    },
+    "events": {
+      "pageChange": {
+        "doc": "A page link was activated.",
+        "detail": "number"
+      }
+    },
+    "gzipBytes": 2146
   },
   {
     "slug": "popover-tooltip",
@@ -14386,7 +17949,614 @@
         "detail": "boolean"
       }
     },
-    "gzipBytes": 2236
+    "gzipBytes": 2237
+  },
+  {
+    "slug": "preview-card",
+    "title": "Preview Card",
+    "category": "ui",
+    "description": "A link that reveals a compact reference preview after a short hover or when focused.",
+    "tags": [
+      "preview",
+      "card",
+      "link",
+      "reference",
+      "overlay"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "props": {
+        "defaultOpen": true
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "press",
+          "key": "Escape"
+        },
+        {
+          "step": "expectEvent",
+          "name": "openChange",
+          "detail": false
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "[data-pica=\"trigger\"]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-pica=\"panel\"]",
+          "name": "data-state",
+          "value": "open"
+        }
+      ]
+    ],
+    "controlled": {
+      "open": "openChange"
+    },
+    "controls": {
+      "triggerLabel": {
+        "type": "string"
+      },
+      "href": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "description": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "meta": {
+        "type": "string"
+      },
+      "placement": {
+        "type": "select",
+        "options": [
+          "top",
+          "bottom",
+          "start",
+          "end"
+        ]
+      },
+      "delay": {
+        "type": "number",
+        "min": 0,
+        "max": 1500,
+        "step": 50
+      },
+      "defaultOpen": {
+        "type": "boolean"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "PreviewCard",
+    "defaults": {
+      "triggerLabel": "Component source",
+      "href": "#",
+      "title": "registry/ui/button",
+      "description": "A button in four looks with a braille spinner while it loads.",
+      "meta": "picagram.dev/components/button",
+      "placement": "top",
+      "delay": 300,
+      "open": null,
+      "defaultOpen": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "triggerLabel": "The visible label of the link that opens the preview.",
+      "href": "The destination followed when the trigger is activated.",
+      "title": "The preview heading.",
+      "description": "A short summary of the linked destination.",
+      "meta": "One line of secondary reference information.",
+      "placement": "Which side of the trigger the card opens toward.",
+      "delay": "Milliseconds of unbroken trigger hover required before the card opens.",
+      "open": "Whether the card is open. Null leaves it uncontrolled.",
+      "defaultOpen": "The card's state at mount, read once, when open is null."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "triggerLabel": "string",
+      "href": "string",
+      "title": "string",
+      "description": "string",
+      "meta": "string",
+      "placement": "\"top\" | \"bottom\" | \"start\" | \"end\"",
+      "delay": "number",
+      "open": "boolean | null",
+      "defaultOpen": "boolean"
+    },
+    "events": {
+      "openChange": {
+        "doc": "The card's requested open state.",
+        "detail": "boolean"
+      }
+    },
+    "gzipBytes": 2457
+  },
+  {
+    "slug": "progress",
+    "title": "Progress",
+    "category": "ui",
+    "description": "A labelled determinate progress bar drawn as flat block cells with an exact accessible value.",
+    "tags": [
+      "progress",
+      "status",
+      "completion",
+      "ui"
+    ],
+    "facets": [
+      "static"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "value": {
+        "type": "number",
+        "min": 0,
+        "max": 100,
+        "step": 1
+      },
+      "min": {
+        "type": "number",
+        "min": -100,
+        "max": 100,
+        "step": 1
+      },
+      "max": {
+        "type": "number",
+        "min": 1,
+        "max": 1000,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      },
+      "showValue": {
+        "type": "boolean"
+      },
+      "width": {
+        "type": "number",
+        "min": 8,
+        "max": 80,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "progressbar role",
+        "author": "W3C",
+        "url": "https://www.w3.org/TR/wai-aria-1.2/#progressbar",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Progress",
+    "defaults": {
+      "value": 62,
+      "min": 0,
+      "max": 100,
+      "label": "Upload",
+      "showValue": true,
+      "width": 40
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "The current amount, clamped between min and max.",
+      "min": "The lowest value in the range.",
+      "max": "The highest value in the range.",
+      "label": "The visible and accessible name of the progress bar.",
+      "showValue": "Shows the completed percentage at the end of the label line.",
+      "width": "The number of cells in the track, from 8 to 80."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "number",
+      "min": "number",
+      "max": "number",
+      "label": "string",
+      "showValue": "boolean",
+      "width": "number"
+    },
+    "events": {},
+    "gzipBytes": 1735
+  },
+  {
+    "slug": "radio-group",
+    "title": "Radio Group",
+    "category": "ui",
+    "description": "A single-choice group with square marks, roving focus, and selection that follows focus.",
+    "tags": [
+      "radio",
+      "choice",
+      "form",
+      "control",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "flow",
+    "controlled": {
+      "value": "valueChange"
+    },
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[role=radio][data-pica-value=paper]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "ink"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[role=radio][data-pica-value=ink]",
+          "name": "aria-checked",
+          "value": "true"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[role=radio][data-pica-value=system]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "system"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "[role=radio][data-pica-value=system]"
+        }
+      ]
+    ],
+    "controls": {
+      "options": {
+        "type": "json"
+      },
+      "defaultValue": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Radio group pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "RadioGroup",
+    "defaults": {
+      "options": [
+        {
+          "value": "paper",
+          "label": "Paper on ink"
+        },
+        {
+          "value": "ink",
+          "label": "Ink on paper"
+        },
+        {
+          "value": "system",
+          "label": "System"
+        }
+      ],
+      "value": null,
+      "defaultValue": "paper",
+      "label": "Theme",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "options": "The choices shown in the group.",
+      "value": "The checked value in controlled use, or null for uncontrolled use.",
+      "defaultValue": "The initially checked value in uncontrolled use.",
+      "label": "The accessible name and visible heading for the group.",
+      "disabled": "Blocks input and removes the group from the tab order."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "options": "readonly RadioGroupOption[]",
+      "value": "string | null",
+      "defaultValue": "string",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "A user checked an option with the keyboard or pointer.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 2457
+  },
+  {
+    "slug": "scroll-area",
+    "title": "Scroll Area",
+    "category": "ui",
+    "description": "A native scroll container with quiet edge rules and a position marker that leave content and keyboard behavior untouched.",
+    "tags": [
+      "scroll",
+      "overflow",
+      "container",
+      "ui"
+    ],
+    "facets": [
+      "static"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "wraps": "content",
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "demo": {
+      "props": {
+        "height": 36
+      },
+      "children": "<ol data-scroll-rows>\n  <li><span aria-hidden=\"true\">01</span>Overview</li>\n  <li><span aria-hidden=\"true\">02</span>Principles</li>\n  <li><span aria-hidden=\"true\">03</span>Typography</li>\n  <li><span aria-hidden=\"true\">04</span>Spacing</li>\n  <li><span aria-hidden=\"true\">05</span>Color</li>\n  <li><span aria-hidden=\"true\">06</span>Structure</li>\n  <li><span aria-hidden=\"true\">07</span>Navigation</li>\n  <li><span aria-hidden=\"true\">08</span>Controls</li>\n  <li><span aria-hidden=\"true\">09</span>Inputs</li>\n  <li><span aria-hidden=\"true\">10</span>Feedback</li>\n  <li><span aria-hidden=\"true\">11</span>States</li>\n  <li><span aria-hidden=\"true\">12</span>Motion</li>\n  <li><span aria-hidden=\"true\">13</span>Charts</li>\n  <li><span aria-hidden=\"true\">14</span>Patterns</li>\n  <li><span aria-hidden=\"true\">15</span>Shaders</li>\n  <li><span aria-hidden=\"true\">16</span>Sections</li>\n  <li><span aria-hidden=\"true\">17</span>Accessibility</li>\n  <li><span aria-hidden=\"true\">18</span>Performance</li>\n  <li><span aria-hidden=\"true\">19</span>Testing</li>\n  <li><span aria-hidden=\"true\">20</span>Release</li>\n</ol>"
+    },
+    "controls": {
+      "height": {
+        "type": "number",
+        "min": 4,
+        "max": 40,
+        "step": 1
+      },
+      "thumb": {
+        "type": "boolean"
+      },
+      "edges": {
+        "type": "boolean"
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "ScrollArea",
+    "defaults": {
+      "height": 14,
+      "thumb": true,
+      "edges": true,
+      "label": "Content"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "height": "Height of the scrollable region in rem.",
+      "thumb": "Shows a slim position marker at the end edge.",
+      "edges": "Shows hairline rules when content continues beyond an edge.",
+      "label": "Accessible name used while the content overflows."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "height": "number",
+      "thumb": "boolean",
+      "edges": "boolean",
+      "label": "string"
+    },
+    "events": {},
+    "gzipBytes": 1999
+  },
+  {
+    "slug": "segmented-control",
+    "title": "Segmented Control",
+    "category": "ui",
+    "description": "A single-choice radio group drawn as one ruled strip, with selection following keyboard focus.",
+    "tags": [
+      "segmented control",
+      "radio group",
+      "choice",
+      "form",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[role=\"radio\"]:nth-of-type(1)"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "list"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[role=\"radio\"]:nth-of-type(2)",
+          "name": "aria-checked",
+          "value": "true"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[role=\"radio\"]:nth-of-type(3)"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "board"
+        }
+      ]
+    ],
+    "controls": {
+      "options": {
+        "type": "json"
+      },
+      "defaultValue": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Radio group pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "SegmentedControl",
+    "defaults": {
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid",
+          "disabled": false
+        },
+        {
+          "value": "list",
+          "label": "List",
+          "disabled": false
+        },
+        {
+          "value": "board",
+          "label": "Board",
+          "disabled": false
+        }
+      ],
+      "value": null,
+      "defaultValue": "grid",
+      "label": "View",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "options": "The choices shown in the ruled strip, in order.",
+      "value": "The checked value. Null means uncontrolled, so the component tracks its own choice.",
+      "defaultValue": "The value checked at mount, read once, while value is null.",
+      "label": "The radio group's accessible name.",
+      "disabled": "Blocks input and dims every segment."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "options": "readonly SegmentedControlOption[]",
+      "value": "string | null",
+      "defaultValue": "string",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The value of the segment the user checked.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 2020
   },
   {
     "slug": "select",
@@ -14545,6 +18715,596 @@
     "gzipBytes": 3528
   },
   {
+    "slug": "separator",
+    "title": "Separator",
+    "category": "ui",
+    "description": "A quiet horizontal or vertical hairline with an optional label on the horizontal rule.",
+    "tags": [
+      "separator",
+      "divider",
+      "rule",
+      "layout",
+      "ui"
+    ],
+    "facets": [
+      "static"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "stage": "fill",
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "demo": {
+      "props": {
+        "label": "Section"
+      }
+    },
+    "controls": {
+      "orientation": {
+        "type": "select",
+        "options": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "separator role",
+        "author": "W3C",
+        "url": "https://www.w3.org/TR/wai-aria-1.2/#separator",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Separator",
+    "defaults": {
+      "orientation": "horizontal",
+      "label": ""
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "orientation": "The direction of the dividing rule.",
+      "label": "Optional text that breaks a horizontal rule."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "orientation": "\"horizontal\" | \"vertical\"",
+      "label": "string"
+    },
+    "events": {},
+    "gzipBytes": 1300
+  },
+  {
+    "slug": "skeleton",
+    "title": "Skeleton",
+    "category": "ui",
+    "description": "Ghost blocks breathe between two quiet shade glyphs while content is loading.",
+    "tags": [
+      "skeleton",
+      "loading",
+      "placeholder",
+      "shimmer",
+      "ui"
+    ],
+    "facets": [
+      "animated",
+      "dither"
+    ],
+    "wave": 6,
+    "animated": true,
+    "decorative": false,
+    "host": "div",
+    "stage": "flow",
+    "palette": [
+      "muted"
+    ],
+    "controls": {
+      "avatar": {
+        "type": "boolean"
+      },
+      "heading": {
+        "type": "boolean"
+      },
+      "lines": {
+        "type": "number",
+        "min": 0,
+        "max": 8,
+        "step": 1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0.25,
+        "max": 2,
+        "step": 0.05
+      },
+      "label": {
+        "type": "string"
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Skeleton",
+    "defaults": {
+      "avatar": true,
+      "heading": true,
+      "lines": 3,
+      "speed": 0.5,
+      "label": "Loading",
+      "fps": 8,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "avatar": "Draws a square placeholder before the text bands.",
+      "heading": "Draws a wider heading band above the text lines.",
+      "lines": "Number of text lines, from 0 to 8. The final line runs short.",
+      "speed": "Pace of the grain breathing, from 0.25 to 2.",
+      "label": "Accessible name for the loading state. An empty label hides the placeholder from assistive technology.",
+      "fps": "Frames per second ceiling for the animation."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "avatar": "boolean",
+      "heading": "boolean",
+      "lines": "number",
+      "speed": "number",
+      "label": "string",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4108
+  },
+  {
+    "slug": "slider",
+    "title": "Slider",
+    "category": "ui",
+    "description": "A labelled slider with stepped keyboard and pointer input in horizontal and vertical orientations.",
+    "tags": [
+      "slider",
+      "range",
+      "value",
+      "form",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"thumb\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 31
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"thumb\"]",
+          "name": "aria-valuenow",
+          "value": "31"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=\"track\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "[data-part=\"thumb\"]"
+        }
+      ]
+    ],
+    "controls": {
+      "defaultValue": {
+        "type": "number",
+        "min": 0,
+        "max": 100,
+        "step": 1
+      },
+      "min": {
+        "type": "number",
+        "min": -1000,
+        "max": 1000,
+        "step": 1
+      },
+      "max": {
+        "type": "number",
+        "min": -1000,
+        "max": 1000,
+        "step": 1
+      },
+      "step": {
+        "type": "number",
+        "min": 0.1,
+        "max": 100,
+        "step": 0.1
+      },
+      "largeStep": {
+        "type": "number",
+        "min": 1,
+        "max": 100,
+        "step": 1
+      },
+      "orientation": {
+        "type": "select",
+        "options": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      "label": {
+        "type": "string"
+      },
+      "showValue": {
+        "type": "boolean"
+      },
+      "height": {
+        "type": "number",
+        "min": 6,
+        "max": 30,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Slider pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/slider/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Slider",
+    "defaults": {
+      "value": null,
+      "defaultValue": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "largeStep": 10,
+      "orientation": "horizontal",
+      "label": "Volume",
+      "showValue": true,
+      "height": 10
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "The current value, or null to let the slider manage its own value.",
+      "defaultValue": "The initial value when value is null.",
+      "min": "The lowest selectable value.",
+      "max": "The highest selectable value.",
+      "step": "The interval between selectable values.",
+      "largeStep": "The amount added or subtracted by Page Up and Page Down.",
+      "orientation": "The direction in which the track runs.",
+      "label": "The visible and accessible name of the slider.",
+      "showValue": "Shows the current value beside the label.",
+      "height": "The track height in rem when orientation is vertical."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "number | null",
+      "defaultValue": "number",
+      "min": "number",
+      "max": "number",
+      "step": "number",
+      "largeStep": "number",
+      "orientation": "\"horizontal\" | \"vertical\"",
+      "label": "string",
+      "showValue": "boolean",
+      "height": "number"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The user chose a value with the keyboard or pointer.",
+        "detail": "number"
+      }
+    },
+    "gzipBytes": 2527
+  },
+  {
+    "slug": "spinner",
+    "title": "Spinner",
+    "category": "ui",
+    "description": "An inline braille cell run that travels clockwise while work of unknown duration is under way.",
+    "tags": [
+      "spinner",
+      "loading",
+      "busy",
+      "status",
+      "ui"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 6,
+    "animated": true,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "controls": {
+      "size": {
+        "type": "number",
+        "min": 3,
+        "max": 9,
+        "step": 1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25
+      },
+      "label": {
+        "type": "string"
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Spinner",
+    "defaults": {
+      "size": 4,
+      "speed": 1,
+      "label": "Loading",
+      "fps": 15,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "size": "Cells along each side of the indicator.",
+      "speed": "Revolutions per two seconds.",
+      "label": "The accessible name. An empty label hides the indicator from assistive technology.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "size": "number",
+      "speed": "number",
+      "label": "string",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 2259
+  },
+  {
+    "slug": "table",
+    "title": "Table",
+    "category": "ui",
+    "description": "A semantic data table with tabular figures, quiet row rules, and optional three-state sorting.",
+    "tags": [
+      "table",
+      "data",
+      "sort",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "th[data-column=\"size\"] button"
+        },
+        {
+          "step": "expectEvent",
+          "name": "sortChange",
+          "detail": {
+            "key": "size",
+            "direction": "asc"
+          }
+        },
+        {
+          "step": "expectAttr",
+          "selector": "th[data-column=\"size\"]",
+          "name": "aria-sort",
+          "value": "ascending"
+        }
+      ]
+    ],
+    "controls": {
+      "columns": {
+        "type": "json"
+      },
+      "rows": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "sortable": {
+        "type": "boolean"
+      },
+      "defaultSort": {
+        "type": "json"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Table",
+    "defaults": {
+      "columns": [
+        {
+          "key": "name",
+          "label": "Name"
+        },
+        {
+          "key": "family",
+          "label": "Family"
+        },
+        {
+          "key": "size",
+          "label": "Size KB",
+          "align": "right"
+        },
+        {
+          "key": "checks",
+          "label": "Checks",
+          "align": "right"
+        }
+      ],
+      "rows": [
+        {
+          "name": "Quiet Hero",
+          "family": "Section",
+          "size": 11.6,
+          "checks": 24
+        },
+        {
+          "name": "Orbit Plot",
+          "family": "Data",
+          "size": 6.4,
+          "checks": 22
+        },
+        {
+          "name": "Glyph Atlas",
+          "family": "ASCII",
+          "size": 5.8,
+          "checks": 18
+        },
+        {
+          "name": "Signal Button",
+          "family": "UI",
+          "size": 4.2,
+          "checks": 16
+        },
+        {
+          "name": "Grid Field",
+          "family": "Pattern",
+          "size": 3.7,
+          "checks": 12
+        }
+      ],
+      "label": "Components",
+      "sortable": true,
+      "defaultSort": {
+        "key": "size",
+        "direction": "desc"
+      }
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "columns": "The keys, labels, and alignment that define the columns.",
+      "rows": "The records shown in the table body.",
+      "label": "The caption that names the table.",
+      "sortable": "Lets each column heading cycle the table ordering.",
+      "defaultSort": "The ordering read when the table mounts, or null to preserve row order."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "columns": "readonly TableColumn[]",
+      "rows": "readonly TableRow[]",
+      "label": "string",
+      "sortable": "boolean",
+      "defaultSort": "TableSort | null"
+    },
+    "events": {
+      "sortChange": {
+        "doc": "A heading changed the table ordering.",
+        "detail": "{ key: string; direction: \"asc\" | \"desc\" | null }"
+      }
+    },
+    "gzipBytes": 2414
+  },
+  {
     "slug": "tabs",
     "title": "Tabs",
     "category": "ui",
@@ -14660,6 +19420,759 @@
         "detail": "string"
       }
     },
-    "gzipBytes": 2272
+    "gzipBytes": 2273
+  },
+  {
+    "slug": "textarea",
+    "title": "Textarea",
+    "category": "ui",
+    "description": "A labelled text field that grows with its content and reports every input.",
+    "tags": [
+      "textarea",
+      "form",
+      "input",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-pica-field]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "press",
+          "key": "x"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "Shipped the palette work today.\nTwo lines in already.x"
+        }
+      ]
+    ],
+    "controls": {
+      "defaultValue": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "label": {
+        "type": "string"
+      },
+      "placeholder": {
+        "type": "string"
+      },
+      "maxRows": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "max": {
+        "type": "number",
+        "min": 0,
+        "max": 1000,
+        "step": 1
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "Textarea",
+    "defaults": {
+      "value": null,
+      "defaultValue": "Shipped the palette work today.\nTwo lines in already.",
+      "label": "Notes",
+      "placeholder": "Write it down",
+      "maxRows": 8,
+      "max": 280,
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "The current text, or null to let the field manage its own value.",
+      "defaultValue": "The text read once when an uncontrolled field mounts.",
+      "label": "The visible name above the field.",
+      "placeholder": "The hint shown while the field is empty.",
+      "maxRows": "The greatest number of visible lines before the field scrolls.",
+      "max": "The suggested character limit shown below the field, or zero to hide the count.",
+      "disabled": "Blocks editing and dims the complete control."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "string | null",
+      "defaultValue": "string",
+      "label": "string",
+      "placeholder": "string",
+      "maxRows": "number",
+      "max": "number",
+      "disabled": "boolean"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The field received text input.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 2030
+  },
+  {
+    "slug": "toast",
+    "title": "Toast",
+    "category": "ui",
+    "description": "A polite live stack of dismissible notices with pausable expiry and four corner positions.",
+    "tags": [
+      "toast",
+      "notification",
+      "status",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "props": {
+        "toasts": [
+          {
+            "id": "build-finished",
+            "title": "Build finished",
+            "message": "All checks passed in 42 seconds.",
+            "tone": "accent"
+          },
+          {
+            "id": "warnings",
+            "title": "3 warnings",
+            "message": "Review the remaining type warnings.",
+            "tone": "default"
+          }
+        ],
+        "duration": 0
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-pica-close=\"build-finished\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "dismiss",
+          "detail": "build-finished"
+        }
+      ]
+    ],
+    "controls": {
+      "toasts": {
+        "type": "json"
+      },
+      "duration": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 500
+      },
+      "position": {
+        "type": "select",
+        "options": [
+          "top-start",
+          "top-end",
+          "bottom-start",
+          "bottom-end"
+        ]
+      },
+      "label": {
+        "type": "string"
+      },
+      "max": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Alert pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+        "license": "W3C document"
+      },
+      {
+        "relation": "technique",
+        "title": "Alert and message dialogs pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Toast",
+    "defaults": {
+      "toasts": [],
+      "duration": 6000,
+      "position": "bottom-end",
+      "label": "Notifications",
+      "max": 3
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "toasts": "The notices to show, in stack order.",
+      "duration": "Milliseconds before a notice leaves, or zero to keep it until dismissal.",
+      "position": "The viewport corner that holds the stack.",
+      "label": "The accessible name for the live region.",
+      "max": "The greatest number of notices visible at once."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "toasts": "readonly ToastItem[]",
+      "duration": "number",
+      "position": "\"top-start\" | \"top-end\" | \"bottom-start\" | \"bottom-end\"",
+      "label": "string",
+      "max": "number"
+    },
+    "events": {
+      "dismiss": {
+        "doc": "A notice left after its timer elapsed or its close button was pressed.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 2603
+  },
+  {
+    "slug": "toggle-group",
+    "title": "Toggle Group",
+    "category": "ui",
+    "description": "A toolbar of independent buttons that can each be pressed or released.",
+    "tags": [
+      "toggle",
+      "toolbar",
+      "button",
+      "control",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "button:nth-of-type(1)"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "button:nth-of-type(2)"
+        },
+        {
+          "step": "press",
+          "key": "Space"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            "grid",
+            "snap"
+          ]
+        },
+        {
+          "step": "expectAttr",
+          "selector": "button:nth-of-type(2)",
+          "name": "aria-pressed",
+          "value": "true"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "button:nth-of-type(3)"
+        }
+      ]
+    ],
+    "controls": {
+      "options": {
+        "type": "json"
+      },
+      "defaultValue": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "orientation": {
+        "type": "select",
+        "options": [
+          "horizontal",
+          "vertical"
+        ]
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Toolbar pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "ToggleGroup",
+    "defaults": {
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid",
+          "disabled": false
+        },
+        {
+          "value": "snap",
+          "label": "Snap",
+          "disabled": false
+        },
+        {
+          "value": "guides",
+          "label": "Guides",
+          "disabled": false
+        }
+      ],
+      "value": null,
+      "defaultValue": [
+        "grid"
+      ],
+      "label": "View options",
+      "orientation": "horizontal"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "options": "The buttons shown in the toolbar.",
+      "value": "The pressed values in controlled use, or null for uncontrolled use.",
+      "defaultValue": "The pressed values read once when uncontrolled use begins.",
+      "label": "The accessible name of the toolbar.",
+      "orientation": "The direction of the toolbar and its arrow key navigation."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "options": "readonly ToggleGroupOption[]",
+      "value": "readonly string[] | null",
+      "defaultValue": "readonly string[]",
+      "label": "string",
+      "orientation": "\"horizontal\" | \"vertical\""
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The pressed values after a button is activated, in option order.",
+        "detail": "readonly string[]"
+      }
+    },
+    "gzipBytes": 2321
+  },
+  {
+    "slug": "toolbar",
+    "title": "Toolbar",
+    "category": "ui",
+    "description": "A labeled band of action and toggle controls with roving keyboard focus.",
+    "tags": [
+      "toolbar",
+      "actions",
+      "toggle",
+      "keyboard",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-pica-control=\"run\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-pica-control=\"format\"]"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "press",
+          "detail": "format"
+        },
+        {
+          "step": "hover",
+          "selector": "[data-pica-control=\"format\"]"
+        }
+      ],
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "press",
+          "key": "End"
+        },
+        {
+          "step": "press",
+          "key": "ArrowLeft"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-pica-control=\"docs\"]"
+        },
+        {
+          "step": "press",
+          "key": " "
+        },
+        {
+          "step": "expectEvent",
+          "name": "toggle",
+          "detail": {
+            "id": "docs",
+            "pressed": false
+          }
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-pica-control=\"docs\"]",
+          "name": "aria-pressed",
+          "value": "false"
+        }
+      ]
+    ],
+    "controls": {
+      "items": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "orientation": {
+        "type": "select",
+        "options": [
+          "horizontal",
+          "vertical"
+        ]
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Toolbar pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "Toolbar",
+    "defaults": {
+      "items": [
+        {
+          "id": "run",
+          "label": "Run"
+        },
+        {
+          "id": "format",
+          "label": "Format"
+        },
+        {
+          "id": "lint",
+          "label": "Lint"
+        },
+        {
+          "id": "divide",
+          "label": "Tools",
+          "separator": true
+        },
+        {
+          "id": "docs",
+          "label": "Docs",
+          "toggle": true,
+          "pressed": true
+        },
+        {
+          "id": "settings",
+          "label": "Settings"
+        }
+      ],
+      "label": "Editor",
+      "orientation": "horizontal"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "items": "The controls and dividing rules in display order.",
+      "label": "The accessible name for the toolbar.",
+      "orientation": "The direction of the toolbar and its arrow key navigation."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "items": "readonly ToolbarItem[]",
+      "label": "string",
+      "orientation": "\"horizontal\" | \"vertical\""
+    },
+    "events": {
+      "press": {
+        "doc": "An action control was activated.",
+        "detail": "string"
+      },
+      "toggle": {
+        "doc": "A toggle control changed state.",
+        "detail": "{ id: string; pressed: boolean }"
+      }
+    },
+    "gzipBytes": 2783
+  },
+  {
+    "slug": "tree-view",
+    "title": "Tree View",
+    "category": "ui",
+    "description": "A keyboard navigable hierarchical tree with internal expansion and controllable selection.",
+    "tags": [
+      "tree",
+      "hierarchy",
+      "navigation",
+      "control",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 6,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "flow",
+    "controlled": {
+      "value": "valueChange"
+    },
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-node-id=components]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "dither"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-node-id=dither]",
+          "name": "aria-selected",
+          "value": "true"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "[data-pica-row]"
+        }
+      ]
+    ],
+    "controls": {
+      "nodes": {
+        "type": "json"
+      },
+      "expanded": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "defaultValue": {
+        "type": "string"
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Tree view pattern",
+        "author": "W3C WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/",
+        "license": "W3C document"
+      }
+    ],
+    "exportName": "TreeView",
+    "defaults": {
+      "nodes": [
+        {
+          "id": "components",
+          "label": "Components",
+          "children": [
+            {
+              "id": "ascii",
+              "label": "ASCII"
+            },
+            {
+              "id": "dither",
+              "label": "Dither"
+            },
+            {
+              "id": "shaders",
+              "label": "Shaders"
+            }
+          ]
+        },
+        {
+          "id": "docs",
+          "label": "Docs",
+          "children": [
+            {
+              "id": "guides",
+              "label": "Guides"
+            },
+            {
+              "id": "reference",
+              "label": "Reference"
+            }
+          ]
+        }
+      ],
+      "value": null,
+      "defaultValue": "dither",
+      "expanded": [
+        "components"
+      ],
+      "label": "Contents"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "nodes": "The hierarchical nodes shown in the tree.",
+      "value": "The selected node id, or null to manage selection inside the core.",
+      "defaultValue": "The initially selected node id when value is null.",
+      "expanded": "Parent ids that start open.",
+      "label": "The accessible name of the tree."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "nodes": "readonly TreeNode[]",
+      "value": "string | null",
+      "defaultValue": "string",
+      "expanded": "readonly string[]",
+      "label": "string"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "A node was selected through the keyboard or pointer.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 2985
   }
 ]
