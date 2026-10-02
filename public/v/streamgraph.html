@@ -1,0 +1,947 @@
+<!doctype html>
+<!--
+  Pica · Streamgraph · streamgraph
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Streamgraph · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaStreamgraph = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/data/streamgraph/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/blocks.ts
+  var BRAILLE_BASE = 10240;
+  function brailleDot(row, col) {
+    if (row === 3) return col === 0 ? 64 : 128;
+    return 1 << (col === 0 ? row : row + 3);
+  }
+  function braille(bits) {
+    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
+  }
+
+  // lib/braille-plot.ts
+  function createBraillePlot(cols, rows) {
+    const w = Math.max(1, Math.floor(cols));
+    const h = Math.max(1, Math.floor(rows));
+    const bits = new Uint8Array(w * h);
+    const plot = {
+      width: w * 2,
+      height: h * 4,
+      dot(x, y) {
+        const dx = Math.round(x);
+        const dy = Math.round(y);
+        if (dx < 0 || dy < 0 || dx >= w * 2 || dy >= h * 4) return;
+        const cell = (dy >> 2) * w + (dx >> 1);
+        bits[cell] = (bits[cell] ?? 0) | brailleDot(dy & 3, dx & 1);
+      },
+      line(x0, y0, x1, y1) {
+        let x = Math.round(x0);
+        let y = Math.round(y0);
+        const endX = Math.round(x1);
+        const endY = Math.round(y1);
+        const stepX = x < endX ? 1 : -1;
+        const stepY = y < endY ? 1 : -1;
+        const runX = Math.abs(endX - x);
+        const runY = -Math.abs(endY - y);
+        let error = runX + runY;
+        for (; ; ) {
+          plot.dot(x, y);
+          if (x === endX && y === endY) return;
+          const twice = error * 2;
+          if (twice >= runY) {
+            error += runY;
+            x += stepX;
+          }
+          if (twice <= runX) {
+            error += runX;
+            y += stepY;
+          }
+        }
+      },
+      clear() {
+        bits.fill(0);
+      },
+      paint(grid, col, row) {
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) grid.set(col + x, row + y, braille(bits[y * w + x] ?? 0));
+        }
+      }
+    };
+    return plot;
+  }
+
+  // lib/chart.ts
+  function niceNumber(x, round) {
+    const exponent = Math.floor(Math.log10(x));
+    const fraction = x / 10 ** exponent;
+    const nice = round ? fraction < 1.5 ? 1 : fraction < 3 ? 2 : fraction < 7 ? 5 : 10 : fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10;
+    return nice * 10 ** exponent;
+  }
+  function niceTicks(min, max, count = 5) {
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return [0, 1];
+    let lo = Math.min(min, max);
+    let hi = Math.max(min, max);
+    if (lo === hi) {
+      const pad = Math.abs(lo) * 0.1 || 1;
+      lo -= pad;
+      hi += pad;
+    }
+    const step = niceNumber(niceNumber(hi - lo, false) / Math.max(1, count - 1), true);
+    const start = Math.floor(lo / step) * step;
+    const end = Math.ceil(hi / step) * step;
+    const decimals = Math.max(0, -Math.floor(Math.log10(step)));
+    const ticks = [];
+    for (let i = 0; start + i * step <= end + step / 2; i++) {
+      ticks.push(Number((start + i * step).toFixed(decimals)) || 0);
+    }
+    return ticks;
+  }
+  var numberFormats = /* @__PURE__ */ new Map();
+  function formatNumber(value, options = {}) {
+    const { compact = true, decimals = 1, locale } = options;
+    const short = compact && Math.abs(value) >= 1e4;
+    const key = `${locale ?? ""}|${short ? "c" : "n"}|${decimals}`;
+    let format = numberFormats.get(key);
+    if (!format) {
+      format = new Intl.NumberFormat(locale, short ? { notation: "compact", maximumFractionDigits: decimals } : { maximumFractionDigits: decimals });
+      numberFormats.set(key, format);
+    }
+    return format.format(value);
+  }
+  var coord = (value) => String(Math.round(value * 100) / 100);
+  function linePath(points) {
+    return points.map(([x, y], i) => `${i === 0 ? "M" : "L"}${coord(x)} ${coord(y)}`).join("");
+  }
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, String(value));
+    return el;
+  }
+  function dataTable(caption, head, rows) {
+    const table = document.createElement("table");
+    table.setAttribute("data-pica", "");
+    table.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    table.createCaption().textContent = caption;
+    const headRow = table.createTHead().insertRow();
+    for (const label of head) {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = label;
+      headRow.appendChild(th);
+    }
+    const body = table.createTBody();
+    for (const row of rows) {
+      const tr = body.insertRow();
+      row.forEach((cell, i) => {
+        if (i === 0) {
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = String(cell);
+          tr.appendChild(th);
+        } else {
+          tr.insertCell().textContent = String(cell);
+        }
+      });
+    }
+    return table;
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/chart-marks.ts
+  function svgLabel(text, x, y, options = {}) {
+    const { anchor = "start", middle = false, size = 10, token = "muted", font = GRID_FONT } = options;
+    const node = svg("text", { x, y, "text-anchor": anchor, fill: cssVar(token), "font-family": font, "font-size": size });
+    if (middle) node.setAttribute("dominant-baseline", "middle");
+    node.style.fontVariantNumeric = "tabular-nums";
+    node.textContent = text;
+    return node;
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function measureCell(fontFamily, fontSize, lineHeight) {
+    return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // registry/data/streamgraph/core.ts
+  var defaults = {
+    data: {
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      series: [
+        { name: "Web", values: [8, 9, 11, 14, 17, 20, 22, 20, 16, 12, 10, 9] },
+        { name: "Mobile", values: [4, 5, 6, 8, 11, 15, 19, 23, 21, 16, 11, 7] },
+        { name: "Platform", values: [9, 10, 11, 12, 13, 14, 16, 19, 21, 20, 17, 14] },
+        { name: "Data", values: [3, 4, 6, 9, 13, 18, 17, 14, 10, 7, 5, 4] },
+        { name: "Design", values: [5, 6, 8, 10, 11, 10, 9, 7, 6, 5, 5, 4] },
+        { name: "Infra", values: [12, 13, 12, 11, 9, 8, 7, 6, 6, 5, 5, 6] }
+      ],
+      unit: "builds"
+    },
+    label: "Builds per month by team",
+    order: "inside-out",
+    highlight: -1,
+    look: "svg",
+    ticks: 5,
+    fontFamily: GRID_FONT
+  };
+  var LABEL_SIZE = 10;
+  var GAP = 6;
+  var INSET = 24;
+  var HIGH = 0.55;
+  var LOW = 0.25;
+  var instances = 0;
+  function clamp(value) {
+    return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : 0;
+  }
+  function ordered(layers, mode) {
+    if (mode !== "inside-out") return layers;
+    const peak = (l) => l.v.indexOf(Math.max(...l.v));
+    const sorted = [...layers].sort((a, b) => peak(a) - peak(b) || a.at - b.at);
+    const below = [];
+    const above = [];
+    let down = 0;
+    let up = 0;
+    sorted.forEach((l, n) => {
+      const weight = l.v.reduce((s, x) => s + x, 0);
+      if (n === 0) above.push(l);
+      else if (up <= down) {
+        above.push(l);
+        up += weight;
+      } else {
+        below.push(l);
+        down += weight;
+      }
+    });
+    const first = above.shift();
+    return [...below.reverse(), ...first ? [first] : [], ...above];
+  }
+  function stack(props) {
+    const labels = props.data.labels ?? [];
+    const raw = props.data.series ?? [];
+    const layers = ordered(
+      raw.map((s, at) => ({ at, name: String(s.name ?? ""), v: labels.map((_, i) => clamp((s.values ?? [])[i])) })),
+      props.order
+    );
+    const base = labels.map((_, i) => -layers.reduce((s, l) => s + (l.v[i] ?? 0), 0) / 2);
+    const edge = [base];
+    for (const l of layers) edge.push((edge[edge.length - 1] ?? base).map((e, i) => e + (l.v[i] ?? 0)));
+    return { layers, edge, max: Math.max(0, ...base.map((b) => -2 * b)) };
+  }
+  function accentLayer(props) {
+    const raw = props.data.series ?? [];
+    const sums = raw.map((s) => (s.values ?? []).reduce((a, x) => a + clamp(x), 0));
+    const pick = Math.round(props.highlight);
+    if (pick < 0) return sums.length ? sums.indexOf(Math.max(...sums)) : -1;
+    return pick < raw.length ? pick : -1;
+  }
+  function scaleValue(max, ticks) {
+    const nice = niceTicks(0, max, ticks).filter((t) => t > 0);
+    return [...nice].reverse().find((t) => t <= max / 2) ?? nice[0] ?? 1;
+  }
+  function axisTicks(count, ticks) {
+    return niceTicks(0, Math.max(1, count - 1), ticks * 2 - 1).filter((t) => Number.isInteger(t) && t >= 0 && t < count);
+  }
+  function thin(indices, fits) {
+    let step = 1;
+    while (step < indices.length && !fits(step)) step++;
+    return indices.filter((_, k) => k % step === 0);
+  }
+  function along(edge, t) {
+    const c = Math.min(edge.length - 1, Math.max(0, t));
+    const j = Math.min(edge.length - 2, Math.floor(c));
+    return (edge[j] ?? 0) + ((edge[j + 1] ?? 0) - (edge[j] ?? 0)) * (c - j);
+  }
+  function cellText(value) {
+    return typeof value === "number" && Number.isFinite(value) ? formatNumber(value, { compact: false }) : "";
+  }
+  function spread(ys, gap) {
+    const order = ys.map((y, i) => [y, i]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const out = new Array(ys.length);
+    let prev = Number.NEGATIVE_INFINITY;
+    for (const [y, i] of order) {
+      prev = Math.max(y, prev + gap);
+      out[i] = prev;
+    }
+    return out;
+  }
+  function faint(color) {
+    return `color-mix(in srgb, ${color} 99%, transparent)`;
+  }
+  function inkOn(strong) {
+    return strong ? `oklch(from ${cssVar("fg")} 0 0 0)` : cssVar("fg");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let view = null;
+    let grid = null;
+    let resize = null;
+    let table = null;
+    const id = `pica-stream-${instances++}`;
+    const palette = watchPalette(host, () => draw());
+    function gridOptions() {
+      return { fontFamily: props.fontFamily, fontSize: 13, columns: 0, lineHeight: 1.3, renderer: "canvas", color: "" };
+    }
+    function buildTable(s, mark) {
+      table?.remove();
+      const raw = props.data.series ?? [];
+      const head = s.layers.map((l) => {
+        if (l.at !== mark) return l.name;
+        const lo = Math.min(...l.v);
+        return `${l.name} (highlighted, ${formatNumber(lo, { compact: false })} to ${formatNumber(Math.max(...l.v), { compact: false })})`;
+      });
+      table = dataTable(
+        props.label || "Streamgraph",
+        ["", ...head],
+        (props.data.labels ?? []).map((text, i) => [text, ...s.layers.map((l) => cellText((raw[l.at]?.values ?? [])[i]))])
+      );
+      host.appendChild(table);
+    }
+    function drawSvg(s, mark) {
+      if (!view) return;
+      const v = view;
+      while (v.firstChild) v.firstChild.remove();
+      const w = Math.max(1, host.clientWidth);
+      const h = Math.max(1, host.clientHeight);
+      v.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      const { fg, muted } = palette.colors;
+      const labels = props.data.labels ?? [];
+      const n = labels.length;
+      const has = n > 1 && s.max > 0;
+      const charW = measureCell(props.fontFamily, LABEL_SIZE, 1).w;
+      const count = Math.max(2, Math.min(10, Math.round(props.ticks)));
+      const unit = has ? scaleValue(s.max, count) : 0;
+      const barText = `${formatNumber(unit)}${props.data.unit ? ` ${props.data.unit}` : ""}`;
+      const font = { size: LABEL_SIZE, font: props.fontFamily };
+      const x0 = INSET + (has ? barText.length * charW + GAP + 7 + INSET : 0);
+      const y0 = INSET;
+      const y1 = Math.max(y0 + 1, h - INSET - LABEL_SIZE - GAP);
+      const cy = (y0 + y1) / 2;
+      const k = has ? (y1 - y0) / s.max : 0;
+      const xRight = (outside2) => Math.max(x0 + 1, w - INSET - (outside2 > 0 ? outside2 * charW + GAP : 0));
+      const fitted = (outside2, x12) => {
+        const found = /* @__PURE__ */ new Map();
+        const tAt = (x) => (x - x0) / (x12 - x0) * (n - 1);
+        s.layers.forEach((l, p) => {
+          if (outside2.has(p)) return;
+          const lo = s.edge[p] ?? [];
+          const hi = s.edge[p + 1] ?? [];
+          const half2 = l.name.length * charW / 2;
+          const thick = (i) => (hi[i] ?? 0) - (lo[i] ?? 0);
+          const peak = lo.reduce((best, _, i) => thick(i) > thick(best) ? i : best, 0);
+          const x = Math.min(x12 - half2, Math.max(x0 + half2, x0 + peak / (n - 1) * (x12 - x0)));
+          const y = cy - (along(lo, tAt(x)) + along(hi, tAt(x))) / 2 * k;
+          const xs = [x - half2, x + half2, ...lo.map((_, i) => x0 + i / (n - 1) * (x12 - x0)).filter((a) => a > x - half2 && a < x + half2)];
+          const pad = LABEL_SIZE / 2 + 1;
+          if (xs.every((a) => cy - along(hi, tAt(a)) * k + pad <= y && cy - along(lo, tAt(a)) * k - pad >= y)) found.set(p, { x, y });
+        });
+        return found;
+      };
+      const outside = /* @__PURE__ */ new Set();
+      let inside = /* @__PURE__ */ new Map();
+      let x1 = xRight(0);
+      if (has) {
+        for (let pass = 0; pass < 4; pass++) {
+          inside = fitted(outside, x1);
+          const before = outside.size;
+          s.layers.forEach((l, p) => {
+            if (!inside.has(p)) outside.add(p);
+          });
+          x1 = xRight(Math.max(0, ...[...outside].map((p) => s.layers[p]?.name.length ?? 0)));
+          if (outside.size === before) break;
+        }
+        inside = fitted(outside, x1);
+      }
+      const xAt = (i) => x0 + (n > 1 ? i / (n - 1) * (x1 - x0) : 0);
+      const axisY = y1 + GAP;
+      v.appendChild(svg("line", { x1: x0, y1: axisY, x2: x1, y2: axisY, stroke: muted, "stroke-width": 1 }));
+      labels.forEach((_, i) => v.appendChild(svg("line", { x1: xAt(i), y1: axisY, x2: xAt(i), y2: axisY + 3, stroke: muted, "stroke-width": 1 })));
+      const maxLen = Math.max(1, ...labels.map((l) => l.length));
+      const spacing = n > 1 ? (x1 - x0) / (n - 1) : x1 - x0;
+      const marks = thin(axisTicks(n, count), (every) => {
+        const stepPx = (axisTicks(n, count)[1] ?? 1) * every * spacing;
+        return stepPx >= maxLen * charW + GAP;
+      });
+      for (const i of marks) v.appendChild(svgLabel(labels[i] ?? "", xAt(i), axisY + 3 + GAP + LABEL_SIZE - 3, { anchor: "middle", ...font }));
+      if (!has) {
+        v.appendChild(svgLabel("no data", (x0 + x1) / 2, cy, { anchor: "middle", middle: true, ...font }));
+        return;
+      }
+      const bx = INSET + 2;
+      const half = unit * k / 2;
+      v.appendChild(svg("path", { d: `M${bx - 3} ${cy - half}H${bx + 3}M${bx} ${cy - half}V${cy + half}M${bx - 3} ${cy + half}H${bx + 3}`, fill: "none", stroke: muted, "stroke-width": 1 }));
+      v.appendChild(svgLabel(barText, bx + GAP + 3, cy, { middle: true, ...font }));
+      const point = (e) => e.map((value, i) => [xAt(i), cy - value * k]);
+      const bands = svg("g", { mask: `url(#${id})` });
+      const mask = svg("mask", { id, maskUnits: "userSpaceOnUse", x: 0, y: 0, width: w, height: h });
+      mask.appendChild(svg("rect", { x: 0, y: 0, width: w, height: h, fill: "white" }));
+      const rules = svg("g");
+      s.layers.forEach((l, p) => {
+        const top = point(s.edge[p + 1] ?? []);
+        const bottom = point(s.edge[p] ?? []).reverse();
+        const d = `${linePath(top)}${linePath(bottom).replace("M", "L")}Z`;
+        const accent = l.at === mark;
+        const full = p % 2 === 0;
+        bands.appendChild(svg("path", { d, fill: accent ? palette.colors.accent : fg, "fill-opacity": accent ? 1 : full ? HIGH : LOW }));
+        if (p < s.layers.length - 1) {
+          mask.appendChild(svg("path", { d: linePath(top), fill: "none", stroke: "black", "stroke-width": 1 }));
+          rules.appendChild(svg("path", { d: linePath(top), fill: "none", stroke: cssVar("bg"), "stroke-width": 1 }));
+        }
+      });
+      v.appendChild(mask);
+      v.appendChild(bands);
+      v.appendChild(rules);
+      const ends = s.layers.map((l, p) => cy - ((s.edge[p]?.[n - 1] ?? 0) + (s.edge[p + 1]?.[n - 1] ?? 0)) / 2 * k);
+      const outs = [...outside];
+      const placed = spread(outs.map((p) => ends[p] ?? cy), LABEL_SIZE + 2);
+      s.layers.forEach((l, p) => {
+        const spot = inside.get(p);
+        const accent = l.at === mark;
+        const at = outs.indexOf(p);
+        const node = spot ? svgLabel(l.name, spot.x, spot.y, { anchor: "middle", middle: true, ...font }) : svgLabel(l.name, x1 + GAP, placed[at] ?? 0, { middle: true, token: "fg", ...font });
+        if (spot) node.style.fill = accent ? cssOn("accent") : inkOn(p % 2 === 0);
+        v.appendChild(node);
+      });
+    }
+    function drawGlyph(s, mark) {
+      if (!grid) return;
+      const g = grid;
+      const { fg, accent, muted } = palette.colors;
+      const labels = props.data.labels ?? [];
+      const n = labels.length;
+      const has = n > 1 && s.max > 0;
+      const count = Math.max(2, Math.min(10, Math.round(props.ticks)));
+      const unit = has ? scaleValue(s.max, count) : 0;
+      const barText = `${formatNumber(unit)}${props.data.unit ? ` ${props.data.unit}` : ""}`;
+      g.clear();
+      const gutter = Math.min(Math.max(1, g.cols - 1), has ? barText.length + 6 : 1);
+      const nameCols = has ? Math.max(...s.layers.map((l) => l.name.length)) + 2 : 0;
+      const right = Math.min(nameCols, Math.max(0, Math.floor(g.cols / 3)));
+      const bottom = g.rows > 4 ? 2 : g.rows > 2 ? 1 : 0;
+      const top0 = g.rows > 4 ? 1 : 0;
+      const plotCols = Math.max(1, g.cols - gutter - right);
+      const plotRows = Math.max(1, g.rows - bottom - top0);
+      if (bottom > 0) {
+        const maxLen = Math.max(1, ...labels.map((l) => l.length));
+        const at = (i) => gutter + Math.round(i / Math.max(1, n - 1) * (plotCols - 1));
+        const round = axisTicks(n, count);
+        const marks = thin(round, (every) => (round[1] ?? 1) * every * ((plotCols - 1) / Math.max(1, n - 1)) >= maxLen + 2);
+        for (const i of marks) {
+          const text = labels[i] ?? "";
+          g.write(Math.max(gutter, Math.min(g.cols - text.length, at(i) - Math.floor(text.length / 2))), g.rows - 1, text, muted);
+        }
+      }
+      if (!has) {
+        const note = "no data";
+        g.write(gutter + Math.max(0, Math.floor((plotCols - note.length) / 2)), Math.floor(plotRows / 2), note, muted);
+        g.flush();
+        return;
+      }
+      const plots = s.layers.map(() => createBraillePlot(plotCols, plotRows));
+      const spanX = Math.max(1, plotCols * 2 - 1);
+      const k = plotRows * 4 / s.max;
+      const cy = plotRows * 2;
+      const ends = [];
+      s.layers.forEach((l, p) => {
+        const plot = plots[p];
+        const sparse = l.at !== mark && p % 2 !== 0;
+        const lo = s.edge[p] ?? [];
+        const hi = s.edge[p + 1] ?? [];
+        const at = (e, x) => along(e, x / spanX * (n - 1));
+        for (let x = 0; x < plotCols * 2; x++) {
+          const top = cy - at(hi, x) * k;
+          const bot = cy - at(lo, x) * k;
+          const first = Math.ceil(top - 0.5);
+          const skip = bot - top >= 2 && p < s.layers.length - 1 ? 1 : 0;
+          for (let y = first + skip; y + 0.5 < bot; y++) if (!sparse || (x + y) % 2 === 0) plot.dot(x, y);
+        }
+        ends[p] = cy - (at(hi, spanX) + at(lo, spanX)) / 2 * k;
+      });
+      const bitsOf = (plot) => {
+        const out = [];
+        plot.paint({ set: (x, y, glyph) => void (out[y * plotCols + x] = glyph.charCodeAt(0) - BRAILLE_BASE) }, 0, 0);
+        return out;
+      };
+      const all = plots.map(bitsOf);
+      for (let i = 0; i < plotCols * plotRows; i++) {
+        let bits = 0;
+        let best = 0;
+        let most = -1;
+        let total = 0;
+        let lit = 0;
+        all.forEach((a, p) => {
+          const here = a[i] ?? 0;
+          bits |= here;
+          const weight = here.toString(2).replace(/0/g, "").length;
+          if (weight > most) [best, most] = [p, weight];
+          total += weight;
+          if (s.layers[p]?.at === mark) lit = weight;
+        });
+        const ink = s.layers[best]?.at === mark || lit * 3 >= total ? accent : fg;
+        if (bits) g.set(gutter + i % plotCols, top0 + Math.floor(i / plotCols), braille(bits), i % 2 ? faint(ink) : ink);
+      }
+      const rows = Math.max(2, Math.min(plotRows, Math.round(unit * k / 4)));
+      const barTop = top0 + Math.floor((plotRows - rows) / 2);
+      for (let r = 0; r < rows; r++) g.set(2, barTop + r, r === 0 ? "┬" : r === rows - 1 ? "┴" : "│", muted);
+      g.write(4, barTop + Math.floor(rows / 2), barText, muted);
+      const placed = spread(ends.map((y) => top0 + Math.round(y / 4 - 0.5)), 1);
+      const lift = Math.max(0, Math.max(...placed) - (top0 + plotRows - 1));
+      s.layers.forEach((l, p) => {
+        g.write(gutter + plotCols + 1, Math.max(top0, (placed[p] ?? 0) - lift), l.name.slice(0, Math.max(0, right - 1)), faint(fg));
+      });
+      g.flush();
+    }
+    function draw() {
+      const s = stack(props);
+      const mark = accentLayer(props);
+      labelHost(host, props.label, "figure");
+      buildTable(s, mark);
+      if (props.look === "glyph") {
+        if (view) {
+          resize?.disconnect();
+          resize = null;
+          view.remove();
+          view = null;
+        }
+        if (!grid) grid = createGrid(host, gridOptions(), draw);
+        drawGlyph(s, mark);
+      } else {
+        if (grid) {
+          grid.destroy();
+          grid = null;
+        }
+        if (!view) {
+          view = svg("svg", { "aria-hidden": "true", "data-pica": "" });
+          view.style.cssText = "display:block;width:100%;height:100%;pointer-events:none";
+          host.appendChild(view);
+          resize = typeof ResizeObserver === "function" ? new ResizeObserver(() => draw()) : null;
+          resize?.observe(host);
+        }
+        drawSvg(s, mark);
+      }
+      host.dataset.picaReady = "true";
+    }
+    draw();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        palette.refresh();
+        if (grid && props.fontFamily !== before.fontFamily) {
+          grid.update(gridOptions());
+          return;
+        }
+        draw();
+      },
+      destroy() {
+        resize?.disconnect();
+        resize = null;
+        view?.remove();
+        view = null;
+        grid?.destroy();
+        grid = null;
+        table?.remove();
+        table = null;
+        palette.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaStreamgraph.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

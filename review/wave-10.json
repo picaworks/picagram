@@ -1,0 +1,22 @@
+{
+  "box-plot": {
+    "decision": "keep",
+    "note": "Second pass. Both glyph faults are fixed: outliers are now hollow circle glyphs for Build and Rollback at both widths and grounds, and the Deploy box walls are straight with no jog at the 100 gridline. The glyph median sits about one value unit from the svg one (the Deploy tick reads near 106.5 against the printed 105.5, under 1 percent of the 0 to 150 axis, at most half a glyph row): acceptable, because the exact figure is printed beside it, the order of the five medians is right, and a cell grid cannot place a tick finer than half a row. Remaining cosmetic nit, not blocking: at 390 the median ticks poke one pixel past the box walls on Build, Lint and Rollback and read as an H; trimming the tick to the inside of the walls would clean it.",
+    "at": "2026-10-02T02:33:58.240Z"
+  },
+  "slope-chart": {
+    "decision": "keep",
+    "note": "Second pass. The glyph look now draws at every width: probed in a real browser, the canvas holds painted pixels at 700, 800, 1280 (about 14k to 19k pixels) where it held none before, and the 1280 capture on ink and paper shows both axes, eight dotted lines, the nudged labels, the leader at 18 Svelte, and the mint Vite +19 line. The svg look is unchanged and stays the best of the wave. Glyph caveat, not blocking: at 1280 the braille lines are sparse dashes, so the crossing region between Vue, jQuery and Next.js is hard to follow by line alone; the end labels and values carry the reading. The 2025 end dots sit one column right of the axis, harmless.",
+    "at": "2026-10-02T02:33:58.241Z"
+  },
+  "lollipop-chart": {
+    "decision": "keep",
+    "note": "Second pass. Hierarchy is fixed in svg: the gridlines are now a pale muted tone on paper and a faint one on ink, so the black or white stems and dots read as the data. The accent dot is larger and mint, the figure stays beside it, and at 390 the plot keeps over half the width. Glyph look: rows are spaced evenly down the canvas with a blank row between them, the axis sits under the last row, and the accent bullet is a larger mint glyph at both widths; about 16 percent of the canvas is still empty below the axis, which is row quantization and fine. Residual nit, not blocking: at 390 the 38 figure on the top row still sits across the faint 40 gridline.",
+    "at": "2026-10-02T02:33:58.241Z"
+  },
+  "streamgraph": {
+    "decision": "keep",
+    "note": "Third pass. All three glyph faults are fixed. The scale bar now sits at about x 18, one em inside the frame, with its 40 builds label beside it and a clear gutter before the stack starts near x 118, at 1280 and 390 on both grounds. Bands are told apart by a thin dark dot row along each boundary plus the alternating dense and sparse fills, and the white Web peak at 390 is bounded by mint on both sides because Web rises through the Platform layer, so it is the data's geometry and not interleaving; a few stray mint cells remain at the stack's lower right edge at 390 and the boundaries stair-step by whole cells, which is the cell resolution of the medium and is acceptable. Time labels at 390 are thinned to Jan, May and Sep with real gaps, and at 1280 to Jan, Mar, May, Jul, Sep, Nov. All six names sit in a right gutter beside their bands. Restraint against STYLE.md: svg layers use two quiet tones with ground hairlines, mint marks only the Platform layer in both looks, labels are mono and no legend appears, nothing glows. The mechanical gate cannot see tone or band separation, and the captures show both are now sound. Standing follow-up, not blocking: the 99 percent ink alternation is still a workaround for run drift in lib/glyph-grid.ts paintCanvas, which draws a same-ink run as one string; fix it in the shared runtime in a separate plan-mode change and then delete faint().",
+    "at": "2026-10-02T02:36:52.907Z"
+  }
+}

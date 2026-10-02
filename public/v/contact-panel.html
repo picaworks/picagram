@@ -1,0 +1,363 @@
+<!doctype html>
+<!--
+  Pica · Contact Panel · contact-panel
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Contact Panel · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><h2>Talk to the team.</h2><p>Questions about the sections, or a page you would like drawn this way.</p></div>
+<script>
+"use strict";
+var PicaContactPanel = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/contact-panel/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+
+  // registry/sections/contact-panel/core.ts
+  var defaults = {
+    channels: [
+      { label: "Email", value: "hello@example.com", href: "mailto:hello@example.com" },
+      { label: "Phone", value: "+1 555 0100", href: "tel:+15550100" },
+      { label: "Studio", value: "14 Foundry Lane, Leeds LS1 4AB" },
+      { label: "Hours", value: "Monday to Friday, 09:00 to 17:00" }
+    ],
+    defaultValues: {
+      name: "Ada Reader",
+      email: "reader@example.com",
+      message: "I would like to talk about using these sections in our docs."
+    },
+    label: "Contact form",
+    detailsLabel: "Contact details",
+    buttonLabel: "Send message",
+    confirmation: "Thank you. We will reply within two working days.",
+    note: "Nothing is sent until your page handles the send event.",
+    disabled: false
+  };
+  var ADDRESS_LABEL = /address|studio|office|location|visit|post/i;
+  function safeHref(href) {
+    const value = (href ?? "").trim();
+    return value && !/^(javascript|data|vbscript):/i.test(value) ? value : "";
+  }
+  function rules(selector) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const hairline = `color-mix(in srgb, ${fg} 30%, transparent)`;
+    const tint = `color-mix(in srgb, ${fg} 10%, transparent)`;
+    const control = `${selector} [data-pica-control]`;
+    return [
+      `:where(${selector}){min-height:24rem}`,
+      `${selector}{box-sizing:border-box;display:flex;flex-direction:column;padding:clamp(1.5rem, 5vw, 4rem);color:${fg}}`,
+      `${selector} > [data-pica-panel]{display:flex;flex-wrap:wrap;align-items:flex-start;gap:clamp(1.75rem, 4vw, 3rem);margin-top:clamp(1.75rem, 4vw, 3rem)}`,
+      `${selector} [data-pica-details]{flex:1 1 16rem;min-width:0}`,
+      `${selector} [data-pica-form]{flex:2 1 32rem;min-width:0;margin:0}`,
+      `${selector} [data-pica-list]{margin:0;padding:0;border-bottom:1px solid ${hairline}}`,
+      `${selector} [data-pica-channel]{padding:0.9em 0;border-top:1px solid ${hairline}}`,
+      `${selector} [data-pica-term]{margin:0 0 0.35em;color:${muted};font-family:${GRID_FONT};font-size:0.72em;line-height:1.2;letter-spacing:0.04em;text-transform:uppercase}`,
+      `${selector} [data-pica-value]{margin:0;color:${fg};font:inherit;font-style:normal;line-height:1.4;overflow-wrap:anywhere}`,
+      `${selector} [data-pica-value] address{margin:0;font:inherit;font-style:normal}`,
+      `${selector} [data-pica-value] a{color:${fg};text-decoration:underline;text-underline-offset:0.2em;text-decoration-thickness:1px}`,
+      `${selector} [data-pica-value] a:hover{background:${tint}}`,
+      `${selector} [data-pica-fields]{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 18rem), 1fr));gap:1.25em}`,
+      `${selector} [data-pica-wide]{grid-column:1 / -1}`,
+      `${control}{display:grid;gap:0.45em;min-width:0}`,
+      `${control}[data-disabled]{opacity:0.45}`,
+      `${control} label{color:${fg};font:inherit;font-size:0.9em;line-height:1.25}`,
+      `${control} input,${control} textarea{appearance:none;box-sizing:border-box;display:block;width:100%;min-width:0;margin:0;padding:0.7em 0.8em;border:1px solid ${muted};border-radius:0;background:transparent;color:${fg};font:inherit;line-height:1.5;outline:none}`,
+      `${control} textarea{min-height:7rem;resize:vertical}`,
+      `${control} input:hover,${control} textarea:hover{background:${tint}}`,
+      `${control} input:disabled,${control} textarea:disabled{cursor:not-allowed}`,
+      `${selector} [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em 1.25em;margin-top:1.5em}`,
+      `${selector} [data-pica-submit]{appearance:none;display:inline-flex;align-items:center;margin:0;padding:0.7em 1.4em;border:1px solid ${accent};border-radius:0;background:${accent};color:${cssOn("accent")};font:inherit;line-height:1.2;cursor:pointer}`,
+      `${selector} [data-pica-submit]:hover{background:color-mix(in srgb, ${accent}, ${fg} 10%)}`,
+      `${selector} [data-pica-submit]:disabled{opacity:0.45;cursor:not-allowed}`,
+      `${selector} [data-pica-note]{margin:0;flex:1 1 14rem;color:${muted};font-family:${GRID_FONT};font-size:0.72em;line-height:1.4;letter-spacing:0.04em}`,
+      `${selector} [data-pica-status]{margin:0;color:${fg};font:inherit;line-height:1.4}`,
+      `${selector} [data-pica-status]:not(:empty){margin-top:1.25em}`,
+      `${selector} a:focus-visible,${selector} input:focus-visible,${selector} textarea:focus-visible,${selector} button:focus-visible{outline:2px solid ${accent};outline-offset:2px}`
+    ].join("\n");
+  }
+  function make(tag, ...marks) {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    for (const mark of marks) el.setAttribute(mark, "");
+    return el;
+  }
+  function renderChannels(list, channels) {
+    list.replaceChildren();
+    for (const channel of channels) {
+      const row = make("div", "data-pica-channel");
+      const term = make("dt", "data-pica-term");
+      const value = make("dd", "data-pica-value");
+      term.textContent = channel.label;
+      const href = safeHref(channel.href);
+      if (href) {
+        const link = make("a");
+        link.href = href;
+        link.textContent = channel.value;
+        value.append(link);
+      } else if (ADDRESS_LABEL.test(channel.label)) {
+        const address = make("address");
+        address.textContent = channel.value;
+        value.append(address);
+      } else {
+        value.textContent = channel.value;
+      }
+      row.append(term, value);
+      list.append(row);
+    }
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let sent = false;
+    let destroyed = false;
+    const emit = emitter(host);
+    const sheet = scope(host);
+    const panel = make("div", "data-pica-panel");
+    const details = make("div", "data-pica-details");
+    details.setAttribute("role", "group");
+    const list = make("dl", "data-pica-list");
+    const form = make("form", "data-pica-form");
+    form.noValidate = true;
+    const fields = make("div", "data-pica-fields");
+    const nameInput = make("input");
+    const emailInput = make("input");
+    const messageInput = make("textarea");
+    const submit = make("button", "data-pica-submit");
+    const note = make("p", "data-pica-note");
+    const actions = make("div", "data-pica-actions");
+    const status = make("p", "data-pica-status");
+    nameInput.type = "text";
+    nameInput.name = "name";
+    nameInput.autocomplete = "name";
+    emailInput.type = "email";
+    emailInput.name = "email";
+    emailInput.autocomplete = "email";
+    messageInput.name = "message";
+    messageInput.rows = 5;
+    submit.type = "submit";
+    status.setAttribute("role", "status");
+    status.setAttribute("aria-live", "polite");
+    const seed = { ...defaults.defaultValues, ...props.defaultValues };
+    nameInput.value = seed.name;
+    emailInput.value = seed.email;
+    messageInput.value = seed.message;
+    const inputs = [nameInput, emailInput, messageInput];
+    const wraps = [];
+    for (const [text, input, wide] of [
+      ["Name", nameInput, false],
+      ["Email", emailInput, false],
+      ["Message", messageInput, true]
+    ]) {
+      const wrap = make("div", "data-pica-control");
+      if (wide) wrap.setAttribute("data-pica-wide", "");
+      const label = make("label");
+      const id = nextId("pica-contact");
+      input.id = id;
+      input.required = true;
+      label.htmlFor = id;
+      label.textContent = text;
+      wrap.append(label, input);
+      fields.append(wrap);
+      wraps.push(wrap);
+    }
+    actions.append(submit, note);
+    form.append(fields, actions, status);
+    details.append(list);
+    panel.append(details, form);
+    host.append(panel);
+    const onSubmit = (event) => {
+      event.preventDefault();
+      if (props.disabled) return;
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      sent = true;
+      status.textContent = props.confirmation;
+      emit("send", { name: nameInput.value, email: emailInput.value, message: messageInput.value });
+    };
+    form.addEventListener("submit", onSubmit);
+    function setDisabled() {
+      for (const input of inputs) input.disabled = props.disabled;
+      submit.disabled = props.disabled;
+      for (const wrap of wraps) wrap.toggleAttribute("data-disabled", props.disabled);
+    }
+    renderChannels(list, props.channels);
+    details.setAttribute("aria-label", props.detailsLabel);
+    form.setAttribute("aria-label", props.label);
+    submit.textContent = props.buttonLabel;
+    note.textContent = props.note;
+    setDisabled();
+    sheet.setRules(rules(sheet.selector));
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (!sameJson(before.channels, props.channels)) renderChannels(list, props.channels);
+        if (props.detailsLabel !== before.detailsLabel) details.setAttribute("aria-label", props.detailsLabel);
+        if (props.label !== before.label) form.setAttribute("aria-label", props.label);
+        if (props.buttonLabel !== before.buttonLabel) submit.textContent = props.buttonLabel;
+        if (props.note !== before.note) note.textContent = props.note;
+        if (sent && props.confirmation !== before.confirmation) status.textContent = props.confirmation;
+        if (props.disabled !== before.disabled) setDisabled();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        form.removeEventListener("submit", onSubmit);
+        panel.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaContactPanel.mount(host, take(window.PICA_PROPS || {}));
+  ["send"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -72,7 +72,10 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Hex Lattice](https://picagram.dev/c/hex-lattice.md): A regular hexagonal hairline lattice that sits quietly behind page content.
 - [Isometric Grid](https://picagram.dev/c/isometric-grid.md): A quiet isometric lattice of equilateral triangles that can resolve into staggered drafting points.
 - [Moire Rings](https://picagram.dev/c/moire-rings.md): Two concentric hairline ring fields drift out of step to form a quiet radial moire behind content.
+- [Step Diagonals](https://picagram.dev/c/step-diagonals.md): Staircases of square steps cross the page as pixel grid diagonals with no oblique stroke.
+- [Triangular Mesh](https://picagram.dev/c/triangular-mesh.md): An irregular triangulated wireframe with a dot at every node and a few accent vertices behind content.
 - [Truchet Tiles](https://picagram.dev/c/truchet-tiles.md): A seeded field of connected quarter circle paths or diagonal zigzags drawn behind content.
+- [Weave Lines](https://picagram.dev/c/weave-lines.md): Outlined horizontal and vertical ribbons weave over and under, with each under strand broken at a crossing.
 
 ## Shaders
 
@@ -95,6 +98,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 ## Data
 
 - [Bar Chart](https://picagram.dev/c/bar-chart.md): Vertical bars from labeled values, drawn as SVG or a monospace glyph grid, with a hidden data table.
+- [Box Plot](https://picagram.dev/c/box-plot.md): The spread of several groups on one value axis, with quartile boxes, medians, whiskers, and outliers, as SVG or a glyph grid.
 - [Bullet Chart](https://picagram.dev/c/bullet-chart.md): Rows showing measures as bars over muted bands that give qualitative ranges, with targets marked as ticks.
 - [Candlestick Chart](https://picagram.dev/c/candlestick-chart.md): Price series drawn as hollow or filled candles, with high and low wicks, from RFC 3339 timestamps and OHLC data.
 - [Donut Chart](https://picagram.dev/c/donut-chart.md): Parts of a whole drawn as a ring, either as SVG segments or a monospace glyph grid, with a hidden data table.
@@ -102,8 +106,11 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Heatmap](https://picagram.dev/c/heatmap.md): A matrix of values displayed as tone-stepped cells with row and column labels and a stepped key.
 - [Kanban Board](https://picagram.dev/c/kanban-board.md): Columns of cards that move between columns by keyboard or by pointer drag.
 - [Line Chart](https://picagram.dev/c/line-chart.md): One or more series plotted as lines over a shared set of labels, in an svg or braille glyph look.
+- [Lollipop Chart](https://picagram.dev/c/lollipop-chart.md): Ranked horizontal rows, each a hairline stem to a dot at its value, as SVG or a glyph grid, with a hidden data table.
 - [Radar Chart](https://picagram.dev/c/radar-chart.md): Three to eight axes radiating from a centre with closed polygon series, drawn as SVG or a monospace glyph grid, with a hidden data table.
 - [Scatter Plot](https://picagram.dev/c/scatter-plot.md): Points from JSON on two linear axes, with highlighted points labeled directly beside them and an optional fit line.
+- [Slope Chart](https://picagram.dev/c/slope-chart.md): Two periods on two shared-scale axes with one straight line per item, labelled at both ends, in an svg or braille glyph look.
+- [Streamgraph](https://picagram.dev/c/streamgraph.md): A stacked area chart centred on a middle line, where each layer's thickness is its value, in an svg or braille glyph look.
 - [Timeline Chart](https://picagram.dev/c/timeline-chart.md): Rows of labeled spans and point events over one shared time axis, for a project plan or a chronology.
 - [Waterfall Chart](https://picagram.dev/c/waterfall-chart.md): A start value, signed changes floating between running totals, and an end total, with hairline connectors.
 
@@ -154,14 +161,17 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 
 ## Sections
 
+- [Article Lead](https://picagram.dev/c/article-lead.md): The opening of an article: a dateline, the page's own headline and standfirst in a reading measure, and a ruled column of facts and key points.
 - [Bento Grid](https://picagram.dev/c/bento-grid.md): A CSS grid section that sizes its children by position into a feature, mosaic, or equal column pattern.
 - [Bento Hero](https://picagram.dev/c/bento-hero.md): A hero laid out as a bento tray: a lead cell for the headline and calls to action over a content cell, beside a column of smaller fact and field cells.
 - [Bohemian Hero](https://picagram.dev/c/bohemian-hero.md): A hero dressed like a weaving: seeded thread bands, a scalloped hairline arch, and copy offset against a selvedge joined by a woven crossband.
 - [Brutalist Hero](https://picagram.dev/c/brutalist-hero.md): A hero section that shows its structure: bordered blocks that collide, mono labels, and the accent as flat fill.
 - [Clay Hero](https://picagram.dev/c/clay-hero.md): Soft inflated forms settle behind the page's own content, shaded in screened tone bands.
+- [Contact Panel](https://picagram.dev/c/contact-panel.md): A page section with a contact details list and a short message form that reports a send event.
 - [Cyberpunk Hero](https://picagram.dev/c/cyberpunk-hero.md): A hero that reads as a terminal held open too long, with scanlines over everything, a headline that tears in rare bursts, and readouts in the corners.
 - [Editorial Hero](https://picagram.dev/c/editorial-hero.md): A magazine opening spread: a deck, a large headline, a measured standfirst with a drop capital, and a byline between hairlines.
 - [Ethereal Hero](https://picagram.dev/c/ethereal-hero.md): A hero that floats its copy in clear air while sparse blue noise grain rises from the ground below.
+- [Event Schedule](https://picagram.dev/c/event-schedule.md): A readable event agenda grouped by day, with times, titles, speakers, and places as plain text.
 - [Glass Hero](https://picagram.dev/c/glass-hero.md): A hero that floats a frosted pane of screened dots over a field drifting behind it.
 - [Hero](https://picagram.dev/c/hero.md): A page hero that adds calls to action and a composed background behind a headline and copy.
 - [Liquid Glass Hero](https://picagram.dev/c/liquid-glass-hero.md): A hero behind a drifting lens slab that bends the printed field beneath its curved edge, screened into tone steps.
@@ -171,6 +181,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Neumorphic Hero](https://picagram.dev/c/neumorphic-hero.md): A soft UI hero that trades blur for screens: a slab and a rail of stat tiles rise from the ground on dithered bevels, and the call to action presses in.
 - [Pixel Art Hero](https://picagram.dev/c/pixel-art-hero.md): A hero drawn as one low resolution screen: pixel type, snapped frames, and a field that shimmers a cell at a time.
 - [Pricing](https://picagram.dev/c/pricing.md): Pricing tiers with a monthly and yearly switch, each plan a card with its own call to action.
+- [Quote Band](https://picagram.dev/c/quote-band.md): One pull quote set large between two hairline rules, with its attribution and an optional quiet dot lattice.
 - [Scrapbook Hero](https://picagram.dev/c/scrapbook-hero.md): A hero assembled like a scrapbook page, with seeded tilts, torn deckle edges, taped corners, and a pasted photocopy print around the page's own copy.
 - [Sketch Hero](https://picagram.dev/c/sketch-hero.md): A hero still being drawn, with hatched fills, overshot construction lines, and working annotations behind the content.
 - [Stats KPI](https://picagram.dev/c/stats-kpi.md): A row of key numbers in mono figures, each with a delta glyph and an inline trend sparkline.
