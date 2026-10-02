@@ -1,0 +1,223 @@
+<!doctype html>
+<!--
+  Pica · Scallop Arches · scallop-arches
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Scallop Arches · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><h2>Courses of scales</h2><p>Nested arches step half a scallop from one row to the next.</p></div>
+<script>
+"use strict";
+var PicaScallopArches = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/patterns/scallop-arches/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/patterns/scallop-arches/core.ts
+  var defaults = {
+    radius: 24,
+    rings: 3,
+    thickness: 1,
+    strength: 0.3
+  };
+  var SCALLOP_SVG_NS = "http://www.w3.org/2000/svg";
+  var scallopSerial = 0;
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const id = `pica-scallop-${scallopSerial += 1}`;
+    const field = layer(host, "under");
+    const svg = document.createElementNS(SCALLOP_SVG_NS, "svg");
+    const defs = document.createElementNS(SCALLOP_SVG_NS, "defs");
+    const tile = document.createElementNS(SCALLOP_SVG_NS, "pattern");
+    const strokes = document.createElementNS(SCALLOP_SVG_NS, "path");
+    const fill = document.createElementNS(SCALLOP_SVG_NS, "rect");
+    svg.setAttribute("data-pica", "");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", "100%");
+    svg.style.cssText = "display:block;overflow:hidden";
+    tile.setAttribute("data-pica", "");
+    tile.setAttribute("id", id);
+    tile.setAttribute("patternUnits", "userSpaceOnUse");
+    strokes.setAttribute("data-pica", "");
+    strokes.setAttribute("fill", "none");
+    strokes.setAttribute("stroke-linecap", "butt");
+    fill.setAttribute("data-pica", "");
+    fill.setAttribute("width", "100%");
+    fill.setAttribute("height", "100%");
+    fill.setAttribute("fill", `url(#${id})`);
+    tile.append(strokes);
+    defs.append(tile);
+    svg.append(defs, fill);
+    field.el.append(svg);
+    function paint() {
+      strokes.style.stroke = cssVar("fg");
+      strokes.setAttribute("stroke-width", String(scallopClamp(props.thickness, 1, 2)));
+      svg.style.opacity = String(scallopClamp(props.strength, 0, 1));
+    }
+    function rebuild() {
+      const radius = scallopRadius(props);
+      tile.setAttribute("width", String(2 * radius));
+      tile.setAttribute("height", String(2 * radius));
+      strokes.setAttribute("d", scallopPath(radius, scallopRings(props, radius)));
+    }
+    paint();
+    rebuild();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.thickness !== before.thickness || props.strength !== before.strength) paint();
+        if (props.radius !== before.radius || props.rings !== before.rings) rebuild();
+      },
+      destroy() {
+        field.remove();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  function scallopRadius(props) {
+    return Math.round(scallopClamp(props.radius, 16, 48));
+  }
+  function scallopRings(props, radius) {
+    return Math.min(Math.floor(radius / 4), Math.round(scallopClamp(props.rings, 2, 5)));
+  }
+  function scallopPath(radius, rings) {
+    const parts = [];
+    const arch = (centre, baseline, ring) => {
+      const reach = radius * ring / rings;
+      parts.push(`M${centre - reach} ${baseline}A${reach} ${reach} 0 0 1 ${centre + reach} ${baseline}`);
+    };
+    for (let ring = 1; ring <= rings; ring += 1) {
+      arch(0, radius, ring);
+      arch(2 * radius, radius, ring);
+      arch(-radius, 2 * radius, ring);
+      arch(radius, 2 * radius, ring);
+      arch(3 * radius, 2 * radius, ring);
+    }
+    arch(0, 3 * radius, rings);
+    arch(2 * radius, 3 * radius, rings);
+    return parts.join("");
+  }
+  function scallopClamp(value, minimum, maximum) {
+    return Math.max(minimum, Math.min(maximum, value));
+  }
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaScallopArches.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

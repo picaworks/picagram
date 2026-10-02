@@ -1996,6 +1996,26 @@
       }
     },
     {
+      "name": "scallop-arches",
+      "type": "registry:component",
+      "title": "Scallop Arches",
+      "description": "Offset courses of nested open semicircle arches drawn as hairlines behind page content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/scallop-arches.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "step-diagonals",
       "type": "registry:component",
       "title": "Step Diagonals",

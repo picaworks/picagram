@@ -306,6 +306,10 @@ Original to Picagram.
 
 - Technique from [The Theory of the Moiré Phenomenon, Volume I: Periodic Layers](https://doi.org/10.1007/978-1-84882-181-1) by Isaac Amidror (Book).
 
+## Scallop Arches (`scallop-arches`)
+
+Original to Picagram.
+
 ## Step Diagonals (`step-diagonals`)
 
 Original to Picagram.

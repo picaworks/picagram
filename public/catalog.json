@@ -9407,6 +9407,92 @@
     "gzipBytes": 1323
   },
   {
+    "slug": "scallop-arches",
+    "title": "Scallop Arches",
+    "category": "patterns",
+    "description": "Offset courses of nested open semicircle arches drawn as hairlines behind page content.",
+    "tags": [
+      "scallop",
+      "scales",
+      "arches",
+      "roof tile",
+      "ornament",
+      "svg"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 12,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "radius": {
+        "type": "number",
+        "min": 16,
+        "max": 48,
+        "step": 1,
+        "label": "Radius (px)"
+      },
+      "rings": {
+        "type": "number",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "label": "Rings per scallop"
+      },
+      "thickness": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 0.1,
+        "label": "Thickness (px)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "demo": {
+      "children": "<h2>Courses of scales</h2><p>Nested arches step half a scallop from one row to the next.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "ScallopArches",
+    "defaults": {
+      "radius": 24,
+      "rings": 3,
+      "thickness": 1,
+      "strength": 0.3
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "radius": "Radius of each scallop's outer ring, and half its width, in whole pixels.",
+      "rings": "Number of concentric arches in each scallop, held to at most a quarter of the radius.",
+      "thickness": "Width of each stroke, in pixels.",
+      "strength": "Opacity of the arches."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "radius": "number",
+      "rings": "number",
+      "thickness": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1494
+  },
+  {
     "slug": "step-diagonals",
     "title": "Step Diagonals",
     "category": "patterns",

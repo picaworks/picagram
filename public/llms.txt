@@ -72,6 +72,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Hex Lattice](https://picagram.dev/c/hex-lattice.md): A regular hexagonal hairline lattice that sits quietly behind page content.
 - [Isometric Grid](https://picagram.dev/c/isometric-grid.md): A quiet isometric lattice of equilateral triangles that can resolve into staggered drafting points.
 - [Moire Rings](https://picagram.dev/c/moire-rings.md): Two concentric hairline ring fields drift out of step to form a quiet radial moire behind content.
+- [Scallop Arches](https://picagram.dev/c/scallop-arches.md): Offset courses of nested open semicircle arches drawn as hairlines behind page content.
 - [Step Diagonals](https://picagram.dev/c/step-diagonals.md): Staircases of square steps cross the page as pixel grid diagonals with no oblique stroke.
 - [Triangular Mesh](https://picagram.dev/c/triangular-mesh.md): An irregular triangulated wireframe with a dot at every node and a few accent vertices behind content.
 - [Truchet Tiles](https://picagram.dev/c/truchet-tiles.md): A seeded field of connected quarter circle paths or diagonal zigzags drawn behind content.
