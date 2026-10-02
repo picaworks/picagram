@@ -81,6 +81,7 @@ Properties that must hold for every input, and where each is checked.
 | A hover step moves the pointer onto the element it names and changes more than 1% of that element's own box, measured against a still picture and against a channel delta rather than a perceptual one, because a 10% tint is invisible to pixelmatch | `scripts/verify/interact.ts` |
 | An interaction that drives the pointer runs with the clock unpinned, so a core that tracks the pointer only while it animates still answers, and its hovers go uncompared because the picture moves on its own | `scripts/verify/interact.ts` |
 | A controlled prop echoed back ends where the uncontrolled component ends, and a controlled prop never updated stays put | `scripts/verify/interact.ts` |
+| The calendar opens on its explicit `month`, else the month of its initial selection (`value` or `defaultValue`), else today | `scripts/verify/interact.ts` |
 | Shaders render on SwiftShader, survive a lost context, and fall back without WebGL2 | `scripts/verify/gpu.ts` |
 | A shader's own canvas holds a live WebGL2 context showing no CSS fallback, and inks more than 1% of itself with everything painted over it hidden | `scripts/verify/gpu.ts` |
 | An animated shader's own canvas advances within 3 s on the real WebGL2 path | `scripts/verify/gpu.ts` |
