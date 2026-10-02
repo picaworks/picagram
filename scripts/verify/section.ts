@@ -1,6 +1,6 @@
 /** A section holds up as a real page section on a phone: nothing spills sideways, the copy sits above whatever
  *  is drawn behind it, a flow host shows all of itself, prose keeps the page's own typeface, and every
- *  focusable node the core made is a real link or button. Runs at the narrow viewport with the demo children
+ *  focusable node the core made is a real link, button, or form control. Runs at the narrow viewport with the demo children
  *  mounted, since that is where a section either survives or does not. */
 import type { BrowserContext } from "@playwright/test";
 import { VIEWPORTS } from "../config";
@@ -14,9 +14,10 @@ const PHONE = VIEWPORTS[1];
  *  the two together name the focusable nodes a section is answerable for. */
 const FOCUSABLE = "a[href], area[href], button, input, select, textarea, summary, iframe, [tabindex], [contenteditable]";
 
-/** What a section's calls to action may be: a real link or a real button, so the browser's own keyboard,
- *  middle click, and form behavior come with them. */
-const REAL = "a[href], button";
+/** What a section's calls to action may be: a real link, a real button, or a native visible form control, so
+ *  the browser's own keyboard, middle click, and form behavior come with them. A span or div made focusable
+ *  with tabindex or a role is none of these. */
+const REAL = "a[href], button, input:not([type=hidden]), select, textarea";
 
 /** Runs in the page: the first text the host wraps, meaning an element the core did not create that holds
  *  text of its own, with its computed family beside the body's. */
@@ -33,8 +34,8 @@ function wrapped(ready: string): { tag: string; text: string; family: string; bo
   return null;
 }
 
-/** Runs in the page: every focusable node the core created, and those of them that are neither a link nor a
- *  button, named as the markup reads. */
+/** Runs in the page: every focusable node the core created, and those of them that are not a link, a
+ *  button, or a form control, named as the markup reads. */
 function focusables(input: { ready: string; focusable: string; real: string }): { total: number; wrong: string[] } {
   const host = document.querySelector(input.ready);
   const nodes = Array.from(host?.querySelectorAll("[data-pica]") ?? []).filter((el) => el.matches(input.focusable));
@@ -124,10 +125,10 @@ export async function section(ctx: Ctx): Promise<void> {
       name: "calls to action are real",
       ok: focus.wrong.length === 0,
       detail: focus.wrong[0]
-        ? `${focus.wrong[0]} takes focus and is neither a link nor a button`
+        ? `${focus.wrong[0]} takes focus and is not a link, a button, or a form control`
         : focus.total === 0
           ? "the core created nothing that takes focus"
-          : `${focus.total} focusable nodes, every one a link or a button`,
+          : `${focus.total} focusable nodes, every one a link, a button, or a form control`,
     });
 
     await page.close();
