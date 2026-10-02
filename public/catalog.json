@@ -1555,6 +1555,237 @@
     "gzipBytes": 5171
   },
   {
+    "slug": "box-plot",
+    "title": "Box Plot",
+    "category": "data",
+    "description": "The spread of several groups on one value axis, with quartile boxes, medians, whiskers, and outliers, as SVG or a glyph grid.",
+    "tags": [
+      "chart",
+      "distribution",
+      "quartiles",
+      "outliers",
+      "svg",
+      "glyph grid",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 10,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "data": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "highlight": {
+        "type": "number",
+        "min": -1,
+        "max": 20,
+        "step": 1
+      },
+      "whisker": {
+        "type": "number",
+        "min": 0.5,
+        "max": 3,
+        "step": 0.1
+      },
+      "ticks": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 1
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Graphical Methods for Data Analysis",
+        "author": "John M. Chambers, William S. Cleveland, Beat Kleiner and Paul A. Tukey",
+        "url": "https://doi.org/10.1201/9781351072304",
+        "license": "Book"
+      },
+      {
+        "relation": "technique",
+        "title": "Nice Numbers for Graph Labels",
+        "author": "Paul Heckbert, Graphics Gems",
+        "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "BoxPlot",
+    "defaults": {
+      "data": [
+        {
+          "label": "Build",
+          "values": [
+            41,
+            44,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            52,
+            53,
+            54,
+            55,
+            56,
+            58,
+            59,
+            61,
+            63,
+            64,
+            96
+          ]
+        },
+        {
+          "label": "Test",
+          "values": [
+            19,
+            21,
+            22,
+            22,
+            23,
+            24,
+            24,
+            25,
+            25,
+            26,
+            26,
+            27,
+            28,
+            28,
+            29,
+            31,
+            32,
+            33
+          ]
+        },
+        {
+          "label": "Lint",
+          "values": [
+            8,
+            9,
+            9,
+            10,
+            11,
+            11,
+            12,
+            12,
+            13,
+            13,
+            14,
+            15,
+            16,
+            17,
+            19
+          ]
+        },
+        {
+          "label": "Deploy",
+          "values": [
+            58,
+            63,
+            68,
+            72,
+            77,
+            81,
+            85,
+            89,
+            93,
+            97,
+            101,
+            104,
+            107,
+            111,
+            115,
+            119,
+            123,
+            127,
+            131,
+            135,
+            139,
+            143,
+            146,
+            148
+          ]
+        },
+        {
+          "label": "Rollback",
+          "values": [
+            11,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            22,
+            23,
+            25,
+            27,
+            29,
+            31,
+            78
+          ]
+        }
+      ],
+      "label": "Task duration by stage, in seconds",
+      "highlight": -1,
+      "whisker": 1.5,
+      "ticks": 5,
+      "look": "svg",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Groups to compare, each with a label and the raw values of its sample. Empty draws the axes and a muted \"no data\" note.",
+      "label": "Name for the chart, read by assistive technology and used as the hidden data table's caption.",
+      "highlight": "Index of the group whose median is drawn in the accent and printed. -1 picks the group with the highest median.",
+      "whisker": "Whiskers reach the most extreme values within this multiple of the interquartile range of the box.",
+      "ticks": "About this many rounded ticks on the value axis.",
+      "look": "\"svg\" draws hairline axes, boxes, and circles. \"glyph\" draws the same plot in a monospace grid.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "{ label: string; values: number[] }[]",
+      "label": "string",
+      "highlight": "number",
+      "whisker": "number",
+      "ticks": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 6666
+  },
+  {
     "slug": "bullet-chart",
     "title": "Bullet Chart",
     "category": "data",
@@ -2800,6 +3031,166 @@
     "gzipBytes": 5819
   },
   {
+    "slug": "lollipop-chart",
+    "title": "Lollipop Chart",
+    "category": "data",
+    "description": "Ranked horizontal rows, each a hairline stem to a dot at its value, as SVG or a glyph grid, with a hidden data table.",
+    "tags": [
+      "chart",
+      "lollipop",
+      "ranking",
+      "dot plot",
+      "svg",
+      "glyph grid",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 10,
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "data": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "sort": {
+        "type": "select",
+        "options": [
+          "value",
+          "input"
+        ]
+      },
+      "highlight": {
+        "type": "number",
+        "min": -1,
+        "max": 30,
+        "step": 1
+      },
+      "values": {
+        "type": "boolean"
+      },
+      "ticks": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 1
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods",
+        "author": "William S. Cleveland and Robert McGill",
+        "url": "https://doi.org/10.1080/01621459.1984.10478080",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Nice Numbers for Graph Labels",
+        "author": "Paul Heckbert, Graphics Gems",
+        "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "LollipopChart",
+    "defaults": {
+      "data": [
+        {
+          "label": "Data",
+          "value": 12
+        },
+        {
+          "label": "UI",
+          "value": 38
+        },
+        {
+          "label": "Patterns",
+          "value": 12
+        },
+        {
+          "label": "Motion",
+          "value": 10
+        },
+        {
+          "label": "Shaders",
+          "value": 14
+        },
+        {
+          "label": "ASCII",
+          "value": 20
+        },
+        {
+          "label": "Effects",
+          "value": 16
+        },
+        {
+          "label": "Dither",
+          "value": 9
+        },
+        {
+          "label": "Sections",
+          "value": 22
+        },
+        {
+          "label": "Immersive",
+          "value": 6
+        }
+      ],
+      "label": "Components by category",
+      "sort": "value",
+      "highlight": -1,
+      "values": true,
+      "ticks": 5,
+      "look": "svg",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Rows to plot, each with a label and a value. Empty draws the axis and a muted \"no data\" note.",
+      "label": "Name for the chart, read by assistive technology and used as the hidden data table's caption.",
+      "sort": "\"value\" ranks rows from largest to smallest, input order breaking ties. \"input\" keeps the given order.",
+      "highlight": "Input index of the row drawn in the accent with a larger dot. -1 highlights the largest value.",
+      "values": "Prints each row's figure beside its dot in mono.",
+      "ticks": "About this many rounded ticks on the value axis.",
+      "look": "\"svg\" draws hairline stems and dots. \"glyph\" draws the same rows in a monospace grid.",
+      "fontFamily": "CSS font-family stack for every label. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "{ label: string; value: number }[]",
+      "label": "string",
+      "sort": "\"value\" | \"input\"",
+      "highlight": "number",
+      "values": "boolean",
+      "ticks": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 5770
+  },
+  {
     "slug": "radar-chart",
     "title": "Radar Chart",
     "category": "data",
@@ -3222,6 +3613,395 @@
     },
     "events": {},
     "gzipBytes": 6187
+  },
+  {
+    "slug": "slope-chart",
+    "title": "Slope Chart",
+    "category": "data",
+    "description": "Two periods on two shared-scale axes with one straight line per item, labelled at both ends, in an svg or braille glyph look.",
+    "tags": [
+      "chart",
+      "slope",
+      "comparison",
+      "before and after",
+      "svg",
+      "braille",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 10,
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "data": {
+        "type": "json",
+        "label": "Data"
+      },
+      "label": {
+        "type": "string"
+      },
+      "highlight": {
+        "type": "number",
+        "min": -1,
+        "max": 20,
+        "step": 1
+      },
+      "values": {
+        "type": "boolean"
+      },
+      "ticks": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 1
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods",
+        "author": "William S. Cleveland and Robert McGill",
+        "url": "https://doi.org/10.1080/01621459.1984.10478080",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Nice Numbers for Graph Labels",
+        "author": "Paul Heckbert, Graphics Gems",
+        "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "SlopeChart",
+    "defaults": {
+      "data": {
+        "from": "2023",
+        "to": "2025",
+        "rows": [
+          {
+            "name": "React",
+            "a": 62,
+            "b": 58
+          },
+          {
+            "name": "Vue",
+            "a": 34,
+            "b": 31
+          },
+          {
+            "name": "jQuery",
+            "a": 38,
+            "b": 24
+          },
+          {
+            "name": "Angular",
+            "a": 27,
+            "b": 19
+          },
+          {
+            "name": "Next.js",
+            "a": 21,
+            "b": 33
+          },
+          {
+            "name": "Svelte",
+            "a": 8,
+            "b": 18
+          },
+          {
+            "name": "Astro",
+            "a": 4,
+            "b": 13
+          },
+          {
+            "name": "Vite",
+            "a": 17,
+            "b": 36
+          }
+        ]
+      },
+      "label": "Share of projects by tool, 2023 and 2025",
+      "highlight": -1,
+      "values": true,
+      "ticks": 5,
+      "look": "svg",
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "The two periods and the items compared between them.",
+      "label": "Name assistive technology reads for the chart, before its data table. Empty hides the chart from it.",
+      "highlight": "Index of the row drawn in the accent, with both values and its change printed. -1 picks the row with the largest absolute change.",
+      "values": "Prints both end values beside every name. Off prints them for the highlighted row alone.",
+      "ticks": "Approximate number of value ticks on the far left, from 2 to 10.",
+      "look": "\"svg\" draws hairline axes and straight lines with lib/chart.ts. \"glyph\" draws the lines as braille dots in a monospace grid.",
+      "fontFamily": "CSS font-family stack for every label and number. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "SlopeChartData",
+      "label": "string",
+      "highlight": "number",
+      "values": "boolean",
+      "ticks": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 7087
+  },
+  {
+    "slug": "streamgraph",
+    "title": "Streamgraph",
+    "category": "data",
+    "description": "A stacked area chart centred on a middle line, where each layer's thickness is its value, in an svg or braille glyph look.",
+    "tags": [
+      "chart",
+      "streamgraph",
+      "stacked",
+      "svg",
+      "braille",
+      "data"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 10,
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "accent",
+      "bg",
+      "muted"
+    ],
+    "controls": {
+      "data": {
+        "type": "json",
+        "label": "Data"
+      },
+      "label": {
+        "type": "string"
+      },
+      "order": {
+        "type": "select",
+        "options": [
+          "inside-out",
+          "input"
+        ]
+      },
+      "highlight": {
+        "type": "number",
+        "min": -1,
+        "max": 20,
+        "step": 1
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "svg",
+          "glyph"
+        ]
+      },
+      "ticks": {
+        "type": "number",
+        "min": 2,
+        "max": 10,
+        "step": 1
+      }
+    },
+    "credits": [
+      {
+        "relation": "technique",
+        "title": "Stacked Graphs: Geometry and Aesthetics",
+        "author": "Lee Byron and Martin Wattenberg",
+        "url": "https://doi.org/10.1109/TVCG.2008.166",
+        "license": "Paper"
+      },
+      {
+        "relation": "technique",
+        "title": "Nice Numbers for Graph Labels",
+        "author": "Paul Heckbert, Graphics Gems",
+        "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+        "license": "Algorithm, no code"
+      }
+    ],
+    "exportName": "Streamgraph",
+    "defaults": {
+      "data": {
+        "labels": [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec"
+        ],
+        "series": [
+          {
+            "name": "Web",
+            "values": [
+              8,
+              9,
+              11,
+              14,
+              17,
+              20,
+              22,
+              20,
+              16,
+              12,
+              10,
+              9
+            ]
+          },
+          {
+            "name": "Mobile",
+            "values": [
+              4,
+              5,
+              6,
+              8,
+              11,
+              15,
+              19,
+              23,
+              21,
+              16,
+              11,
+              7
+            ]
+          },
+          {
+            "name": "Platform",
+            "values": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              16,
+              19,
+              21,
+              20,
+              17,
+              14
+            ]
+          },
+          {
+            "name": "Data",
+            "values": [
+              3,
+              4,
+              6,
+              9,
+              13,
+              18,
+              17,
+              14,
+              10,
+              7,
+              5,
+              4
+            ]
+          },
+          {
+            "name": "Design",
+            "values": [
+              5,
+              6,
+              8,
+              10,
+              11,
+              10,
+              9,
+              7,
+              6,
+              5,
+              5,
+              4
+            ]
+          },
+          {
+            "name": "Infra",
+            "values": [
+              12,
+              13,
+              12,
+              11,
+              9,
+              8,
+              7,
+              6,
+              6,
+              5,
+              5,
+              6
+            ]
+          }
+        ],
+        "unit": "builds"
+      },
+      "label": "Builds per month by team",
+      "order": "inside-out",
+      "highlight": -1,
+      "look": "svg",
+      "ticks": 5,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "data": "Labels and layers to stack.",
+      "label": "Name assistive technology reads for the chart, before its data table. Empty hides the chart from it.",
+      "order": "\"inside-out\" puts the layers that peak earliest nearest the center. \"input\" stacks them as given, bottom to top.",
+      "highlight": "Index of the layer drawn in the accent. -1 highlights the layer with the largest total.",
+      "look": "\"svg\" draws filled bands with hairline axes. \"glyph\" draws the same stack as braille dots in a monospace grid.",
+      "ticks": "Approximate number of labels on the time axis and of steps in the scale bar's round value, from 2 to 10.",
+      "fontFamily": "CSS font-family stack for every label and number. Must be monospace."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "data": "StreamgraphData",
+      "label": "string",
+      "order": "\"inside-out\" | \"input\"",
+      "highlight": "number",
+      "look": "\"svg\" | \"glyph\"",
+      "ticks": "number",
+      "fontFamily": "string"
+    },
+    "events": {},
+    "gzipBytes": 7647
   },
   {
     "slug": "timeline-chart",
@@ -8627,6 +9407,286 @@
     "gzipBytes": 1323
   },
   {
+    "slug": "scallop-arches",
+    "title": "Scallop Arches",
+    "category": "patterns",
+    "description": "Offset courses of nested open semicircle arches drawn as hairlines behind page content.",
+    "tags": [
+      "scallop",
+      "scales",
+      "arches",
+      "roof tile",
+      "ornament",
+      "svg"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 12,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "radius": {
+        "type": "number",
+        "min": 16,
+        "max": 48,
+        "step": 1,
+        "label": "Radius (px)"
+      },
+      "rings": {
+        "type": "number",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "label": "Rings per scallop"
+      },
+      "thickness": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 0.1,
+        "label": "Thickness (px)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "demo": {
+      "children": "<h2>Courses of scales</h2><p>Nested arches step half a scallop from one row to the next.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "ScallopArches",
+    "defaults": {
+      "radius": 24,
+      "rings": 3,
+      "thickness": 1,
+      "strength": 0.3
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "radius": "Radius of each scallop's outer ring, and half its width, in whole pixels.",
+      "rings": "Number of concentric arches in each scallop, held to at most a quarter of the radius.",
+      "thickness": "Width of each stroke, in pixels.",
+      "strength": "Opacity of the arches."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "radius": "number",
+      "rings": "number",
+      "thickness": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1494
+  },
+  {
+    "slug": "step-diagonals",
+    "title": "Step Diagonals",
+    "category": "patterns",
+    "description": "Staircases of square steps cross the page as pixel grid diagonals with no oblique stroke.",
+    "tags": [
+      "stairs",
+      "steps",
+      "diagonal",
+      "pixel",
+      "svg"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 12,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "step": {
+        "type": "number",
+        "min": 8,
+        "max": 40,
+        "step": 1,
+        "label": "Step (px)"
+      },
+      "run": {
+        "type": "number",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "Treads per riser"
+      },
+      "spacing": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1,
+        "label": "Spacing (risers)"
+      },
+      "direction": {
+        "type": "select",
+        "options": [
+          "rising",
+          "falling"
+        ]
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "demo": {
+      "children": "<h2>Measured steps</h2><p>Each diagonal is built from square corners on a pixel grid.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "StepDiagonals",
+    "defaults": {
+      "step": 12,
+      "run": 1,
+      "spacing": 4,
+      "direction": "rising",
+      "strength": 0.3
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "step": "Height of each riser in pixels, and the unit of every other length.",
+      "run": "Treads per riser. One gives equal treads and risers, and more gives a shallower stair.",
+      "spacing": "Risers between neighbouring staircases, measured vertically.",
+      "direction": "Climbs to the right when rising, and mirrors that when falling.",
+      "strength": "Opacity of the staircase layer, from invisible to full ink."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "step": "number",
+      "run": "number",
+      "spacing": "number",
+      "direction": "\"rising\" | \"falling\"",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1574
+  },
+  {
+    "slug": "triangular-mesh",
+    "title": "Triangular Mesh",
+    "category": "patterns",
+    "description": "An irregular triangulated wireframe with a dot at every node and a few accent vertices behind content.",
+    "tags": [
+      "triangles",
+      "mesh",
+      "low poly",
+      "wireframe",
+      "nodes",
+      "seeded"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 12,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "cell": {
+        "type": "number",
+        "min": 24,
+        "max": 96,
+        "step": 1,
+        "label": "Cell (px)"
+      },
+      "jitter": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.6,
+        "step": 0.05
+      },
+      "nodes": {
+        "type": "boolean"
+      },
+      "marks": {
+        "type": "number",
+        "min": 0,
+        "max": 12,
+        "step": 1,
+        "label": "Marks (%)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "seed": {
+        "type": "number",
+        "min": -2147483648,
+        "max": 2147483647,
+        "step": 1
+      }
+    },
+    "palette": [
+      "fg",
+      "accent"
+    ],
+    "demo": {
+      "children": "<h2>Surface in outline</h2><p>Straight edges join a field of nodes into triangles of every shape.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "TriangularMesh",
+    "defaults": {
+      "cell": 48,
+      "jitter": 0.35,
+      "nodes": true,
+      "marks": 1,
+      "strength": 0.3,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Integer seed used to displace every node and to choose the marked ones.",
+      "cell": "Distance between lattice nodes before they are displaced, in pixels.",
+      "jitter": "How far each node moves from its lattice position, as a fraction of the cell.",
+      "nodes": "Draws a small dot at every node.",
+      "marks": "Percent of nodes drawn as larger accent dots.",
+      "strength": "Opacity of the edges from invisible to full ink."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "cell": "number",
+      "jitter": "number",
+      "nodes": "boolean",
+      "marks": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 2088
+  },
+  {
     "slug": "truchet-tiles",
     "title": "Truchet Tiles",
     "category": "patterns",
@@ -8724,6 +9784,225 @@
     },
     "events": {},
     "gzipBytes": 1675
+  },
+  {
+    "slug": "weave-lines",
+    "title": "Weave Lines",
+    "category": "patterns",
+    "description": "Outlined horizontal and vertical ribbons weave over and under, with each under strand broken at a crossing.",
+    "tags": [
+      "weave",
+      "basket",
+      "ribbon",
+      "textile",
+      "lines",
+      "css"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 12,
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "controls": {
+      "pitch": {
+        "type": "number",
+        "min": 12,
+        "max": 48,
+        "step": 1,
+        "label": "Pitch (px)"
+      },
+      "float": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Float (crossings)"
+      },
+      "ribbon": {
+        "type": "number",
+        "min": 0.5,
+        "max": 0.9,
+        "step": 0.05
+      },
+      "gap": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Gap (px)"
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      }
+    },
+    "palette": [
+      "fg"
+    ],
+    "demo": {
+      "children": "<h2>Woven structure</h2><p>Strands pass over and under to give the page a cloth-like rhythm.</p>"
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "WeaveLines",
+    "defaults": {
+      "pitch": 24,
+      "float": 1,
+      "ribbon": 0.75,
+      "gap": 3,
+      "strength": 0.35
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "pitch": "Distance between strand centers on both axes, in pixels.",
+      "float": "How many crossings a strand passes over before it passes under.",
+      "ribbon": "Ribbon width as a fraction of the pitch.",
+      "gap": "How far an under strand's edge lines stop short of the over strand, in pixels.",
+      "strength": "Opacity of the weave from invisible to full ink."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "pitch": "number",
+      "float": "number",
+      "ribbon": "number",
+      "gap": "number",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 1684
+  },
+  {
+    "slug": "article-lead",
+    "title": "Article Lead",
+    "category": "sections",
+    "description": "The opening of an article: a dateline, the page's own headline and standfirst in a reading measure, and a ruled column of facts and key points.",
+    "tags": [
+      "article",
+      "essay",
+      "dateline",
+      "byline",
+      "standfirst",
+      "measure",
+      "key points",
+      "section"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 11,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "children": "<h1>Why a measure matters.</h1><p>Sixty characters is where a line stops being a guess and starts being a reading habit, and every other choice on the page answers to it.</p><p>The paragraphs below hold to the same width.</p>"
+    },
+    "controls": {
+      "section": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string",
+        "label": "Date (ISO)"
+      },
+      "authors": {
+        "type": "json"
+      },
+      "readingTime": {
+        "type": "number",
+        "min": 0,
+        "max": 60,
+        "step": 1,
+        "label": "Read time (minutes)"
+      },
+      "points": {
+        "type": "json"
+      },
+      "pointsLabel": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string",
+        "label": "Aside label"
+      },
+      "measure": {
+        "type": "number",
+        "min": 48,
+        "max": 80,
+        "step": 1,
+        "label": "Measure (ch)"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "ArticleLead",
+    "defaults": {
+      "section": "ESSAY",
+      "date": "2026-09-14",
+      "authors": [
+        {
+          "name": "Mara Quill",
+          "role": "Editor"
+        },
+        {
+          "name": "Jonas Reed",
+          "role": "Design"
+        }
+      ],
+      "readingTime": 8,
+      "points": [
+        "A line near sixty characters is the length a reader can hold without losing the next one.",
+        "Rhythm comes from one steady rule for spacing, repeated until the page stops asking to be noticed.",
+        "Restraint is a choice about what to leave out, made before the first word is set."
+      ],
+      "pointsLabel": "In brief",
+      "label": "Article details",
+      "measure": 62
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "section": "The section name at the left of the dateline. Empty removes it.",
+      "date": "The publication date as an ISO date, such as 2026-09-14. It sets the time element's datetime. An empty or invalid date removes the date and the Published row.",
+      "authors": "Who wrote the piece. At most four show. An empty list removes the Words by row.",
+      "readingTime": "The reading time in minutes, from 0 to 60. Zero removes the Read time row.",
+      "points": "Up to three key points, each a sentence. An empty list removes the whole group.",
+      "pointsLabel": "The label above the key points.",
+      "label": "The accessible name of the aside that holds the facts and the key points.",
+      "measure": "The width of the text column, in characters of the page's own font, from 48 to 80."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "section": "string",
+      "date": "string",
+      "authors": "readonly ArticleLeadAuthor[]",
+      "readingTime": "number",
+      "points": "readonly string[]",
+      "pointsLabel": "string",
+      "label": "string",
+      "measure": "number"
+    },
+    "events": {},
+    "gzipBytes": 3430
   },
   {
     "slug": "bento-grid",
@@ -9429,6 +10708,198 @@
     "gzipBytes": 6744
   },
   {
+    "slug": "contact-panel",
+    "title": "Contact Panel",
+    "category": "sections",
+    "description": "A page section with a contact details list and a short message form that reports a send event.",
+    "tags": [
+      "contact",
+      "form",
+      "section",
+      "details",
+      "message"
+    ],
+    "facets": [
+      "static",
+      "interactive",
+      "text"
+    ],
+    "wave": 11,
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "wraps": "content",
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "children": "<h2>Talk to the team.</h2><p>Questions about the sections, or a page you would like drawn this way.</p>"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a[href^='mailto:']"
+        },
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a[href^='tel:']"
+        },
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "input[name=name]"
+        },
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "input[name=email]"
+        },
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "textarea[name=message]"
+        },
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "button[type=submit]"
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectEvent",
+          "name": "send",
+          "detail": {
+            "name": "Ada Reader",
+            "email": "reader@example.com",
+            "message": "I would like to talk about using these sections in our docs."
+          }
+        }
+      ]
+    ],
+    "controls": {
+      "channels": {
+        "type": "json"
+      },
+      "defaultValues": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "detailsLabel": {
+        "type": "string"
+      },
+      "buttonLabel": {
+        "type": "string"
+      },
+      "confirmation": {
+        "type": "string"
+      },
+      "note": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "ContactPanel",
+    "defaults": {
+      "channels": [
+        {
+          "label": "Email",
+          "value": "hello@example.com",
+          "href": "mailto:hello@example.com"
+        },
+        {
+          "label": "Phone",
+          "value": "+1 555 0100",
+          "href": "tel:+15550100"
+        },
+        {
+          "label": "Studio",
+          "value": "14 Foundry Lane, Leeds LS1 4AB"
+        },
+        {
+          "label": "Hours",
+          "value": "Monday to Friday, 09:00 to 17:00"
+        }
+      ],
+      "defaultValues": {
+        "name": "Ada Reader",
+        "email": "reader@example.com",
+        "message": "I would like to talk about using these sections in our docs."
+      },
+      "label": "Contact form",
+      "detailsLabel": "Contact details",
+      "buttonLabel": "Send message",
+      "confirmation": "Thank you. We will reply within two working days.",
+      "note": "Nothing is sent until your page handles the send event.",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "channels": "The contact details, one row each. A channel with an href links, and one without is plain text.",
+      "defaultValues": "The values the three fields start with, read once at mount.",
+      "label": "The accessible name of the form.",
+      "detailsLabel": "The accessible name of the contact details.",
+      "buttonLabel": "The text on the submit button.",
+      "confirmation": "The text announced in the status region after a valid send.",
+      "note": "The mono note beside the button.",
+      "disabled": "Disables every control and the button, and dims them to 45 percent."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "channels": "readonly ContactChannel[]",
+      "defaultValues": "ContactValues",
+      "label": "string",
+      "detailsLabel": "string",
+      "buttonLabel": "string",
+      "confirmation": "string",
+      "note": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "send": {
+        "doc": "The visitor submitted a valid form. The detail holds the three field values.",
+        "detail": "ContactSend"
+      }
+    },
+    "gzipBytes": 3242
+  },
+  {
     "slug": "cyberpunk-hero",
     "title": "Cyberpunk Hero",
     "category": "sections",
@@ -9898,6 +11369,148 @@
     },
     "events": {},
     "gzipBytes": 5962
+  },
+  {
+    "slug": "event-schedule",
+    "title": "Event Schedule",
+    "category": "sections",
+    "description": "A readable event agenda grouped by day, with times, titles, speakers, and places as plain text.",
+    "tags": [
+      "schedule",
+      "agenda",
+      "event",
+      "program",
+      "sessions",
+      "section"
+    ],
+    "facets": [
+      "static",
+      "text"
+    ],
+    "wave": 11,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "host": "div",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "children": "<h2>Two days, six sessions.</h2><p>Every talk, who gives it, and where to find it.</p>"
+    },
+    "controls": {
+      "sessions": {
+        "type": "json"
+      },
+      "highlight": {
+        "type": "number",
+        "min": -1,
+        "max": 40,
+        "step": 1
+      },
+      "highlightLabel": {
+        "type": "string"
+      },
+      "zone": {
+        "type": "string"
+      },
+      "headingLevel": {
+        "type": "number",
+        "min": 2,
+        "max": 5,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "EventSchedule",
+    "defaults": {
+      "sessions": [
+        {
+          "day": "2026-11-12",
+          "start": "09:00",
+          "end": "09:30",
+          "title": "Opening remarks",
+          "speaker": "Maren Holt",
+          "place": "Main hall"
+        },
+        {
+          "day": "2026-11-12",
+          "start": "10:00",
+          "end": "10:45",
+          "title": "How a grid measures type",
+          "speaker": "Dario Okafor",
+          "place": "Main hall"
+        },
+        {
+          "day": "2026-11-12",
+          "start": "13:30",
+          "end": "16:00",
+          "title": "Workshop: setting a page in one font",
+          "speaker": "Priya Venkataraman",
+          "place": "Studio 2"
+        },
+        {
+          "day": "2026-11-13",
+          "start": "09:30",
+          "end": "10:30",
+          "title": "Panel: print habits on the screen",
+          "speaker": "Lena Aoki and guests",
+          "place": "Main hall"
+        },
+        {
+          "day": "2026-11-13",
+          "start": "11:00",
+          "end": "11:40",
+          "title": "Palettes of four colors",
+          "speaker": "Tomas Brandt",
+          "place": "Room 4"
+        },
+        {
+          "day": "2026-11-13",
+          "start": "16:30",
+          "end": "17:00",
+          "title": "Closing session",
+          "speaker": "Maren Holt",
+          "place": "Main hall"
+        }
+      ],
+      "highlight": 1,
+      "highlightLabel": "Next up",
+      "zone": "All times local to the venue",
+      "headingLevel": 3,
+      "label": "Event schedule"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "sessions": "Sessions in any order. They are grouped by day, in date order and then start order, ties in input order.",
+      "highlight": "Index of one session in the sorted order that is marked with a bar and a label. -1 marks none.",
+      "highlightLabel": "Visible label printed before the highlighted session's title.",
+      "zone": "Caption printed once above the first day, such as the time zone. Empty shows none.",
+      "headingLevel": "Heading level of each day heading, from 2 to 5, so it fits under the page's own headings.",
+      "label": "Accessible name of the schedule."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "sessions": "ScheduleSession[]",
+      "highlight": "number",
+      "highlightLabel": "string",
+      "zone": "string",
+      "headingLevel": "number",
+      "label": "string"
+    },
+    "events": {},
+    "gzipBytes": 3674
   },
   {
     "slug": "glass-hero",
@@ -11205,6 +12818,113 @@
       }
     },
     "gzipBytes": 3189
+  },
+  {
+    "slug": "quote-band",
+    "title": "Quote Band",
+    "category": "sections",
+    "description": "One pull quote set large between two hairline rules, with its attribution and an optional quiet dot lattice.",
+    "tags": [
+      "quote",
+      "pull quote",
+      "blockquote",
+      "section",
+      "typography",
+      "attribution"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "background"
+    ],
+    "wave": 11,
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "stage": "flow",
+    "host": "div",
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "demo": {
+      "children": "<p>From the maintainers' notes.</p>"
+    },
+    "controls": {
+      "quote": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "name": {
+        "type": "string"
+      },
+      "role": {
+        "type": "string"
+      },
+      "href": {
+        "type": "string",
+        "label": "Source link"
+      },
+      "align": {
+        "type": "select",
+        "options": [
+          "start",
+          "center"
+        ]
+      },
+      "background": {
+        "type": "select",
+        "options": [
+          "dots",
+          "none"
+        ]
+      },
+      "strength": {
+        "type": "number",
+        "min": 0,
+        "max": 0.6,
+        "step": 0.05
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "QuoteBand",
+    "defaults": {
+      "quote": "A good section does not announce itself. It makes the page around it easier to read.",
+      "name": "Ines Calder",
+      "role": "Design lead, Fieldwork",
+      "href": "",
+      "align": "start",
+      "background": "dots",
+      "strength": 0.2
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "quote": "The quoted words, set large across the band.",
+      "name": "Who said it.",
+      "role": "Their role, shown beside the name in uppercase mono.",
+      "href": "Where the quote comes from. A non empty value makes the name a link and sets the blockquote's cite.",
+      "align": "\"start\" sets the quote beside a gutter hairline. \"center\" drops the gutter and centers the type.",
+      "background": "A quiet dot lattice behind the band, or nothing.",
+      "strength": "Opacity of the dot lattice, from 0 to 0.6."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "quote": "string",
+      "name": "string",
+      "role": "string",
+      "href": "string",
+      "align": "\"start\" | \"center\"",
+      "background": "\"dots\" | \"none\"",
+      "strength": "number"
+    },
+    "events": {},
+    "gzipBytes": 3059
   },
   {
     "slug": "scrapbook-hero",
@@ -15747,7 +17467,7 @@
         "detail": "string"
       }
     },
-    "gzipBytes": 3507
+    "gzipBytes": 3506
   },
   {
     "slug": "card",

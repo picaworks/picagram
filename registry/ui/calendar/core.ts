@@ -131,7 +131,7 @@ export const mount: Mount<CalendarProps> = (host, initial = {}) => {
   const sheet = scope(host);
   const today = calendarToday();
   let selected = calendarParseDate(props.value ?? props.defaultValue);
-  let visible = calendarParseMonth(props.month) ?? calendarParseDate(props.value ?? "") ?? today;
+  let visible = calendarParseMonth(props.month) ?? selected ?? today;
   let focusDate = selected && selected.year === visible.year && selected.month === visible.month
     ? selected
     : today.year === visible.year && today.month === visible.month ? today : { ...visible, day: 1 };

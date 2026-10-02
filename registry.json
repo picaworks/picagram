@@ -344,6 +344,41 @@
       }
     },
     {
+      "name": "box-plot",
+      "type": "registry:component",
+      "title": "Box Plot",
+      "description": "The spread of several groups on one value axis, with quartile boxes, medians, whiskers, and outliers, as SVG or a glyph grid.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/box-plot.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Graphical Methods for Data Analysis",
+            "author": "John M. Chambers, William S. Cleveland, Beat Kleiner and Paul A. Tukey",
+            "url": "https://doi.org/10.1201/9781351072304",
+            "license": "Book"
+          },
+          {
+            "relation": "technique",
+            "title": "Nice Numbers for Graph Labels",
+            "author": "Paul Heckbert, Graphics Gems",
+            "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
       "name": "bullet-chart",
       "type": "registry:component",
       "title": "Bullet Chart",
@@ -539,6 +574,41 @@
       }
     },
     {
+      "name": "lollipop-chart",
+      "type": "registry:component",
+      "title": "Lollipop Chart",
+      "description": "Ranked horizontal rows, each a hairline stem to a dot at its value, as SVG or a glyph grid, with a hidden data table.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/lollipop-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods",
+            "author": "William S. Cleveland and Robert McGill",
+            "url": "https://doi.org/10.1080/01621459.1984.10478080",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Nice Numbers for Graph Labels",
+            "author": "Paul Heckbert, Graphics Gems",
+            "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
       "name": "radar-chart",
       "type": "registry:component",
       "title": "Radar Chart",
@@ -602,6 +672,76 @@
             "relation": "technique",
             "title": "Nice Numbers for Graph Labels",
             "author": "Paul Heckbert",
+            "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "slope-chart",
+      "type": "registry:component",
+      "title": "Slope Chart",
+      "description": "Two periods on two shared-scale axes with one straight line per item, labelled at both ends, in an svg or braille glyph look.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/slope-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods",
+            "author": "William S. Cleveland and Robert McGill",
+            "url": "https://doi.org/10.1080/01621459.1984.10478080",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Nice Numbers for Graph Labels",
+            "author": "Paul Heckbert, Graphics Gems",
+            "url": "https://dl.acm.org/doi/10.5555/90767.90846",
+            "license": "Algorithm, no code"
+          }
+        ]
+      }
+    },
+    {
+      "name": "streamgraph",
+      "type": "registry:component",
+      "title": "Streamgraph",
+      "description": "A stacked area chart centred on a middle line, where each layer's thickness is its value, in an svg or braille glyph look.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/streamgraph.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": [
+          {
+            "relation": "technique",
+            "title": "Stacked Graphs: Geometry and Aesthetics",
+            "author": "Lee Byron and Martin Wattenberg",
+            "url": "https://doi.org/10.1109/TVCG.2008.166",
+            "license": "Paper"
+          },
+          {
+            "relation": "technique",
+            "title": "Nice Numbers for Graph Labels",
+            "author": "Paul Heckbert, Graphics Gems",
             "url": "https://dl.acm.org/doi/10.5555/90767.90846",
             "license": "Algorithm, no code"
           }
@@ -1856,6 +1996,66 @@
       }
     },
     {
+      "name": "scallop-arches",
+      "type": "registry:component",
+      "title": "Scallop Arches",
+      "description": "Offset courses of nested open semicircle arches drawn as hairlines behind page content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/scallop-arches.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "step-diagonals",
+      "type": "registry:component",
+      "title": "Step Diagonals",
+      "description": "Staircases of square steps cross the page as pixel grid diagonals with no oblique stroke.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/step-diagonals.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "triangular-mesh",
+      "type": "registry:component",
+      "title": "Triangular Mesh",
+      "description": "An irregular triangulated wireframe with a dot at every node and a few accent vertices behind content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/triangular-mesh.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "truchet-tiles",
       "type": "registry:component",
       "title": "Truchet Tiles",
@@ -1881,6 +2081,46 @@
             "license": "Paper"
           }
         ]
+      }
+    },
+    {
+      "name": "weave-lines",
+      "type": "registry:component",
+      "title": "Weave Lines",
+      "description": "Outlined horizontal and vertical ribbons weave over and under, with each under strand broken at a crossing.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/weave-lines.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "article-lead",
+      "type": "registry:component",
+      "title": "Article Lead",
+      "description": "The opening of an article: a dateline, the page's own headline and standfirst in a reading measure, and a ruled column of facts and key points.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/article-lead.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -1984,6 +2224,26 @@
       }
     },
     {
+      "name": "contact-panel",
+      "type": "registry:component",
+      "title": "Contact Panel",
+      "description": "A page section with a contact details list and a short message form that reports a send event.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/contact-panel.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "cyberpunk-hero",
       "type": "registry:component",
       "title": "Cyberpunk Hero",
@@ -2034,6 +2294,26 @@
       "files": [
         {
           "path": "public/react/ethereal-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "event-schedule",
+      "type": "registry:component",
+      "title": "Event Schedule",
+      "description": "A readable event agenda grouped by day, with times, titles, speakers, and places as plain text.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/event-schedule.tsx",
           "type": "registry:component"
         }
       ],
@@ -2229,6 +2509,26 @@
             "license": "W3C document"
           }
         ]
+      }
+    },
+    {
+      "name": "quote-band",
+      "type": "registry:component",
+      "title": "Quote Band",
+      "description": "One pull quote set large between two hairline rules, with its attribution and an optional quiet dot lattice.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/quote-band.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
