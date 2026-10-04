@@ -2,7 +2,7 @@ import { runInNewContext } from "node:vm";
 import { describe, expect, it } from "vitest";
 import { loadAll } from "../scripts/catalog";
 import { vanillaParts } from "../scripts/single-file";
-import { CURRENT_RELEASE, items, isNew, matches, type CatalogItem } from "../src/lib/catalog";
+import { CURRENT_RELEASE, items, isNew, inRelease, readRelease, matches, type CatalogItem } from "../src/lib/catalog";
 
 const originals = await loadAll(["clay-hero", "glass-hero", "liquid-glass-hero", "ethereal-hero", "minimal-hero"]);
 
@@ -34,9 +34,38 @@ describe("release filters", () => {
     expect(matches(item, "zzz", [], true)).toBe(false);
     expect(matches(item, "", ["animated"], true)).toBe(false);
   });
-  it("does not label previous batches or undated items new", () => {
+  it("keeps both review batches and excludes unreviewed or undated items", () => {
+    expect(isNew({ release: "microsites-2026-10-04" })).toBe(true);
     expect(isNew({ release: "older-batch" })).toBe(false);
     expect(isNew({})).toBe(false);
     expect(matches({ ...item, release: "older-batch" }, "", [], true)).toBe(false);
+  });
+  it("selects explicit batches without changing their stable membership", () => {
+    const earlier = { ...item, release: "microsites-2026-10-04" };
+    expect(matches(earlier, "rome", ["text"], true, "sections", "microsites-2026-10-04")).toBe(true);
+    expect(matches(earlier, "", [], true, "all", CURRENT_RELEASE)).toBe(false);
+    expect(matches(item, "", [], true, "all", CURRENT_RELEASE)).toBe(true);
+    expect(inRelease(earlier, "all")).toBe(true);
+    expect(readRelease("microsites-2026-10-04")).toBe("microsites-2026-10-04");
+    expect(readRelease("all")).toBe("all");
+    expect(readRelease("guess-from-date")).toBeNull();
+    expect(readRelease(null)).toBeNull();
+  });
+});
+
+describe("ASCII and motion release inventory", () => {
+  it("adds the exact distinct batch and retains the approved microsites", async () => {
+    const entries = await loadAll();
+    const latest = entries.filter((entry) => entry.meta.release === CURRENT_RELEASE);
+    expect(latest).toHaveLength(47);
+    expect(new Set(latest.map((entry) => entry.meta.slug)).size).toBe(47);
+    expect(latest.every((entry) => entry.meta.wave === 14)).toBe(true);
+    expect(latest.filter((entry) => entry.meta.category === "ascii")).toHaveLength(19);
+    expect(latest.filter((entry) => entry.meta.category === "effects" && entry.meta.animated)).toHaveLength(23);
+    expect(latest.filter((entry) => entry.meta.category === "immersive")).toHaveLength(5);
+    expect(entries.filter((entry) => entry.meta.release === "microsites-2026-10-04")).toHaveLength(36);
+    expect(entries.filter((entry) => entry.meta.category === "ascii")).toHaveLength(30);
+    expect(entries.filter((entry) => entry.meta.category === "effects" && entry.meta.animated)).toHaveLength(30);
+    expect(entries.filter((entry) => entry.meta.category === "immersive")).toHaveLength(10);
   });
 });

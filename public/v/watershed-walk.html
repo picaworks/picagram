@@ -1,0 +1,755 @@
+<!doctype html>
+<!--
+  Pica · Watershed walk · watershed-walk
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Watershed walk · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaWatershedWalk = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/immersive/watershed-walk/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/rng.ts
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
+
+  // registry/immersive/watershed-walk/core.ts
+  var defaults = {
+    title: "From spring to estuary",
+    introduction: "Follow one drop through an invented catchment. Four connected stations show how water, sediment and people shape the same route.",
+    stations: [
+      {
+        "name": "Spring",
+        "reference": "01 / HEADWATER",
+        "title": "Water arrives from below",
+        "description": "At the seep line, water emerges between sandstone and clay. Its temperature stays close to the ground temperature while the air changes through the day.",
+        "facts": "Elevation 412 m · Water 11.2 °C · Flow 0.8 L/s",
+        "note": "Observe: compare the wet line with the boundary between the two rock layers.",
+        "x": 17,
+        "y": 31,
+        "group": "Upper",
+        "chapters": [
+          "Locate the seep",
+          "Record temperature",
+          "Compare the layers"
+        ]
+      },
+      {
+        "name": "Mill reach",
+        "reference": "02 / CHANNEL",
+        "title": "A bend stores yesterday",
+        "description": "A wide bend slows the current and leaves fine silt behind a stone wall. A short sample record shows the water becoming cloudy after the previous evening rain.",
+        "facts": "Elevation 208 m · Turbidity 18 NTU · Flow 14 L/s",
+        "note": "Observe: compare the inside and outside of the bend without entering the channel.",
+        "x": 39,
+        "y": 53,
+        "group": "Middle",
+        "chapters": [
+          "Read the bend",
+          "Sample suspended silt",
+          "Sketch the bank"
+        ]
+      },
+      {
+        "name": "Reed bed",
+        "reference": "03 / WETLAND",
+        "title": "A place to pause",
+        "description": "The channel spreads across a shallow reed bed. Root stems interrupt the current, while insects gather at the clear edge between the reeds and open water.",
+        "facts": "Elevation 46 m · Water depth 0.32 m · pH 7.1",
+        "note": "Observe: count stems within a fixed square before comparing the open-water edge.",
+        "x": 63,
+        "y": 65,
+        "group": "Lower",
+        "chapters": [
+          "Measure depth",
+          "Count reed stems",
+          "Watch the open edge"
+        ]
+      },
+      {
+        "name": "Estuary",
+        "reference": "04 / TIDAL LIMIT",
+        "title": "The route meets the tide",
+        "description": "A salinity sample at the tidal limit records freshwater mixing with a rising tide. The mud surface carries branching traces from the last retreating water.",
+        "facts": "Elevation 2 m · Salinity 9 ppt · Tide rising",
+        "note": "Observe: mark the upper wet edge, then return to the same point after one hour.",
+        "x": 83,
+        "y": 77,
+        "group": "Lower",
+        "chapters": [
+          "Locate the tide line",
+          "Measure salinity",
+          "Repeat the visit"
+        ]
+      }
+    ],
+    fps: 24,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const attrs = hostAttributes(host);
+    const sceneId = nextId("scene");
+    attrs.set("data-pica-id", sceneId);
+    const sheet = document.createElement("style");
+    sheet.setAttribute("data-pica", "");
+    host.append(sheet);
+    const s = `[data-pica-id="${sceneId}"]`;
+    sheet.textContent = `
+    ${s}{color:${cssVar("fg")};background:${cssVar("bg")};box-sizing:border-box}
+    ${s} *,${s} *::before{box-sizing:border-box}
+    ${s} [data-part="page"]{padding:clamp(18px,3vw,40px);max-width:1440px;margin:auto}
+    ${s} [data-part="edition"],${s} [data-part="caption"],${s} [data-part="reference"]{font:12px/1.5 ${GRID_FONT};letter-spacing:.06em;color:${cssVar("muted")}}
+    ${s} h1{font-size:clamp(34px,5vw,68px);font-weight:500;line-height:1.06;letter-spacing:-.045em;margin:14px 0}
+    ${s} [data-part="intro"]{max-width:760px;font-size:17px;line-height:1.6;margin:0 0 22px}
+    ${s} [data-part="workspace"]{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(270px,1fr);gap:28px;border-top:1px solid ${cssVar("muted")};padding-top:18px}
+    ${s} [data-part="scene"]{position:relative;min-width:0;height:365px;border-bottom:1px solid ${cssVar("muted")}}
+    ${s} [data-action="select"]{font-family:${GRID_FONT}}
+    ${s} [data-part="markers"]{position:absolute;inset:0}
+    ${s} [data-part="markers"] button{position:absolute;transform:translate(-50%,-50%);width:44px;height:44px;padding:0;background:${cssVar("bg")};font-size:15px;border:1px solid ${cssVar("fg")};z-index:1}
+    ${s} [data-part="markers"] button[aria-pressed="true"]{border:3px solid ${cssVar("accent")}}
+    ${s} button{font:inherit;color:inherit;cursor:pointer;background:transparent;border:1px solid ${cssVar("muted")};border-radius:0;min-height:44px;padding:8px 12px}
+    ${s} button:focus-visible{outline:2px solid ${cssVar("accent")};outline-offset:3px}
+    ${s} button:disabled{opacity:.45;cursor:default}
+    ${s} button[aria-pressed="true"]{border-bottom:3px solid ${cssVar("accent")}}
+    ${s} [data-part="detail"]{min-width:0}
+    ${s} h2{font-size:25px;font-weight:500;line-height:1.2;margin:10px 0 14px}
+    ${s} [data-part="detail"] p{font-size:16px;line-height:1.6;margin:12px 0}
+    ${s} [data-part="facts"]{border-top:1px solid ${cssVar("muted")};padding-top:12px;font:13px/1.6 ${GRID_FONT}}
+    ${s} [data-part="chapters"]{margin:14px 0;padding-left:20px;font-size:14px;line-height:1.7}
+    ${s} [data-part="controls"]{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+    ${s} [data-part="register"]{display:flex;gap:0;flex-wrap:wrap;margin:12px 0 18px;padding:0;list-style:none}
+    ${s} [data-part="register"] li{flex:1;min-width:155px}
+    ${s} [data-part="register"] button{width:100%;text-align:left;border:0;border-top:1px solid ${cssVar("muted")};font-size:14px;padding:12px 8px}
+    ${s} [data-part="foot"]{font:12px/1.6 ${GRID_FONT};color:${cssVar("muted")};border-top:1px solid ${cssVar("muted")};padding-top:12px}
+    @media(max-width:620px){${s} [data-part="workspace"]{grid-template-columns:1fr;gap:16px}${s} [data-part="scene"]{height:235px}${s} [data-part="intro"]{font-size:15px;line-height:1.5;margin-bottom:16px}${s} h1{margin:10px 0}${s} [data-part="detail"] p{font-size:15px;line-height:1.5}${s} [data-part="register"] li{min-width:45%}${s} h2{font-size:23px}${s} [data-part="page"]{padding:18px}${s} [data-part="controls"]{margin:12px 0}}
+  `;
+    const node = (tag, part, text = "") => {
+      const el = document.createElement(tag);
+      el.setAttribute("data-pica", "");
+      el.dataset.part = part;
+      el.textContent = text;
+      return el;
+    };
+    const button = (action, text) => {
+      const el = node("button", action, text);
+      el.type = "button";
+      el.dataset.action = action;
+      return el;
+    };
+    const page = node("div", "page");
+    const edition = node("p", "edition", "FIELD EXPEDITION / WATERSHED 06");
+    const heading = node("h1", "heading");
+    const intro = node("p", "intro");
+    const workspace = node("div", "workspace");
+    const sceneWrap = node("div", "scene-wrap");
+    const scene = node("div", "scene");
+    const markers = node("div", "markers");
+    markers.setAttribute("role", "group");
+    markers.setAttribute("aria-label", "Spatial station selection");
+    const caption = node("p", "caption", "Scene / Select a number. The register below follows the same route.");
+    const detail = node("section", "detail");
+    const reference = node("p", "reference");
+    const detailTitle = node("h2", "detail-title");
+    detailTitle.tabIndex = -1;
+    const account = node("p", "account");
+    const facts = node("p", "facts");
+    const note = node("p", "note");
+    const chapters = node("ol", "chapters");
+    const chapterNote = node("p", "chapter-note");
+    const controls = node("div", "controls");
+    const enter = button("enter", "Start the field walk");
+    const back = button("back", "Back to overview");
+    const prev = button("previous", "Previous station");
+    const next = button("next", "Next station");
+    const pause = button("pause", "Pause scene");
+    const registerTitle = node("p", "reference", "LINEAR station REGISTER");
+    const filters = node("div", "controls");
+    const register = node("ol", "register");
+    const foot = node("p", "foot", "FIELD NOTE / These supplied observations describe an invented route, not current conditions.");
+    sceneWrap.append(scene, caption);
+    controls.append(enter, back, prev, next, pause);
+    detail.append(reference, detailTitle, account, facts, note, chapters, chapterNote, controls);
+    workspace.append(sceneWrap, detail);
+    page.append(edition, heading, intro, workspace, registerTitle, filters, register, foot);
+    host.append(page);
+    const runtime = {};
+    const pathFiltering = false;
+    const chapterSelection = false;
+    const surface = createCanvas(scene, { maxDpr: 1.5, maxPixels: 15e5, onResize: () => runtime.loop?.redraw() });
+    scene.append(markers);
+    const ink = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => runtime.loop?.redraw());
+    let entries = [];
+    let selected = -1;
+    let selectedChapter = 0;
+    let entered = false;
+    let path = "All";
+    let userPaused = props.paused;
+    let lastIndex = 0;
+    let destroyed = false;
+    const point = (entry) => [
+      Math.min(92, Math.max(8, Number.isFinite(entry.x) ? entry.x : 50)),
+      Math.min(86, Math.max(12, Number.isFinite(entry.y) ? entry.y : 50))
+    ];
+    function paint(t, reduced) {
+      if (!ink) return;
+      const w = surface.width, h = surface.height;
+      const colors = palette.colors;
+      ink.clearRect(0, 0, w, h);
+      ink.lineWidth = Math.max(1, surface.dpr);
+      ink.lineJoin = "miter";
+      ink.strokeStyle = colors.muted;
+      const line = (points, width = 1) => {
+        ink.lineWidth = width * surface.dpr;
+        ink.beginPath();
+        points.forEach((p, i) => i ? ink.lineTo((p[0] ?? 0) * w, (p[1] ?? 0) * h) : ink.moveTo((p[0] ?? 0) * w, (p[1] ?? 0) * h));
+        ink.stroke();
+      };
+      const rect = (x2, y, a, b) => {
+        ink.strokeRect(x2 * w, y * h, a * w, b * h);
+      };
+      const phase = reduced ? 0.5 : (Math.sin(t / 2200 + hashSeed(props.seed, 7) / 4294967296) + 1) / 2;
+      line([[0.06, 0.25], [0.16, 0.28], [0.25, 0.39], [0.35, 0.42], [0.44, 0.58], [0.54, 0.6], [0.65, 0.68], [0.75, 0.72], [0.94, 0.79]], 2);
+      line([[0.06, 0.4], [0.2, 0.44], [0.33, 0.54], [0.45, 0.7], [0.61, 0.78], [0.94, 0.87]]);
+      line([[0.06, 0.58], [0.26, 0.62], [0.46, 0.83], [0.94, 0.94]]);
+      for (let j = 0; j < 12; j++) {
+        const x2 = 0.08 + j * 0.072;
+        line([[x2, 0.86], [x2 + 0.025, 0.91]]);
+      }
+      ink.strokeStyle = colors.fg;
+      line([[0.14, 0.25], [0.25, 0.34], [0.33, 0.43], [0.45, 0.49], [0.53, 0.62], [0.65, 0.62], [0.74, 0.74], [0.92, 0.74]], 2);
+      for (let j = 0; j < 7; j++) {
+        const x2 = 0.58 + j * 0.018;
+        line([[x2, 0.65], [x2 - 8e-3, 0.55]]);
+        line([[x2, 0.59], [x2 + 0.012, 0.57]]);
+      }
+      ink.strokeStyle = colors.accent;
+      const x = 0.24 + phase * 0.09;
+      line([[x, 0.35], [x + 0.024, 0.374]], 3);
+      line([[0.77 + phase * 0.07, 0.75], [0.8 + phase * 0.07, 0.75]], 2);
+      ink.strokeStyle = colors.muted;
+      rect(0.07, 0.9, 0.03, 0.04);
+      line([[0.08, 0.94], [0.42, 0.94]]);
+      for (let j = 0; j < 4; j++) line([[0.08 + j * 0.1, 0.92], [0.08 + j * 0.1, 0.96]]);
+      entries.forEach((entry, i) => {
+        if (pathFiltering && path !== "All" && entry.group !== path) return;
+        const [x2, y] = point(entry);
+        const px = x2 * w / 100, py = y * h / 100, radius = 22 * surface.dpr;
+        ink.clearRect(px - radius, py - radius, 2 * radius, 2 * radius);
+        ink.strokeStyle = i === selected ? colors.accent : colors.fg;
+        ink.lineWidth = surface.dpr;
+        ink.strokeRect(px - 27 * surface.dpr, py - 27 * surface.dpr, 54 * surface.dpr, 54 * surface.dpr);
+      });
+    }
+    function render() {
+      heading.textContent = props.title || "Untitled experience";
+      intro.textContent = props.introduction;
+      attrs.set("role", "region");
+      attrs.set("aria-label", heading.textContent);
+      attrs.set("aria-hidden", null);
+      page.dataset.view = selected >= 0 ? "detail" : entered ? "overview" : "entrance";
+      markers.replaceChildren();
+      register.replaceChildren();
+      filters.replaceChildren();
+      chapters.replaceChildren();
+      entries = props.stations.slice(0, 12);
+      if (selected >= entries.length) selected = -1;
+      entries.forEach((entry, i) => {
+        if (pathFiltering && path !== "All" && entry.group !== path) return;
+        const mark = button("select", String(i + 1).padStart(2, "0"));
+        mark.dataset.index = String(i);
+        mark.setAttribute("aria-label", `station ${i + 1}: ${entry.name}`);
+        mark.setAttribute("aria-pressed", String(i === selected));
+        const [x, y] = point(entry);
+        mark.style.left = `${x}%`;
+        mark.style.top = `${y}%`;
+        markers.append(mark);
+        const row = node("li", "row");
+        const link = button("select", `${String(i + 1).padStart(2, "0")} / ${entry.name}`);
+        link.dataset.index = String(i);
+        link.setAttribute("aria-pressed", String(i === selected));
+        row.append(link);
+        register.append(row);
+      });
+      if (pathFiltering) for (const group of ["All", ...new Set(entries.map((e) => e.group))]) {
+        const filter = button("path", `${group} path`);
+        filter.dataset.path = group;
+        filter.setAttribute("aria-pressed", String(group === path));
+        filters.append(filter);
+      }
+      const current = entries[selected];
+      reference.textContent = current?.reference ?? (entered ? "Overview / Choose a station" : "ENTRY / OPEN THE ROUTE");
+      detailTitle.textContent = current?.title ?? (entries.length ? "Read the whole catchment" : "The register is empty");
+      account.textContent = current?.description ?? (entries.length ? "Start at the spring and move downstream. Station notes hold measured sample values and a practical observation prompt." : "Add records to the stations prop to build a route. The scene remains an architectural guide.");
+      facts.textContent = current?.facts ?? `${entries.length} station${entries.length === 1 ? "" : "s"} / Native buttons support keyboard and touch.`;
+      note.textContent = current?.note ?? "Escape returns to the overview, then to the entrance.";
+      note.hidden = !current;
+      for (const [index, cue] of (current?.chapters ?? []).entries()) {
+        const row = node("li", "chapter");
+        if (chapterSelection) {
+          const cueButton = button("chapter", cue);
+          cueButton.dataset.chapter = String(index);
+          cueButton.setAttribute("aria-pressed", String(index === selectedChapter));
+          row.append(cueButton);
+        } else row.textContent = cue;
+        chapters.append(row);
+      }
+      chapterNote.hidden = !chapterSelection || !current;
+      chapterNote.textContent = current?.chapterNotes?.[selectedChapter] ?? "";
+      chapters.hidden = !current;
+      enter.hidden = entered;
+      enter.disabled = !entries.length;
+      back.hidden = !entered;
+      prev.hidden = !current;
+      next.hidden = !current;
+      const route = entries.map((entry, index) => ({ entry, index })).filter(({ entry }) => !pathFiltering || path === "All" || entry.group === path).map(({ index }) => index);
+      prev.disabled = route.indexOf(selected) <= 0;
+      next.disabled = route.indexOf(selected) >= route.length - 1;
+      pause.textContent = userPaused ? "Resume scene" : "Pause scene";
+      pause.setAttribute("aria-pressed", String(userPaused));
+      runtime.loop?.redraw();
+    }
+    function choose(i) {
+      if (!entries[i]) return;
+      selected = i;
+      selectedChapter = 0;
+      entered = true;
+      lastIndex = i;
+      render();
+      detailTitle.focus({ preventScroll: true });
+    }
+    function overview() {
+      selected = -1;
+      render();
+      const target = markers.querySelector(`[data-index="${lastIndex}"]`);
+      (target ?? back).focus({ preventScroll: true });
+    }
+    const onClick = (event) => {
+      const target = event.target instanceof Element ? event.target.closest("button[data-action]") : null;
+      if (!target || !page.contains(target)) return;
+      const action = target.dataset.action;
+      if (action === "select") choose(Number(target.dataset.index));
+      else if (action === "enter") {
+        entered = true;
+        render();
+        markers.querySelector("button")?.focus({ preventScroll: true });
+      } else if (action === "back") overview();
+      else if (action === "previous" || action === "next") {
+        const route = entries.map((entry, index) => ({ entry, index })).filter(({ entry }) => !pathFiltering || path === "All" || entry.group === path).map(({ index }) => index);
+        choose(route[route.indexOf(selected) + (action === "next" ? 1 : -1)] ?? -1);
+      } else if (action === "chapter") {
+        selectedChapter = Number(target.dataset.chapter);
+        render();
+        Array.from(chapters.querySelectorAll("button")).find((b) => Number(b.dataset.chapter) === selectedChapter)?.focus({ preventScroll: true });
+      } else if (action === "path") {
+        path = target.dataset.path ?? "All";
+        selected = -1;
+        entered = true;
+        render();
+        Array.from(filters.querySelectorAll("button")).find((b) => b.dataset.path === path)?.focus({ preventScroll: true });
+      } else if (action === "pause") {
+        userPaused = !userPaused;
+        runtime.loop?.update({ paused: userPaused });
+        render();
+      }
+    };
+    const onKey = (event) => {
+      if (event.key !== "Escape") return;
+      if (selected >= 0) {
+        event.preventDefault();
+        overview();
+      } else if (entered) {
+        event.preventDefault();
+        entered = false;
+        path = "All";
+        render();
+        enter.focus({ preventScroll: true });
+      }
+    };
+    page.addEventListener("click", onClick);
+    page.addEventListener("keydown", onKey);
+    render();
+    runtime.loop = createLoop({ el: scene, paused: userPaused, time: props.time, fps: Math.max(1, Math.min(30, props.fps)), still: 1200, frame: paint });
+    attrs.set("data-pica-ready", "true");
+    return {
+      update(partial) {
+        const old = props;
+        props = { ...props, ...partial };
+        if (partial.paused !== void 0) userPaused = props.paused;
+        if (!sameJson(old.stations, props.stations)) {
+          selected = -1;
+          path = "All";
+        }
+        palette.refresh();
+        render();
+        runtime.loop?.update({ paused: userPaused, time: props.time, fps: Math.max(1, Math.min(30, props.fps)) });
+        runtime.loop?.redraw();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        runtime.loop?.destroy();
+        palette.destroy();
+        surface.destroy();
+        page.removeEventListener("click", onClick);
+        page.removeEventListener("keydown", onKey);
+        page.remove();
+        sheet.remove();
+        attrs.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaWatershedWalk.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

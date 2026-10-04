@@ -22,6 +22,12 @@ The components share one look:
 
 Every component draws with four palette tokens, so a single palette matches it to a brand. See [STYLE.md](STYLE.md) for the rules every component follows.
 
+## Local review batches
+
+The expanded local collection contains 247 designs. The review selector keeps the [36 microsites](docs/plans/2026-10-04-microsite-release.md) and [47 ASCII, motion and immersive additions](docs/plans/2026-10-04-ascii-motion-release.md) separately reviewable, or shows both new batches together. NEW membership comes from their stable release metadata.
+
+Use `?new=ascii-motion-2026-10-04` for the latest batch, `?new=microsites-2026-10-04` for the earlier batch, or `?new=all` for both. Each works with existing component hash links, search, facets and category. The local [composer proof](docs/plans/2026-10-04-composer-proof.md) remains available at `/lab/composer.html`.
+
 ## License
 
 MIT + Commons Clause, the same model React Bits uses. You can use the components in anything, including commercial work. You cannot sell or republish them as a component library or template pack. This makes Picagram source-available rather than OSI open source.

@@ -1,6 +1,6 @@
 "use client";
 import { useState, type RefObject } from "react";
-import { isNew, CATEGORIES, CATEGORY_TITLES, FACETS, facetCounts, groupByCategory, type CatalogItem, type Category, type Facet } from "@/lib/catalog";
+import { isNew, inRelease, RELEASES, CATEGORIES, CATEGORY_TITLES, FACETS, facetCounts, groupByCategory, type ReleaseFilter, type CatalogItem, type Category, type Facet } from "@/lib/catalog";
 import type { PreviewFont } from "@/lib/fonts";
 import { useMetaKey } from "@/lib/platform";
 import { THEMES, type Theme } from "@/lib/theme";
@@ -13,6 +13,8 @@ interface LayersProps {
   onFont: (font: PreviewFont) => void;
   newOnly: boolean;
   onNewOnly: (value: boolean) => void;
+  release: ReleaseFilter;
+  onRelease: (value: ReleaseFilter) => void;
   category: Category | "all";
   onCategory: (value: Category | "all") => void;
   onResetFilters: () => void;
@@ -87,8 +89,13 @@ export function Layers(p: LayersProps) {
         <kbd aria-hidden="true">{meta} K</kbd>
       </div>
       <div className="layers-batch">
-        <button type="button" className="chip" aria-pressed={p.newOnly} onClick={() => p.onNewOnly(!p.newOnly)}>NEW only <span className="chip-count">{p.items.filter(isNew).length}</span></button>
+        <button type="button" className="chip" aria-pressed={p.newOnly} onClick={() => p.onNewOnly(!p.newOnly)}>NEW only <span className="chip-count">{p.items.filter((item) => inRelease(item, p.release)).length}</span></button>
         <button type="button" className="chip" onClick={p.onResetFilters}>Reset filters</button>
+        <label className="label" htmlFor="catalog-release">Review batch</label>
+        <select id="catalog-release" className="field" value={p.release} onChange={(e) => p.onRelease(e.target.value as ReleaseFilter)}>
+          {RELEASES.map((release) => <option key={release.id} value={release.id}>{release.title}</option>)}
+          <option value="all">Both new batches</option>
+        </select>
         <label className="label" htmlFor="catalog-category">Category</label>
         <select id="catalog-category" className="field" value={p.category} onChange={(e) => p.onCategory(e.target.value as Category | "all")}>
           <option value="all">All categories</option>

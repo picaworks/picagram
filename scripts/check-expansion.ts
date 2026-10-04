@@ -6,9 +6,12 @@ import AxeBuilder from "@axe-core/playwright";
 import { loadAll, ROOT } from "./catalog";
 import { stage, WORK } from "./verify/stage";
 import { serve } from "./verify/serve";
+import { diffRatio } from "./verify/page";
 
-const entries = (await loadAll()).filter((e) => e.meta.release === "microsites-2026-10-04" && (process.argv.length === 2 || process.argv.slice(2).includes(e.meta.slug)));
-const evidence = join(ROOT, ".pica", "expansion-proof");
+const release = process.env.PICA_RELEASE ?? "microsites-2026-10-04";
+const entries = (await loadAll()).filter((e) => e.meta.release === release && (process.argv.length === 2 || process.argv.slice(2).includes(e.meta.slug)));
+if (entries.length === 0) throw new Error(`No components selected for ${release}`);
+const evidence = join(ROOT, ".pica", release === "microsites-2026-10-04" ? "expansion-proof" : `${release}-proof`);
 await mkdir(evidence, { recursive: true });
 const server = await serve(WORK);
 const browser = await chromium.launch({ headless: true });
@@ -41,10 +44,20 @@ try {
         const keyboard = page.locator("a[href],button,summary").first();
         if (await keyboard.count()) await keyboard.focus();
         const focus = await keyboard.count() === 0 || await keyboard.evaluate((el) => document.activeElement === el);
-        const ok = audit.scrollWidth <= width && audit.headings === 1 && audit.broken.length === 0 && audit.overflow.length === 0 && audit.text > 300 && axe.violations.length === 0 && errors.length === 0 && focus;
+        const fullPage = entry.meta.category === "immersive" || entry.meta.category === "sections" || entry.meta.tags.includes("website") || entry.meta.tags.includes("layout");
+        const vanilla = await page.screenshot({ path: join(evidence, `${entry.meta.slug}-${width}-${ground}.png`), fullPage: true });
+        let parity: number | null = null;
+        if (process.env.PICA_COMPARE_REACT === "1") {
+          await page.goto(`${server.origin}/${entry.meta.slug}/react.html`);
+          await page.waitForSelector('[data-pica-ready="true"]');
+          await page.evaluate(() => document.fonts.ready);
+          const reactControl = page.locator("a[href],button,summary").first();
+          if (await reactControl.count()) await reactControl.focus();
+          parity = diffRatio(vanilla, await page.screenshot({ path: join(evidence, `${entry.meta.slug}-${width}-${ground}-react.png`), fullPage: true }));
+        }
+        const ok = audit.scrollWidth <= width && audit.headings <= 1 && (!fullPage || audit.headings === 1) && audit.broken.length === 0 && audit.overflow.length === 0 && audit.text > (fullPage ? 300 : 100) && axe.violations.length === 0 && errors.length === 0 && focus && (parity === null || parity <= .002);
         if (!ok) failures++;
-        await page.screenshot({ path: join(evidence, `${entry.meta.slug}-${width}-${ground}.png`), fullPage: true });
-        results.push({ slug: entry.meta.slug, width, ground, ok, ...audit, focus, axe: axe.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target) })), errors });
+        results.push({ slug: entry.meta.slug, width, ground, ok, ...audit, focus, parity, axe: axe.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target) })), errors });
         await context.close();
       }
     }

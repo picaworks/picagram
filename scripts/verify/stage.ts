@@ -103,7 +103,7 @@ export async function stage(entry: Entry): Promise<Staged> {
   const dir = join(WORK, slug);
   await mkdir(dir, { recursive: true });
   const bundle = await vanillaBundle(entry);
-  const fontHead = entry.meta.wave === 13 ? `<link rel="stylesheet" href="../fonts/fonts.css"><style>${fontProfileCss(slug)}</style>` : "";
+  const fontHead = entry.meta.wave === 13 || entry.meta.wave === 14 ? `<link rel="stylesheet" href="../fonts/fonts.css"><style>${fontProfileCss(slug)}</style>` : "";
   if (fontHead) await cp(join(ROOT, "public", "fonts"), join(WORK, "fonts"), { recursive: true });
   const demoHtml = (e: Entry) => vanillaHtml(e, bundle).replace("</head>", `${fontHead}</head>`);
   await writeFile(join(dir, "vanilla.html"), demoHtml(entry));
