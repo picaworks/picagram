@@ -122,6 +122,8 @@ export interface Meta {
   wraps?: "content" | "panels";
   /** Controlled props, each mapped to the event that reports a change to it, such as { value: "valueChange" }. */
   controlled?: Readonly<Record<string, string>>;
+  /** Optional isolated input sequence for each controlled prop when a full interaction changes independent state. */
+  controlledInteractions?: Readonly<Record<string, readonly Step[]>>;
   /** Scripted interactions verify runs in both shapes. Each list of steps starts from a fresh mount. */
   interactions?: readonly (readonly Step[])[];
   /** How the demo page and the catalog frame give the component room. "inline" marks a text run, which is

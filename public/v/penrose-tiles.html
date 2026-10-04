@@ -1,0 +1,313 @@
+<!doctype html>
+<!--
+  Pica · Penrose Tiles · penrose-tiles
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Penrose Tiles · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaPenroseTiles = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/patterns/penrose-tiles/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/chart.ts
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, String(value));
+    return el;
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // registry/patterns/penrose-tiles/core.ts
+  var defaults = {
+    depth: 6,
+    scale: 38,
+    seed: 1,
+    opacity: 0.26
+  };
+  var PENROSE_PHI = (1 + Math.sqrt(5)) / 2;
+  function penroseFinite(value, fallback) {
+    return Number.isFinite(value) ? value : fallback;
+  }
+  function penroseDepth(value) {
+    return Math.max(1, Math.min(8, Math.round(penroseFinite(value, defaults.depth))));
+  }
+  function penroseBetween(a, b) {
+    return { x: a.x + (b.x - a.x) / PENROSE_PHI, y: a.y + (b.y - a.y) / PENROSE_PHI };
+  }
+  function penrosePointKey(point) {
+    return `${Math.round(point.x * 1e9)},${Math.round(point.y * 1e9)}`;
+  }
+  function penroseEdgeKey(a, b) {
+    const left = penrosePointKey(a), right = penrosePointKey(b);
+    return left < right ? `${left}:${right}` : `${right}:${left}`;
+  }
+  function penrosePatch(depth) {
+    let triangles = [];
+    for (let i = 0; i < 10; i++) {
+      const left = (2 * i - 1) * Math.PI / 10;
+      const right = (2 * i + 1) * Math.PI / 10;
+      let b = { x: Math.cos(left), y: Math.sin(left) };
+      let c = { x: Math.cos(right), y: Math.sin(right) };
+      if (i % 2 === 0) [b, c] = [c, b];
+      triangles.push({ kind: 0, a: { x: 0, y: 0 }, b, c });
+    }
+    for (let round = 0; round < depth; round++) {
+      const next = [];
+      for (const { kind, a, b, c } of triangles) {
+        if (kind === 0) {
+          const p = penroseBetween(a, b);
+          next.push({ kind: 0, a: c, b: p, c: b }, { kind: 1, a: p, b: c, c: a });
+        } else {
+          const q = penroseBetween(b, a);
+          const r = penroseBetween(b, c);
+          next.push({ kind: 1, a: r, b: c, c: a }, { kind: 1, a: q, b: r, c: b }, { kind: 0, a: r, b: q, c: a });
+        }
+      }
+      triangles = next;
+    }
+    const bases = /* @__PURE__ */ new Map();
+    const rhombi = [];
+    for (const triangle of triangles) {
+      const key = `${triangle.kind}:${penroseEdgeKey(triangle.b, triangle.c)}`;
+      const partner = bases.get(key);
+      if (!partner) {
+        bases.set(key, triangle);
+        continue;
+      }
+      bases.delete(key);
+      rhombi.push({ kind: triangle.kind, points: [triangle.a, triangle.b, partner.a, triangle.c] });
+    }
+    return rhombi;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let depth = penroseDepth(props.depth);
+    let rhombi = penrosePatch(depth);
+    let alive = true;
+    let graphic = null;
+    const attrs = hostAttributes(host);
+    const surface = layer(host, "under");
+    surface.el.style.overflow = "hidden";
+    function opacity() {
+      surface.el.style.opacity = String(Math.max(0, Math.min(1, penroseFinite(props.opacity, defaults.opacity))));
+    }
+    function draw() {
+      if (!alive) return;
+      const width = Math.max(1, host.clientWidth), height = Math.max(1, host.clientHeight);
+      const edge = Math.max(12, Math.min(120, penroseFinite(props.scale, defaults.scale)));
+      const radius = edge * PENROSE_PHI ** depth;
+      const rng = createRng(penroseFinite(props.seed, defaults.seed));
+      const angle = rng() * Math.PI * 2;
+      const cosine = Math.cos(angle), sine = Math.sin(angle);
+      const available = Math.max(0, radius * 0.85 - Math.hypot(width, height) / 2);
+      const offsetX = (rng() - 0.5) * Math.min(radius * 0.34, available);
+      const offsetY = (rng() - 0.5) * Math.min(radius * 0.34, available);
+      const cx = width / 2 + offsetX, cy = height / 2 + offsetY;
+      const transform = (point) => ({
+        x: cx + radius * (point.x * cosine - point.y * sine),
+        y: cy + radius * (point.x * sine + point.y * cosine)
+      });
+      const coordinate = (point) => `${point.x.toFixed(3)} ${point.y.toFixed(3)}`;
+      const fills = [[], []];
+      const edges = /* @__PURE__ */ new Map();
+      for (const rhombus of rhombi) {
+        const points = rhombus.points.map(transform);
+        if (Math.max(...points.map((p) => p.x)) < -2 || Math.min(...points.map((p) => p.x)) > width + 2 || Math.max(...points.map((p) => p.y)) < -2 || Math.min(...points.map((p) => p.y)) > height + 2) continue;
+        fills[rhombus.kind].push(points.map((p, i) => `${i ? "L" : "M"}${coordinate(p)}`).join("") + "Z");
+        for (let i = 0; i < 4; i++) {
+          const a = rhombus.points[i], b = rhombus.points[(i + 1) % 4];
+          const p = points[i], q = points[(i + 1) % 4];
+          if (a && b && p && q) edges.set(penroseEdgeKey(a, b), [p, q]);
+        }
+      }
+      const root = svg("svg", { "data-pica": "", "aria-hidden": "true", viewBox: `0 0 ${width} ${height}`, preserveAspectRatio: "none" });
+      root.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none";
+      for (const kind of [0, 1]) {
+        root.appendChild(svg("path", { "data-pica": "", d: fills[kind].join(""), fill: cssVar("fg"), "fill-opacity": kind ? 0.035 : 0.09, stroke: "none" }));
+      }
+      const edgePath = Array.from(edges.values()).map(([a, b]) => `M${coordinate(a)}L${coordinate(b)}`).join("");
+      root.appendChild(svg("path", { "data-pica": "", d: edgePath, fill: "none", stroke: cssVar("fg"), "stroke-opacity": 0.72, "stroke-width": 0.8, "stroke-linecap": "round", "stroke-linejoin": "round", "vector-effect": "non-scaling-stroke" }));
+      graphic?.remove();
+      graphic = root;
+      surface.el.appendChild(root);
+      attrs.set("data-pica-ready", "true");
+    }
+    opacity();
+    draw();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => draw()) : null;
+    observer?.observe(host);
+    return {
+      update(next) {
+        if (!alive) return;
+        const before = props;
+        props = { ...props, ...next };
+        const nextDepth = penroseDepth(props.depth);
+        if (nextDepth !== depth) {
+          depth = nextDepth;
+          rhombi = penrosePatch(depth);
+        }
+        if (props.opacity !== before.opacity) opacity();
+        if (props.depth !== before.depth || props.scale !== before.scale || props.seed !== before.seed) draw();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        observer?.disconnect();
+        surface.remove();
+        graphic = null;
+        attrs.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaPenroseTiles.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

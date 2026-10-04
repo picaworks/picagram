@@ -184,6 +184,7 @@ The fields are typed in `lib/meta.ts`.
 | `wraps` | `"content"` when the component decorates children, and `"panels"` when each direct child is a panel. |
 | `host` | The host element, when it is not a div: `span`, `button`, or `dialog`. |
 | `controlled` | Each controlled prop, mapped to its event. |
+| `controlledInteractions` | Optional per-prop press/click probes when a full interaction also changes independent state; the complete `interactions` still checks parity and events. |
 | `interactions` | Lists of steps (`press`, `click`, `hover`, `pointerMove`, `expectFocus`, `expectEvent`, `expectAttr`) that verify runs in both shapes. A `hover` names the element that changes and must change more than 1% of it. A `pointerMove` takes a fraction of the host on each axis, with y measured downward as the DOM measures it, and unpins the clock for its whole list. |
 | `stage` | `"inline"` centers and enlarges a text run on the demo page. `"flow"` lets a component take its own height above a floor of one frame, the way a section sits in a real page, so a hero is never clipped on a phone. A flow component sets its own minimum in a `:where()` rule rather than an inline style, so a page that gives the host a height still wins. |
 | `capture` | The animation time for captures, when 1200 ms is not representative. |

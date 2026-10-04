@@ -1,0 +1,875 @@
+<!doctype html>
+<!--
+  Pica · Parallel Coordinate Plot · parallel-coordinate-plot
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Parallel Coordinate Plot · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaParallelCoordinatePlot = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/data/parallel-coordinate-plot/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/chart.ts
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, String(value));
+    return el;
+  }
+  function dataTable(caption, head, rows) {
+    const table = document.createElement("table");
+    table.setAttribute("data-pica", "");
+    table.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    table.createCaption().textContent = caption;
+    const headRow = table.createTHead().insertRow();
+    for (const label of head) {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = label;
+      headRow.appendChild(th);
+    }
+    const body = table.createTBody();
+    for (const row of rows) {
+      const tr = body.insertRow();
+      row.forEach((cell, i) => {
+        if (i === 0) {
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = String(cell);
+          tr.appendChild(th);
+        } else {
+          tr.insertCell().textContent = String(cell);
+        }
+      });
+    }
+    return table;
+  }
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // registry/data/parallel-coordinate-plot/core.ts
+  var defaults = {
+    axes: [
+      { key: "output", label: "OUTPUT", min: 0, max: 100, unit: "", invert: false },
+      { key: "efficiency", label: "EFFICIENCY", min: 0, max: 100, unit: "%", invert: false },
+      { key: "mass", label: "MASS", min: 0, max: 5, unit: " kg", invert: true },
+      { key: "cost", label: "COST", min: 0, max: 1e3, unit: "", invert: true }
+    ],
+    records: [
+      { id: "aster", label: "Aster", values: { output: 88, efficiency: 64, mass: 4.1, cost: 760 } },
+      { id: "birch", label: "Birch", values: { output: 54, efficiency: 91, mass: 1.2, cost: 410 } },
+      { id: "cedar", label: "Cedar", values: { output: 72, efficiency: 82, mass: 2.3, cost: 570 } },
+      { id: "delta", label: "Delta", values: { output: 96, efficiency: 52, mass: 3.6, cost: 920 } },
+      { id: "elm", label: "Elm", values: { output: 42, efficiency: 76, mass: 0.8, cost: 230 } }
+    ],
+    value: null,
+    defaultValue: "cedar",
+    look: "glyph",
+    label: "Parallel coordinate comparison of output, efficiency, mass, and cost"
+  };
+  function parallelNumber(value) {
+    return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value);
+  }
+  function parallelPrepare(axes, records) {
+    const keys = /* @__PURE__ */ new Set();
+    const resolvedAxes = [];
+    for (const axis of axes) {
+      if (!axis.key || keys.has(axis.key)) continue;
+      keys.add(axis.key);
+      const values = records.map((record) => record.values[axis.key]).filter((v) => typeof v === "number" && Number.isFinite(v));
+      let lower = typeof axis.min === "number" && Number.isFinite(axis.min) ? axis.min : values.length ? values.reduce((a, b) => Math.min(a, b)) : 0;
+      let upper = typeof axis.max === "number" && Number.isFinite(axis.max) ? axis.max : values.length ? values.reduce((a, b) => Math.max(a, b)) : 1;
+      if (upper <= lower) {
+        const center = values[0] ?? lower;
+        const padding = Math.max(0.5, Math.abs(center) * 0.05);
+        lower = center - padding;
+        upper = center + padding;
+      }
+      resolvedAxes.push({ ...axis, lower, upper });
+    }
+    const ids = /* @__PURE__ */ new Set();
+    const resolvedRecords = [];
+    for (const record of records) {
+      if (!record.id || ids.has(record.id)) continue;
+      const values = resolvedAxes.map((axis) => {
+        const value = record.values[axis.key];
+        return typeof value === "number" && Number.isFinite(value) ? value : null;
+      });
+      if (!values.some((v) => v !== null)) continue;
+      ids.add(record.id);
+      const fractions = values.map((value, i) => {
+        const axis = resolvedAxes[i];
+        if (value === null || !axis) return null;
+        const fraction = Math.max(0, Math.min(1, (value - axis.lower) / (axis.upper - axis.lower)));
+        return axis.invert ? fraction : 1 - fraction;
+      });
+      resolvedRecords.push({ id: record.id, label: record.label || record.id, values, fractions });
+    }
+    return { axes: resolvedAxes, records: resolvedRecords };
+  }
+  function parallelDistance(point, a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const squared = dx * dx + dy * dy;
+    const t = squared ? Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / squared)) : 0;
+    return Math.hypot(point.x - a.x - t * dx, point.y - a.y - t * dy);
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let internalValue = props.defaultValue;
+    let data = parallelPrepare(props.axes, props.records);
+    let alive = true;
+    let grid = null;
+    let graphic = null;
+    let table = null;
+    let hits = [];
+    const attrs = hostAttributes(host);
+    const restoreStyle = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    const emit = emitter(host);
+    const frame = document.createElement("div");
+    frame.setAttribute("data-pica", "");
+    frame.setAttribute("aria-hidden", "true");
+    frame.style.cssText = `position:absolute;inset:0;overflow:hidden;background:${cssVar("bg")};cursor:crosshair`;
+    host.appendChild(frame);
+    const help = document.createElement("span");
+    help.setAttribute("data-pica", "");
+    help.id = nextId("parallel-help");
+    help.textContent = "Click a record line or use arrow keys to select a record. Home and End select the first and last records; Escape clears selection. Each axis has its own numeric scale. Values outside a domain are clipped; missing values are gaps.";
+    const status = document.createElement("span");
+    status.setAttribute("data-pica", "");
+    status.id = nextId("parallel-status");
+    status.setAttribute("aria-live", "polite");
+    status.setAttribute("aria-atomic", "true");
+    for (const node of [help, status]) {
+      node.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0";
+      host.appendChild(node);
+    }
+    const palette = watchPalette(host, () => {
+      if (alive) draw();
+    });
+    function selected() {
+      return props.value === null ? internalValue : props.value;
+    }
+    function detail() {
+      const record = data.records.find((item) => item.id === selected());
+      if (!record) return data.records.length ? "Select a record · arrow keys or click a line" : "No numeric records";
+      return `${record.label} · ${data.axes.map((axis, i) => `${axis.label || axis.key} ${record.values[i] === null ? "missing" : parallelNumber(record.values[i]) + (axis.unit || "")}`).join(" / ")}`;
+    }
+    function accessibility() {
+      const label = props.label.trim();
+      attrs.set("role", label ? "group" : null);
+      attrs.set("aria-label", label || null);
+      attrs.set("aria-hidden", label ? null : "true");
+      attrs.set("tabindex", label ? "0" : null);
+      attrs.set("aria-describedby", label ? `${help.id} ${status.id}` : null);
+      status.textContent = detail();
+    }
+    function updateTable() {
+      table?.remove();
+      table = dataTable(props.label || "Parallel coordinate data", ["Record", ...data.axes.map((axis) => `${axis.label || axis.key}${axis.unit ? ` (${axis.unit.trim()})` : ""}`)], data.records.map((record) => [record.label, ...record.values.map((value) => value === null ? "Missing" : value)]));
+      host.appendChild(table);
+    }
+    function orderedRecords() {
+      return [...data.records.filter((record) => record.id !== selected()), ...data.records.filter((record) => record.id === selected())];
+    }
+    function labelRows(labels, top, bottom, spacing) {
+      const sorted = [...labels].sort((a, b) => a.y - b.y);
+      const gap = Math.min(spacing, (bottom - top) / Math.max(1, sorted.length - 1));
+      let last = top - gap;
+      for (const item of sorted) {
+        item.y = Math.max(item.y, last + gap);
+        last = item.y;
+      }
+      const tail = sorted.at(-1);
+      if (tail && tail.y > bottom) {
+        tail.y = bottom;
+        for (let i = sorted.length - 2; i >= 0; i--) {
+          const item = sorted[i], following = sorted[i + 1];
+          if (item && following) item.y = Math.min(item.y, following.y - gap);
+        }
+      }
+      return sorted;
+    }
+    function drawSvg() {
+      graphic?.remove();
+      const width = Math.max(1, frame.clientWidth);
+      const height = Math.max(1, frame.clientHeight);
+      const root = svg("svg", { "data-pica": "", "aria-hidden": "true", viewBox: `0 0 ${width} ${height}`, "font-family": GRID_FONT, "font-size": 11 });
+      root.style.cssText = "display:block;width:100%;height:100%;pointer-events:none";
+      frame.appendChild(root);
+      graphic = root;
+      const left = Math.min(42, width * 0.12);
+      const gutter = Math.min(120, Math.max(62, width * 0.2));
+      const right = Math.max(left + 1, width - gutter);
+      const top = Math.min(58, height * 0.25);
+      const bottom = Math.max(top + 1, height - 58);
+      const axisX = (i) => data.axes.length < 2 ? (left + right) / 2 : left + i / (data.axes.length - 1) * (right - left);
+      function text(x, y, value, anchor = "middle", muted = false) {
+        const node = svg("text", { "data-pica": "", x, y, "text-anchor": anchor, fill: cssVar(muted ? "muted" : "fg") });
+        node.textContent = value;
+        root.appendChild(node);
+      }
+      function segment(a, b, color, strokeWidth = 1) {
+        root.appendChild(svg("line", { "data-pica": "", x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: cssVar(color), "stroke-width": strokeWidth, "stroke-linecap": "round" }));
+      }
+      data.axes.forEach((axis, i) => {
+        const x = axisX(i);
+        segment({ x, y: top }, { x, y: bottom }, "muted");
+        const label = `${axis.label || axis.key}${axis.invert ? " ↓" : ""}`;
+        const available = data.axes.length > 1 ? (right - left) / (data.axes.length - 1) : right - left;
+        text(x, top - 32, label.slice(0, Math.max(3, Math.floor(available / 6.6))));
+        text(x, top - 12, parallelNumber(axis.invert ? axis.lower : axis.upper) + (axis.unit || ""), "middle", true);
+        text(x, bottom + 18, parallelNumber(axis.invert ? axis.upper : axis.lower) + (axis.unit || ""), "middle", true);
+        for (let tick = 0; tick <= 4; tick++) {
+          const y = top + tick / 4 * (bottom - top);
+          segment({ x: x - 3, y }, { x: x + 3, y }, "muted");
+        }
+      });
+      hits = [];
+      const endpoints = /* @__PURE__ */ new Map();
+      for (const record of orderedRecords()) {
+        const active = record.id === selected();
+        let preceding = null;
+        record.fractions.forEach((fraction, i) => {
+          if (fraction === null) {
+            preceding = null;
+            return;
+          }
+          const point = { x: axisX(i), y: top + fraction * (bottom - top) };
+          if (preceding) {
+            segment(preceding, point, active ? "accent" : "muted", active ? 2.4 : 1.1);
+            hits.push({ id: record.id, a: preceding, b: point });
+          }
+          root.appendChild(svg("circle", { "data-pica": "", cx: point.x, cy: point.y, r: active ? 3.4 : 2, fill: cssVar(active ? "accent" : "fg") }));
+          hits.push({ id: record.id, a: point, b: point });
+          preceding = point;
+          endpoints.set(record.id, point);
+        });
+      }
+      const labels = labelRows([...endpoints].map(([id, p]) => ({ id, y: p.y })), top, bottom, 15);
+      for (const item of labels) {
+        const record = data.records.find((r) => r.id === item.id);
+        const point = endpoints.get(item.id);
+        if (!record || !point) continue;
+        const anchor = { x: right + 10, y: item.y };
+        segment(point, anchor, "muted", 0.6);
+        const active = item.id === selected();
+        text(anchor.x + 4, item.y + 4, `${active ? "› " : ""}${record.label}`.slice(0, Math.max(1, Math.floor((width - anchor.x - 8) / 6.6))), "start");
+        hits.push({ id: item.id, a: anchor, b: { x: width - 4, y: item.y } });
+      }
+      if (!data.axes.length || !data.records.length) text(width / 2, (top + bottom) / 2, !data.axes.length ? "NO NUMERIC AXES" : "NO NUMERIC RECORDS", "middle", true);
+      text(12, height - 14, detail().slice(0, Math.max(1, Math.floor((width - 24) / 6.6))), "start");
+    }
+    function drawGlyph() {
+      if (!grid) return;
+      const g = grid;
+      const colors = palette.colors;
+      g.clear();
+      const left = Math.min(4, Math.floor(g.cols / 8));
+      const right = Math.max(left + 1, g.cols - Math.min(17, Math.max(10, Math.floor(g.cols / 5))));
+      const top = Math.min(4, Math.floor(g.rows / 4));
+      const bottom = Math.max(top + 1, g.rows - 5);
+      const axisX = (i) => Math.round(data.axes.length < 2 ? (left + right) / 2 : left + i / (data.axes.length - 1) * (right - left));
+      function segment(a, b, color, active = false) {
+        const steps = Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y), 1);
+        const mark = active ? "•" : Math.abs(b.y - a.y) < 0.5 ? "─" : b.y > a.y ? "╲" : "╱";
+        for (let i = 0; i <= steps; i++) g.set(Math.round(a.x + (b.x - a.x) * i / steps), Math.round(a.y + (b.y - a.y) * i / steps), mark, color);
+      }
+      function centered(x, y, label, color, maxLength) {
+        const text = label.slice(0, Math.max(1, maxLength));
+        g.write(Math.max(0, Math.min(g.cols - text.length, x - Math.floor(text.length / 2))), y, text, color);
+      }
+      data.axes.forEach((axis, i) => {
+        const x = axisX(i);
+        for (let y = top; y <= bottom; y++) g.set(x, y, "│", colors.muted);
+        const space = data.axes.length > 1 ? Math.floor((right - left) / (data.axes.length - 1)) : right - left;
+        centered(x, top - 3, `${axis.label || axis.key}${axis.invert ? "↓" : ""}`, colors.fg, space);
+        centered(x, top - 1, parallelNumber(axis.invert ? axis.lower : axis.upper) + (axis.unit || ""), colors.muted, space);
+        centered(x, bottom + 1, parallelNumber(axis.invert ? axis.upper : axis.lower) + (axis.unit || ""), colors.muted, space);
+        for (let tick = 0; tick <= 4; tick++) g.set(x, Math.round(top + tick / 4 * (bottom - top)), "┼", colors.muted);
+      });
+      hits = [];
+      const endpoints = /* @__PURE__ */ new Map();
+      const pixel = (p) => ({ x: (p.x + 0.5) * g.cellWidth, y: (p.y + 0.5) * g.cellHeight });
+      for (const record of orderedRecords()) {
+        const active = record.id === selected();
+        let preceding = null;
+        record.fractions.forEach((fraction, i) => {
+          if (fraction === null) {
+            preceding = null;
+            return;
+          }
+          const point = { x: axisX(i), y: Math.round(top + fraction * (bottom - top)) };
+          if (preceding) {
+            segment(preceding, point, active ? colors.accent : colors.muted, active);
+            hits.push({ id: record.id, a: pixel(preceding), b: pixel(point) });
+          }
+          g.set(point.x, point.y, active ? "◆" : "○", active ? colors.accent : colors.fg);
+          hits.push({ id: record.id, a: pixel(point), b: pixel(point) });
+          preceding = point;
+          endpoints.set(record.id, point);
+        });
+      }
+      for (const item of labelRows([...endpoints].map(([id, p]) => ({ id, y: p.y })), top, bottom, 1)) {
+        const record = data.records.find((r) => r.id === item.id);
+        const point = endpoints.get(item.id);
+        if (!record || !point) continue;
+        const anchor = { x: right + 2, y: Math.round(item.y) };
+        segment(point, anchor, colors.muted);
+        const label = `${item.id === selected() ? "›" : " "}${record.label}`.slice(0, Math.max(1, g.cols - anchor.x - 1));
+        g.write(anchor.x, anchor.y, label, colors.fg);
+        hits.push({ id: item.id, a: pixel(anchor), b: pixel({ x: anchor.x + label.length, y: anchor.y }) });
+      }
+      if (!data.axes.length || !data.records.length) g.write(2, Math.floor((top + bottom) / 2), (!data.axes.length ? "NO NUMERIC AXES" : "NO NUMERIC RECORDS").slice(0, Math.max(0, g.cols - 4)), colors.muted);
+      g.write(1, g.rows - 2, detail().slice(0, Math.max(0, g.cols - 2)), colors.fg);
+      g.flush();
+    }
+    function draw() {
+      if (!alive) return;
+      if (grid) drawGlyph();
+      else drawSvg();
+      status.textContent = detail();
+      attrs.set("data-pica-ready", "true");
+    }
+    function mountView() {
+      if (props.look === "glyph") grid = createGrid(frame, { fontFamily: GRID_FONT, fontSize: 12, columns: 0, lineHeight: 1.2, renderer: "canvas", color: "" }, draw);
+      draw();
+    }
+    function select(id) {
+      if (id === selected()) return;
+      if (props.value === null) {
+        internalValue = id;
+        draw();
+      }
+      emit("valueChange", id);
+    }
+    const onKey = (event) => {
+      if (event.target !== host) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        select("");
+        return;
+      }
+      if (!data.records.length) return;
+      const index = data.records.findIndex((record2) => record2.id === selected());
+      let nextIndex;
+      switch (event.key) {
+        case "ArrowRight":
+        case "ArrowDown":
+          nextIndex = (index + 1) % data.records.length;
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+          nextIndex = (index < 0 ? data.records.length - 1 : index + data.records.length - 1) % data.records.length;
+          break;
+        case "Home":
+          nextIndex = 0;
+          break;
+        case "End":
+          nextIndex = data.records.length - 1;
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+      const record = data.records[nextIndex];
+      if (record) select(record.id);
+    };
+    const onClick = (event) => {
+      host.focus({ preventScroll: true });
+      const rect = frame.getBoundingClientRect();
+      const point = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      let distance = 16;
+      let id = null;
+      for (const hit of hits) {
+        const candidate = parallelDistance(point, hit.a, hit.b);
+        if (candidate <= distance) {
+          distance = candidate;
+          id = hit.id;
+        }
+      }
+      if (id !== null) select(id);
+    };
+    host.addEventListener("keydown", onKey);
+    frame.addEventListener("click", onClick);
+    const resize = new ResizeObserver(() => {
+      if (alive && !grid) draw();
+    });
+    resize.observe(frame);
+    accessibility();
+    updateTable();
+    mountView();
+    return {
+      update(partial) {
+        if (!alive) return;
+        const before = props;
+        props = { ...props, ...partial };
+        const dataChanged = !sameJson(before.axes, props.axes) || !sameJson(before.records, props.records);
+        if (dataChanged) data = parallelPrepare(props.axes, props.records);
+        if (dataChanged || before.label !== props.label) updateTable();
+        accessibility();
+        palette.refresh();
+        if (before.look !== props.look) {
+          grid?.destroy();
+          grid = null;
+          graphic?.remove();
+          graphic = null;
+          mountView();
+        } else draw();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        resize.disconnect();
+        host.removeEventListener("keydown", onKey);
+        frame.removeEventListener("click", onClick);
+        grid?.destroy();
+        palette.destroy();
+        frame.remove();
+        table?.remove();
+        help.remove();
+        status.remove();
+        attrs.restore();
+        restoreStyle();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaParallelCoordinatePlot.mount(host, take(initial));
+  ["valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

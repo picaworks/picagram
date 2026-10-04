@@ -1,0 +1,615 @@
+<!doctype html>
+<!--
+  Pica · Lenticular Image · lenticular-image
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Lenticular Image · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaLenticularImage = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/effects/lenticular-image/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+  function relativeLuminance(color) {
+    const [r, g, b] = parseColor(color);
+    const linear = (v) => {
+      const c = v / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+  }
+  function inkColor(host) {
+    return readPalette(host).fg;
+  }
+  function hostTone(host) {
+    const fg = relativeLuminance(inkColor(host));
+    let bg = 1;
+    for (let el = host; el; el = el.parentElement) {
+      const background = getComputedStyle(el).backgroundColor;
+      if (parseColor(background)[3] > 0) {
+        bg = relativeLuminance(background);
+        break;
+      }
+    }
+    return fg > bg ? "light-on-dark" : "dark-on-light";
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/pixels.ts
+  function createPlate() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    return {
+      canvas,
+      put(image) {
+        if (canvas.width !== image.width) canvas.width = image.width;
+        if (canvas.height !== image.height) canvas.height = image.height;
+        ctx?.putImageData(image, 0, 0);
+      }
+    };
+  }
+
+  // lib/sample.ts
+  function fitRect(sourceW, sourceH, boxW, boxH, fit, alignX = 0.5, alignY = 0.5) {
+    const scale = fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+    const w = sourceW * scale;
+    const h = sourceH * scale;
+    return { x: (boxW - w) * alignX, y: (boxH - h) * alignY, w, h };
+  }
+  function createSampler() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    let ink = new Float32Array(0);
+    return {
+      sample(source, sourceW, sourceH, host, o) {
+        const ny = o.ny ?? o.n;
+        const sw = o.cols * o.n;
+        const sh = o.rows * ny;
+        if (ink.length !== sw * sh) ink = new Float32Array(sw * sh);
+        if (!ctx || sourceW <= 0 || sourceH <= 0) return ink.fill(0);
+        if (canvas.width !== sw) canvas.width = sw;
+        if (canvas.height !== sh) canvas.height = sh;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, sw, sh);
+        if (o.mirror) ctx.setTransform(-1, 0, 0, 1, sw, 0);
+        const box = fitRect(sourceW, sourceH, o.cols * o.aspect, o.rows, o.fit, o.alignX, o.alignY);
+        const toX = o.n / o.aspect;
+        ctx.drawImage(source, box.x * toX, box.y * ny, box.w * toX, box.h * ny);
+        const data = ctx.getImageData(0, 0, sw, sh).data;
+        const lightOnDark = (o.tone === "auto" ? hostTone(host) : o.tone) === "light-on-dark";
+        for (let p = 0; p < sw * sh; p++) {
+          const i = p * 4;
+          const alpha = (data[i + 3] ?? 0) / 255;
+          const luma = (0.2126 * (data[i] ?? 0) + 0.7152 * (data[i + 1] ?? 0) + 0.0722 * (data[i + 2] ?? 0)) / 255;
+          const linear = Math.min(1, Math.max(0, (luma - 0.5) * o.contrast + 0.5)) ** 2.2;
+          ink[p] = alpha * (lightOnDark ? linear : 1 - linear);
+        }
+        return ink;
+      }
+    };
+  }
+
+  // lib/subject.ts
+  function litSphere(size = 256, lightX = 0.36, lightY = 0.34) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const light = ctx.createRadialGradient(size * lightX, size * lightY, size * 0.02, size * 0.5, size * 0.5, size * 0.46);
+      light.addColorStop(0, "#ffffff");
+      light.addColorStop(0.55, "#8a8a8a");
+      light.addColorStop(1, "#141414");
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return canvas;
+  }
+
+  // lib/source.ts
+  function loadSource(src, ready, fail) {
+    if (!src) {
+      const sphere = litSphere();
+      ready({ image: sphere, width: sphere.width, height: sphere.height, builtIn: true });
+      return () => void 0;
+    }
+    let live = true;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "async";
+    img.onload = () => {
+      if (live) ready({ image: img, width: img.naturalWidth, height: img.naturalHeight, builtIn: false });
+    };
+    img.onerror = () => {
+      if (live) fail();
+    };
+    img.src = src;
+    return () => {
+      live = false;
+    };
+  }
+  function fitFor(source, fit) {
+    return source.builtIn ? "contain" : fit;
+  }
+  function fitHostAspect(host, width, height) {
+    if (host.clientHeight >= 2 || width <= 0 || height <= 0) return () => void 0;
+    return styleHost(host, { "aspect-ratio": `${width} / ${height}` });
+  }
+  function showNote(host, text) {
+    const note = document.createElement("span");
+    note.setAttribute("data-pica", "");
+    note.setAttribute("aria-hidden", "true");
+    note.textContent = text;
+    note.style.cssText = [
+      "position:absolute",
+      "inset:0",
+      "display:flex",
+      "align-items:center",
+      "justify-content:center",
+      "pointer-events:none",
+      `color:${cssVar("muted")}`
+    ].join(";");
+    const restore = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    host.appendChild(note);
+    return () => {
+      note.remove();
+      restore();
+    };
+  }
+
+  // registry/effects/lenticular-image/core.ts
+  var lenticularSvg = (drawing) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" fill="currentColor">${drawing}</svg>`)}`;
+  var defaults = {
+    sources: [
+      lenticularSvg('<circle cx="400" cy="292" r="182" opacity=".12"/><path d="M400 110a182 182 0 1 0 0 364a182 182 0 0 0 0-364Zm0 45a137 137 0 1 1 0 274a137 137 0 0 1 0-274Z" fill-rule="evenodd"/><circle cx="400" cy="292" r="63"/><path d="M150 506h500v4H150Z" opacity=".45"/>'),
+      lenticularSvg('<path d="M138 443L326 137l111 168 56-86 169 224Z" opacity=".22"/><path d="M138 443L326 137l111 168-57 88-53-161-128 211Z"/><path d="m380 393 113-174 169 224H538L493 315l-67 128H199Z" opacity=".65"/><path d="M150 506h500v4H150Z" opacity=".45"/>')
+    ],
+    position: 0.42,
+    pitch: 12,
+    axis: "vertical"
+  };
+  var LENTICULAR_MAX = 768;
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let destroyed = false;
+    let started = false;
+    let workW = 0;
+    let workH = 0;
+    let output = null;
+    const images = [null, null];
+    const ink = [new Float32Array(0), new Float32Array(0)];
+    const settled = [false, false];
+    const failed = [false, false];
+    const cancellations = [() => void 0, () => void 0];
+    const generations = [0, 0];
+    let removeNote = null;
+    const priorReady = host.getAttribute("data-pica-ready");
+    labelHost(host, "");
+    const undoAspect = fitHostAspect(host, 800, 600);
+    const plate = createPlate();
+    const sampler = createSampler();
+    const surface = createCanvas(host, { maxPixels: 4e6, onResize: () => prepare() });
+    const ctx = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => {
+      if (started) draw();
+    });
+    function finite(value, fallback) {
+      return Number.isFinite(value) ? value : fallback;
+    }
+    function prepareImage(index) {
+      const source = images[index];
+      ink[index] = new Float32Array(0);
+      if (!source || !workW || !workH) return;
+      try {
+        ink[index] = sampler.sample(source.image, source.width, source.height, host, {
+          cols: workW,
+          rows: workH,
+          aspect: 1,
+          n: 1,
+          fit: fitFor(source, "cover"),
+          tone: source.builtIn ? "light-on-dark" : "dark-on-light",
+          contrast: 1,
+          mirror: false
+        }).slice();
+      } catch {
+        images[index] = null;
+        failed[index] = true;
+      }
+    }
+    function prepare() {
+      if (destroyed) return;
+      const width = Math.max(1, surface.cssWidth);
+      const height = Math.max(1, surface.cssHeight);
+      const scale = Math.min(1, LENTICULAR_MAX / Math.max(width, height));
+      const nextW = Math.max(1, Math.round(width * scale));
+      const nextH = Math.max(1, Math.round(height * scale));
+      if (nextW !== workW || nextH !== workH) {
+        workW = nextW;
+        workH = nextH;
+        output = new ImageData(workW, workH);
+        prepareImage(0);
+        prepareImage(1);
+      }
+      if (started) draw();
+    }
+    function draw() {
+      if (destroyed) return;
+      const unavailable = failed.some(Boolean) || !ctx;
+      if (unavailable && !removeNote) removeNote = showNote(host, "image unavailable");
+      if (!unavailable && removeNote) {
+        removeNote();
+        removeNote = null;
+      }
+      if (ctx && output) {
+        const width = Math.max(1, surface.cssWidth);
+        const height = Math.max(1, surface.cssHeight);
+        const vertical = props.axis !== "horizontal";
+        const pitch = Math.max(4, Math.min(64, finite(props.pitch, defaults.pitch)));
+        const position = Math.max(0, Math.min(1, finite(props.position, defaults.position)));
+        const pixels = output.data;
+        const fg = parseColor(palette.colors.fg);
+        const scale = vertical ? width / workW : height / workH;
+        const feather = Math.min(0.12, scale / pitch * 0.55);
+        for (let y = 0; y < workH; y++) {
+          for (let x = 0; x < workW; x++) {
+            const index = y * workW + x;
+            const coordinate = (vertical ? x + 0.5 : y + 0.5) * scale;
+            const phase = coordinate / pitch % 1;
+            let second = position === 0 ? 0 : position === 1 ? 1 : Math.max(0, Math.min(1, (position - phase) / feather + 0.5));
+            second = second * second * (3 - 2 * second);
+            const firstInk = ink[0]?.[index] ?? 0;
+            const secondInk = ink[1]?.[index] ?? 0;
+            const coverage = firstInk * (1 - second) + secondInk * second;
+            const ridge = 0.91 + 0.09 * Math.sin(Math.PI * phase);
+            const j = index * 4;
+            pixels[j] = fg[0];
+            pixels[j + 1] = fg[1];
+            pixels[j + 2] = fg[2];
+            pixels[j + 3] = Math.round(Math.max(0, Math.min(1, coverage * ridge)) * fg[3]);
+          }
+        }
+        plate.put(output);
+        ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = palette.colors.bg;
+        ctx.fillRect(0, 0, width, height);
+        ctx.imageSmoothingEnabled = true;
+        ctx.drawImage(plate.canvas, 0, 0, width, height);
+      }
+      if (settled[0] && settled[1]) host.dataset.picaReady = "true";
+    }
+    function load(index) {
+      cancellations[index]?.();
+      const generation = (generations[index] ?? 0) + 1;
+      generations[index] = generation;
+      settled[index] = false;
+      failed[index] = false;
+      images[index] = null;
+      ink[index] = new Float32Array(0);
+      const src = props.sources?.[index];
+      cancellations[index] = loadSource(typeof src === "string" ? src : defaults.sources[index] ?? "", (source) => {
+        if (destroyed || generations[index] !== generation) return;
+        images[index] = source;
+        settled[index] = true;
+        prepareImage(index);
+        if (started) draw();
+      }, () => {
+        if (destroyed || generations[index] !== generation) return;
+        failed[index] = true;
+        settled[index] = true;
+        if (started) draw();
+      });
+    }
+    prepare();
+    load(0);
+    load(1);
+    started = true;
+    draw();
+    return {
+      update(next) {
+        if (destroyed) return;
+        const before = props;
+        props = { ...props, ...next };
+        if (!sameJson(before.sources, props.sources)) {
+          for (let index = 0; index < 2; index++) {
+            if (before.sources?.[index] !== props.sources?.[index]) load(index);
+          }
+        }
+        palette.refresh();
+        draw();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        cancellations.forEach((cancel) => cancel());
+        removeNote?.();
+        removeNote = null;
+        palette.destroy();
+        surface.destroy();
+        undoAspect();
+        unlabelHost(host);
+        if (priorReady === null) delete host.dataset.picaReady;
+        else host.setAttribute("data-pica-ready", priorReady);
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaLenticularImage.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

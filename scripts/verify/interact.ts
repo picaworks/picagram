@@ -123,7 +123,7 @@ async function drive(ctx: Ctx, context: BrowserContext, options: OpenOptions, st
 
 async function controlled(ctx: Ctx, context: BrowserContext, prop: string, event: string, events: readonly string[]): Promise<void> {
   const name = `controlled ${prop}`;
-  const steps = (ctx.entry.meta.interactions?.[0] ?? []).filter((step) => step.step === "press" || step.step === "click");
+  const steps = (ctx.entry.meta.controlledInteractions?.[prop] ?? ctx.entry.meta.interactions?.[0] ?? []).filter((step) => step.step === "press" || step.step === "click");
   if (steps.length === 0) {
     ctx.checks.push({ name, ok: false, detail: "needs a first interaction with at least one press or click" });
     return;

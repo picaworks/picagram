@@ -1,0 +1,31 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "ascii-wave-tank",
+  title: "ASCII Wave Tank",
+  category: "ascii",
+  description: "A bounded shallow-water simulation uses measured ASCII density as timed impulses reflect from tank walls and supplied solid barriers.",
+  tags: ["waves", "water", "simulation", "obstacles", "reflections"],
+  facets: ["animated"],
+  wave: 15,
+  release: "components-2026-10-04",
+  animated: true,
+  decorative: false,
+  original: true,
+  palette: ["fg", "bg"],
+  capture: 1800,
+  controls: {
+    obstacles: { type: "json" },
+    impulses: { type: "json" },
+    damping: { type: "number", min: 0, max: 4, step: 0.05 },
+    speed: { type: "number", min: 0.03, max: 0.4, step: 0.01 },
+    chars: { type: "string" },
+    label: { type: "string" },
+    fontSize: { type: "number", min: 6, max: 32, step: 1 },
+    lineHeight: { type: "number", min: 0.8, max: 2, step: 0.05 },
+    fps: { type: "number", min: 1, max: 30, step: 1 },
+    paused: { type: "boolean" },
+    seed: { type: "number", min: 1, max: 999, step: 1 },
+  },
+  credits: [],
+};

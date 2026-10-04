@@ -1,0 +1,237 @@
+<!doctype html>
+<!--
+  Pica · Cairo Pentagons · cairo-pentagons
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Cairo Pentagons · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaCairoPentagons = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/patterns/cairo-pentagons/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/patterns/cairo-pentagons/core.ts
+  var defaults = {
+    scale: 54,
+    orientation: 0,
+    opacity: 0.22
+  };
+  function cairoNumber(value, fallback, min, max) {
+    return Math.min(max, Math.max(min, Number.isFinite(value) ? value : fallback));
+  }
+  function cairoMask(scale) {
+    const a = 1 / (2 * Math.sqrt(3));
+    const paths = [];
+    for (let y = 0; y < 2; y++) {
+      for (let x = 0; x < 2; x++) {
+        if ((x + y) % 2 === 0) {
+          paths.push(`M${x},${y}L${x + a},${y + 0.5}L${x},${y + 1}`);
+          paths.push(`M${x + 1},${y}L${x + 1 - a},${y + 0.5}L${x + 1},${y + 1}`);
+          paths.push(`M${x + a},${y + 0.5}L${x + 1 - a},${y + 0.5}`);
+        } else {
+          paths.push(`M${x},${y}L${x + 0.5},${y + a}L${x + 1},${y}`);
+          paths.push(`M${x},${y + 1}L${x + 0.5},${y + 1 - a}L${x + 1},${y + 1}`);
+          paths.push(`M${x + 0.5},${y + a}L${x + 0.5},${y + 1 - a}`);
+        }
+      }
+    }
+    const image = `<svg xmlns="http://www.w3.org/2000/svg" width="${scale * 2}" height="${scale * 2}" viewBox="0 0 2 2"><path d="${paths.join("")}" fill="none" stroke="currentColor" stroke-width="${1 / scale}" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(image)}")`;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let alive = true;
+    const attributes = hostAttributes(host);
+    const surface = layer(host, "under");
+    surface.el.style.overflow = "hidden";
+    surface.el.style.borderRadius = "inherit";
+    surface.el.style.backgroundColor = cssVar("bg");
+    const seams = document.createElement("div");
+    seams.setAttribute("data-pica", "");
+    seams.setAttribute("aria-hidden", "true");
+    seams.style.cssText = `position:absolute;left:50%;top:50%;pointer-events:none;transform-origin:center;background:${cssVar("fg")};mask-mode:alpha;mask-repeat:repeat;-webkit-mask-repeat:repeat`;
+    surface.el.appendChild(seams);
+    function size() {
+      if (!alive) return;
+      const scale = cairoNumber(props.scale, defaults.scale, 20, 160);
+      const side = Math.ceil(Math.hypot(host.clientWidth, host.clientHeight) + scale * 4);
+      seams.style.width = `${side}px`;
+      seams.style.height = `${side}px`;
+    }
+    function geometry() {
+      const scale = cairoNumber(props.scale, defaults.scale, 20, 160);
+      const image = cairoMask(scale);
+      seams.style.setProperty("mask-image", image);
+      seams.style.setProperty("-webkit-mask-image", image);
+      seams.style.setProperty("mask-size", `${scale * 2}px ${scale * 2}px`);
+      seams.style.setProperty("-webkit-mask-size", `${scale * 2}px ${scale * 2}px`);
+      seams.style.setProperty("mask-position", "center");
+      seams.style.setProperty("-webkit-mask-position", "center");
+      size();
+    }
+    function appearance() {
+      const orientation = cairoNumber(props.orientation, defaults.orientation, -180, 180);
+      seams.style.transform = `translate(-50%, -50%) rotate(${orientation}deg)`;
+      seams.style.opacity = String(cairoNumber(props.opacity, defaults.opacity, 0, 1));
+    }
+    const resize = typeof ResizeObserver === "function" ? new ResizeObserver(size) : null;
+    resize?.observe(host);
+    geometry();
+    appearance();
+    attributes.set("data-pica-ready", "true");
+    return {
+      update(next) {
+        if (!alive) return;
+        const before = props;
+        props = { ...props, ...next };
+        if (before.scale !== props.scale) geometry();
+        if (before.orientation !== props.orientation || before.opacity !== props.opacity) appearance();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        resize?.disconnect();
+        surface.remove();
+        attributes.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaCairoPentagons.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

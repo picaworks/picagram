@@ -1,0 +1,608 @@
+<!doctype html>
+<!--
+  Pica · Strata Stack · strata-stack
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Strata Stack · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaStrataStack = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/immersive/strata-stack/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // registry/immersive/strata-stack/core.ts
+  var defaults = {
+    layers: [
+      { id: "sandstone", label: "Sandstone", thickness: 22 },
+      { id: "shale", label: "Shale", thickness: 9 },
+      { id: "limestone", label: "Limestone", thickness: 34 },
+      { id: "siltstone", label: "Siltstone", thickness: 14 },
+      { id: "basalt", label: "Basalt", thickness: 18 }
+    ],
+    separation: 8,
+    value: null,
+    defaultValue: "limestone",
+    view: "isometric",
+    label: "Geological strata"
+  };
+  function strataNumber(value, fallback) {
+    return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+  }
+  function strataRecords(raw) {
+    if (!Array.isArray(raw)) return [];
+    const ids = /* @__PURE__ */ new Set();
+    const result = [];
+    for (const record of raw) {
+      if (!record || typeof record.id !== "string" || !record.id.trim() || ids.has(record.id)) continue;
+      ids.add(record.id);
+      result.push({ id: record.id, label: String(record.label || record.id), thickness: Math.max(0, strataNumber(record.thickness, 0)) });
+    }
+    return result;
+  }
+  function strataInside(point, polygon) {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      const a = polygon[i];
+      const b = polygon[j];
+      if (!a || !b) continue;
+      if (a[1] > point[1] !== b[1] > point[1] && point[0] < (b[0] - a[0]) * (point[1] - a[1]) / (b[1] - a[1]) + a[0]) inside = !inside;
+    }
+    return inside;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let records = strataRecords(props.layers);
+    let current = props.defaultValue;
+    let alive = true;
+    let initialized = false;
+    let hits = [];
+    const attributes = hostAttributes(host);
+    attributes.set("data-pica-id", host.getAttribute("data-pica-id"));
+    const sheet = scope(host);
+    const emit = emitter(host);
+    const abort = new AbortController();
+    const surface = createCanvas(host, { maxPixels: 24e5, onResize: () => draw() });
+    const ctx = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => draw());
+    const controls = document.createElement("div");
+    controls.setAttribute("data-pica", "");
+    controls.setAttribute("data-part", "layers");
+    controls.setAttribute("role", "group");
+    controls.setAttribute("aria-label", "Select geological layer");
+    host.append(controls);
+    const s = sheet.selector;
+    sheet.setRules([
+      `${s} [data-part="layers"]{position:absolute;z-index:2;left:12px;right:12px;bottom:12px;display:flex;justify-content:center;flex-wrap:wrap;gap:5px;max-height:38%;overflow:auto}`,
+      `${s} [data-part="layer"]{max-width:100%;box-sizing:border-box;margin:0;padding:6px 8px;border:1px solid color-mix(in srgb,${cssVar("fg")} 28%,transparent);border-radius:0;background:${cssVar("bg")};color:${cssVar("fg")};font-family:${GRID_FONT};font-size:11px;line-height:1.3;font-variant-numeric:tabular-nums;cursor:pointer}`,
+      `${s} [data-part="layer"][aria-pressed="true"]{border-color:${cssVar("accent")};box-shadow:inset 0 -2px ${cssVar("accent")}}`,
+      `${s} [data-part="layer"]:hover{background:color-mix(in srgb,${cssVar("fg")} 9%,${cssVar("bg")})}`,
+      `${s} [data-part="layer"]:focus-visible{outline:2px solid ${cssVar("fg")};outline-offset:2px}`
+    ].join("\n"));
+    function selected() {
+      const wanted = props.value ?? current;
+      return records.find((record) => record.id === wanted)?.id ?? records[0]?.id ?? "";
+    }
+    function buttons() {
+      const focused = document.activeElement?.getAttribute("data-layer-id");
+      controls.replaceChildren();
+      for (const record of records) {
+        const button = document.createElement("button");
+        button.setAttribute("data-pica", "");
+        button.setAttribute("data-part", "layer");
+        button.setAttribute("data-layer-id", record.id);
+        button.type = "button";
+        button.textContent = `${record.label} · ${record.thickness} m`;
+        button.setAttribute("aria-label", `${record.label}, thickness ${record.thickness} metres`);
+        controls.append(button);
+        if (record.id === focused) button.focus({ preventScroll: true });
+      }
+    }
+    function describe() {
+      const id = selected();
+      const record = records.find((entry) => entry.id === id);
+      const name = String(props.label ?? "").trim() || "Geological strata";
+      attributes.set("role", "group");
+      attributes.set("aria-hidden", null);
+      attributes.set("aria-label", `${name}. ${records.length} layers, top to bottom.${record ? ` Selected ${record.label}, ${record.thickness} metres thick.` : " No layer records supplied."}`);
+      for (const child of Array.from(controls.children)) {
+        if (!(child instanceof HTMLButtonElement)) continue;
+        const active = child.getAttribute("data-layer-id") === id;
+        child.setAttribute("aria-pressed", String(active));
+        child.tabIndex = active ? 0 : -1;
+      }
+    }
+    function choose(id) {
+      if (!records.some((record) => record.id === id) || id === selected()) return;
+      if (props.value === null) current = id;
+      describe();
+      draw();
+      emit("valueChange", id);
+    }
+    function draw() {
+      if (!alive || !initialized) return;
+      hits = [];
+      const width = Math.max(1, surface.cssWidth);
+      const height = Math.max(1, surface.cssHeight);
+      if (ctx) {
+        ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = palette.colors.bg;
+        ctx.fillRect(0, 0, width, height);
+        if (records.length) {
+          let project2 = function(x, y, z) {
+            return [x * ca - y * sa, (x * sa + y * ca) * se - z * ce];
+          }, screen2 = function(x, y, z) {
+            const point = project2(x, y, z);
+            return [offsetX + point[0] * scale, offsetY + point[1] * scale];
+          };
+          var project = project2, screen = screen2;
+          const gap = Math.max(0, Math.min(30, strataNumber(props.separation, 8)));
+          let unit = Math.max(1, gap);
+          for (const record of records) unit = Math.max(unit, record.thickness);
+          const total = records.reduce((sum, record) => sum + record.thickness / unit, 0) + gap / unit * Math.max(0, records.length - 1);
+          const blockW = Math.max(1.8, total * 1.22);
+          const blockD = blockW * 0.62;
+          const view = props.view;
+          const azimuth = (view === "front" ? 0 : view === "oblique" ? -18 : -36) * Math.PI / 180;
+          const elevation = (view === "front" ? 0 : view === "oblique" ? 19 : 34) * Math.PI / 180;
+          const ca = Math.cos(azimuth), sa = Math.sin(azimuth);
+          const ce = Math.cos(elevation), se = Math.sin(elevation);
+          const bounds = [];
+          for (const x of [-blockW / 2, blockW / 2]) {
+            for (const y of [-blockD / 2, blockD / 2]) {
+              for (const z of [0, total]) bounds.push(project2(x, y, z));
+            }
+          }
+          let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+          for (const point of bounds) {
+            minX = Math.min(minX, point[0]);
+            maxX = Math.max(maxX, point[0]);
+            minY = Math.min(minY, point[1]);
+            maxY = Math.max(maxY, point[1]);
+          }
+          const sceneHeight = Math.max(1, height - controls.offsetHeight - 34);
+          const scale = Math.max(0.1, Math.min((width - 36) / Math.max(0.01, maxX - minX), (sceneHeight - 20) / Math.max(0.01, maxY - minY)));
+          const offsetX = width / 2 - (minX + maxX) / 2 * scale;
+          const offsetY = sceneHeight / 2 - (minY + maxY) / 2 * scale + 6;
+          const stack = [];
+          let cursor = total;
+          for (const record of records) {
+            const bottom = cursor - record.thickness / unit;
+            stack.push({ record, top: cursor, bottom });
+            cursor = bottom - gap / unit;
+          }
+          const path = (face) => {
+            if (!ctx) return;
+            ctx.beginPath();
+            ctx.moveTo(face[0][0], face[0][1]);
+            for (let i = 1; i < face.length; i++) {
+              const point = face[i];
+              if (point) ctx.lineTo(point[0], point[1]);
+            }
+            ctx.closePath();
+          };
+          const selectedId = selected();
+          const halfW = blockW / 2, halfD = blockD / 2;
+          for (let i = stack.length - 1; i >= 0; i--) {
+            const entry = stack[i];
+            if (!entry) continue;
+            const { record, top, bottom } = entry;
+            const active = record.id === selectedId;
+            const faces = [
+              { polygon: [screen2(-halfW, -halfD, top), screen2(halfW, -halfD, top), screen2(halfW, halfD, top), screen2(-halfW, halfD, top)], ink: 0.1, section: false },
+              { polygon: [screen2(-halfW, -halfD, top), screen2(-halfW, halfD, top), screen2(-halfW, halfD, bottom), screen2(-halfW, -halfD, bottom)], ink: 0.17, section: false },
+              { polygon: [screen2(-halfW, halfD, top), screen2(halfW, halfD, top), screen2(halfW, halfD, bottom), screen2(-halfW, halfD, bottom)], ink: 0.26, section: true }
+            ];
+            for (const face of faces) {
+              ctx.save();
+              path(face.polygon);
+              ctx.globalCompositeOperation = "destination-out";
+              ctx.globalAlpha = 1;
+              ctx.fill();
+              ctx.globalCompositeOperation = "source-over";
+              ctx.fillStyle = palette.colors.bg;
+              ctx.fill();
+              ctx.fillStyle = active ? palette.colors.accent : palette.colors.fg;
+              ctx.globalAlpha = active ? face.ink + 0.11 : face.ink;
+              ctx.fill();
+              ctx.globalAlpha = active ? 1 : 0.62;
+              ctx.strokeStyle = active ? palette.colors.accent : palette.colors.fg;
+              ctx.lineWidth = active ? 1.6 : 1;
+              ctx.stroke();
+              if (face.section && record.thickness > 0) {
+                ctx.clip();
+                const beds = Math.min(20, Math.floor(record.thickness / 5));
+                ctx.globalAlpha = active ? 0.62 : 0.22;
+                ctx.lineWidth = 0.8;
+                for (let bed = 1; bed <= beds; bed++) {
+                  const z = top - Math.min(record.thickness, bed * 5) / unit;
+                  const a = screen2(-halfW, halfD, z);
+                  const b = screen2(halfW, halfD, z);
+                  ctx.beginPath();
+                  ctx.moveTo(a[0], a[1]);
+                  ctx.lineTo(b[0], b[1]);
+                  ctx.stroke();
+                }
+              }
+              ctx.restore();
+              hits.push({ id: record.id, polygon: face.polygon });
+            }
+          }
+        }
+      }
+      attributes.set("data-pica-ready", "true");
+    }
+    controls.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement) || target.parentElement !== controls) return;
+      const id = target.getAttribute("data-layer-id");
+      if (id !== null) choose(id);
+    }, { signal: abort.signal });
+    controls.addEventListener("keydown", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+      const index = records.findIndex((record2) => record2.id === target.getAttribute("data-layer-id"));
+      if (index < 0) return;
+      let next;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") next = Math.min(records.length - 1, index + 1);
+      else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = Math.max(0, index - 1);
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = records.length - 1;
+      else return;
+      event.preventDefault();
+      const record = records[next];
+      if (!record) return;
+      choose(record.id);
+      const button = controls.children.item(next);
+      if (button instanceof HTMLButtonElement) button.focus({ preventScroll: true });
+    }, { signal: abort.signal });
+    surface.canvas.addEventListener("click", (event) => {
+      const box = surface.canvas.getBoundingClientRect();
+      const point = [
+        (event.clientX - box.left) / Math.max(1, box.width) * surface.cssWidth,
+        (event.clientY - box.top) / Math.max(1, box.height) * surface.cssHeight
+      ];
+      for (let i = hits.length - 1; i >= 0; i--) {
+        const hit = hits[i];
+        if (hit && strataInside(point, hit.polygon)) {
+          choose(hit.id);
+          const recordIndex = records.findIndex((record) => record.id === hit.id);
+          const button = controls.children.item(recordIndex);
+          if (button instanceof HTMLButtonElement) button.focus({ preventScroll: true });
+          return;
+        }
+      }
+    }, { signal: abort.signal });
+    surface.canvas.style.pointerEvents = "auto";
+    surface.canvas.style.cursor = "pointer";
+    const legendObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => draw()) : null;
+    legendObserver?.observe(controls);
+    initialized = true;
+    buttons();
+    describe();
+    draw();
+    return {
+      update(next) {
+        if (!alive) return;
+        const before = props;
+        const previousSelection = selected();
+        props = { ...props, ...next };
+        const dataChanged = !sameJson(before.layers, props.layers);
+        if (dataChanged) {
+          records = strataRecords(props.layers);
+          buttons();
+        }
+        if (before.value !== props.value && props.value === null) current = previousSelection;
+        const selectionChanged = before.value !== props.value || dataChanged;
+        const paletteChanged = palette.refresh();
+        if (selectionChanged || before.label !== props.label) describe();
+        if (selectionChanged || before.separation !== props.separation || before.view !== props.view || paletteChanged) draw();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        abort.abort();
+        legendObserver?.disconnect();
+        controls.remove();
+        palette.destroy();
+        surface.destroy();
+        sheet.destroy();
+        attributes.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaStrataStack.mount(host, take(initial));
+  ["valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

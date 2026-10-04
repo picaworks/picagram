@@ -1,0 +1,632 @@
+<!doctype html>
+<!--
+  Pica · Pressure Print Image · pressure-print-image
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Pressure Print Image · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaPressurePrintImage = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/effects/pressure-print-image/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+  function relativeLuminance(color) {
+    const [r, g, b] = parseColor(color);
+    const linear = (v) => {
+      const c = v / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+  }
+  function inkColor(host) {
+    return readPalette(host).fg;
+  }
+  function hostTone(host) {
+    const fg = relativeLuminance(inkColor(host));
+    let bg = 1;
+    for (let el = host; el; el = el.parentElement) {
+      const background = getComputedStyle(el).backgroundColor;
+      if (parseColor(background)[3] > 0) {
+        bg = relativeLuminance(background);
+        break;
+      }
+    }
+    return fg > bg ? "light-on-dark" : "dark-on-light";
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/pixels.ts
+  function createPlate() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    return {
+      canvas,
+      put(image) {
+        if (canvas.width !== image.width) canvas.width = image.width;
+        if (canvas.height !== image.height) canvas.height = image.height;
+        ctx?.putImageData(image, 0, 0);
+      }
+    };
+  }
+
+  // lib/sample.ts
+  function fitRect(sourceW, sourceH, boxW, boxH, fit, alignX = 0.5, alignY = 0.5) {
+    const scale = fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+    const w = sourceW * scale;
+    const h = sourceH * scale;
+    return { x: (boxW - w) * alignX, y: (boxH - h) * alignY, w, h };
+  }
+
+  // lib/subject.ts
+  function litSphere(size = 256, lightX = 0.36, lightY = 0.34) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const light = ctx.createRadialGradient(size * lightX, size * lightY, size * 0.02, size * 0.5, size * 0.5, size * 0.46);
+      light.addColorStop(0, "#ffffff");
+      light.addColorStop(0.55, "#8a8a8a");
+      light.addColorStop(1, "#141414");
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return canvas;
+  }
+
+  // lib/source.ts
+  function loadSource(src, ready, fail) {
+    if (!src) {
+      const sphere = litSphere();
+      ready({ image: sphere, width: sphere.width, height: sphere.height, builtIn: true });
+      return () => void 0;
+    }
+    let live = true;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "async";
+    img.onload = () => {
+      if (live) ready({ image: img, width: img.naturalWidth, height: img.naturalHeight, builtIn: false });
+    };
+    img.onerror = () => {
+      if (live) fail();
+    };
+    img.src = src;
+    return () => {
+      live = false;
+    };
+  }
+  function fitFor(source, fit) {
+    return source.builtIn ? "contain" : fit;
+  }
+  function fitHostAspect(host, width, height) {
+    if (host.clientHeight >= 2 || width <= 0 || height <= 0) return () => void 0;
+    return styleHost(host, { "aspect-ratio": `${width} / ${height}` });
+  }
+  function showNote(host, text) {
+    const note = document.createElement("span");
+    note.setAttribute("data-pica", "");
+    note.setAttribute("aria-hidden", "true");
+    note.textContent = text;
+    note.style.cssText = [
+      "position:absolute",
+      "inset:0",
+      "display:flex",
+      "align-items:center",
+      "justify-content:center",
+      "pointer-events:none",
+      `color:${cssVar("muted")}`
+    ].join(";");
+    const restore = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    host.appendChild(note);
+    return () => {
+      note.remove();
+      restore();
+    };
+  }
+
+  // registry/effects/pressure-print-image/core.ts
+  var defaults = {
+    src: "",
+    pressure: 0.78,
+    radius: 0.48,
+    position: [0.48, 0.52],
+    fit: "contain"
+  };
+  var PRESSURE_WORK_MAX = 480;
+  var PRESSURE_ORDER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+  function pressureNumber(value, fallback, min, max) {
+    return Math.min(max, Math.max(min, Number.isFinite(value) ? value : fallback));
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let source = null;
+    let destroyed = false;
+    let started = false;
+    let failed = false;
+    let generation = 0;
+    let workW = 0;
+    let workH = 0;
+    let luminance = new Float32Array(0);
+    let alpha = new Float32Array(0);
+    let output = null;
+    let cancel = () => void 0;
+    let undoAspect = () => void 0;
+    let removeNote = null;
+    const attributes = hostAttributes(host);
+    const restore = styleHost(host, { "background-color": cssVar("bg") });
+    const input = document.createElement("canvas");
+    input.setAttribute("data-pica", "");
+    const inputContext = input.getContext("2d", { willReadFrequently: true });
+    const plate = createPlate();
+    const surface = createCanvas(host, { maxPixels: 25e5, onResize: () => resized() });
+    const context = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => {
+      if (started && !destroyed) draw();
+    });
+    function note(on) {
+      if (on && !removeNote) removeNote = showNote(host, "image unavailable");
+      if (!on && removeNote) {
+        removeNote();
+        removeNote = null;
+      }
+    }
+    function dimensions() {
+      const width = Math.max(1, surface.cssWidth);
+      const height = Math.max(1, surface.cssHeight);
+      const scale = Math.min(1, PRESSURE_WORK_MAX / Math.max(width, height));
+      return [Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale))];
+    }
+    function prepare() {
+      if (!source || destroyed) return;
+      if (!inputContext || !context) throw new Error("Canvas unavailable");
+      const [width, height] = dimensions();
+      input.width = width;
+      input.height = height;
+      inputContext.clearRect(0, 0, width, height);
+      const box = fitRect(source.width, source.height, width, height, fitFor(source, props.fit === "cover" ? "cover" : "contain"));
+      inputContext.drawImage(source.image, box.x, box.y, box.w, box.h);
+      const pixels = inputContext.getImageData(0, 0, width, height).data;
+      workW = width;
+      workH = height;
+      luminance = new Float32Array(width * height);
+      alpha = new Float32Array(width * height);
+      output = new ImageData(width, height);
+      for (let i = 0; i < luminance.length; i++) {
+        const offset = i * 4;
+        const luma = (0.2126 * (pixels[offset] ?? 0) + 0.7152 * (pixels[offset + 1] ?? 0) + 0.0722 * (pixels[offset + 2] ?? 0)) / 255;
+        luminance[i] = luma ** 2.2;
+        alpha[i] = (pixels[offset + 3] ?? 0) / 255;
+      }
+    }
+    function fail() {
+      if (destroyed) return;
+      source = null;
+      output = null;
+      failed = true;
+      draw();
+    }
+    function resized() {
+      if (!started || destroyed) return;
+      const [width, height] = dimensions();
+      if (source && (width !== workW || height !== workH)) {
+        try {
+          prepare();
+        } catch {
+          fail();
+          return;
+        }
+      }
+      draw();
+    }
+    function draw() {
+      if (destroyed) return;
+      const width = Math.max(1, surface.cssWidth);
+      const height = Math.max(1, surface.cssHeight);
+      note(failed);
+      if (context) {
+        context.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = palette.colors.bg;
+        context.fillRect(0, 0, width, height);
+        if (source && output) {
+          const pressure = pressureNumber(props.pressure, defaults.pressure, 0, 1);
+          const radius = pressureNumber(props.radius, defaults.radius, 0.05, 1.5);
+          const position = Array.isArray(props.position) ? props.position : defaults.position;
+          const centerX = pressureNumber(position[0] ?? defaults.position[0], defaults.position[0], 0, 1) * workW;
+          const centerY = pressureNumber(position[1] ?? defaults.position[1], defaults.position[1], 0, 1) * workH;
+          const contactRadius = Math.max(1e-3, radius * Math.min(workW, workH) * (0.5 + 0.5 * Math.sqrt(pressure)));
+          const inverseRadiusSquared = 1 / (contactRadius * contactRadius);
+          const fg = parseColor(palette.colors.fg);
+          const lightOnDark = hostTone(host) === "light-on-dark";
+          const pixels = output.data;
+          for (let y = 0; y < workH; y++) {
+            for (let x = 0; x < workW; x++) {
+              const i = y * workW + x;
+              const dx = x + 0.5 - centerX;
+              const dy = y + 0.5 - centerY;
+              const contact = Math.max(0, 1 - (dx * dx + dy * dy) * inverseRadiusSquared);
+              const localPressure = pressure * contact * contact * (3 - 2 * contact);
+              const value = luminance[i] ?? 0;
+              const tone = lightOnDark ? value : 1 - value;
+              const density = Math.pow(Math.max(0, tone), 0.75) * Math.min(1, localPressure * 1.65);
+              const threshold = ((PRESSURE_ORDER[y % 4 * 4 + x % 4] ?? 0) + 0.5) / 16;
+              const printed = pressure > 0 && density >= threshold;
+              const offset = i * 4;
+              pixels[offset] = fg[0];
+              pixels[offset + 1] = fg[1];
+              pixels[offset + 2] = fg[2];
+              pixels[offset + 3] = printed ? Math.round((alpha[i] ?? 0) * fg[3]) : 0;
+            }
+          }
+          plate.put(output);
+          context.imageSmoothingEnabled = false;
+          context.drawImage(plate.canvas, 0, 0, width, height);
+        }
+      }
+      if (source && output || failed) attributes.set("data-pica-ready", "true");
+    }
+    function load() {
+      cancel();
+      const current = ++generation;
+      source = null;
+      output = null;
+      failed = false;
+      note(false);
+      undoAspect();
+      undoAspect = () => void 0;
+      attributes.set("data-pica-ready", null);
+      draw();
+      cancel = loadSource(props.src, (next) => {
+        if (destroyed || current !== generation) return;
+        source = next;
+        undoAspect = fitHostAspect(host, next.width, next.height);
+        try {
+          prepare();
+        } catch {
+          fail();
+          return;
+        }
+        draw();
+      }, () => {
+        if (!destroyed && current === generation) fail();
+      });
+    }
+    labelHost(host, "");
+    started = true;
+    load();
+    return {
+      update(next) {
+        if (destroyed) return;
+        const before = props;
+        props = { ...props, ...next };
+        const paletteChanged = palette.refresh();
+        if (before.src !== props.src) load();
+        else {
+          if (before.fit !== props.fit && source) {
+            try {
+              prepare();
+            } catch {
+              fail();
+              return;
+            }
+            draw();
+          } else if (paletteChanged || before.pressure !== props.pressure || before.radius !== props.radius || !sameJson(before.position, props.position)) draw();
+        }
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        generation++;
+        cancel();
+        note(false);
+        palette.destroy();
+        undoAspect();
+        surface.destroy();
+        restore();
+        unlabelHost(host);
+        attributes.restore();
+        source = null;
+        output = null;
+        luminance = new Float32Array(0);
+        alpha = new Float32Array(0);
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaPressurePrintImage.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

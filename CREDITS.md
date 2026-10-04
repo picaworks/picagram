@@ -38,6 +38,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Fretboard (`ascii-fretboard`)
+
+Original to Picagram.
+
 ## Garden Plan (`ascii-garden-plan`)
 
 Original to Picagram.
@@ -53,6 +57,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## ASCII Library Catalog (`ascii-library-catalog`)
+
+Original to Picagram.
+
+## ASCII Lissajous Scope (`ascii-lissajous-scope`)
 
 Original to Picagram.
 
@@ -73,6 +81,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## Packet Route (`ascii-packet-route`)
+
+Original to Picagram.
+
+## ASCII Piano Roll (`ascii-piano-roll`)
 
 Original to Picagram.
 
@@ -121,10 +133,18 @@ Original to Picagram.
 - Technique from [Marching squares](https://en.wikipedia.org/wiki/Marching_squares) by Wikipedia (Algorithm, no code).
 - Technique from [Simplex noise demystified](https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf) by Stefan Gustavson (Public domain).
 
+## ASCII Tree Rings (`ascii-tree-rings`)
+
+Original to Picagram.
+
 ## ASCII Video (`ascii-video`)
 
 - Technique from [play.core](https://github.com/ertdfgcvb/play.core) by Andreas Gysin (Apache-2.0).
 - Technique from [ascii-camera](https://github.com/idevelop/ascii-camera) by Andrei Gheorghe (MIT).
+
+## ASCII Wave Tank (`ascii-wave-tank`)
+
+Original to Picagram.
 
 ## ASCII Waves (`ascii-waves`)
 
@@ -156,7 +176,19 @@ Original to Picagram.
 - Technique from [Japanese Candlestick Charting Techniques](https://lccn.loc.gov/90022736) by Steve Nison (Book).
 - Technique from [Date and Time on the Internet: Timestamps (RFC 3339)](https://www.rfc-editor.org/rfc/rfc3339) by G. Klyne and C. Newman (IETF standard).
 
+## Chord Diagram (`chord-diagram`)
+
+Original to Picagram.
+
+## Dendrogram (`dendrogram`)
+
+Original to Picagram.
+
 ## Donut Chart (`donut-chart`)
+
+Original to Picagram.
+
+## Fan Chart (`fan-chart`)
 
 Original to Picagram.
 
@@ -167,6 +199,10 @@ Original to Picagram.
 ## Heatmap (`heatmap`)
 
 - Technique from [The History of the Cluster Heat Map](https://doi.org/10.1198/tas.2009.0033) by Leland Wilkinson and Michael Friendly (Paper).
+
+## Horizon Chart (`horizon-chart`)
+
+Original to Picagram.
 
 ## Kanban Board (`kanban-board`)
 
@@ -180,6 +216,10 @@ Original to Picagram.
 
 - Technique from [Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods](https://doi.org/10.1080/01621459.1984.10478080) by William S. Cleveland and Robert McGill (Paper).
 - Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
+
+## Parallel Coordinate Plot (`parallel-coordinate-plot`)
+
+Original to Picagram.
 
 ## Radar Chart (`radar-chart`)
 
@@ -275,6 +315,10 @@ Original to Picagram.
 
 - Technique from [Printing registration](https://en.wikipedia.org/wiki/Printing_registration) by Wikipedia (Reference, no code).
 
+## Contour Wipe Image (`contour-wipe-image`)
+
+Original to Picagram.
+
 ## Cylinder Roll (`cylinder-roll`)
 
 Original to Picagram.
@@ -284,6 +328,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## Echo Arcs (`echo-arcs`)
+
+Original to Picagram.
+
+## Edge Fold Image (`edge-fold-image`)
 
 Original to Picagram.
 
@@ -317,6 +365,10 @@ Original to Picagram.
 - Technique from [CSS halftone patterns](https://css-irl.info/css-halftone-patterns/) by Michelle Barker, CSS { In Real Life } (Article).
 
 ## Ink Erosion (`ink-erosion`)
+
+Original to Picagram.
+
+## Lenticular Image (`lenticular-image`)
 
 Original to Picagram.
 
@@ -356,6 +408,14 @@ Original to Picagram.
 ## Pixel Sort (`pixel-sort`)
 
 - Technique from [ASDF pixel sorting](https://github.com/kimasendorf/ASDFPixelSort) by Kim Asendorf (Technique, no code read).
+
+## Pixel Weft Image (`pixel-weft-image`)
+
+Original to Picagram.
+
+## Pressure Print Image (`pressure-print-image`)
+
+Original to Picagram.
 
 ## Print Registration (`print-registration`)
 
@@ -435,6 +495,14 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Folded Atlas (`folded-atlas`)
+
+Original to Picagram.
+
+## Geodesic Shell (`geodesic-shell`)
+
+Original to Picagram.
+
 ## Globe (`globe`)
 
 - Technique from [Evenly distributing points on a sphere](https://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/) by Martin Roberts (Article).
@@ -449,6 +517,14 @@ Original to Picagram.
 - Port of [Natural Earth](https://www.naturalearthdata.com/about/terms-of-use/) by Tom Patterson and Nathaniel Vaughn Kelso (Public domain).
 
 ## Paper theatre (`paper-theatre`)
+
+Original to Picagram.
+
+## Perspective Maze (`perspective-maze`)
+
+Original to Picagram.
+
+## Strata Stack (`strata-stack`)
 
 Original to Picagram.
 
@@ -474,11 +550,23 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Scroll Ruler (`scroll-ruler`)
+
+Original to Picagram.
+
 ## Split-Flap Display (`split-flap-display`)
 
 Original to Picagram.
 
+## Spring Trace (`spring-trace`)
+
+Original to Picagram.
+
 ## Brick Lattice (`brick-lattice`)
+
+Original to Picagram.
+
+## Cairo Pentagons (`cairo-pentagons`)
 
 Original to Picagram.
 
@@ -502,6 +590,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Dragon Fold (`dragon-fold`)
+
+Original to Picagram.
+
 ## Grid Paper (`grid-paper`)
 
 Original to Picagram.
@@ -521,6 +613,10 @@ Original to Picagram.
 ## Moire Rings (`moire-rings`)
 
 - Technique from [The Theory of the Moiré Phenomenon, Volume I: Periodic Layers](https://doi.org/10.1007/978-1-84882-181-1) by Isaac Amidror (Book).
+
+## Penrose Tiles (`penrose-tiles`)
+
+Original to Picagram.
 
 ## Scallop Arches (`scallop-arches`)
 
@@ -855,6 +951,10 @@ Original to Picagram.
 - Technique from [Domain warping](https://iquilezles.org/articles/warp/) by Inigo Quilez (Article).
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 
+## Shadow Lattice (`shadow-lattice`)
+
+Original to Picagram.
+
 ## Tunnel Grid (`tunnel-grid`)
 
 - Technique from [Survey of Texture Mapping](https://doi.org/10.1109/MCG.1986.276672) by Paul S. Heckbert (Paper).
@@ -946,6 +1046,10 @@ Original to Picagram.
 
 - Technique from [Menu and menubar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 - Technique from [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) by MDN (CC-BY-SA documentation).
+
+## Crop Window (`crop-window`)
+
+Original to Picagram.
 
 ## Dialog (`dialog`)
 
@@ -1052,6 +1156,10 @@ Original to Picagram.
 - Technique from [Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 
 ## Textarea (`textarea`)
+
+Original to Picagram.
+
+## Timecode Editor (`timecode-editor`)
 
 Original to Picagram.
 

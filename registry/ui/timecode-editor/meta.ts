@@ -1,0 +1,40 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "timecode-editor",
+  title: "Timecode Editor",
+  category: "ui",
+  description: "Four native inputs edit non-drop hours, minutes, seconds, and frames with frame-rate-aware carrying and keyboard stepping.",
+  tags: ["timecode", "frames", "video", "native inputs", "keyboard", "form"],
+  facets: ["static", "interactive"],
+  wave: 15,
+  release: "components-2026-10-04",
+  animated: false,
+  decorative: false,
+  original: true,
+  stage: "inline",
+  host: "div",
+  palette: ["fg", "bg", "accent", "muted"],
+  controlled: { value: "valueChange" },
+  controls: {
+    fps: { type: "number", min: 1, max: 120, step: 1 },
+    defaultValue: { type: "number", min: 0, max: 8639999, step: 1 },
+    label: { type: "string" },
+    disabled: { type: "boolean" },
+  },
+  interactions: [
+    [
+      { step: "click", selector: "[data-part=\"frames\"]" },
+      { step: "expectFocus", selector: "[data-part=\"frames\"]" },
+      { step: "press", key: "ArrowUp" },
+      { step: "expectEvent", name: "valueChange", detail: 2010 },
+      { step: "press", key: "End" },
+      { step: "expectEvent", name: "valueChange", detail: 2015 },
+      { step: "press", key: "ArrowUp" },
+      { step: "expectEvent", name: "valueChange", detail: 2016 },
+      { step: "press", key: "ArrowLeft" },
+      { step: "expectFocus", selector: "[data-part=\"seconds\"]" },
+    ],
+  ],
+  credits: [],
+};

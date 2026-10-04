@@ -1,0 +1,510 @@
+<!doctype html>
+<!--
+  Pica · Scroll Ruler · scroll-ruler
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Scroll Ruler · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><pre>000  ┼────┼────┼────┼────┼────┼────┼────┼────
+001  │    │    │    │    │    │    │    │    
+002  │    │    │    │    │    │    │    │    
+003  │    │    │    │    │    │    │    │    
+004  │    │    │    │    │    │    │    │    
+005  ┼────┼────┼────┼────┼────┼────┼────┼────
+006  │    │    │    │    │    │    │    │    
+007  │    │    │    │    │    │    │    │    
+008  │    │    │    │    │    │    │    │    
+009  │    │    │    │    │    │    │    │    
+010  ┼────┼────┼────┼────┼────┼────┼────┼────
+011  │    │    │    │    │    │    │    │    
+012  │    │    │    │    │    │    │    │    
+013  │    │    │    │    │    │    │    │    
+014  │    │    │    │    │    │    │    │    
+015  ┼────┼────┼────┼────┼────┼────┼────┼────
+016  │    │    │    │    │    │    │    │    
+017  │    │    │    │    │    │    │    │    
+018  │    │    │    │    │    │    │    │    
+019  │    │    │    │    │    │    │    │    
+020  ┼────┼────┼────┼────┼────┼────┼────┼────
+021  │    │    │    │    │    │    │    │    
+022  │    │    │    │    │    │    │    │    
+023  │    │    │    │    │    │    │    │    
+024  │    │    │    │    │    │    │    │    
+025  ┼────┼────┼────┼────┼────┼────┼────┼────
+026  │    │    │    │    │    │    │    │    
+027  │    │    │    │    │    │    │    │    
+028  │    │    │    │    │    │    │    │    
+029  │    │    │    │    │    │    │    │    
+030  ┼────┼────┼────┼────┼────┼────┼────┼────
+031  │    │    │    │    │    │    │    │    
+032  │    │    │    │    │    │    │    │    
+033  │    │    │    │    │    │    │    │    
+034  │    │    │    │    │    │    │    │    
+035  ┼────┼────┼────┼────┼────┼────┼────┼────
+036  │    │    │    │    │    │    │    │    
+037  │    │    │    │    │    │    │    │    
+038  │    │    │    │    │    │    │    │    
+039  │    │    │    │    │    │    │    │    
+040  ┼────┼────┼────┼────┼────┼────┼────┼────
+041  │    │    │    │    │    │    │    │    
+042  │    │    │    │    │    │    │    │    
+043  │    │    │    │    │    │    │    │    
+044  │    │    │    │    │    │    │    │    
+045  ┼────┼────┼────┼────┼────┼────┼────┼────
+046  │    │    │    │    │    │    │    │    
+047  │    │    │    │    │    │    │    │    
+048  │    │    │    │    │    │    │    │    
+049  │    │    │    │    │    │    │    │    
+050  ┼────┼────┼────┼────┼────┼────┼────┼────
+051  │    │    │    │    │    │    │    │    
+052  │    │    │    │    │    │    │    │    
+053  │    │    │    │    │    │    │    │    
+054  │    │    │    │    │    │    │    │    
+055  ┼────┼────┼────┼────┼────┼────┼────┼────
+056  │    │    │    │    │    │    │    │    
+057  │    │    │    │    │    │    │    │    
+058  │    │    │    │    │    │    │    │    
+059  │    │    │    │    │    │    │    │    
+060  ┼────┼────┼────┼────┼────┼────┼────┼────
+061  │    │    │    │    │    │    │    │    
+062  │    │    │    │    │    │    │    │    
+063  │    │    │    │    │    │    │    │    
+064  │    │    │    │    │    │    │    │    
+065  ┼────┼────┼────┼────┼────┼────┼────┼────
+066  │    │    │    │    │    │    │    │    
+067  │    │    │    │    │    │    │    │    
+068  │    │    │    │    │    │    │    │    
+069  │    │    │    │    │    │    │    │    
+070  ┼────┼────┼────┼────┼────┼────┼────┼────
+071  │    │    │    │    │    │    │    │    
+072  │    │    │    │    │    │    │    │    
+073  │    │    │    │    │    │    │    │    
+074  │    │    │    │    │    │    │    │    
+075  ┼────┼────┼────┼────┼────┼────┼────┼────
+076  │    │    │    │    │    │    │    │    
+077  │    │    │    │    │    │    │    │    
+078  │    │    │    │    │    │    │    │    
+079  │    │    │    │    │    │    │    │    
+080  ┼────┼────┼────┼────┼────┼────┼────┼────
+081  │    │    │    │    │    │    │    │    
+082  │    │    │    │    │    │    │    │    
+083  │    │    │    │    │    │    │    │    
+084  │    │    │    │    │    │    │    │    
+085  ┼────┼────┼────┼────┼────┼────┼────┼────
+086  │    │    │    │    │    │    │    │    
+087  │    │    │    │    │    │    │    │    
+088  │    │    │    │    │    │    │    │    
+089  │    │    │    │    │    │    │    │    
+090  ┼────┼────┼────┼────┼────┼────┼────┼────
+091  │    │    │    │    │    │    │    │    
+092  │    │    │    │    │    │    │    │    
+093  │    │    │    │    │    │    │    │    
+094  │    │    │    │    │    │    │    │    
+095  ┼────┼────┼────┼────┼────┼────┼────┼────
+096  │    │    │    │    │    │    │    │    
+097  │    │    │    │    │    │    │    │    
+098  │    │    │    │    │    │    │    │    
+099  │    │    │    │    │    │    │    │    </pre></div>
+<script>
+"use strict";
+var PicaScrollRuler = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/motion/scroll-ruler/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/chart.ts
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, String(value));
+    return el;
+  }
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/motion/scroll-ruler/core.ts
+  var defaults = {
+    orientation: "vertical",
+    unit: "px",
+    label: "Local scroll position",
+    tickStep: 100
+  };
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let alive = true;
+    let graphic = null;
+    let trackStart = 0;
+    let trackLength = 1;
+    let lastPosition = 0;
+    let lastExtent = 0;
+    const initialTop = host.scrollTop, initialLeft = host.scrollLeft;
+    const attrs = hostAttributes(host);
+    const restore = styleHost(host, {
+      ...getComputedStyle(host).position === "static" ? { position: "relative" } : {},
+      overflow: "auto"
+    });
+    const emit = emitter(host);
+    const hostId = host.id || nextId("scroll-ruler-host");
+    if (!host.id) attrs.set("id", hostId);
+    const ruler = document.createElement("div");
+    ruler.setAttribute("data-pica", "");
+    ruler.setAttribute("data-scroll-ruler", "");
+    ruler.setAttribute("role", "scrollbar");
+    ruler.setAttribute("tabindex", "0");
+    ruler.setAttribute("aria-controls", hostId);
+    ruler.style.cssText = `position:absolute;top:0;left:0;z-index:1;box-sizing:border-box;overflow:hidden;cursor:pointer;font-family:${GRID_FONT};color:${cssVar("fg")};background:${cssVar("bg")};touch-action:auto`;
+    host.appendChild(ruler);
+    function vertical() {
+      return props.orientation !== "horizontal";
+    }
+    function measure() {
+      const viewport = vertical() ? host.clientHeight : host.clientWidth;
+      const extent = Math.max(0, (vertical() ? host.scrollHeight : host.scrollWidth) - viewport);
+      const raw = vertical() ? host.scrollTop : host.scrollLeft;
+      const position = Math.max(0, Math.min(extent, Number.isFinite(raw) ? raw : 0));
+      return { position, extent, viewport, progress: extent ? position / extent : 0 };
+    }
+    function tickStep() {
+      const raw = Number.isFinite(props.tickStep) ? props.tickStep : defaults.tickStep;
+      return Math.max(props.unit === "percent" ? 0.1 : 1, Math.min(1e5, raw));
+    }
+    function text(value) {
+      const rounded = Math.round(value * 10) / 10;
+      return `${rounded}${props.unit === "percent" ? "%" : "px"}`;
+    }
+    function accessible() {
+      attrs.set("role", "group");
+      attrs.set("aria-label", props.label || null);
+      attrs.set("tabindex", "0");
+      ruler.setAttribute("aria-label", props.label || "Local scroll position");
+      ruler.setAttribute("aria-orientation", vertical() ? "vertical" : "horizontal");
+    }
+    function draw() {
+      const state = measure();
+      if (!alive) return state;
+      const isVertical = vertical();
+      const width = Math.max(1, isVertical ? Math.min(100, host.clientWidth) : host.clientWidth);
+      const height = Math.max(1, isVertical ? host.clientHeight : Math.min(70, host.clientHeight));
+      ruler.style.width = `${width}px`;
+      ruler.style.height = `${height}px`;
+      ruler.style.transform = `translate(${host.scrollLeft + (isVertical ? Math.max(0, host.clientWidth - width) : 0)}px,${host.scrollTop}px)`;
+      ruler.setAttribute("aria-valuemin", "0");
+      ruler.setAttribute("aria-valuemax", String(Math.round(state.extent)));
+      ruler.setAttribute("aria-valuenow", String(Math.round(state.position)));
+      ruler.setAttribute("aria-valuetext", `${Math.round(state.position)} pixels of ${Math.round(state.extent)} pixels, ${Math.round(state.progress * 100)} percent`);
+      const root = svg("svg", { "data-pica": "", "aria-hidden": "true", viewBox: `0 0 ${width} ${height}`, "font-family": GRID_FONT, "font-size": 10 });
+      root.style.cssText = "display:block;width:100%;height:100%;pointer-events:none";
+      trackStart = isVertical ? 40 : 16;
+      trackLength = Math.max(1, isVertical ? height - 62 : width - 32);
+      function line(x1, y1, x2, y2, token, strokeWidth = 1) {
+        root.appendChild(svg("line", { "data-pica": "", x1, y1, x2, y2, stroke: cssVar(token), "stroke-width": strokeWidth }));
+      }
+      function label(x, y, content, anchor = "start", token = "fg") {
+        const node = svg("text", { "data-pica": "", x, y, fill: cssVar(token), "text-anchor": anchor });
+        node.textContent = content;
+        root.appendChild(node);
+      }
+      const end = trackStart + trackLength;
+      if (isVertical) line(14, trackStart, 14, end, "muted");
+      else line(trackStart, 36, end, 36, "muted");
+      const range = props.unit === "percent" ? state.extent ? 100 : 0 : state.extent;
+      const current = props.unit === "percent" ? state.progress * 100 : state.position;
+      const step = tickStep();
+      const maximumLabels = Math.max(1, Math.floor(trackLength / (isVertical ? 42 : 76)));
+      const major = step * Math.max(1, Math.ceil(range / step / maximumLabels));
+      const minor = major / 5;
+      const ticks = range ? Math.min(200, Math.floor(range / minor)) : 0;
+      for (let i = 0; i <= ticks; i++) {
+        const value = i * minor;
+        const at = trackStart + (range ? value / range * trackLength : 0);
+        const isMajor = i % 5 === 0;
+        if (isVertical) {
+          line(14, at, isMajor ? 27 : 20, at, isMajor ? "fg" : "muted");
+          if (isMajor && (value === 0 || range - value > major * 0.32)) label(32, at + 3, text(value), "start", "muted");
+        } else {
+          line(at, 36, at, isMajor ? 46 : 41, isMajor ? "fg" : "muted");
+          if (isMajor && (value === 0 || range - value > major * 0.32)) label(at, 59, text(value), value === 0 ? "start" : "middle", "muted");
+        }
+      }
+      if (range) {
+        if (isVertical) {
+          line(14, end, 27, end, "fg");
+          label(32, end + 3, text(range), "start", "muted");
+        } else {
+          line(end, 36, end, 46, "fg");
+          label(end, 59, text(range), "end", "muted");
+        }
+      }
+      const indicator = trackStart + state.progress * trackLength;
+      if (isVertical) {
+        line(5, indicator, 27, indicator, "accent", 3);
+        label(8, 15, text(current));
+        label(8, 28, `/ ${text(range)}`, "start", "muted");
+      } else {
+        line(indicator, 28, indicator, 46, "accent", 3);
+        label(16, 17, `${text(current)} / ${text(range)}`);
+        label(width - 16, 17, `${Math.round(state.progress * 100)}%`, "end", "muted");
+      }
+      graphic?.remove();
+      graphic = root;
+      ruler.appendChild(root);
+      attrs.set("data-pica-ready", "true");
+      return state;
+    }
+    function report(state) {
+      if (Math.abs(state.position - lastPosition) < 0.01 && state.extent === lastExtent) return;
+      lastPosition = state.position;
+      lastExtent = state.extent;
+      emit("positionChange", { position: state.position, extent: state.extent, progress: state.progress });
+    }
+    function seek(position) {
+      const state = measure();
+      const next = Math.max(0, Math.min(state.extent, position));
+      if (vertical()) host.scrollTop = next;
+      else host.scrollLeft = next;
+      report(draw());
+    }
+    const onScroll = () => {
+      if (alive) report(draw());
+    };
+    const onKey = (event) => {
+      if (event.target !== ruler && event.target !== host) return;
+      const state = measure();
+      const step = props.unit === "percent" ? state.extent * tickStep() / 100 : tickStep();
+      let position;
+      switch (event.key) {
+        case "Home":
+          position = 0;
+          break;
+        case "End":
+          position = state.extent;
+          break;
+        case "PageDown":
+          position = state.position + state.viewport * 0.9;
+          break;
+        case "PageUp":
+          position = state.position - state.viewport * 0.9;
+          break;
+        case "ArrowDown":
+          if (!vertical()) return;
+          position = state.position + step;
+          break;
+        case "ArrowUp":
+          if (!vertical()) return;
+          position = state.position - step;
+          break;
+        case "ArrowRight":
+          if (vertical()) return;
+          position = state.position + step;
+          break;
+        case "ArrowLeft":
+          if (vertical()) return;
+          position = state.position - step;
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+      seek(position);
+    };
+    const onClick = (event) => {
+      ruler.focus({ preventScroll: true });
+      const rect = ruler.getBoundingClientRect();
+      const coordinate = vertical() ? event.clientY - rect.top : event.clientX - rect.left;
+      if (coordinate < trackStart - 8 || coordinate > trackStart + trackLength + 8) return;
+      const progress = Math.max(0, Math.min(1, (coordinate - trackStart) / trackLength));
+      seek(measure().extent * progress);
+    };
+    const refresh = () => {
+      if (!alive) return;
+      const state = draw();
+      lastPosition = state.position;
+      lastExtent = state.extent;
+    };
+    host.addEventListener("scroll", onScroll, { passive: true });
+    host.addEventListener("keydown", onKey);
+    ruler.addEventListener("click", onClick);
+    host.addEventListener("load", refresh, true);
+    const resize = typeof ResizeObserver === "function" ? new ResizeObserver(refresh) : null;
+    function observeContent() {
+      resize?.disconnect();
+      resize?.observe(host);
+      for (const child of Array.from(host.children)) if (child !== ruler) resize?.observe(child);
+    }
+    const mutations = typeof MutationObserver === "function" ? new MutationObserver((records) => {
+      if (!alive || !records.some((record) => record.target !== ruler && !ruler.contains(record.target))) return;
+      observeContent();
+      refresh();
+    }) : null;
+    accessible();
+    refresh();
+    observeContent();
+    mutations?.observe(host, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["style", "class", "hidden", "src", "width", "height"] });
+    document.fonts.addEventListener("loadingdone", refresh);
+    return {
+      update(next) {
+        if (!alive) return;
+        props = { ...props, ...next };
+        accessible();
+        refresh();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        mutations?.disconnect();
+        resize?.disconnect();
+        host.removeEventListener("scroll", onScroll);
+        host.removeEventListener("keydown", onKey);
+        ruler.removeEventListener("click", onClick);
+        host.removeEventListener("load", refresh, true);
+        document.fonts.removeEventListener("loadingdone", refresh);
+        ruler.remove();
+        graphic = null;
+        attrs.restore();
+        restore();
+        host.scrollTop = initialTop;
+        host.scrollLeft = initialLeft;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaScrollRuler.mount(host, take(initial));
+  ["positionChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

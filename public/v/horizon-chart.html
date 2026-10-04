@@ -1,0 +1,831 @@
+<!doctype html>
+<!--
+  Pica · Horizon Chart · horizon-chart
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Horizon Chart · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaHorizonChart = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/data/horizon-chart/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/chart.ts
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, String(value));
+    return el;
+  }
+  function dataTable(caption, head, rows) {
+    const table = document.createElement("table");
+    table.setAttribute("data-pica", "");
+    table.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    table.createCaption().textContent = caption;
+    const headRow = table.createTHead().insertRow();
+    for (const label of head) {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = label;
+      headRow.appendChild(th);
+    }
+    const body = table.createTBody();
+    for (const row of rows) {
+      const tr = body.insertRow();
+      row.forEach((cell, i) => {
+        if (i === 0) {
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = String(cell);
+          tr.appendChild(th);
+        } else {
+          tr.insertCell().textContent = String(cell);
+        }
+      });
+    }
+    return table;
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/ramp.ts
+  var FALLBACK_RAMP = " .:-=+*#%@";
+  var rampCache = /* @__PURE__ */ new Map();
+  function uniqueGlyphs(chars) {
+    return Array.from(new Set(Array.from(chars.length > 0 ? chars : FALLBACK_RAMP)));
+  }
+  function fontSettled(fontFamily) {
+    try {
+      return document.fonts.check(`12px ${fontFamily}`);
+    } catch {
+      return true;
+    }
+  }
+  function inkMaps(glyphs, fontFamily, lineHeight, n) {
+    if (typeof document === "undefined") return null;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    const fontPx = 40;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    const w = Math.max(1, Math.ceil(ctx.measureText("M").width || fontPx * 0.6));
+    const h = Math.max(1, Math.ceil(fontPx * lineHeight));
+    canvas.width = w;
+    canvas.height = h;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#000";
+    return glyphs.map((glyph) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillText(glyph, 0, h / 2);
+      const alpha = ctx.getImageData(0, 0, w, h).data;
+      const sums = new Array(n * n).fill(0);
+      for (let y = 0; y < h; y++) {
+        const sy = Math.min(n - 1, Math.floor(y / h * n));
+        for (let x = 0; x < w; x++) {
+          const k = sy * n + Math.min(n - 1, Math.floor(x / w * n));
+          sums[k] = (sums[k] ?? 0) + (alpha[(y * w + x) * 4 + 3] ?? 0);
+        }
+      }
+      return sums;
+    });
+  }
+  function measureRamp(chars, fontFamily, lineHeight = 1.2) {
+    const glyphs = uniqueGlyphs(chars);
+    const key = `${fontFamily}|${lineHeight}|${glyphs.join("")}`;
+    const cached = rampCache.get(key);
+    if (cached) return cached;
+    const maps = inkMaps(glyphs, fontFamily, lineHeight, 1);
+    if (!maps) {
+      const last = Math.max(1, glyphs.length - 1);
+      return { glyphs, levels: glyphs.map((_, i) => i / last) };
+    }
+    const order = glyphs.map((glyph, i) => ({ glyph, ink: maps[i]?.[0] ?? 0 })).sort((a, b) => a.ink - b.ink);
+    const lightest = order[0]?.ink ?? 0;
+    const span = (order[order.length - 1]?.ink ?? 1) - lightest || 1;
+    const ramp = {
+      glyphs: order.map((o) => o.glyph),
+      levels: order.map((o) => (o.ink - lightest) / span)
+    };
+    if (fontSettled(fontFamily)) rampCache.set(key, ramp);
+    return ramp;
+  }
+  function pick(ramp, v) {
+    const { glyphs, levels } = ramp;
+    const last = glyphs.length - 1;
+    if (last < 0) return " ";
+    if (v <= 0) return glyphs[0] ?? " ";
+    if (v >= 1) return glyphs[last] ?? " ";
+    let lo = 0;
+    let hi = last;
+    while (hi - lo > 1) {
+      const mid = lo + hi >> 1;
+      if ((levels[mid] ?? 0) < v) lo = mid;
+      else hi = mid;
+    }
+    const nearer = v - (levels[lo] ?? 0) <= (levels[hi] ?? 1) - v ? lo : hi;
+    return glyphs[nearer] ?? " ";
+  }
+
+  // registry/data/horizon-chart/core.ts
+  var defaults = {
+    series: [
+      { name: "North", values: [0, 1, 3, 5, 7, 8, 6, 4, 1, -2, -4, -6, -7, -5, -3, 0, 2, 4, 6, 5, 3, 1, -1, -3] },
+      { name: "Central", values: [-3, -4, -2, 0, 2, 4, 3, 1, -1, -3, -5, -4, -2, 1, 3, 5, 7, 6, 4, 2, 0, -2, -4, -2] },
+      { name: "South", values: [4, 3, 1, -2, -4, -6, -8, -7, -5, -2, 1, 3, 5, 4, 2, 0, -1, -3, -4, -2, 0, 2, 4, 5] }
+    ],
+    baseline: 0,
+    bands: 4,
+    labels: Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, "0")}:00`),
+    look: "glyph",
+    label: "Hourly signed deviations by region"
+  };
+  var HORIZON_ORDER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+  function horizonNumber(value) {
+    if (!Number.isFinite(value)) return "Missing";
+    if (Math.abs(value) >= 1e4 || value !== 0 && Math.abs(value) < 1e-3) return value.toExponential(2);
+    return value.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
+  }
+  function horizonValid(value) {
+    return typeof value === "number" && Number.isFinite(value);
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let alive = true;
+    let ready = false;
+    let grid = null;
+    let graphic = null;
+    let table = null;
+    const attributes = hostAttributes(host);
+    const restore = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    const frame = document.createElement("div");
+    frame.setAttribute("data-pica", "");
+    frame.setAttribute("aria-hidden", "true");
+    frame.style.cssText = `position:absolute;inset:0;overflow:hidden;background:${cssVar("bg")}`;
+    host.appendChild(frame);
+    const patternPrefix = nextId("horizon-density");
+    const palette = watchPalette(host, () => {
+      if (alive && ready) draw();
+    });
+    function data() {
+      return Array.isArray(props.series) ? props.series.filter((row) => row && Array.isArray(row.values)) : [];
+    }
+    function dimensions() {
+      const baseline = Number.isFinite(props.baseline) ? props.baseline : defaults.baseline;
+      const bands = Math.max(2, Math.min(6, Math.round(Number.isFinite(props.bands) ? props.bands : defaults.bands)));
+      let maximum = 0;
+      let count = 0;
+      for (const row of data()) {
+        count = Math.max(count, row.values.length);
+        for (const value of row.values) if (horizonValid(value)) maximum = Math.max(maximum, Math.abs(value - baseline));
+      }
+      return { baseline, bands, maximum, step: maximum > 0 ? maximum / bands : 1, count };
+    }
+    function sampleLabel(index) {
+      return props.labels[index] || String(index + 1);
+    }
+    function accessibility() {
+      const label = props.label.trim();
+      attributes.set("role", label ? "group" : null);
+      attributes.set("aria-label", label ? `${label}. Density encodes absolute deviation from the baseline; slash hatching marks negative values. Rows share one magnitude scale.` : null);
+      attributes.set("aria-hidden", label ? null : "true");
+    }
+    function updateTable() {
+      table?.remove();
+      const scale = dimensions();
+      table = dataTable(props.label || "Horizon chart", ["Series", "Sample", "Value", "Signed deviation", "Magnitude band", "Sign"], data().flatMap((row) => row.values.map((value, index) => {
+        const valid = horizonValid(value);
+        const deviation = valid ? value - scale.baseline : 0;
+        return [row.name || "Unnamed series", sampleLabel(index), valid ? value : "Missing", valid ? deviation : "Missing", valid ? Math.min(scale.bands, Math.ceil(Math.abs(deviation) / scale.step)) : "Missing", valid ? deviation < 0 ? "Negative (slash hatched)" : deviation > 0 ? "Positive" : "At baseline" : "Missing"];
+      })));
+      host.appendChild(table);
+    }
+    function interpolated(values, t) {
+      const index = Math.floor(t);
+      const a = values[index];
+      const fraction = t - index;
+      if (!horizonValid(a)) return null;
+      if (fraction < 1e-6) return a;
+      const b = values[index + 1];
+      return horizonValid(b) ? a + (b - a) * fraction : null;
+    }
+    function drawGlyph() {
+      if (!grid) return;
+      const g = grid;
+      const colors = palette.colors;
+      const rows = data();
+      const scale = dimensions();
+      const ramp = measureRamp(" .:-=+*#%@", GRID_FONT, 1.3);
+      g.clear();
+      const left = Math.min(2, Math.max(0, g.cols - 1));
+      const width = Math.max(1, g.cols - 4);
+      g.write(left, 1, `BASE ${horizonNumber(scale.baseline)}  ${scale.bands} BANDS x ${horizonNumber(scale.step)}`.slice(0, width), colors.fg);
+      const bandRows = Math.max(1, Math.min(5, Math.floor(Math.max(1, g.rows - 9) / Math.max(1, rows.length)) - 2));
+      const laneRows = bandRows + 3;
+      const start = Math.max(4, Math.floor((g.rows - rows.length * laneRows) / 2));
+      rows.forEach((row, index) => {
+        const top = start + index * laneRows;
+        const latest = [...row.values].reverse().find(horizonValid);
+        const deviation = latest === void 0 ? "Missing" : `${latest - scale.baseline >= 0 ? "+" : ""}${horizonNumber(latest - scale.baseline)}`;
+        g.write(left, top - 1, (row.name || "Unnamed series").slice(0, Math.max(1, width - deviation.length - 2)), colors.fg);
+        if (width > deviation.length + 4) g.write(left + width - deviation.length, top - 1, deviation, colors.fg);
+        for (let x = 0; x < width; x++) {
+          const value = interpolated(row.values, width <= 1 ? 0 : x / (width - 1) * Math.max(0, scale.count - 1));
+          if (value === null) continue;
+          const signed = value - scale.baseline;
+          const magnitude = Math.abs(signed) / scale.step;
+          for (let y = 0; y < bandRows; y++) {
+            const height = (bandRows - y - 0.5) / bandRows;
+            if (magnitude <= height) continue;
+            const band = Math.min(scale.bands - 1, Math.floor(magnitude - height));
+            const tone = 0.18 + 0.8 * (band + 1) / scale.bands;
+            const glyph = signed < 0 && (x + y * 2) % 4 === 0 ? "/" : pick(ramp, tone);
+            g.set(left + x, top + y, glyph, colors.fg);
+          }
+          if (x % 4 === 0) g.set(left + x, top + bandRows, ".", colors.muted);
+        }
+        row.values.forEach((value, sample) => {
+          if (!horizonValid(value) || scale.count <= 1 || horizonValid(row.values[sample - 1]) || horizonValid(row.values[sample + 1])) return;
+          const x = Math.round(sample / (scale.count - 1) * (width - 1));
+          const signed = value - scale.baseline;
+          const magnitude = Math.abs(signed) / scale.step;
+          for (let y = 0; y < bandRows; y++) {
+            const height = (bandRows - y - 0.5) / bandRows;
+            if (magnitude <= height) continue;
+            const band = Math.min(scale.bands - 1, Math.floor(magnitude - height));
+            g.set(left + x, top + y, signed < 0 ? "/" : pick(ramp, 0.18 + 0.8 * (band + 1) / scale.bands), colors.fg);
+          }
+        });
+      });
+      if (!rows.length || !scale.count) g.write(left, Math.floor(g.rows / 2), "NO SERIES DATA".slice(0, width), colors.fg);
+      const ticks = width >= 48 ? 5 : width >= 20 ? 3 : 2;
+      const tickRow = Math.max(0, g.rows - 3);
+      for (let i = 0; i < ticks && scale.count; i++) {
+        const index = Math.round(i / (ticks - 1) * Math.max(0, scale.count - 1));
+        const label = sampleLabel(index).slice(0, Math.max(1, Math.floor(width / ticks) - 1));
+        const x = Math.max(left, Math.min(left + width - label.length, left + Math.round(i / (ticks - 1) * (width - 1)) - Math.floor(label.length / 2)));
+        g.write(x, tickRow, label, colors.fg);
+      }
+      g.write(left, Math.max(0, g.rows - 1), "/ NEGATIVE  DENSITY = MAGNITUDE".slice(0, width), colors.fg);
+      g.flush();
+    }
+    function drawSvg() {
+      graphic?.remove();
+      const width = Math.max(1, frame.clientWidth);
+      const height = Math.max(1, frame.clientHeight);
+      const rows = data();
+      const scale = dimensions();
+      const root = svg("svg", { "data-pica": "", "aria-hidden": "true", viewBox: `0 0 ${width} ${height}`, "font-family": GRID_FONT, "font-size": 11 });
+      root.style.cssText = "width:100%;height:100%;display:block";
+      graphic = root;
+      frame.appendChild(root);
+      const defs = svg("defs", { "data-pica": "" });
+      root.appendChild(defs);
+      for (let band = 0; band < scale.bands; band++) {
+        const pattern = svg("pattern", { "data-pica": "", id: `${patternPrefix}-${band}`, width: 8, height: 8, patternUnits: "userSpaceOnUse" });
+        const sites = Math.max(1, Math.round((band + 1) / scale.bands * 16));
+        for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) {
+          if ((HORIZON_ORDER[y * 4 + x] ?? 0) < sites) pattern.appendChild(svg("circle", { "data-pica": "", cx: x * 2 + 1, cy: y * 2 + 1, r: 0.9, fill: cssVar("fg") }));
+        }
+        defs.appendChild(pattern);
+      }
+      const negative = svg("pattern", { "data-pica": "", id: `${patternPrefix}-negative`, width: 8, height: 8, patternUnits: "userSpaceOnUse" });
+      negative.appendChild(svg("path", { "data-pica": "", d: "M-2 2L2 -2M0 8L8 0M6 10L10 6", fill: "none", stroke: cssVar("fg"), "stroke-width": 0.8 }));
+      defs.appendChild(negative);
+      function text(x, y, value, anchor = "start") {
+        const node = svg("text", { "data-pica": "", x, y, fill: cssVar("fg"), "text-anchor": anchor });
+        node.textContent = value;
+        root.appendChild(node);
+      }
+      const left = Math.min(18, width * 0.05);
+      const plotWidth = Math.max(1, width - left * 2);
+      text(left, 24, `BASE ${horizonNumber(scale.baseline)}  /  ${scale.bands} BANDS x ${horizonNumber(scale.step)}`);
+      const bandHeight = Math.max(6, Math.min(54, (height - 120) / Math.max(1, rows.length) - 28));
+      const laneHeight = bandHeight + 28;
+      const start = Math.max(64, (height - rows.length * laneHeight) / 2);
+      rows.forEach((row, rowIndex) => {
+        const top = start + rowIndex * laneHeight;
+        const bottom = top + bandHeight;
+        text(left, top - 9, (row.name || "Unnamed series").slice(0, Math.max(1, Math.floor(plotWidth / 7) - 12)));
+        const latest = [...row.values].reverse().find(horizonValid);
+        text(left + plotWidth, top - 9, latest === void 0 ? "Missing" : `${latest - scale.baseline >= 0 ? "+" : ""}${horizonNumber(latest - scale.baseline)}`, "end");
+        function area(sign, band) {
+          let path = "";
+          let points = [];
+          function flush() {
+            const first = points[0];
+            const last = points[points.length - 1];
+            if (first && last) {
+              if (points.length === 1) {
+                const span = scale.count === 1 ? plotWidth : Math.max(2, plotWidth / Math.max(1, scale.count - 1) * 0.15);
+                const x0 = Math.max(left, Math.min(left + plotWidth - span, first[0] - span / 2));
+                path += `M${x0},${bottom}L${x0},${first[1]}L${x0 + span},${first[1]}L${x0 + span},${bottom}Z`;
+              } else path += `M${first[0]},${bottom}L${points.map((point) => `${point[0]},${point[1]}`).join("L")}L${last[0]},${bottom}Z`;
+            }
+            points = [];
+          }
+          function append(index, value) {
+            const magnitude = sign * (value - scale.baseline) / scale.step;
+            const folded = Math.max(0, Math.min(1, magnitude - band));
+            points.push([left + index / Math.max(1, scale.count - 1) * plotWidth, bottom - folded * bandHeight]);
+          }
+          row.values.forEach((value, index) => {
+            if (!horizonValid(value)) {
+              flush();
+              return;
+            }
+            append(index, value);
+            const next = row.values[index + 1];
+            if (!horizonValid(next) || next === value) return;
+            const crossings = [0, band * scale.step, (band + 1) * scale.step].map((level) => (scale.baseline + sign * level - value) / (next - value)).filter((t) => t > 0 && t < 1).sort((a, b) => a - b);
+            for (const t of crossings) append(index + t, value + (next - value) * t);
+          });
+          flush();
+          return path;
+        }
+        for (let band = 0; band < scale.bands; band++) {
+          for (const sign of [1, -1]) root.appendChild(svg("path", { "data-pica": "", d: area(sign, band), fill: `url(#${patternPrefix}-${band})` }));
+        }
+        root.appendChild(svg("path", { "data-pica": "", d: area(-1, 0), fill: `url(#${patternPrefix}-negative)` }));
+        root.appendChild(svg("line", { "data-pica": "", x1: left, x2: left + plotWidth, y1: bottom, y2: bottom, stroke: cssVar("muted"), "stroke-width": 0.7, "stroke-dasharray": "2 5" }));
+      });
+      const ticks = width >= 500 ? 5 : 3;
+      for (let i = 0; i < ticks && scale.count; i++) {
+        const index = Math.round(i / (ticks - 1) * Math.max(0, scale.count - 1));
+        text(left + i / (ticks - 1) * plotWidth, height - 34, sampleLabel(index).slice(0, Math.max(1, Math.floor(plotWidth / ticks / 7))), i === 0 ? "start" : i === ticks - 1 ? "end" : "middle");
+      }
+      text(left, height - 12, "/ NEGATIVE  /  DENSITY = MAGNITUDE");
+      if (!rows.length || !scale.count) text(width / 2, height / 2, "NO SERIES DATA", "middle");
+    }
+    function draw() {
+      if (!alive) return;
+      if (grid) drawGlyph();
+      else drawSvg();
+      attributes.set("data-pica-ready", "true");
+    }
+    function mountView() {
+      if (props.look !== "svg") grid = createGrid(frame, { fontFamily: GRID_FONT, fontSize: 12, columns: 0, lineHeight: 1.3, renderer: "canvas", color: "" }, draw);
+      draw();
+    }
+    const resize = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && ready && !grid) draw();
+    }) : null;
+    resize?.observe(frame);
+    accessibility();
+    updateTable();
+    ready = true;
+    mountView();
+    return {
+      update(next) {
+        if (!alive) return;
+        const before = props;
+        props = { ...props, ...next };
+        const dataChanged = !sameJson(before.series, props.series) || !sameJson(before.labels, props.labels) || before.baseline !== props.baseline || before.bands !== props.bands;
+        if (dataChanged || before.label !== props.label) updateTable();
+        if (before.label !== props.label) accessibility();
+        const recolored = palette.refresh();
+        if (before.look !== props.look) {
+          grid?.destroy();
+          grid = null;
+          graphic?.remove();
+          graphic = null;
+          mountView();
+        } else if (dataChanged || recolored) draw();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        resize?.disconnect();
+        palette.destroy();
+        grid?.destroy();
+        frame.remove();
+        table?.remove();
+        attributes.restore();
+        restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaHorizonChart.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,909 @@
+<!doctype html>
+<!--
+  Pica · Fan Chart · fan-chart
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Fan Chart · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaFanChart = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/data/fan-chart/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/chart.ts
+  function linearScale(domain, range) {
+    const [d0, d1] = domain;
+    const [r0, r1] = range;
+    const k = d1 === d0 ? 0 : (r1 - r0) / (d1 - d0);
+    return Object.assign((value) => r0 + (value - d0) * k, { domain, range });
+  }
+  function extent(values) {
+    let min = Number.POSITIVE_INFINITY;
+    let max = Number.NEGATIVE_INFINITY;
+    for (const value of values) {
+      if (!Number.isFinite(value)) continue;
+      if (value < min) min = value;
+      if (value > max) max = value;
+    }
+    return min <= max ? [min, max] : [0, 0];
+  }
+  function niceNumber(x, round) {
+    const exponent = Math.floor(Math.log10(x));
+    const fraction = x / 10 ** exponent;
+    const nice = round ? fraction < 1.5 ? 1 : fraction < 3 ? 2 : fraction < 7 ? 5 : 10 : fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10;
+    return nice * 10 ** exponent;
+  }
+  function niceTicks(min, max, count = 5) {
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return [0, 1];
+    let lo = Math.min(min, max);
+    let hi = Math.max(min, max);
+    if (lo === hi) {
+      const pad = Math.abs(lo) * 0.1 || 1;
+      lo -= pad;
+      hi += pad;
+    }
+    const step = niceNumber(niceNumber(hi - lo, false) / Math.max(1, count - 1), true);
+    const start = Math.floor(lo / step) * step;
+    const end = Math.ceil(hi / step) * step;
+    const decimals = Math.max(0, -Math.floor(Math.log10(step)));
+    const ticks = [];
+    for (let i = 0; start + i * step <= end + step / 2; i++) {
+      ticks.push(Number((start + i * step).toFixed(decimals)) || 0);
+    }
+    return ticks;
+  }
+  var numberFormats = /* @__PURE__ */ new Map();
+  function formatNumber(value, options = {}) {
+    const { compact = true, decimals = 1, locale } = options;
+    const short = compact && Math.abs(value) >= 1e4;
+    const key = `${locale ?? ""}|${short ? "c" : "n"}|${decimals}`;
+    let format = numberFormats.get(key);
+    if (!format) {
+      format = new Intl.NumberFormat(locale, short ? { notation: "compact", maximumFractionDigits: decimals } : { maximumFractionDigits: decimals });
+      numberFormats.set(key, format);
+    }
+    return format.format(value);
+  }
+  var coord = (value) => String(Math.round(value * 100) / 100);
+  function linePath(points) {
+    return points.map(([x, y], i) => `${i === 0 ? "M" : "L"}${coord(x)} ${coord(y)}`).join("");
+  }
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, String(value));
+    return el;
+  }
+  function dataTable(caption, head, rows) {
+    const table = document.createElement("table");
+    table.setAttribute("data-pica", "");
+    table.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    table.createCaption().textContent = caption;
+    const headRow = table.createTHead().insertRow();
+    for (const label of head) {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = label;
+      headRow.appendChild(th);
+    }
+    const body = table.createTBody();
+    for (const row of rows) {
+      const tr = body.insertRow();
+      row.forEach((cell, i) => {
+        if (i === 0) {
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = String(cell);
+          tr.appendChild(th);
+        } else {
+          tr.insertCell().textContent = String(cell);
+        }
+      });
+    }
+    return table;
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/chart-marks.ts
+  function svgLabel(text, x, y, options = {}) {
+    const { anchor = "start", middle = false, size = 10, token = "muted", font = GRID_FONT } = options;
+    const node = svg("text", { x, y, "text-anchor": anchor, fill: cssVar(token), "font-family": font, "font-size": size });
+    if (middle) node.setAttribute("dominant-baseline", "middle");
+    node.style.fontVariantNumeric = "tabular-nums";
+    node.textContent = text;
+    return node;
+  }
+  function gridLines(values, options) {
+    const { side, plot, at, label, size = 10, gap = size * 0.6, rule = true } = options;
+    const across = side === "left" || side === "right";
+    const group = svg("g");
+    for (const value of values) {
+      const p = at(value);
+      if (rule) {
+        const ends = across ? { x1: plot.x, y1: p, x2: plot.x + plot.width, y2: p } : { x1: p, y1: plot.y, x2: p, y2: plot.y + plot.height };
+        group.appendChild(svg("line", { ...ends, stroke: cssVar("muted"), "stroke-width": 1 }));
+      }
+      const text = label?.(value) ?? "";
+      if (!text) continue;
+      const x = side === "left" ? plot.x - gap : side === "right" ? plot.x + plot.width + gap : p;
+      const y = across ? p : side === "top" ? plot.y - gap : plot.y + plot.height + gap + size;
+      const anchor = side === "left" ? "end" : side === "right" ? "start" : "middle";
+      group.appendChild(svgLabel(text, x, y, { anchor, middle: across, size }));
+    }
+    return group;
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // lib/ramp.ts
+  var FALLBACK_RAMP = " .:-=+*#%@";
+  var rampCache = /* @__PURE__ */ new Map();
+  function uniqueGlyphs(chars) {
+    return Array.from(new Set(Array.from(chars.length > 0 ? chars : FALLBACK_RAMP)));
+  }
+  function fontSettled(fontFamily) {
+    try {
+      return document.fonts.check(`12px ${fontFamily}`);
+    } catch {
+      return true;
+    }
+  }
+  function inkMaps(glyphs, fontFamily, lineHeight, n) {
+    if (typeof document === "undefined") return null;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    const fontPx = 40;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    const w = Math.max(1, Math.ceil(ctx.measureText("M").width || fontPx * 0.6));
+    const h = Math.max(1, Math.ceil(fontPx * lineHeight));
+    canvas.width = w;
+    canvas.height = h;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#000";
+    return glyphs.map((glyph) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillText(glyph, 0, h / 2);
+      const alpha = ctx.getImageData(0, 0, w, h).data;
+      const sums = new Array(n * n).fill(0);
+      for (let y = 0; y < h; y++) {
+        const sy = Math.min(n - 1, Math.floor(y / h * n));
+        for (let x = 0; x < w; x++) {
+          const k = sy * n + Math.min(n - 1, Math.floor(x / w * n));
+          sums[k] = (sums[k] ?? 0) + (alpha[(y * w + x) * 4 + 3] ?? 0);
+        }
+      }
+      return sums;
+    });
+  }
+  function measureRamp(chars, fontFamily, lineHeight = 1.2) {
+    const glyphs = uniqueGlyphs(chars);
+    const key = `${fontFamily}|${lineHeight}|${glyphs.join("")}`;
+    const cached = rampCache.get(key);
+    if (cached) return cached;
+    const maps = inkMaps(glyphs, fontFamily, lineHeight, 1);
+    if (!maps) {
+      const last = Math.max(1, glyphs.length - 1);
+      return { glyphs, levels: glyphs.map((_, i) => i / last) };
+    }
+    const order = glyphs.map((glyph, i) => ({ glyph, ink: maps[i]?.[0] ?? 0 })).sort((a, b) => a.ink - b.ink);
+    const lightest = order[0]?.ink ?? 0;
+    const span = (order[order.length - 1]?.ink ?? 1) - lightest || 1;
+    const ramp = {
+      glyphs: order.map((o) => o.glyph),
+      levels: order.map((o) => (o.ink - lightest) / span)
+    };
+    if (fontSettled(fontFamily)) rampCache.set(key, ramp);
+    return ramp;
+  }
+  function pick(ramp, v) {
+    const { glyphs, levels } = ramp;
+    const last = glyphs.length - 1;
+    if (last < 0) return " ";
+    if (v <= 0) return glyphs[0] ?? " ";
+    if (v >= 1) return glyphs[last] ?? " ";
+    let lo = 0;
+    let hi = last;
+    while (hi - lo > 1) {
+      const mid = lo + hi >> 1;
+      if ((levels[mid] ?? 0) < v) lo = mid;
+      else hi = mid;
+    }
+    const nearer = v - (levels[lo] ?? 0) <= (levels[hi] ?? 1) - v ? lo : hi;
+    return glyphs[nearer] ?? " ";
+  }
+
+  // registry/data/fan-chart/core.ts
+  var defaults = {
+    series: [74, 76, 73, 78, 80, 83, 85, 88, 91, 94, 97, 100],
+    intervals: [
+      { label: "50%", lower: [null, null, null, null, 80, 81, 82, 84, 86, 88, 90, 92], upper: [null, null, null, null, 80, 85, 88, 92, 96, 100, 104, 108] },
+      { label: "80%", lower: [null, null, null, null, 80, 79, 79, 79, 80, 81, 82, 83], upper: [null, null, null, null, 80, 87, 91, 97, 102, 107, 112, 117] },
+      { label: "95%", lower: [null, null, null, null, 80, 77, 75, 74, 73, 72, 71, 70], upper: [null, null, null, null, 80, 89, 95, 102, 109, 116, 123, 130] }
+    ],
+    labels: ["Q1 '25", "Q2 '25", "Q3 '25", "Q4 '25", "Q1 '26", "Q2 '26", "Q3 '26", "Q4 '26", "Q1 '27", "Q2 '27", "Q3 '27", "Q4 '27"],
+    label: "Quarterly central forecast with supplied 50%, 80%, and 95% uncertainty bounds",
+    look: "glyph"
+  };
+  function fanChartFinite(value) {
+    return typeof value === "number" && Number.isFinite(value) ? value : null;
+  }
+  function fanChartPrepare(props) {
+    const source = Array.isArray(props.series) ? props.series : [];
+    const intervals = (Array.isArray(props.intervals) ? props.intervals : []).filter((band) => band && Array.isArray(band.lower) && Array.isArray(band.upper)).slice(0, 12);
+    const count = Math.min(512, Math.max(source.length, ...intervals.map((band) => Math.max(band.lower.length, band.upper.length)), 0));
+    const central = Array.from({ length: count }, (_, index) => fanChartFinite(source[index]));
+    const bands = intervals.map((band, ordinal) => {
+      const lower = [];
+      const upper = [];
+      let width = 0;
+      let validCount = 0;
+      for (let index = 0; index < count; index++) {
+        const lo = fanChartFinite(band.lower[index]);
+        const hi = fanChartFinite(band.upper[index]);
+        const valid = lo !== null && hi !== null && lo <= hi;
+        lower.push(valid ? lo : null);
+        upper.push(valid ? hi : null);
+        if (valid) {
+          width += hi - lo;
+          validCount++;
+        }
+      }
+      return { label: typeof band.label === "string" && band.label ? band.label : `Interval ${ordinal + 1}`, lower, upper, width: width / Math.max(1, validCount) };
+    });
+    const values = [...central, ...bands.flatMap((band) => [...band.lower, ...band.upper])].filter((value) => value !== null);
+    const [min, max] = extent(values);
+    const ticks = niceTicks(min, max, 5);
+    return { central, bands, count, ticks, domain: [ticks[0] ?? 0, ticks[ticks.length - 1] ?? 1], valid: values.length > 0 };
+  }
+  function fanChartSample(values, index) {
+    const low = Math.floor(index);
+    const high = Math.min(values.length - 1, Math.ceil(index));
+    const a = values[low], b = values[high];
+    if (a === null || b === null || a === void 0 || b === void 0) return null;
+    return a + (b - a) * (index - low);
+  }
+  function fanChartRuns(count, valid) {
+    const runs = [];
+    let run = [];
+    for (let index = 0; index < count; index++) {
+      if (valid(index)) run.push(index);
+      else if (run.length) {
+        runs.push(run);
+        run = [];
+      }
+    }
+    if (run.length) runs.push(run);
+    return runs;
+  }
+  function fanChartIndices(count, capacity) {
+    const ticks = Math.min(count, Math.max(1, Math.floor(capacity)));
+    if (ticks <= 1) return count ? [0] : [];
+    return Array.from({ length: ticks }, (_, index) => Math.round(index * (count - 1) / (ticks - 1)));
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let data = fanChartPrepare(props);
+    let alive = true;
+    let grid = null;
+    let graphic = null;
+    let table = null;
+    const attrs = hostAttributes(host);
+    const restore = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    const frame = document.createElement("div");
+    frame.setAttribute("data-pica", "");
+    frame.setAttribute("aria-hidden", "true");
+    frame.style.cssText = `position:absolute;inset:0;overflow:hidden;background:${cssVar("bg")}`;
+    host.append(frame);
+    const palette = watchPalette(host, () => draw());
+    function accessibility() {
+      const label = props.label.trim();
+      attrs.set("role", label ? "group" : null);
+      attrs.set("aria-label", label || null);
+      attrs.set("aria-hidden", label ? null : "true");
+    }
+    function timeLabel(index) {
+      return typeof props.labels[index] === "string" ? props.labels[index] : String(index + 1);
+    }
+    function updateTable() {
+      table?.remove();
+      const head = ["Period", "Central", ...data.bands.flatMap((band) => [`${band.label} lower`, `${band.label} upper`])];
+      const rows = Array.from({ length: data.count }, (_, index) => [timeLabel(index), data.central[index] ?? "Missing", ...data.bands.flatMap((band) => [band.lower[index] ?? "Missing", band.upper[index] ?? "Missing"])]);
+      table = dataTable(props.label || "Fan chart", head, rows);
+      for (const node of table.querySelectorAll("*")) node.setAttribute("data-pica", "");
+      host.append(table);
+    }
+    function sortedBands() {
+      return [...data.bands].sort((a, b) => b.width - a.width);
+    }
+    function drawSvg() {
+      graphic?.remove();
+      const width = Math.max(1, frame.clientWidth);
+      const height = Math.max(1, frame.clientHeight);
+      const root = svg("svg", { "data-pica": "", "aria-hidden": "true", viewBox: `0 0 ${width} ${height}` });
+      root.style.cssText = "display:block;width:100%;height:100%";
+      graphic = root;
+      frame.append(root);
+      const longestTick = Math.max(...data.ticks.map((tick) => formatNumber(tick, { locale: "en-US" }).length), 1);
+      const left = Math.min(width * 0.3, Math.max(36, longestTick * 7 + 10));
+      const plot = { x: left, y: 42, width: Math.max(1, width - left - 18), height: Math.max(1, height - 82) };
+      const x = linearScale([0, Math.max(1, data.count - 1)], [plot.x, plot.x + plot.width]);
+      const y = linearScale(data.domain, [plot.y + plot.height, plot.y]);
+      const atX = (index) => data.count === 1 ? plot.x + plot.width / 2 : x(index);
+      const guides = gridLines(data.ticks, { side: "left", plot, at: y, label: (value) => formatNumber(value, { locale: "en-US" }), size: 11 });
+      for (const line of guides.querySelectorAll("line")) line.setAttribute("stroke-opacity", "0.22");
+      root.append(guides);
+      root.append(svg("line", { x1: plot.x, y1: plot.y + plot.height, x2: plot.x + plot.width, y2: plot.y + plot.height, stroke: cssVar("muted"), "stroke-width": 1 }));
+      const bands = sortedBands();
+      bands.forEach((band, level) => {
+        const opacity = 0.12 + level / Math.max(1, bands.length - 1) * 0.16;
+        for (const run of fanChartRuns(data.count, (index) => band.lower[index] !== null && band.upper[index] !== null)) {
+          const upper = run.map((index) => [atX(index), y(band.upper[index])]);
+          const lower = [...run].reverse().map((index) => [atX(index), y(band.lower[index])]);
+          if (run.length === 1) {
+            const index = run[0];
+            root.append(svg("line", { x1: atX(index), x2: atX(index), y1: y(band.lower[index]), y2: y(band.upper[index]), stroke: cssVar("fg"), "stroke-opacity": opacity + 0.2, "stroke-width": 3 }));
+          } else {
+            const path = linePath([...upper, ...lower]) + "Z";
+            root.append(svg("path", { d: path, fill: cssVar("fg"), "fill-opacity": opacity, stroke: cssVar("fg"), "stroke-opacity": 0.24, "stroke-width": 0.7 }));
+          }
+        }
+      });
+      for (const run of fanChartRuns(data.count, (index) => data.central[index] !== null)) {
+        const points = run.map((index) => [atX(index), y(data.central[index])]);
+        root.append(svg("path", { d: linePath(points), fill: "none", stroke: cssVar("accent"), "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+        for (const [cx, cy] of points) root.append(svg("circle", { cx, cy, r: 2.2, fill: cssVar("accent") }));
+      }
+      const capacity = Math.max(2, Math.floor(plot.width / 88));
+      for (const index of fanChartIndices(data.count, capacity)) {
+        const label = svgLabel(timeLabel(index).slice(0, 14), atX(index), plot.y + plot.height + 23, { size: 11, anchor: index === 0 ? "start" : index === data.count - 1 ? "end" : "middle" });
+        const title = svg("title");
+        title.textContent = timeLabel(index);
+        label.append(title);
+        root.append(label);
+      }
+      root.append(svg("line", { x1: plot.x, x2: plot.x + 14, y1: 19, y2: 19, stroke: cssVar("accent"), "stroke-width": 2 }));
+      root.append(svgLabel("Central", plot.x + 20, 23, { token: "fg", size: 11 }));
+      let legendX = plot.x + 88;
+      for (const band of data.bands) {
+        const name = band.label.slice(0, 18);
+        if (legendX + name.length * 7 > width - 12) break;
+        root.append(svg("rect", { x: legendX, y: 13, width: 8, height: 8, fill: cssVar("fg"), "fill-opacity": 0.3 }));
+        root.append(svgLabel(name, legendX + 14, 23, { token: "fg", size: 11 }));
+        legendX += name.length * 7 + 32;
+      }
+      if (!data.valid) root.append(svgLabel("NO VALID DATA", plot.x + plot.width / 2, plot.y + plot.height / 2, { anchor: "middle", size: 12 }));
+      for (const node of root.querySelectorAll("*")) node.setAttribute("data-pica", "");
+    }
+    function drawGlyph() {
+      if (!grid) return;
+      const g = grid;
+      const colors = palette.colors;
+      const ramp = measureRamp(" .:-=+*#%@", GRID_FONT, 1.25);
+      g.clear();
+      const tickStrings = data.ticks.map((value) => formatNumber(value, { locale: "en-US" }));
+      const left = Math.max(2, Math.min(Math.floor(g.cols / 3), Math.max(...tickStrings.map((text) => text.length), 1) + 2));
+      const right = Math.max(left + 1, g.cols - 3);
+      const top = 4;
+      const bottom = Math.max(top + 1, g.rows - 4);
+      const x = linearScale([0, Math.max(1, data.count - 1)], [left, right]);
+      const y = linearScale(data.domain, [bottom, top]);
+      const atX = (index) => data.count === 1 ? (left + right) / 2 : x(index);
+      for (let index = 0; index < data.ticks.length; index++) {
+        const value = data.ticks[index];
+        const row = Math.round(y(value));
+        const label = tickStrings[index] ?? "";
+        g.write(Math.max(0, left - label.length - 1), row, label, colors.muted);
+        for (let col = left; col <= right; col++) if ((col - left) % 3 === 0) g.set(col, row, "·", colors.muted);
+      }
+      const bands = sortedBands();
+      for (let col = left; col <= right; col++) {
+        if (data.count < 2) continue;
+        const position = (col - left) / Math.max(1, right - left) * (data.count - 1);
+        bands.forEach((band, level) => {
+          const lo = fanChartSample(band.lower, position);
+          const hi = fanChartSample(band.upper, position);
+          if (lo === null || hi === null) return;
+          const shade = pick(ramp, 0.28 + 0.42 * (level + 1) / Math.max(1, bands.length));
+          const firstRow = Math.max(top, Math.ceil(y(hi)));
+          const lastRow = Math.min(bottom, Math.floor(y(lo)));
+          for (let row = firstRow; row <= lastRow; row++) g.set(col, row, shade, colors.fg);
+        });
+      }
+      if (data.count === 1) {
+        for (const band of bands) {
+          const lo = band.lower[0], hi = band.upper[0];
+          if (lo === null || hi === null || lo === void 0 || hi === void 0) continue;
+          for (let row = Math.ceil(y(hi)); row <= Math.floor(y(lo)); row++) g.set(Math.round(atX(0)), row, pick(ramp, 0.5), colors.fg);
+        }
+      }
+      function segment(a, b) {
+        const steps = Math.max(1, Math.ceil(Math.max(Math.abs(b[0] - a[0]), Math.abs(b[1] - a[1]))));
+        for (let step = 0; step <= steps; step++) g.set(Math.round(a[0] + (b[0] - a[0]) * step / steps), Math.round(a[1] + (b[1] - a[1]) * step / steps), "•", colors.accent);
+      }
+      for (const run of fanChartRuns(data.count, (index) => data.central[index] !== null)) {
+        run.forEach((index, ordinal) => {
+          const point = [atX(index), y(data.central[index])];
+          const prior = run[ordinal - 1];
+          if (prior === void 0) segment(point, point);
+          else segment([atX(prior), y(data.central[prior])], point);
+        });
+      }
+      g.set(left, 1, "━", colors.accent);
+      g.write(left + 2, 1, "Central", colors.fg);
+      g.write(left + 11, 1, data.bands.map((band) => band.label).join(" / ").slice(0, Math.max(0, g.cols - left - 12)), colors.fg);
+      for (const index of fanChartIndices(data.count, Math.max(2, Math.floor((right - left) / 11)))) {
+        const label = timeLabel(index).slice(0, 10);
+        const col = Math.max(left, Math.min(right - label.length + 1, Math.round(atX(index) - label.length / 2)));
+        g.write(col, bottom + 2, label, colors.muted);
+      }
+      if (!data.valid) g.write(Math.max(left, Math.floor((left + right - 13) / 2)), Math.round((top + bottom) / 2), "NO VALID DATA", colors.muted);
+      g.flush();
+    }
+    function draw() {
+      if (!alive) return;
+      if (grid) drawGlyph();
+      else drawSvg();
+      attrs.set("data-pica-ready", "true");
+    }
+    function mountView() {
+      if (props.look === "glyph") grid = createGrid(frame, { fontFamily: GRID_FONT, fontSize: 12, columns: 0, lineHeight: 1.25, renderer: "canvas", color: "" }, draw);
+      draw();
+    }
+    const resize = new ResizeObserver(() => {
+      if (alive && !grid) draw();
+    });
+    resize.observe(frame);
+    accessibility();
+    updateTable();
+    mountView();
+    return {
+      update(next) {
+        if (!alive) return;
+        const before = props;
+        props = { ...props, ...next };
+        const dataChanged = changed(before, props, ["series", "intervals"]);
+        if (dataChanged) data = fanChartPrepare(props);
+        if (dataChanged || changed(before, props, ["labels", "label"])) updateTable();
+        if (before.label !== props.label) accessibility();
+        palette.refresh();
+        if (before.look !== props.look) {
+          grid?.destroy();
+          grid = null;
+          graphic?.remove();
+          graphic = null;
+          mountView();
+        } else if (dataChanged || changed(before, props, ["labels", "label"]) || grid) draw();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        resize.disconnect();
+        grid?.destroy();
+        palette.destroy();
+        frame.remove();
+        table?.remove();
+        attrs.restore();
+        restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaFanChart.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>
