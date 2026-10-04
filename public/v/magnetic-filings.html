@@ -22,7 +22,7 @@ html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto;
 .pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
 </head>
 <body>
-<div id="pica"><article class="field-note"><p class="field-index">Dipole / 03 · Field study</p><h2>Lines of attraction</h2><p>A pair of slowly moving sources aligns short filings. The source geometry gives each mark a reason to turn.</p><details><summary>Read the field note</summary><p>Field direction sums opposite inverse square sources; filings are capped to a fixed lattice.</p></details></article></div>
+<div id="pica"><p>Bearings were taken from the ridge every quarter mile, each one written in pencil beside the last.</p><p>By noon the readings agreed: north had moved four degrees since the old chart was drawn.</p></div>
 <script>
 "use strict";
 var PicaMagneticFilings = (() => {
@@ -52,14 +52,6 @@ var PicaMagneticFilings = (() => {
   });
 
   // lib/host.ts
-  function nextSerial() {
-    const g = globalThis;
-    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
-    return g.__picaSerial;
-  }
-  function nextId(prefix) {
-    return `${prefix}-${nextSerial()}`;
-  }
   var unstyled = /* @__PURE__ */ new WeakMap();
   function styleHost(host, styles) {
     if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
@@ -158,6 +150,84 @@ var PicaMagneticFilings = (() => {
     };
   }
 
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/glyph-grid.ts
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function measureCell(fontFamily, fontSize, lineHeight) {
+    return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
+  }
+
   // lib/loop.ts
   var MAX_STEP_MS = 100;
   function createLoop(options) {
@@ -236,198 +306,372 @@ var PicaMagneticFilings = (() => {
     };
   }
 
-  // lib/palette.ts
-  var TOKENS = ["fg", "bg", "accent", "muted"];
-  var TOKEN_FALLBACK = {
-    fg: "currentColor",
-    bg: "transparent",
-    accent: "#13C4A3",
-    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
-  };
-  function cssVar(token) {
-    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  // lib/ramp.ts
+  var FALLBACK_RAMP = " .:-=+*#%@";
+  var rampCache = /* @__PURE__ */ new Map();
+  var shapeCache = /* @__PURE__ */ new Map();
+  function uniqueGlyphs(chars) {
+    return Array.from(new Set(Array.from(chars.length > 0 ? chars : FALLBACK_RAMP)));
   }
-  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
-  function createProbe(host) {
-    const probe = document.createElement("span");
-    probe.setAttribute("data-pica", "");
-    probe.setAttribute("aria-hidden", "true");
-    probe.style.cssText = [
-      "position:absolute",
-      "width:0",
-      "height:0",
-      "overflow:hidden",
-      "visibility:hidden",
-      "pointer-events:none",
-      `color:${cssVar("fg")}`,
-      `background-color:${cssVar("bg")}`,
-      `border-top:0 solid ${cssVar("accent")}`,
-      `outline:0 solid ${cssVar("muted")}`,
-      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
-      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
-    ].join(";");
-    host.appendChild(probe);
-    return probe;
-  }
-  function probeColors(probe) {
-    const style = getComputedStyle(probe);
-    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
-  }
-  function watchPalette(host, onChange) {
-    const probe = createProbe(host);
-    let colors = probeColors(probe);
-    function refresh() {
-      const next = probeColors(probe);
-      const differs = TOKENS.some((token) => next[token] !== colors[token]);
-      colors = next;
-      return differs;
+  function fontSettled(fontFamily) {
+    try {
+      return document.fonts.check(`12px ${fontFamily}`);
+    } catch {
+      return true;
     }
-    const onEvent = (event) => {
-      event.stopPropagation();
-      if (event.type === "transitionend" && refresh()) onChange(colors);
-    };
-    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
-    return {
-      get colors() {
-        return colors;
-      },
-      refresh,
-      destroy() {
-        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
-        probe.remove();
+  }
+  function inkMaps(glyphs, fontFamily, lineHeight, n) {
+    if (typeof document === "undefined") return null;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    const fontPx = 40;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    const w = Math.max(1, Math.ceil(ctx.measureText("M").width || fontPx * 0.6));
+    const h = Math.max(1, Math.ceil(fontPx * lineHeight));
+    canvas.width = w;
+    canvas.height = h;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#000";
+    return glyphs.map((glyph) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillText(glyph, 0, h / 2);
+      const alpha = ctx.getImageData(0, 0, w, h).data;
+      const sums = new Array(n * n).fill(0);
+      for (let y = 0; y < h; y++) {
+        const sy = Math.min(n - 1, Math.floor(y / h * n));
+        for (let x = 0; x < w; x++) {
+          const k = sy * n + Math.min(n - 1, Math.floor(x / w * n));
+          sums[k] = (sums[k] ?? 0) + (alpha[(y * w + x) * 4 + 3] ?? 0);
+        }
       }
+      return sums;
+    });
+  }
+  function measureRamp(chars, fontFamily, lineHeight = 1.2) {
+    const glyphs = uniqueGlyphs(chars);
+    const key = `${fontFamily}|${lineHeight}|${glyphs.join("")}`;
+    const cached = rampCache.get(key);
+    if (cached) return cached;
+    const maps = inkMaps(glyphs, fontFamily, lineHeight, 1);
+    if (!maps) {
+      const last = Math.max(1, glyphs.length - 1);
+      return { glyphs, levels: glyphs.map((_, i) => i / last) };
+    }
+    const order = glyphs.map((glyph, i) => ({ glyph, ink: maps[i]?.[0] ?? 0 })).sort((a, b) => a.ink - b.ink);
+    const lightest = order[0]?.ink ?? 0;
+    const span = (order[order.length - 1]?.ink ?? 1) - lightest || 1;
+    const ramp = {
+      glyphs: order.map((o) => o.glyph),
+      levels: order.map((o) => (o.ink - lightest) / span)
     };
+    if (fontSettled(fontFamily)) rampCache.set(key, ramp);
+    return ramp;
+  }
+  function measureShapes(chars, fontFamily, lineHeight = 1.2, n = 3) {
+    const glyphs = uniqueGlyphs(chars);
+    const key = `${fontFamily}|${lineHeight}|${n}|${glyphs.join("")}`;
+    const cached = shapeCache.get(key);
+    if (cached) return cached;
+    const maps = inkMaps(glyphs, fontFamily, lineHeight, n);
+    if (!maps) return null;
+    let max = 1;
+    for (const m of maps) for (const v of m) if (v > max) max = v;
+    const shapes = { glyphs, n, cells: maps.map((m) => m.map((v) => v / max)) };
+    if (fontSettled(fontFamily)) shapeCache.set(key, shapes);
+    return shapes;
+  }
+  function matchShape(shapes, sample) {
+    let best = 0;
+    let bestDistance = Infinity;
+    for (let g = 0; g < shapes.cells.length; g++) {
+      const cells = shapes.cells[g] ?? [];
+      let d = 0;
+      for (let i = 0; i < cells.length; i++) {
+        const e = (cells[i] ?? 0) - (sample[i] ?? 0);
+        d += e * e;
+      }
+      if (d < bestDistance) {
+        bestDistance = d;
+        best = g;
+      }
+    }
+    return shapes.glyphs[best] ?? " ";
   }
 
   // lib/rng.ts
-  function createRng(seed) {
-    let state = seed >>> 0;
-    return () => {
-      state = state + 1831565813 >>> 0;
-      let t = state;
-      t = Math.imul(t ^ t >>> 15, t | 1);
-      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-      return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    };
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
   }
 
   // registry/effects/magnetic-filings/core.ts
   var defaults = {
-    pitch: 26,
+    sources: [{ x: 0.2, y: 0.25, charge: 1 }, { x: 0.8, y: 0.75, charge: -1 }],
+    spacing: 2,
+    fontSize: 13,
+    quiet: 3,
+    layout: "none",
     period: 24,
-    opacity: 0.38,
-    fps: 18,
-    showPause: true,
+    opacity: 0.6,
+    fps: 15,
     paused: false,
     time: null,
     seed: 1
   };
+  var FILINGS = "-\\|/";
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
     let loop = null;
-    let destroyed = false;
+    let undoLayout = () => void 0;
+    let destroyed = false, ready = false, full = true, key = "";
+    let hw = 0, hh = 0, cw = 1, ch = 1, s = 1, n = 0, rows = 0, cols = 1, ox = 0, oy = 0, period = 24e3, tick = 600;
+    let zone = null;
+    let kind = new Uint8Array(0), shown = new Uint8Array(0), ticks = new Float64Array(0), phase = new Float64Array(0);
+    let bins = [], weak = "·", charges = [], lit = [];
     const attrs = hostAttributes(host);
-    const fieldId = nextId("pica-field");
-    attrs.set("data-pica-field", fieldId);
-    const undo = styleHost(host, { isolation: "isolate" });
-    const sheet = document.createElement("style");
-    sheet.setAttribute("data-pica", "");
-    host.append(sheet);
-    const sel = `[data-pica-field="${fieldId}"]`;
-    sheet.textContent = `
-    ${sel} > .field-note{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(540px,calc(100% - 112px));line-height:1.6}
-    ${sel} .field-note h2{font:inherit;font-weight:500;font-size:clamp(30px,4vw,48px);line-height:1.1;margin:16px 0 22px;letter-spacing:-.035em}
-    ${sel} .field-note .field-index{font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
-    ${sel} .field-note p{margin:16px 0;max-width:48ch}
-    ${sel} .field-note details{font-size:13px;margin-top:24px}
-    ${sel} .field-note summary{cursor:pointer;list-style-position:inside}
-    ${sel} > [data-pica-pause]{position:absolute;left:24px;bottom:24px;z-index:2;font:inherit;font-size:12px;background:transparent;color:${cssVar("fg")};border:1px solid ${cssVar("fg")};padding:8px 12px;cursor:pointer}
-    ${sel} > [data-pica-pause]:focus-visible{outline:2px solid ${cssVar("accent")};outline-offset:4px}
-    ${sel} .field-note summary:focus-visible{outline:2px solid ${cssVar("accent")};outline-offset:5px}
-  `;
-    const redraw = () => loop?.redraw();
-    const surface = createCanvas(host, { maxDpr: 1.5, maxPixels: 16e5, css: "z-index:-1", onResize: redraw });
+    const undoIsolation = styleHost(host, { isolation: "isolate" });
+    const range = document.createRange();
+    const num = (value, lo, hi, fallback) => {
+      const v = Number(value);
+      return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : fallback;
+    };
+    const size = () => num(props.fontSize, 10, 20, 13);
+    const fps = () => num(props.fps, 12, 24, 15);
+    const tickOf = (t, p) => Math.floor((t + p) / tick);
+    const away = (x, y) => zone ? Math.max(Math.max(zone[0] - x, x - zone[2], 0) - cw / 2, Math.max(zone[1] - y, y - zone[3], 0) - ch / 2) : Infinity;
+    applyLayout();
+    const surface = createCanvas(host, { maxDpr: 1.5, maxPixels: 4e6, css: "z-index:-1", onResize: () => relayout(true) });
     const ctx = surface.canvas.getContext("2d");
-    const palette = watchPalette(host, redraw);
-    const pause = document.createElement("button");
-    pause.setAttribute("data-pica", "");
-    pause.setAttribute("data-pica-pause", "");
-    pause.type = "button";
-    pause.textContent = "Pause animation";
-    const syncPause = () => {
-      pause.hidden = !props.showPause;
-      pause.setAttribute("aria-pressed", String(props.paused));
+    const palette = watchPalette(host, () => {
+      full = true;
+      loop?.redraw();
+    });
+    const sizes = new ResizeObserver(() => relayout(false));
+    const watch = () => {
+      sizes.disconnect();
+      sizes.observe(host);
+      for (const child of Array.from(host.children)) if (!child.hasAttribute("data-pica")) sizes.observe(child);
     };
-    const togglePause = () => {
-      props = { ...props, paused: !props.paused };
-      syncPause();
-      loop?.update({ paused: props.paused });
-    };
-    pause.addEventListener("click", togglePause);
-    host.append(pause);
-    syncPause();
-    function draw(t) {
-      const w = surface.cssWidth, h = surface.cssHeight;
-      ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
-      ctx.clearRect(0, 0, w, h);
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(0, 0, w, h);
-      ctx.rect(w * 0.14, h * 0.2, w * 0.72, h * 0.6);
-      ctx.clip("evenodd");
-      const colors = palette.colors;
-      const opacity = Math.max(0, Math.min(1, props.opacity));
-      ctx.globalAlpha = opacity;
-      ctx.strokeStyle = colors.fg;
-      ctx.fillStyle = colors.fg;
-      ctx.lineWidth = 1;
-      const phase = createRng(props.seed)() * Math.PI * 2;
-      const s = (t / (Math.max(12, props.period) * 1e3) % 1 + 1) % 1;
-      const pitch = Math.max(20, Math.min(48, props.pitch), w / 60, h / 60);
-      const poles = [[w * (0.16 + 0.035 * Math.sin(s * 6.283 + phase)), h * 0.24], [w * (0.83 + 0.035 * Math.cos(s * 6.283 + phase)), h * 0.76]];
-      for (let y = pitch / 2; y < h; y += pitch) for (let x = pitch / 2; x < w; x += pitch) {
-        let vx = 0, vy = 0;
-        poles.forEach((p, i) => {
-          const dx2 = x - p[0], dy2 = y - p[1], d = Math.pow(dx2 * dx2 + dy2 * dy2 + 160, 1.5);
-          vx += (i ? -1 : 1) * dx2 / d;
-          vy += (i ? -1 : 1) * dy2 / d;
-        });
-        const a = Math.atan2(vy, vx), dx = Math.cos(a) * 7, dy = Math.sin(a) * 7;
-        ctx.beginPath();
-        ctx.moveTo(x - dx, y - dy);
-        ctx.lineTo(x + dx, y + dy);
-        ctx.stroke();
-      }
-      ctx.strokeStyle = colors.accent;
-      ctx.lineWidth = 2;
-      poles.forEach((p) => {
-        ctx.beginPath();
-        ctx.arc(p[0], p[1], 10, 0, Math.PI * 2);
-        ctx.stroke();
-      });
-      ctx.restore();
-      attrs.set("data-pica-ready", "true");
+    const children = new MutationObserver(() => {
+      watch();
+      relayout(false);
+    });
+    const onFonts = () => relayout(true);
+    watch();
+    children.observe(host, { childList: true });
+    document.fonts.addEventListener("loadingdone", onFonts);
+    function applyLayout() {
+      undoLayout();
+      undoLayout = props.layout === "center" ? styleHost(host, {
+        display: "grid",
+        "place-content": "center",
+        "justify-items": "start",
+        "grid-template-columns": "minmax(0, 34em)",
+        padding: `${2 * measureCell(GRID_FONT, size(), 1.2).h}px`,
+        "box-sizing": "border-box"
+      }) : () => void 0;
     }
-    loop = createLoop({ el: host, fps: Math.max(12, Math.min(24, props.fps)), paused: props.paused, time: props.time, still: 1200, frame: draw });
+    function measure() {
+      const o = surface.canvas.getBoundingClientRect();
+      let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;
+      const add = (node) => {
+        const el = node.nodeType === 1 ? node : null;
+        if (el ? el.hasAttribute("data-pica") : node.nodeType !== 3 || !node.textContent?.trim()) return;
+        if (!el) range.selectNodeContents(node);
+        const box = (el ?? range).getBoundingClientRect();
+        if (box.width || box.height) {
+          l = Math.min(l, box.left);
+          t = Math.min(t, box.top);
+          r = Math.max(r, box.right);
+          b = Math.max(b, box.bottom);
+        } else el?.childNodes.forEach(add);
+      };
+      host.childNodes.forEach(add);
+      return l > r ? null : [l - o.left, t - o.top, r - o.left, b - o.top];
+    }
+    function cellOf(c, t) {
+      const a = 2 * Math.PI * t / period + c.a;
+      const fx = (c.x + c.d * 4 * ch * Math.sin(a) - ox) / cw - 0.5;
+      const fy = (c.y + 3 * ch * Math.sin(2 * a) - oy) / ch - 0.5;
+      let col = Math.round(fx);
+      if (s > 1 && col % s === 0) col += fx > col ? 1 : -1;
+      col = Math.max(1, Math.min(cols - 2, col));
+      return Math.max(0, Math.min(rows - 1, Math.round(fy))) * cols + col;
+    }
+    function field(x, y, at) {
+      let ex = 0, ey = 0;
+      for (let j = 0; j + 2 < at.length; j += 3) {
+        const dx = x - at[j], dy = y - at[j + 1], d2 = dx * dx + dy * dy + ch * ch, f = at[j + 2] / (d2 * Math.sqrt(d2));
+        ex += f * dx;
+        ey += f * dy;
+      }
+      return [ex, ey];
+    }
+    function relayout(force) {
+      if (destroyed) return;
+      const z = measure();
+      const next = [surface.cssWidth, surface.cssHeight, ...(z ?? []).map(Math.round)].join();
+      if (!force && next === key) return;
+      key = next;
+      zone = z;
+      hw = surface.cssWidth;
+      hh = surface.cssHeight;
+      ({ w: cw, h: ch } = measureCell(GRID_FONT, size(), 1.2));
+      s = Math.round(num(props.spacing, 1, 3, 2));
+      n = Math.max(0, Math.floor((hw / cw - 1) / s) + 1);
+      rows = Math.max(0, Math.floor(hh / ch));
+      cols = Math.max(1, (n - 1) * s + 1);
+      ox = (hw - cols * cw) / 2;
+      oy = (hh - rows * ch) / 2;
+      period = num(props.period, 12, 60, 24) * 1e3;
+      tick = period / Math.round(period / 600);
+      const band = ch * (1 + Math.round(num(props.quiet, 0, 6, 3)));
+      const rx = 4 * ch + 3.5 * cw, ry = 5 * ch;
+      const keep = (v, pad, span) => Math.max(pad + 3 * ch, Math.min(span - pad - 3 * ch, v));
+      const free = (x, y, ex, ey) => !z || x <= z[0] - band - ex || x >= z[2] + band + ex || y <= z[1] - band - ey || y >= z[3] + band + ey;
+      charges = (Array.isArray(props.sources) ? props.sources : []).slice(0, 4).map((src, j) => {
+        const h = hashSeed(props.seed, j + 1, 7);
+        let x = keep(num(src?.x, 0, 1, 0.5) * hw, rx, hw), y = keep(num(src?.y, 0, 1, 0.5) * hh, ry, hh);
+        for (const [ex, ey] of [[rx, ry], [3.5 * cw, 2 * ch]]) {
+          if (!z || free(x, y, ex, ey)) break;
+          let best = Infinity, bx = x, by = y;
+          for (const [cx, cy] of [[z[0] - band - ex, y], [z[2] + band + ex, y], [x, z[1] - band - ey], [x, z[3] + band + ey]]) {
+            const px = keep(cx, rx, hw), py = keep(cy, ry, hh), d = Math.hypot(px - x, py - y);
+            if (free(px, py, ex, ey) && d < best) [best, bx, by] = [d, px, py];
+          }
+          [x, y] = [bx, by];
+          if (best < Infinity) break;
+        }
+        return { x, y, q: num(src?.charge, -1, 1, 1), a: h / 4294967296 * 2 * Math.PI, d: h & 1 ? 1 : -1, p: (h & 65535) / 65536 * tick };
+      });
+      const count = n * rows, amp = new Float64Array(count), mags = [], home = charges.flatMap((c) => [c.x, c.y, c.q]);
+      kind = new Uint8Array(count);
+      shown = new Uint8Array(count);
+      ticks = new Float64Array(count);
+      phase = new Float64Array(count);
+      for (let i = 0; i < count; i++) {
+        const col = i % n, r = (i - col) / n, x = ox + (col * s + 0.5) * cw, y = oy + (r + 0.5) * ch, gap = away(x, y);
+        let near = 64 * ch * ch, p = hashSeed(props.seed, col, r) / 4294967296 * tick;
+        for (const c of charges) {
+          const d = (x - c.x) ** 2 + (y - c.y) ** 2;
+          if (d < near) [near, p] = [d, c.p];
+        }
+        phase[i] = p;
+        if (gap < ch) continue;
+        if (gap < band) {
+          kind[i] = 1;
+          continue;
+        }
+        const [ex, ey] = field(x, y, home);
+        kind[i] = gap < band + 2 * ch ? 4 : 2;
+        mags.push(amp[i] = Math.hypot(ex, ey));
+      }
+      mags.sort((a, b) => a - b);
+      const lo = mags[Math.floor(mags.length * 0.4)] ?? 0, hi = mags[Math.floor(mags.length * 0.8)] ?? 0;
+      for (let i = 0; i < count; i++) if (kind[i] > 1) kind[i] = amp[i] > hi && kind[i] === 2 ? 3 : amp[i] > lo ? 2 : 1;
+      const shapes = measureShapes(FILINGS, GRID_FONT, 1.2), reach = Math.hypot(cw, ch) / 64;
+      bins = [];
+      for (let b = 0; b < 16; b++) {
+        const a = b * Math.PI / 16, sample = new Array(9).fill(0);
+        for (let j = -32; j <= 32; j++) {
+          const x = 0.5 + j * reach * Math.cos(a) / cw, y = 0.5 + j * reach * Math.sin(a) / ch, at = Math.floor(y * 3) * 3 + Math.floor(x * 3);
+          if (x >= 0 && x < 1 && y >= 0 && y < 1) sample[at] += 1;
+        }
+        const top = Math.max(...sample);
+        bins.push(shapes ? Math.max(0, FILINGS.indexOf(matchShape(shapes, sample.map((v) => v / top)))) : Math.round(b / 4) % 4);
+      }
+      weak = measureRamp("·:", GRID_FONT, 1.2).glyphs[0] ?? "·";
+      full = true;
+      loop?.redraw();
+    }
+    function draw(t) {
+      if (destroyed) return;
+      const all = full, dirty = new Uint8Array(rows);
+      full = false;
+      if (all) dirty.fill(1);
+      for (let i = 0; i < kind.length; i++) {
+        const k = kind[i], step = tickOf(t, phase[i]);
+        let code = Math.min(1, k);
+        if (k > 1) {
+          if (!all && step === ticks[i]) continue;
+          ticks[i] = step;
+          const when = step * tick - phase[i], at = [];
+          for (const c of charges) {
+            const cell = cellOf(c, when);
+            at.push(ox + (cell % cols + 0.5) * cw, oy + (Math.floor(cell / cols) + 0.5) * ch, c.q);
+          }
+          const col = i % n, [ex, ey] = field(ox + (col * s + 0.5) * cw, oy + ((i - col) / n + 0.5) * ch, at);
+          code = k * 4 - 6 + bins[(Math.round(Math.atan2(ey, ex) * 16 / Math.PI) + 32) % 16];
+        }
+        if (code !== shown[i]) {
+          shown[i] = code;
+          dirty[Math.floor(i / n)] = 1;
+        }
+      }
+      const cells = cols > 2 && rows > 0 ? charges.map((c) => cellOf(c, tickOf(t, c.p) * tick - c.p)) : [];
+      if (cells.join() !== lit.join()) for (const cell of [...lit, ...cells]) for (let d = -1; d < 2; d++) dirty[Math.floor(cell / cols) + d] = 1;
+      lit = cells;
+      const pocket = (r, c) => cells.some((cell) => Math.abs(Math.floor(cell / cols) - r) < 2 && Math.abs(cell % cols - c) < 3);
+      const { fg, muted, accent } = palette.colors;
+      ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+      if (all) ctx.clearRect(0, 0, hw, hh);
+      else for (let r = 0; r < rows; r++) if (dirty[r]) ctx.clearRect(0, oy + r * ch, hw, ch);
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "left";
+      ctx.font = `${size()}px ${GRID_FONT}`;
+      ctx.globalAlpha = num(props.opacity, 0, 1, 0.6);
+      for (const strong of [false, true]) {
+        ctx.fillStyle = strong ? fg : muted;
+        for (let r = 0; r < rows; r++) {
+          if (!dirty[r]) continue;
+          for (let col = 0; col < n; col++) {
+            const code = shown[r * n + col];
+            if (!code || code > 5 !== strong || pocket(r, col * s)) continue;
+            ctx.fillText(code > 1 ? FILINGS[(code - 2) % 4] : weak, ox + col * s * cw, oy + (r + 0.5) * ch);
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = accent;
+      ctx.font = `700 ${size()}px ${GRID_FONT}`;
+      cells.forEach((cell, j) => {
+        const r = Math.floor(cell / cols), c = cell % cols, y = oy + (r + 0.5) * ch;
+        if (!dirty[r] || [-1, 0, 1].some((k) => away(ox + (c + k + 0.5) * cw, y) < ch)) return;
+        ["[", charges[j].q < 0 ? "−" : "+", "]"].forEach((g, k) => ctx.fillText(g, ox + (c + k - 1) * cw, y));
+      });
+      if (!ready) {
+        ready = true;
+        attrs.set("data-pica-ready", "true");
+      }
+    }
+    relayout(true);
+    loop = createLoop({ el: host, fps: fps(), paused: props.paused, time: props.time, still: 1200, frame: draw });
     return {
       update(next) {
         if (destroyed) return;
         props = { ...props, ...next };
         palette.refresh();
-        syncPause();
-        loop?.update({ paused: props.paused, time: props.time, fps: Math.max(12, Math.min(24, props.fps)) });
-        loop?.redraw();
+        applyLayout();
+        relayout(true);
+        loop?.update({ paused: props.paused, time: props.time, fps: fps() });
       },
       destroy() {
         if (destroyed) return;
         destroyed = true;
-        pause.removeEventListener("click", togglePause);
-        pause.remove();
+        sizes.disconnect();
+        children.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
         loop?.destroy();
         palette.destroy();
         surface.destroy();
-        sheet.remove();
-        undo();
+        undoLayout();
+        undoIsolation();
         attrs.restore();
       }
     };
@@ -449,7 +693,7 @@ var PicaMagneticFilings = (() => {
     }
     return data;
   }
-  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var initial = Object.assign({}, {"layout":"center"}, window.PICA_PROPS || {});
   var instance = PicaMagneticFilings.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;

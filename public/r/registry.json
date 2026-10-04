@@ -87,7 +87,7 @@
       "name": "ascii-exhibition-map",
       "type": "registry:component",
       "title": "ASCII Exhibition Map",
-      "description": "An exhibition guide with an aligned character floor plan, numbered room selection, practical access notes and a linear visiting route.",
+      "description": "A floor plan drawn in box-drawing glyphs from room rectangles and doors, with a route-ordered room list that selects and fills one room.",
       "categories": [
         "ascii"
       ],
@@ -385,7 +385,7 @@
       "name": "ascii-process-map",
       "type": "registry:component",
       "title": "Process map",
-      "description": "A reusable character decision map with editable steps and native choices that update the route summary.",
+      "description": "A decision flow drawn in box-drawing characters, with native choices that trace the selected route.",
       "categories": [
         "ascii"
       ],
@@ -1853,7 +1853,7 @@
       "name": "magnetic-filings",
       "type": "registry:component",
       "title": "Magnetic Filings",
-      "description": "Short filings align with a moving dipole field in the margins of a protected reading area.",
+      "description": "Orientation glyphs follow the field of slowly drifting charges behind the content they wrap, leaving it a clear margin.",
       "categories": [
         "effects"
       ],
@@ -2016,7 +2016,7 @@
       "name": "pixel-louver",
       "type": "registry:component",
       "title": "Pixel Louver",
-      "description": "A bounded grid of mechanical louvers changes projected width in a slow traveling phase.",
+      "description": "Eighth-block louver blades turn in whole cells beside the content, or in every cell around it, and never draw under it.",
       "categories": [
         "effects"
       ],
@@ -2422,7 +2422,7 @@
       "name": "archive-aisle",
       "type": "registry:component",
       "title": "Archive aisle",
-      "description": "A perspective archive aisle with collection records, access notes and a readable finding aid.",
+      "description": "A one-point archive aisle on canvas whose camera walks to each collection's bay, with numbered markers, a register and a readable detail.",
       "categories": [
         "immersive"
       ],

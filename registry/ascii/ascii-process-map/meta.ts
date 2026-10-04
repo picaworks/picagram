@@ -3,11 +3,13 @@ export const meta = {
   "slug": "ascii-process-map",
   "title": "Process map",
   "category": "ascii",
-  "description": "A reusable character decision map with editable steps and native choices that update the route summary.",
+  "description": "A decision flow drawn in box-drawing characters, with native choices that trace the selected route.",
   "tags": [
-    "asset",
     "diagram",
-    "process"
+    "flowchart",
+    "process",
+    "decision",
+    "box-drawing"
   ],
   "facets": [
     "static",
@@ -19,7 +21,7 @@ export const meta = {
   "animated": false,
   "decorative": false,
   "controls": {
-    "title": {
+    "label": {
       "type": "string"
     },
     "start": {
@@ -36,28 +38,77 @@ export const meta = {
   "original": true,
   "palette": [
     "fg",
-    "bg",
-    "accent",
-    "muted"
+    "muted",
+    "accent"
   ],
   "stage": "flow",
+  "controlled": {
+    "value": "valueChange"
+  },
   "interactions": [
     [
       {
         "step": "click",
-        "selector": "button:nth-of-type(2)"
+        "selector": "[data-index='1']"
+      },
+      {
+        "step": "expectEvent",
+        "name": "valueChange",
+        "detail": 1
       },
       {
         "step": "expectAttr",
-        "selector": "[data-route]",
-        "name": "data-route",
-        "value": "1"
-      },
-      {
-        "step": "expectAttr",
-        "selector": "button:nth-of-type(2)",
+        "selector": "[data-index='1']",
         "name": "aria-pressed",
         "value": "true"
+      },
+      {
+        "step": "expectAttr",
+        "selector": "[data-part='diagram']",
+        "name": "data-selected",
+        "value": "1"
+      }
+    ],
+    [
+      {
+        "step": "press",
+        "key": "Tab"
+      },
+      {
+        "step": "expectFocus",
+        "selector": "[data-index='0']"
+      },
+      {
+        "step": "press",
+        "key": "Space"
+      },
+      {
+        "step": "expectEvent",
+        "name": "valueChange",
+        "detail": 0
+      },
+      {
+        "step": "expectAttr",
+        "selector": "[data-index='0']",
+        "name": "aria-pressed",
+        "value": "true"
+      }
+    ],
+    [
+      {
+        "step": "click",
+        "selector": "[data-route-index='2']"
+      },
+      {
+        "step": "expectEvent",
+        "name": "valueChange",
+        "detail": 2
+      },
+      {
+        "step": "expectAttr",
+        "selector": "[data-part='diagram']",
+        "name": "data-selected",
+        "value": "2"
       }
     ]
   ]

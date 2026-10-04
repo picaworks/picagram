@@ -563,12 +563,13 @@
     "slug": "ascii-exhibition-map",
     "title": "ASCII Exhibition Map",
     "category": "ascii",
-    "description": "An exhibition guide with an aligned character floor plan, numbered room selection, practical access notes and a linear visiting route.",
+    "description": "A floor plan drawn in box-drawing glyphs from room rectangles and doors, with a route-ordered room list that selects and fills one room.",
     "tags": [
       "ascii",
-      "page",
-      "layout",
-      "exhibition-map"
+      "floor plan",
+      "map",
+      "box drawing",
+      "selection"
     ],
     "facets": [
       "static",
@@ -582,16 +583,18 @@
     "stage": "flow",
     "palette": [
       "fg",
-      "bg",
-      "accent",
-      "muted"
+      "muted",
+      "accent"
     ],
+    "controlled": {
+      "value": "valueChange"
+    },
     "controls": {
       "label": {
         "type": "string"
       },
-      "title": {
-        "type": "string"
+      "plan": {
+        "type": "json"
       },
       "rooms": {
         "type": "json"
@@ -603,18 +606,24 @@
       [
         {
           "step": "click",
-          "selector": "button:nth-child(2)"
+          "selector": "[data-part=rooms] li:nth-child(2) button"
         },
         {
           "step": "expectEvent",
-          "name": "selectionChange",
+          "name": "valueChange",
           "detail": 1
         },
         {
           "step": "expectAttr",
-          "selector": "button:nth-child(2)",
+          "selector": "[data-part=rooms] li:nth-child(2) button",
           "name": "aria-pressed",
           "value": "true"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=plan]",
+          "name": "data-selected",
+          "value": "1"
         }
       ],
       [
@@ -624,7 +633,7 @@
         },
         {
           "step": "expectFocus",
-          "selector": "button"
+          "selector": "[data-part=rooms] button"
         },
         {
           "step": "press",
@@ -632,59 +641,157 @@
         },
         {
           "step": "expectEvent",
-          "name": "selectionChange",
+          "name": "valueChange",
           "detail": 0
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-room=\"2\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 2
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=plan]",
+          "name": "data-selected",
+          "value": "2"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=rooms] li:nth-child(3) button",
+          "name": "aria-pressed",
+          "value": "true"
         }
       ]
     ],
     "exportName": "AsciiExhibitionMap",
     "defaults": {
-      "label": "The Holding Room / Exhibition guide",
-      "title": "Objects that remember work",
+      "label": "Ground floor plan",
+      "plan": {
+        "cols": 16,
+        "rows": 11
+      },
       "rooms": [
         {
-          "name": "01 / Measure",
+          "name": "Entrance",
+          "subject": "Desk, lockers and the start of the route",
+          "note": "Pick up a printed plan at the desk. Lockers sit beside the street door, and the route begins through the opening in the north wall.",
+          "access": "Level street entrance / Seats at the desk",
+          "x": 0,
+          "y": 7,
+          "w": 11,
+          "h": 4,
+          "doors": [
+            {
+              "side": "s",
+              "at": 5
+            },
+            {
+              "side": "n",
+              "at": 2
+            }
+          ]
+        },
+        {
+          "name": "Measure",
           "subject": "Tools for agreeing on a length",
           "note": "A folded ruler, a marked string and a workshop gauge show three ways of making a measurement repeatable. Read the wear marks beside the numbered divisions.",
-          "access": "Level access / Seating by the east wall"
+          "access": "Level access / Seating by the east wall",
+          "x": 0,
+          "y": 0,
+          "w": 5,
+          "h": 7,
+          "doors": [
+            {
+              "side": "e",
+              "at": 3
+            }
+          ]
         },
         {
-          "name": "02 / Mend",
+          "name": "Mend",
           "subject": "Repair as a visible record",
           "note": "Patched cloth and a joined ceramic bowl preserve the decision to keep an object in use. A handling sample lets visitors feel the seam without touching the exhibited pieces.",
-          "access": "Level access / Handling sample at seated height"
+          "access": "Level access / Seated handling sample",
+          "x": 5,
+          "y": 0,
+          "w": 6,
+          "h": 7,
+          "doors": [
+            {
+              "side": "e",
+              "at": 2
+            }
+          ]
         },
         {
-          "name": "03 / Carry",
+          "name": "Carry",
           "subject": "The shape of a daily journey",
           "note": "A market basket, a tool roll and a parcel wrapper are arranged around the routes they served. Each label traces a repeated trip from the maker to the place of use.",
-          "access": "Level access / Large print labels at the entry"
+          "access": "Level access / Large print labels",
+          "x": 11,
+          "y": 0,
+          "w": 5,
+          "h": 6,
+          "doors": [
+            {
+              "side": "s",
+              "at": 2
+            }
+          ]
+        },
+        {
+          "name": "Keep",
+          "subject": "Where each tool waits between jobs",
+          "note": "Shadow boards, labelled drawers and a mended tool chest show how a workshop keeps its things in order. The last opening leads back to the entrance.",
+          "access": "Level access / Drawers at seated height",
+          "x": 11,
+          "y": 6,
+          "w": 5,
+          "h": 5,
+          "doors": [
+            {
+              "side": "w",
+              "at": 2
+            }
+          ]
         }
-      ]
+      ],
+      "value": null,
+      "defaultValue": 0
     },
     "docs": {
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "label": "The exhibition name.",
-      "title": "The exhibition headline.",
-      "rooms": "Numbered rooms and their program details."
+      "label": "Names the region and prints as the plan's caption. Empty leaves no caption and no role.",
+      "plan": "The plan's size in plan units. It grows to hold every room.",
+      "rooms": "The rooms in route order, numbered from 01. Rooms that touch share one wall, and a door cuts it for both.",
+      "value": "The selected room's index while controlled, or null to let the component keep its own selection.",
+      "defaultValue": "The room selected at mount while uncontrolled, or -1 for none."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
       "label": "string",
-      "title": "string",
-      "rooms": "readonly { name: string; subject: string; note: string; access: string }[]"
+      "plan": "{ cols: number; rows: number }",
+      "rooms": "readonly AsciiExhibitionMapRoom[]",
+      "value": "number | null",
+      "defaultValue": "number"
     },
     "events": {
-      "selectionChange": {
-        "doc": "The selected record index after a visitor chooses a record.",
+      "valueChange": {
+        "doc": "The index of the room a visitor chose, from its button or from the plan.",
         "detail": "number"
       }
     },
-    "gzipBytes": 4002
+    "gzipBytes": 5558
   },
   {
     "slug": "ascii-expedition-log",
@@ -2368,11 +2475,13 @@
     "slug": "ascii-process-map",
     "title": "Process map",
     "category": "ascii",
-    "description": "A reusable character decision map with editable steps and native choices that update the route summary.",
+    "description": "A decision flow drawn in box-drawing characters, with native choices that trace the selected route.",
     "tags": [
-      "asset",
       "diagram",
-      "process"
+      "flowchart",
+      "process",
+      "decision",
+      "box-drawing"
     ],
     "facets": [
       "static",
@@ -2384,7 +2493,7 @@
     "animated": false,
     "decorative": false,
     "controls": {
-      "title": {
+      "label": {
         "type": "string"
       },
       "start": {
@@ -2401,36 +2510,85 @@
     "original": true,
     "palette": [
       "fg",
-      "bg",
-      "accent",
-      "muted"
+      "muted",
+      "accent"
     ],
     "stage": "flow",
+    "controlled": {
+      "value": "valueChange"
+    },
     "interactions": [
       [
         {
           "step": "click",
-          "selector": "button:nth-of-type(2)"
+          "selector": "[data-index='1']"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 1
         },
         {
           "step": "expectAttr",
-          "selector": "[data-route]",
-          "name": "data-route",
-          "value": "1"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "button:nth-of-type(2)",
+          "selector": "[data-index='1']",
           "name": "aria-pressed",
           "value": "true"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part='diagram']",
+          "name": "data-selected",
+          "value": "1"
+        }
+      ],
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-index='0']"
+        },
+        {
+          "step": "press",
+          "key": "Space"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 0
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-index='0']",
+          "name": "aria-pressed",
+          "value": "true"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-route-index='2']"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 2
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part='diagram']",
+          "name": "data-selected",
+          "value": "2"
         }
       ]
     ],
     "exportName": "AsciiProcessMap",
     "defaults": {
-      "title": "Document intake",
+      "label": "Document intake",
       "start": "Receive submission",
-      "decision": "Is the record complete?",
+      "decision": "Can it be reviewed?",
       "routes": [
         {
           "choice": "Ready for review",
@@ -2448,30 +2606,50 @@
             "Return to contributor",
             "Receive amended record"
           ],
-          "outcome": "The contributor supplies the missing information before review."
+          "outcome": "The amended record returns to intake."
+        },
+        {
+          "choice": "Out of scope",
+          "steps": [
+            "Record the reason",
+            "Refer to another archive",
+            "Close the submission"
+          ],
+          "outcome": "The contributor receives a referral."
         }
-      ]
+      ],
+      "value": null,
+      "defaultValue": 0
     },
     "docs": {
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "title": "The process title.",
-      "start": "The entry step.",
-      "decision": "The decision prompt.",
-      "routes": "Decision choices and the ordered steps for each branch."
+      "label": "Names the region and prints as the drawing's caption. Empty leaves out both the caption and the region role.",
+      "start": "The entry step, drawn in a light box above the decision. Empty leaves the box out.",
+      "decision": "The question the routes answer, drawn in a double box. Empty leaves the box out.",
+      "routes": "Each answer with its ordered steps and its outcome. At most four are drawn and listed.",
+      "value": "The selected route's index. Null leaves the component uncontrolled, so it keeps its own choice.",
+      "defaultValue": "The route selected at mount, read once, while value is null."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
-      "title": "string",
+      "label": "string",
       "start": "string",
       "decision": "string",
-      "routes": "{ choice: string; steps: string[]; outcome: string }[]"
+      "routes": "{ choice: string; steps: string[]; outcome: string }[]",
+      "value": "number | null",
+      "defaultValue": "number"
     },
-    "events": {},
-    "gzipBytes": 2887
+    "events": {
+      "valueChange": {
+        "doc": "The index of the route chosen, from its button or from its head box in the drawing.",
+        "detail": "number"
+      }
+    },
+    "gzipBytes": 4858
   },
   {
     "slug": "ascii-rain",
@@ -9910,17 +10088,17 @@
     "slug": "magnetic-filings",
     "title": "Magnetic Filings",
     "category": "effects",
-    "description": "Short filings align with a moving dipole field in the margins of a protected reading area.",
+    "description": "Orientation glyphs follow the field of slowly drifting charges behind the content they wrap, leaving it a clear margin.",
     "tags": [
-      "geometry",
       "field",
-      "canvas",
+      "vector",
+      "glyphs",
+      "charges",
       "reading"
     ],
     "facets": [
       "animated",
-      "overlay",
-      "interactive",
+      "background",
       "canvas"
     ],
     "wave": 14,
@@ -9930,27 +10108,53 @@
     "wraps": "content",
     "palette": [
       "fg",
+      "muted",
       "accent"
     ],
     "controls": {
-      "pitch": {
+      "sources": {
+        "type": "json"
+      },
+      "spacing": {
         "type": "number",
-        "min": 20,
-        "max": 48,
-        "step": 1
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Spacing (columns)"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 10,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size (px)"
+      },
+      "quiet": {
+        "type": "number",
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "label": "Quiet band (cells)"
+      },
+      "layout": {
+        "type": "select",
+        "options": [
+          "none",
+          "center"
+        ]
       },
       "period": {
         "type": "number",
         "min": 12,
         "max": 60,
         "step": 1,
-        "label": "Traversal (s)"
+        "label": "Loop (s)"
       },
       "opacity": {
         "type": "number",
         "min": 0.1,
-        "max": 0.6,
-        "step": 0.01
+        "max": 1,
+        "step": 0.05
       },
       "fps": {
         "type": "number",
@@ -9961,61 +10165,42 @@
       "paused": {
         "type": "boolean"
       },
-      "showPause": {
-        "type": "boolean",
-        "label": "Pause control"
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
       }
     },
     "demo": {
-      "children": "<article class=\"field-note\"><p class=\"field-index\">Dipole / 03 · Field study</p><h2>Lines of attraction</h2><p>A pair of slowly moving sources aligns short filings. The source geometry gives each mark a reason to turn.</p><details><summary>Read the field note</summary><p>Field direction sums opposite inverse square sources; filings are capped to a fixed lattice.</p></details></article>"
+      "props": {
+        "layout": "center"
+      },
+      "children": "<p>Bearings were taken from the ridge every quarter mile, each one written in pencil beside the last.</p><p>By noon the readings agreed: north had moved four degrees since the old chart was drawn.</p>"
     },
-    "interactions": [
-      [
-        {
-          "step": "click",
-          "selector": "[data-pica-pause]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "true"
-        },
-        {
-          "step": "expectFocus",
-          "selector": "[data-pica-pause]"
-        },
-        {
-          "step": "press",
-          "key": "Enter"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "false"
-        },
-        {
-          "step": "press",
-          "key": "Space"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "true"
-        }
-      ]
-    ],
     "original": true,
     "credits": [],
     "exportName": "MagneticFilings",
     "defaults": {
-      "pitch": 26,
+      "sources": [
+        {
+          "x": 0.2,
+          "y": 0.25,
+          "charge": 1
+        },
+        {
+          "x": 0.8,
+          "y": 0.75,
+          "charge": -1
+        }
+      ],
+      "spacing": 2,
+      "fontSize": 13,
+      "quiet": 3,
+      "layout": "none",
       "period": 24,
-      "opacity": 0.38,
-      "fps": 18,
-      "showPause": true,
+      "opacity": 0.6,
+      "fps": 15,
       "paused": false,
       "time": null,
       "seed": 1
@@ -10024,24 +10209,30 @@
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "pitch": "Distance between dipole filings in CSS pixels.",
-      "period": "Seconds for one slow traversal of the field.",
-      "opacity": "Ink strength of the decorative geometry, from zero to one.",
-      "showPause": "Show a native keyboard accessible pause toggle below the field.",
-      "fps": "Frames per second ceiling, bounded between twelve and twenty four."
+      "sources": "Up to four charges: x and y place each one as a fraction of the host, and charge runs from -1 to 1. Each is marked [+] or [−] in the accent, drifts on its own small figure eight, and moves to the nearest free place when its path would meet the content.",
+      "spacing": "Glyph columns from one filing to the next, 1 to 3. At 2 each filing sits in a square cell.",
+      "fontSize": "Glyph size in CSS pixels, 10 to 20.",
+      "quiet": "Cells around the content, past the one cell kept clear, that draw only the faintest glyph, 0 to 6.",
+      "layout": "\"center\" makes the host a grid that centers its children in a column up to 34em wide, inside two cells of padding. \"none\" leaves layout to the page.",
+      "period": "Seconds for each charge to close its path, 12 to 60.",
+      "opacity": "Ink strength of the filings, from zero to one: the strongest draw in fg at this strength, the rest in muted.",
+      "fps": "Frames per second ceiling, 12 to 24."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
-      "pitch": "number",
+      "sources": "{ x: number; y: number; charge: number }[]",
+      "spacing": "number",
+      "fontSize": "number",
+      "quiet": "number",
+      "layout": "\"none\" | \"center\"",
       "period": "number",
       "opacity": "number",
-      "showPause": "boolean",
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 3513
+    "gzipBytes": 6037
   },
   {
     "slug": "moire-interference",
@@ -10826,16 +11017,18 @@
     "slug": "pixel-louver",
     "title": "Pixel Louver",
     "category": "effects",
-    "description": "A bounded grid of mechanical louvers changes projected width in a slow traveling phase.",
+    "description": "Eighth-block louver blades turn in whole cells beside the content, or in every cell around it, and never draw under it.",
     "tags": [
       "material",
+      "louver",
+      "shutters",
+      "blocks",
       "geometric",
       "motion"
     ],
     "facets": [
       "animated",
       "background",
-      "interactive",
       "canvas"
     ],
     "wave": 14,
@@ -10846,9 +11039,43 @@
     "original": true,
     "credits": [],
     "palette": [
-      "fg"
+      "fg",
+      "muted"
     ],
     "controls": {
+      "area": {
+        "type": "select",
+        "options": [
+          "margins",
+          "full"
+        ]
+      },
+      "axis": {
+        "type": "select",
+        "options": [
+          "x",
+          "y"
+        ]
+      },
+      "columns": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "quiet": {
+        "type": "number",
+        "min": 0,
+        "max": 6,
+        "step": 1
+      },
+      "layout": {
+        "type": "select",
+        "options": [
+          "none",
+          "center"
+        ]
+      },
       "speed": {
         "type": "number",
         "min": 0.2,
@@ -10877,35 +11104,19 @@
         "step": 1
       }
     },
-    "interactions": [
-      [
-        {
-          "step": "click",
-          "selector": "[data-pica-pause]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "true"
-        },
-        {
-          "step": "press",
-          "key": "Space"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "false"
-        }
-      ]
-    ],
     "demo": {
-      "children": "<article data-demo-copy><p>BUILDING STUDIES / SHADING</p><h2>Light, measured in sections.</h2><p>Compare screen spacing, projected shade and maintenance notes for the east facade study.</p><details><summary>Read the design record</summary><p>Facade study E02 uses equal blade spacing with alternating projected shade. Check the sight line from the reading area before choosing a maintenance interval.</p></details></article>"
+      "props": {
+        "layout": "center"
+      },
+      "children": "<p>Shade moves across the east elevation through the afternoon.</p><p>By evening the blades stand open to the street.</p>"
     },
     "exportName": "PixelLouver",
     "defaults": {
+      "area": "margins",
+      "columns": 6,
+      "axis": "x",
+      "quiet": 2,
+      "layout": "none",
       "speed": 1,
       "opacity": 0.34,
       "scale": 1,
@@ -10917,20 +11128,30 @@
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "speed": "Motion rate multiplier, clamped from 0.2 to 2.",
-      "opacity": "Printed mark opacity, clamped from 0.1 to 0.65.",
-      "scale": "Mechanical detail scale, clamped from 0.6 to 1.8."
+      "area": "\"margins\" sets a bank of blades beside the content on each side, or above and below it where a side has too little room; \"full\" fills every cell except the content and its quiet cells, which the rail frames, and turns in a broader wave. A full field draws its blades at 0.35 of the opacity and never closes them past five eighths, so the screen stays behind the type.",
+      "columns": "Blades across each bank beside the content, or rows of blades in a bank above or below it, from 2 to 16. Unused when area is \"full\".",
+      "axis": "\"x\" turns upright blades, filled from the left, across a bank beside the content, and level slats, filled from the bottom, along a bank above or below it; \"y\" does the reverse.",
+      "quiet": "The fewest empty cells between the content and the nearest blade or rail, from 0 to 6.",
+      "layout": "\"center\" sets the children in one centered column, flush left, with two cells of padding; \"none\" leaves their layout to the page.",
+      "speed": "Motion rate multiplier, clamped from 0.2 to 2. At 1 every blade turns through one cycle in 24 s.",
+      "opacity": "Opacity of the blades, clamped from 0.1 to 0.65, and 0.35 of it in a full field. The rail draws at twice this, up to 1.",
+      "scale": "Glyph size as a multiple of the host's font size, clamped from 0.6 to 1.8."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
+      "area": "\"margins\" | \"full\"",
+      "columns": "number",
+      "axis": "\"x\" | \"y\"",
+      "quiet": "number",
+      "layout": "\"none\" | \"center\"",
       "speed": "number",
       "opacity": "number",
       "scale": "number"
     },
     "events": {},
-    "gzipBytes": 3476
+    "gzipBytes": 4624
   },
   {
     "slug": "pixel-sort",
@@ -13157,11 +13378,12 @@
     "slug": "archive-aisle",
     "title": "Archive aisle",
     "category": "immersive",
-    "description": "A perspective archive aisle with collection records, access notes and a readable finding aid.",
+    "description": "A one-point archive aisle on canvas whose camera walks to each collection's bay, with numbered markers, a register and a readable detail.",
     "tags": [
       "navigation",
       "collection",
-      "scene",
+      "perspective",
+      "camera",
       "original"
     ],
     "facets": [
@@ -13179,19 +13401,30 @@
     "palette": [
       "fg",
       "bg",
-      "accent",
       "muted"
     ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "capture": 4000,
     "controls": {
-      "title": {
+      "label": {
         "type": "string"
-      },
-      "introduction": {
-        "type": "textarea",
-        "rows": 3
       },
       "collections": {
         "type": "json"
+      },
+      "defaultValue": {
+        "type": "number",
+        "min": -1,
+        "max": 11,
+        "step": 1
+      },
+      "headingLevel": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1
       },
       "fps": {
         "type": "number",
@@ -13203,17 +13436,189 @@
         "type": "boolean"
       }
     },
+    "demo": {
+      "props": {
+        "collections": [
+          {
+            "name": "Town plans",
+            "reference": "CA 61/09",
+            "title": "The unbuilt crossing",
+            "description": "Nine folded drawings trace a footbridge proposed in 1961. Pencil revisions move its landing away from the market, and the final envelope carries no approval stamp.",
+            "facts": "9 drawings · 1961–1968",
+            "note": "Open. Unfolding needs a support board from the desk.",
+            "chapters": [
+              "Scope and content",
+              "Arrangement",
+              "Access"
+            ]
+          },
+          {
+            "name": "Oral histories",
+            "reference": "OH 84/24",
+            "title": "Voices from the night shift",
+            "description": "Transcripts of 24 interviews document the mill after dark, from the sound of each machine to the signals passed across the floor.",
+            "facts": "24 transcripts · 1984",
+            "note": "Edited transcripts are open. Personal addresses remain closed.",
+            "chapters": [
+              "Scope and content",
+              "Names and places",
+              "Access"
+            ]
+          },
+          {
+            "name": "Correspondence",
+            "reference": "CO 72/76",
+            "title": "Letters from the allotments",
+            "description": "A bundle of 76 letters follows the making of a shared garden, with seed requests, minutes and a map drawn on an envelope.",
+            "facts": "76 letters · 1972–1975",
+            "note": "Open. Keep the bundle in its original order when asking for scans.",
+            "chapters": [
+              "Scope and content",
+              "Original order",
+              "Access"
+            ]
+          },
+          {
+            "name": "Workshop ledgers",
+            "reference": "WL 49/04",
+            "title": "A repair for every season",
+            "description": "Four ledgers from a bicycle repair shop show how regular maintenance tied a street together through tools, parts and trust.",
+            "facts": "4 volumes · 1949–1963",
+            "note": "Open. The fourth volume is served as a copy.",
+            "chapters": [
+              "Scope and content",
+              "Related records",
+              "Access"
+            ]
+          },
+          {
+            "name": "Street photographs",
+            "reference": "PH 90/31",
+            "title": "One street, one morning",
+            "description": "Thirty-one prints record every shopfront on the high street on the morning before it was widened.",
+            "facts": "31 prints · 1990",
+            "note": "Open. Prints are served in sleeves.",
+            "chapters": [
+              "Scope and content",
+              "Sequence",
+              "Access"
+            ]
+          },
+          {
+            "name": "Lamp committee",
+            "reference": "MN 55/18",
+            "title": "Minutes of the lamp committee",
+            "description": "Eighteen years of minutes argue over where the first electric street lamps should stand, with a pencilled count of every post.",
+            "facts": "3 volumes · 1955–1973",
+            "note": "Open. The 1961 volume is fragile and served by appointment.",
+            "chapters": [
+              "Scope and content",
+              "Arrangement",
+              "Related records",
+              "Access"
+            ]
+          }
+        ]
+      }
+    },
     "interactions": [
       [
         {
           "step": "click",
-          "selector": "[data-action=\"enter\"]"
+          "selector": "[data-part=\"markers\"] [data-index=\"1\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 1
         },
         {
           "step": "expectAttr",
-          "selector": "[data-part=\"page\"]",
+          "selector": "[data-part=\"aisle\"]",
+          "name": "data-view",
+          "value": "detail"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"heading\"]"
+        },
+        {
+          "step": "press",
+          "key": "Escape"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": -1
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"aisle\"]",
           "name": "data-view",
           "value": "overview"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"markers\"] [data-index=\"1\"]"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=\"register\"] [data-index=\"2\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 2
+        },
+        {
+          "step": "click",
+          "selector": "[data-action=\"next\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 3
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"markers\"] [data-index=\"3\"]",
+          "name": "aria-pressed",
+          "value": "true"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-action=\"next\"]"
+        },
+        {
+          "step": "click",
+          "selector": "[data-action=\"back\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": -1
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"aisle\"]",
+          "name": "data-view",
+          "value": "overview"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"markers\"] [data-index=\"3\"]"
+        },
+        {
+          "step": "hover",
+          "selector": "[data-part=\"register\"] [data-index=\"4\"]"
+        }
+      ],
+      [
+        {
+          "step": "press",
+          "key": "Tab"
         },
         {
           "step": "expectFocus",
@@ -13224,102 +13629,33 @@
           "key": "Enter"
         },
         {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 0
+        },
+        {
           "step": "expectAttr",
-          "selector": "[data-part=\"page\"]",
+          "selector": "[data-part=\"aisle\"]",
           "name": "data-view",
           "value": "detail"
         },
         {
           "step": "expectFocus",
-          "selector": "[data-part=\"detail-title\"]"
-        },
-        {
-          "step": "click",
-          "selector": "[data-action=\"next\"]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-part=\"markers\"] [data-index=\"1\"]",
-          "name": "aria-pressed",
-          "value": "true"
-        },
-        {
-          "step": "press",
-          "key": "Escape"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-part=\"page\"]",
-          "name": "data-view",
-          "value": "overview"
-        },
-        {
-          "step": "press",
-          "key": "Escape"
-        },
-        {
-          "step": "expectFocus",
-          "selector": "[data-action=\"enter\"]"
-        }
-      ],
-      [
-        {
-          "step": "click",
-          "selector": "[data-part=\"register\"] [data-index=\"2\"]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-part=\"page\"]",
-          "name": "data-view",
-          "value": "detail"
-        },
-        {
-          "step": "click",
-          "selector": "[data-action=\"back\"]"
-        },
-        {
-          "step": "expectFocus",
-          "selector": "[data-part=\"markers\"] [data-index=\"2\"]"
-        }
-      ],
-      [
-        {
-          "step": "click",
-          "selector": "[data-action=\"pause\"]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-action=\"pause\"]",
-          "name": "aria-pressed",
-          "value": "true"
-        },
-        {
-          "step": "click",
-          "selector": "[data-action=\"pause\"]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-action=\"pause\"]",
-          "name": "aria-pressed",
-          "value": "false"
+          "selector": "[data-part=\"heading\"]"
         }
       ]
     ],
     "exportName": "ArchiveAisle",
     "defaults": {
-      "title": "Aisle seven",
-      "introduction": "Walk the shelves of a fictional civic archive. Four collections trace a town through plans, voices, letters and working records.",
+      "label": "Aisle seven",
       "collections": [
         {
           "name": "Town plans",
-          "reference": "A7 / COLLECTION 01",
+          "reference": "CA 61/09",
           "title": "The unbuilt crossing",
-          "description": "Nine folded drawings trace a proposed footbridge from 1961 to 1968. Pencil revisions move its landing away from the market. The final envelope carries no approval stamp.",
-          "facts": "CA 61/09 · 9 drawings · 1961–1968",
-          "note": "Access: open. Unfolding requires a support board; ask the reading room desk.",
-          "x": 25,
-          "y": 30,
-          "group": "Plans",
+          "description": "Nine folded drawings trace a footbridge proposed in 1961. Pencil revisions move its landing away from the market, and the final envelope carries no approval stamp.",
+          "facts": "9 drawings · 1961–1968",
+          "note": "Open. Unfolding needs a support board from the desk.",
           "chapters": [
             "Scope and content",
             "Arrangement",
@@ -13328,14 +13664,11 @@
         },
         {
           "name": "Oral histories",
-          "reference": "A7 / COLLECTION 02",
+          "reference": "OH 84/24",
           "title": "Voices from the night shift",
-          "description": "Transcripts of 24 interviews document the mill after dark. Speakers describe the sound of each machine and the informal signals used across the floor.",
-          "facts": "OH 84/24 · 24 transcripts · 1984",
-          "note": "Access: edited transcripts are open. Personal addresses remain closed.",
-          "x": 74,
-          "y": 36,
-          "group": "Voices",
+          "description": "Transcripts of 24 interviews document the mill after dark, from the sound of each machine to the signals passed across the floor.",
+          "facts": "24 transcripts · 1984",
+          "note": "Edited transcripts are open. Personal addresses remain closed.",
           "chapters": [
             "Scope and content",
             "Names and places",
@@ -13344,14 +13677,11 @@
         },
         {
           "name": "Correspondence",
-          "reference": "A7 / COLLECTION 03",
+          "reference": "CO 72/76",
           "title": "Letters from the allotments",
-          "description": "A bundle of 76 letters follows the creation of a shared garden. Seed requests sit alongside meeting minutes and a map drawn on the back of an envelope.",
-          "facts": "CO 72/76 · 76 letters · 1972–1975",
-          "note": "Access: open. Keep the original bundle order when requesting scans.",
-          "x": 28,
-          "y": 70,
-          "group": "Letters",
+          "description": "A bundle of 76 letters follows the making of a shared garden, with seed requests, minutes and a map drawn on an envelope.",
+          "facts": "76 letters · 1972–1975",
+          "note": "Open. Keep the bundle in its original order when asking for scans.",
           "chapters": [
             "Scope and content",
             "Original order",
@@ -13360,14 +13690,11 @@
         },
         {
           "name": "Workshop ledgers",
-          "reference": "A7 / COLLECTION 04",
+          "reference": "WL 49/04",
           "title": "A repair for every season",
-          "description": "Four ledgers list work from a bicycle repair shop. Their ruled columns show how recurring maintenance connected neighbours through tools, parts and trust.",
-          "facts": "WL 49/04 · 4 volumes · 1949–1963",
-          "note": "Access: open. The fourth volume is available as a reading copy.",
-          "x": 71,
-          "y": 72,
-          "group": "Work",
+          "description": "Four ledgers from a bicycle repair shop show how regular maintenance tied a street together through tools, parts and trust.",
+          "facts": "4 volumes · 1949–1963",
+          "note": "Open. The fourth volume is served as a copy.",
           "chapters": [
             "Scope and content",
             "Related records",
@@ -13375,7 +13702,10 @@
           ]
         }
       ],
-      "fps": 24,
+      "value": null,
+      "defaultValue": -1,
+      "headingLevel": 3,
+      "fps": 30,
       "paused": false,
       "time": null,
       "seed": 1
@@ -13384,22 +13714,31 @@
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "title": "Heading of the complete entry experience.",
-      "introduction": "Introduction displayed above the spatial scene.",
-      "collections": "Editable records, with spatial positions and full readable details; an empty array displays an empty register.",
-      "fps": "Frames per second ceiling, between 1 and 30."
+      "label": "Accessible name of the aisle region. Empty leaves the host without a role.",
+      "collections": "Collections in bay order, up to 12. Collection i is shelved on the left wall for even i and on the right for odd i, floor(i / 2) bays in.",
+      "value": "The open collection's index, -1 for the overview, or null to let the component manage its own view.",
+      "defaultValue": "The view at mount while value is null: a collection's index, or -1 for the overview.",
+      "headingLevel": "Level of the detail heading, from 2 to 6.",
+      "fps": "Frames per second ceiling while the camera moves, from 1 to 30."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
-      "title": "string",
-      "introduction": "string",
-      "collections": "readonly ArchiveAisleRecord[]",
+      "label": "string",
+      "collections": "readonly ArchiveAisleCollection[]",
+      "value": "number | null",
+      "defaultValue": "number",
+      "headingLevel": "number",
       "fps": "number"
     },
-    "events": {},
-    "gzipBytes": 7148
+    "events": {
+      "valueChange": {
+        "doc": "A visitor opened a collection, giving its index, or went back to the overview, giving -1.",
+        "detail": "number"
+      }
+    },
+    "gzipBytes": 7765
   },
   {
     "slug": "city-grid",

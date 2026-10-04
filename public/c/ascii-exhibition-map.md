@@ -1,8 +1,8 @@
 # ASCII Exhibition Map
 
-> An exhibition guide with an aligned character floor plan, numbered room selection, practical access notes and a linear visiting route.
+> A floor plan drawn in box-drawing glyphs from room rectangles and doors, with a route-ordered room list that selects and fills one room.
 
-Category: ascii. Tags: ascii, page, layout, exhibition-map. Static. Size: 3.9 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
+Category: ascii. Tags: ascii, floor plan, map, box drawing, selection. Static. Size: 5.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
@@ -16,9 +16,11 @@ Or paste one of the two files below. The React file imports only `react`. The HT
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `label` | string | `"The Holding Room / Exhibition guide"` | The exhibition name. |
-| `title` | string | `"Objects that remember work"` | The exhibition headline. |
-| `rooms` | readonly { name: string; subject: string; note: string; access: string }[] | `[{"name":"01 / Measure","subject":"Tools for agreeing on a length","note":"A folded ruler, a marked string and a workshop gauge show three ways of making a measurement repeatable. Read the wear marks beside the numbered divisions.","access":"Level access / Seating by the east wall"},{"name":"02 / Mend","subject":"Repair as a visible record","note":"Patched cloth and a joined ceramic bowl preserve the decision to keep an object in use. A handling sample lets visitors feel the seam without touching the exhibited pieces.","access":"Level access / Handling sample at seated height"},{"name":"03 / Carry","subject":"The shape of a daily journey","note":"A market basket, a tool roll and a parcel wrapper are arranged around the routes they served. Each label traces a repeated trip from the maker to the place of use.","access":"Level access / Large print labels at the entry"}]` | Numbered rooms and their program details. |
+| `label` | string | `"Ground floor plan"` | Names the region and prints as the plan's caption. Empty leaves no caption and no role. |
+| `plan` | { cols: number; rows: number } | `{"cols":16,"rows":11}` | The plan's size in plan units. It grows to hold every room. |
+| `rooms` | readonly AsciiExhibitionMapRoom[] | `[{"name":"Entrance","subject":"Desk, lockers and the start of the route","note":"Pick up a printed plan at the desk. Lockers sit beside the street door, and the route begins through the opening in the north wall.","access":"Level street entrance / Seats at the desk","x":0,"y":7,"w":11,"h":4,"doors":[{"side":"s","at":5},{"side":"n","at":2}]},{"name":"Measure","subject":"Tools for agreeing on a length","note":"A folded ruler, a marked string and a workshop gauge show three ways of making a measurement repeatable. Read the wear marks beside the numbered divisions.","access":"Level access / Seating by the east wall","x":0,"y":0,"w":5,"h":7,"doors":[{"side":"e","at":3}]},{"name":"Mend","subject":"Repair as a visible record","note":"Patched cloth and a joined ceramic bowl preserve the decision to keep an object in use. A handling sample lets visitors feel the seam without touching the exhibited pieces.","access":"Level access / Seated handling sample","x":5,"y":0,"w":6,"h":7,"doors":[{"side":"e","at":2}]},{"name":"Carry","subject":"The shape of a daily journey","note":"A market basket, a tool roll and a parcel wrapper are arranged around the routes they served. Each label traces a repeated trip from the maker to the place of use.","access":"Level access / Large print labels","x":11,"y":0,"w":5,"h":6,"doors":[{"side":"s","at":2}]},{"name":"Keep","subject":"Where each tool waits between jobs","note":"Shadow boards, labelled drawers and a mended tool chest show how a workshop keeps its things in order. The last opening leads back to the entrance.","access":"Level access / Drawers at seated height","x":11,"y":6,"w":5,"h":5,"doors":[{"side":"w","at":2}]}]` | The rooms in route order, numbered from 01. Rooms that touch share one wall, and a door cuts it for both. |
+| `value` | number \| null | `null` | The selected room's index while controlled, or null to let the component keep its own selection. |
+| `defaultValue` | number | `0` | The room selected at mount while uncontrolled, or -1 for none. |
 
 ## Events
 
@@ -26,11 +28,11 @@ Each event is a CustomEvent on the host named `pica:` plus the event name in low
 
 | Event | React prop | Detail | Description |
 |---|---|---|---|
-| `selectionChange` | `onSelectionChange` | `number` | The selected record index after a visitor chooses a record. |
+| `valueChange` | `onValueChange` | `number` | The index of the room a visitor chose, from its button or from the plan. |
 
 ## Colors
 
-Draws with `--pica-fg`, `--pica-bg`, `--pica-accent`, `--pica-muted`. Set them on any ancestor, pass `palette` to the React component, or put `palette` in `window.PICA_PROPS` for the HTML file.
+Draws with `--pica-fg`, `--pica-muted`, `--pica-accent`. Set them on any ancestor, pass `palette` to the React component, or put `palette` in `window.PICA_PROPS` for the HTML file.
 
 ## React
 
@@ -183,6 +185,11 @@ function splitProps<P>(props: Partial<P>): { data: Partial<P>; handlers: Record<
   return { data: data as Partial<P>, handlers };
 }
 
+// lib/font.ts
+/** The monospace stack glyph components default to. It lives in its own module, so a text component that
+ *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
+const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
 // lib/host.ts
 /** What a core may change on its host, and the nodes it adds, each undone on destroy. A core never writes
  *  to, moves, or removes a node it did not create, and every node it adds carries data-pica.
@@ -310,36 +317,6 @@ function scope(host: HTMLElement): Scope {
   };
 }
 
-// lib/json.ts
-/** Comparing props that hold JSON. React passes fresh arrays and objects on every render, so a core compares
- *  them by content before deciding what to rebuild. */
-
-/** Deep equality for JSON values. */
-function sameJson(a: unknown, b: unknown): boolean {
-  if (a === b) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) || Array.isArray(b)) {
-    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (!sameJson(a[i], b[i])) return false;
-    }
-    return true;
-  }
-  const left = a as Record<string, unknown>;
-  const right = b as Record<string, unknown>;
-  const keys = Object.keys(left);
-  if (keys.length !== Object.keys(right).length) return false;
-  for (const key of keys) {
-    if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
-  }
-  return true;
-}
-
-/** Whether any of `keys` holds a different value in `after` than in `before`, compared as JSON. */
-function changed<P>(before: P, after: P, keys: readonly (keyof P)[]): boolean {
-  return keys.some((key) => !sameJson(before[key], after[key]));
-}
-
 // lib/palette.ts
 /** The four colors every component draws with. They live in CSS custom properties, so they cascade: set
  *  them once on a page or a section and every component follows, including on a theme switch. A wrapper's
@@ -454,148 +431,866 @@ function watchPalette(host: HTMLElement, onChange: (colors: Colors) => void): Pa
   };
 }
 
-// lib/font.ts
-/** The monospace stack glyph components default to. It lives in its own module, so a text component that
- *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
-const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+// lib/glyph-grid.ts
+/** A monospace cell grid painted as text rows or onto a canvas. See docs/architecture/contract.md. */
 
-// registry/ascii/ascii-exhibition-map/core.ts
-export interface AsciiExhibitionMapProps {
-  /** The exhibition name. */
-  label: string;
-  /** The exhibition headline. */
-  title: string;
-  /** Numbered rooms and their program details. */
-  rooms: readonly { name: string; subject: string; note: string; access: string }[];
+interface GridOptions {
+  /** CSS font-family stack. Must be monospace. */
+  fontFamily: string;
+  /** Glyph size in CSS pixels. Ignored when `columns` is above zero. */
+  fontSize: number;
+  /** Fit exactly this many columns across the host and derive the glyph size from it. 0 uses `fontSize`. */
+  columns: number;
+  /** Line height as a multiple of the glyph size. */
+  lineHeight: number;
+  /** "dom" keeps glyphs as text and is cheapest up to DOM_CELL_LIMIT cells. "canvas" handles more
+   *  cells and per-cell color. "auto" picks by cell count. */
+  renderer: "dom" | "canvas" | "auto";
+  /** Glyph color. Empty uses --pica-fg, and failing that the host's inherited color. */
+  color: string;
 }
-export interface AsciiExhibitionMapEvents {
-  /** The selected record index after a visitor chooses a record. */
-  selectionChange: number;
+
+/** Above this many cells, "auto" paints to a canvas instead of text rows. */
+const DOM_CELL_LIMIT = 12000;
+
+interface Grid {
+  readonly cols: number;
+  readonly rows: number;
+  /** Cell width over cell height, for sampling images and fields without stretching them. */
+  readonly aspect: number;
+  /** Cell width in CSS pixels, for mapping a pointer or a layout onto cells. */
+  readonly cellWidth: number;
+  /** Cell height in CSS pixels. */
+  readonly cellHeight: number;
+  /** The CSS font shorthand glyphs are drawn in. */
+  readonly font: string;
+  /** Writes one glyph into the back buffer. `color` is honored by the canvas renderer only. */
+  set(x: number, y: number, glyph: string, color?: string): void;
+  /** Writes a string starting at (x, y), clipped to the grid. */
+  write(x: number, y: number, text: string, color?: string): void;
+  /** Fills the back buffer. */
+  clear(glyph?: string): void;
+  /** Paints the rows that changed since the last flush. */
+  flush(): void;
+  update(options: Partial<GridOptions>): void;
+  destroy(): void;
 }
-export const defaults: AsciiExhibitionMapProps = {
-  "label": "The Holding Room / Exhibition guide",
-  "title": "Objects that remember work",
-  "rooms": [
-    {
-      "name": "01 / Measure",
-      "subject": "Tools for agreeing on a length",
-      "note": "A folded ruler, a marked string and a workshop gauge show three ways of making a measurement repeatable. Read the wear marks beside the numbered divisions.",
-      "access": "Level access / Seating by the east wall"
-    },
-    {
-      "name": "02 / Mend",
-      "subject": "Repair as a visible record",
-      "note": "Patched cloth and a joined ceramic bowl preserve the decision to keep an object in use. A handling sample lets visitors feel the seam without touching the exhibited pieces.",
-      "access": "Level access / Handling sample at seated height"
-    },
-    {
-      "name": "03 / Carry",
-      "subject": "The shape of a daily journey",
-      "note": "A market basket, a tool roll and a parcel wrapper are arranged around the routes they served. Each label traces a repeated trip from the maker to the place of use.",
-      "access": "Level access / Large print labels at the entry"
+
+let measurer: CanvasRenderingContext2D | null | undefined;
+
+/** A glyph's advance as a share of the font size, or 0.6 where nothing can be measured. Measured on every
+ *  call, because a web font can finish loading between calls. */
+function advanceOf(fontFamily: string): number {
+  if (measurer === undefined) measurer = document.createElement("canvas").getContext("2d");
+  if (!measurer) return 0.6;
+  measurer.font = `100px ${fontFamily}`;
+  return measurer.measureText("M").width / 100 || 0.6;
+}
+
+/** The cell a glyph grid draws for this font, in CSS pixels. */
+function measureCell(fontFamily: string, fontSize: number, lineHeight: number): { w: number; h: number } {
+  return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
+}
+
+/** Creates a grid inside `host`. `onLayout` runs whenever the cell count changes (resize, font load),
+ *  after which the back buffer is blank and the caller should draw again. */
+function createGrid(host: HTMLElement, options: GridOptions, onLayout: () => void): Grid {
+  let opts: GridOptions = { ...options };
+  let cols = 1;
+  let rows = 1;
+  let cellW = 7.2;
+  let cellH = 14;
+  let fontPx = 12;
+  let width = -1;
+  let height = -1;
+  let cells: string[] = [" "];
+  let tints: (string | undefined)[] = [undefined];
+  let shown: string[] = [];
+  let view: HTMLElement | null = null;
+  let lines: HTMLElement[] = [];
+  let ctx: CanvasRenderingContext2D | null = null;
+  let ink = "";
+  let alive = true;
+
+  const restoreHost = styleHost(
+    host,
+    getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" },
+  );
+  const font = (): string => `${fontPx}px ${opts.fontFamily}`;
+
+  /** Recomputes the cell grid from the host's size. Returns true when the grid was rebuilt. */
+  function layout(force: boolean): boolean {
+    const w = host.clientWidth;
+    const h = host.clientHeight;
+    const advance = advanceOf(opts.fontFamily);
+    const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+    const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+    const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+    const nextRows = Math.max(1, Math.floor(h / nextCellH));
+    if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+    width = w;
+    height = h;
+    fontPx = px;
+    cellW = px * advance;
+    cellH = nextCellH;
+    cols = nextCols;
+    rows = nextRows;
+    cells = new Array<string>(cols * rows).fill(" ");
+    tints = new Array<string | undefined>(cols * rows).fill(undefined);
+    mountView();
+    return true;
+  }
+
+  function mountView(): void {
+    view?.remove();
+    lines = [];
+    ctx = null;
+    const color = opts.color || cssVar("fg");
+    const mode = opts.renderer === "auto" ? (cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom") : opts.renderer;
+    if (mode === "dom") {
+      const pre = document.createElement("pre");
+      pre.style.cssText = [
+        "position:absolute", "inset:0", "margin:0", "padding:0", "overflow:hidden",
+        "white-space:pre", "letter-spacing:0", "user-select:none", "pointer-events:none",
+        "font-kerning:none", "font-variant-ligatures:none",
+        `font-family:${opts.fontFamily}`, `font-size:${fontPx}px`, `line-height:${cellH}px`, `color:${color}`,
+      ].join(";");
+      for (let y = 0; y < rows; y++) {
+        const line = document.createElement("span");
+        line.style.display = "block";
+        line.style.height = `${cellH}px`;
+        pre.appendChild(line);
+        lines.push(line);
+      }
+      view = pre;
+    } else {
+      const canvas = document.createElement("canvas");
+      // Text rows follow a palette change through CSS on their own; a canvas has to be painted again. A 1 ms
+      // color transition turns any change to its ink into a transitionend, which repaints it, for far fewer
+      // bytes than a palette watcher.
+      canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+      canvas.addEventListener("transitionend", (event) => {
+        event.stopPropagation();
+        if (ctx && view === canvas) paintCanvas(ctx, canvas);
+      });
+      const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.textBaseline = "middle";
+        ctx.font = font();
+      }
+      view = canvas;
     }
-  ]
-};
+    view.setAttribute("data-pica", "");
+    view.setAttribute("aria-hidden", "true");
+    shown = new Array<string>(rows).fill("\u0000");
+    ink = "";
+    host.appendChild(view);
+  }
 
-function exhibitionNode<T extends keyof HTMLElementTagNameMap>(parent: HTMLElement, tag: T, text = "", cls = ""): HTMLElementTagNameMap[T] {
-  const el = document.createElement(tag);
-  el.setAttribute("data-pica", "");
-  el.className = cls;
-  el.textContent = text;
-  parent.append(el);
-  return el;
-}
-function exhibitionLink(parent: HTMLElement, text: string, target: string): HTMLAnchorElement {
-  const a = exhibitionNode(parent, "a", text);
-  a.href = target;
-  return a;
-}
-function exhibitionArt(parent: HTMLElement, wide: string, compact: string, caption: string): void {
-  const figure = exhibitionNode(parent, "figure");
-  exhibitionNode(figure, "pre", wide, "art wide-art").setAttribute("aria-hidden", "true");
-  exhibitionNode(figure, "pre", compact, "art small-art").setAttribute("aria-hidden", "true");
-  exhibitionNode(figure, "figcaption", caption, "label muted");
-}
-function exhibitionDisclosure(parent: HTMLElement, heading: string, body: string): void {
-  const d = exhibitionNode(parent, "details");
-  exhibitionNode(d, "summary", heading);
-  exhibitionNode(d, "p", body);
-}
-function exhibitionRules(s: string): string {
-  const fg = cssVar("fg"), bg = cssVar("bg"), muted = cssVar("muted"), accent = cssVar("accent");
-  return `
-${s}{box-sizing:border-box;max-width:1400px;margin:auto;padding:clamp(20px,4vw,52px);color:${fg};background:${bg};line-height:1.6;overflow-wrap:anywhere}
-${s} *{box-sizing:border-box;min-width:0}
-${s} h1,${s} h2,${s} h3,${s} p,${s} pre,${s} figure{margin:0}
-${s} h1{font-size:clamp(2.5rem,5.4vw,5rem);font-weight:500;line-height:1.04;letter-spacing:-.045em;max-width:15ch}
-${s} h2{font-weight:500;font-size:1.6rem;line-height:1.25;margin-bottom:1rem}
-${s} h3{font-size:1.15rem;font-weight:600;line-height:1.35}
-${s} p+p{margin-top:1rem}
-${s} .label{font-family:${GRID_FONT};font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
-${s} .muted{color:${muted}}
-${s} .mast{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-bottom:1px solid ${fg};padding-bottom:1rem}
-${s} .mark{display:inline-block;width:10px;height:10px;background:${accent};margin-right:10px}
-${s} a{color:inherit;text-underline-offset:.3em}
-${s} nav{display:flex;gap:1.4rem;flex-wrap:wrap}
-${s} a:focus-visible,${s} summary:focus-visible,${s} button:focus-visible{outline:2px solid ${accent};outline-offset:4px}
-${s} button{font:inherit;font-family:${GRID_FONT};font-size:.8rem;padding:.8rem 1rem;color:inherit;background:transparent;border:1px solid ${muted};cursor:pointer;text-align:left}
-${s} button[aria-pressed=true]{border-color:${fg};border-left:5px solid ${accent};padding-left:calc(1rem - 4px)}
-${s} .art{font-family:${GRID_FONT};font-size:clamp(11px,1.2vw,15px);line-height:1.35;white-space:pre;overflow-wrap:normal}
-${s} .small-art{display:none}
-${s} .intro{font-size:1.2rem;max-width:46ch;margin:1.5rem 0 2rem}
-${s} .rule{border-top:1px solid ${muted};padding-top:1.5rem;margin-top:2rem}
-${s} details{border-top:1px solid ${muted};padding:1rem 0}
-${s} summary{cursor:pointer;font-family:${GRID_FONT};font-size:.8rem}
-${s} details p{padding-top:1rem;max-width:62ch}
-${s} .foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:3rem;border-top:1px solid ${fg};padding-top:1rem}
-${s} .row{border-top:1px solid ${muted};padding:1.3rem 0;display:grid;grid-template-columns:4rem 1fr 7rem;gap:1.2rem}
-${s} .row p{max-width:58ch;margin-top:.5rem}
-${s} .columns{display:grid;grid-template-columns:1.4fr 1fr;gap:3rem;margin-top:2rem}
-${s} .choices{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.5rem 0}
-${s} .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0;padding:1rem 0;border-block:1px solid ${muted}}
-${s} .facts strong{display:block;font-family:${GRID_FONT};font-size:1.4rem;font-weight:400}
-${s} ul,${s} ol{padding-left:1.4rem;margin:1rem 0}
-${s} li+li{margin-top:.7rem}
-@media(max-width:600px){${s}{padding:20px}${s} h1{font-size:2.7rem}${s} .columns{grid-template-columns:1fr;gap:2rem}${s} .art{font-size:11px}${s} .wide-art{display:none}${s} .small-art{display:block}${s} .row{grid-template-columns:2rem 1fr;gap:.6rem}${s} .row>.label:last-child{grid-column:2}${s} nav{gap:.7rem}${s} .facts{gap:.7rem}${s} .intro{font-size:1.1rem}}
-${s} .exhibitionhead{margin:2rem 0}${s} .exhibitionhead h1{max-width:19ch;margin-top:1rem}${s} .mapgrid{display:grid;grid-template-columns:1fr 1.1fr;gap:4rem;border-top:1px solid ${fg};padding-top:2rem}${s} .mapgrid figure{margin-bottom:2rem}${s} .mapgrid figcaption{margin-top:1rem;max-width:38ch}${s} .mapgrid .choices{flex-direction:column}${s} .mapgrid .choices button{width:100%}${s} .access{margin-top:1.5rem;padding-left:1rem;border-left:3px solid ${accent}}${s} .programline{white-space:pre-line}${s} .roomdetail{min-height:260px}@media(max-width:800px){${s} .mapgrid{gap:2rem}}@media(max-width:600px){${s} .mapgrid{grid-template-columns:1fr}${s} .roomdetail{min-height:0}}
-`;
-}
-function exhibitionRender(root: HTMLElement, p: AsciiExhibitionMapProps, id: string, choose: (index: number) => void, selected: number): void {
-  root.replaceChildren();
-const mast=exhibitionNode(root,"header","","mast label");const brand=exhibitionNode(mast,"span");exhibitionNode(brand,"span","","mark").setAttribute("aria-hidden","true");exhibitionNode(brand,"span",p.label);const intro=exhibitionNode(root,"header","","exhibitionhead");exhibitionNode(intro,"p","Open Thursday to Sunday / 10:00–17:00","label muted");const h=exhibitionNode(intro,"h1",p.title);h.id=`${id}-title`;exhibitionNode(intro,"p","An exhibition about measuring, repairing and carrying. Follow the numbered route or choose a room below.","intro");const grid=exhibitionNode(root,"div","","mapgrid");const map=exhibitionNode(grid,"section");exhibitionArt(map,"+-------------+-------------+\n| 01 MEASURE  | 02 MEND     |\n|  [] []      |  ~~~  ()    |\n|             :             |\n+------:------+------:------+\n| ENTRY       | 03 CARRY    |\n|  >  DESK    :  /_\\  [ ]   |\n+-------------+-------------+","+----------+----------+\n|01 MEASURE:02 MEND   |\n+----:-----+----:-----+\n|ENTRY  >  :03 CARRY  |\n+----------+----------+","Floor plan / Colons mark openings / All rooms on one level");exhibitionNode(map,"h2","Visit in your own order");exhibitionNode(map,"p","The entrance desk supplies a printed guide and a large print room list. Bags may remain with you. Quiet seats are available in each room.");const program=exhibitionNode(map,"section","","rule");exhibitionNode(program,"h2","Public program");exhibitionNode(program,"p","11:30 / Reading an object\nA twenty minute guided conversation at the entrance desk.","programline");exhibitionNode(program,"p","14:00 / The visible mend\nA repair demonstration in room 02. Drop in; no booking needed.","programline");const rooms=exhibitionNode(grid,"section");exhibitionNode(rooms,"h2","Room index");const choices=exhibitionNode(rooms,"div","","choices");p.rooms.forEach((x,i)=>{const b=exhibitionNode(choices,"button",x.name);b.type="button";b.setAttribute("aria-pressed",String(i===selected));b.onclick=()=>choose(i);});const detail=exhibitionNode(rooms,"section","","roomdetail rule");detail.setAttribute("aria-live","polite");const x=p.rooms[selected]??p.rooms[0];if(x){exhibitionNode(detail,"p",x.name,"label muted");exhibitionNode(detail,"h2",x.subject);exhibitionNode(detail,"p",x.note);exhibitionNode(detail,"p",x.access,"access label");}const route=exhibitionNode(rooms,"section","","rule");exhibitionNode(route,"h2","A linear route");const list=exhibitionNode(route,"ol");p.rooms.forEach(x=>exhibitionNode(list,"li",`${x.name}: ${x.subject}. ${x.access}.`));exhibitionDisclosure(route,"Plan your visit","Entry is free. Allow forty minutes for the three rooms. The accessible entrance is beside the street desk, and the entire exhibition is on one level. Ask the desk for the tactile handling guide.");const foot=exhibitionNode(root,"footer","","foot label");exhibitionNode(foot,"span","Exhibition study / Three rooms, one route");exhibitionLink(foot,"Back to top",`#${id}-title`);
-}
-export const mount: Mount<AsciiExhibitionMapProps> = (host, initial = {}) => {
-  let props: AsciiExhibitionMapProps = { ...defaults, ...initial };
-  const attrs = hostAttributes(host);
-  const id = nextId("ascii-exhibition-map");
-  attrs.set("role", "region");
-  attrs.set("aria-label", props.label);
-  const style = exhibitionNode(host, "style");
-  const root = exhibitionNode(host, "article");
-  root.id = id;
-  style.textContent = exhibitionRules(`[id="${id}"]`);
-  let selected = 0;
-  const emit = emitter<AsciiExhibitionMapEvents>(host);
-  const choose = (index: number): void => {
-    selected = index;
-    draw();
-    root.querySelectorAll<HTMLButtonElement>("button")[index]?.focus();
-    emit("selectionChange", index);
+  function paintCanvas(context: CanvasRenderingContext2D, target: HTMLElement): void {
+    const color = getComputedStyle(target).color;
+    if (color !== ink) {
+      ink = color;
+      shown.fill("\u0000");
+    }
+    for (let y = 0; y < rows; y++) {
+      const start = y * cols;
+      const text = cells.slice(start, start + cols).join("");
+      let tinted = false;
+      for (let x = 0; x < cols; x++) {
+        if (tints[start + x] !== undefined) {
+          tinted = true;
+          break;
+        }
+      }
+      const key = tinted ? `${text}\u0000${tints.slice(start, start + cols).join(",")}` : text;
+      if (key === shown[y]) continue;
+      shown[y] = key;
+      const top = y * cellH;
+      context.clearRect(0, top, width, cellH);
+      if (!tinted) {
+        context.fillStyle = ink;
+        context.fillText(text, 0, top + cellH / 2);
+        continue;
+      }
+      // One fillText per run of same-colored cells: monospace advances keep every glyph on its cell.
+      let x = 0;
+      while (x < cols) {
+        const tint = tints[start + x] ?? ink;
+        let end = x + 1;
+        while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+        context.fillStyle = tint;
+        context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+        x = end;
+      }
+    }
+  }
+
+  function paintText(): void {
+    for (let y = 0; y < rows; y++) {
+      const row = cells.slice(y * cols, (y + 1) * cols).join("");
+      if (row === shown[y]) continue;
+      shown[y] = row;
+      const line = lines[y];
+      if (line) line.textContent = row;
+    }
+  }
+
+  function set(x: number, y: number, glyph: string, color?: string): void {
+    if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+    const i = y * cols + x;
+    cells[i] = glyph;
+    tints[i] = color;
+  }
+
+  const resizeObserver = typeof ResizeObserver === "function"
+    ? new ResizeObserver(() => {
+        if (alive && layout(false)) onLayout();
+      })
+    : null;
+  resizeObserver?.observe(host);
+
+  const onFonts = (): void => {
+    if (alive && layout(true)) onLayout();
   };
-  const draw = (): void => exhibitionRender(root, props, id, choose, selected);
-  draw();
-  attrs.set("data-pica-ready", "true");
+  document.fonts.addEventListener("loadingdone", onFonts);
+
+  layout(true);
+
   return {
+    get cols() {
+      return cols;
+    },
+    get rows() {
+      return rows;
+    },
+    get aspect() {
+      return cellW / cellH;
+    },
+    get cellWidth() {
+      return cellW;
+    },
+    get cellHeight() {
+      return cellH;
+    },
+    get font() {
+      return font();
+    },
+    set,
+    write(x, y, text, color) {
+      let i = 0;
+      for (const glyph of text) {
+        set(x + i, y, glyph, color);
+        i++;
+      }
+    },
+    clear(glyph = " ") {
+      cells.fill(glyph);
+      tints.fill(undefined);
+    },
+    flush() {
+      if (!view) return;
+      if (ctx) paintCanvas(ctx, view);
+      else paintText();
+    },
     update(next) {
-      const merged = { ...props, ...next };
-      if (sameJson(merged, props)) return;
-      props = merged;
-      attrs.set("aria-label", props.label);
-      draw();
+      opts = { ...opts, ...next };
+      layout(true);
+      onLayout();
     },
     destroy() {
+      alive = false;
+      resizeObserver?.disconnect();
+      document.fonts.removeEventListener("loadingdone", onFonts);
+      view?.remove();
+      view = null;
+      restoreHost();
+    },
+  };
+}
+
+// lib/json.ts
+/** Comparing props that hold JSON. React passes fresh arrays and objects on every render, so a core compares
+ *  them by content before deciding what to rebuild. */
+
+/** Deep equality for JSON values. */
+function sameJson(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!sameJson(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  const left = a as Record<string, unknown>;
+  const right = b as Record<string, unknown>;
+  const keys = Object.keys(left);
+  if (keys.length !== Object.keys(right).length) return false;
+  for (const key of keys) {
+    if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+  }
+  return true;
+}
+
+/** Whether any of `keys` holds a different value in `after` than in `before`, compared as JSON. */
+function changed<P>(before: P, after: P, keys: readonly (keyof P)[]): boolean {
+  return keys.some((key) => !sameJson(before[key], after[key]));
+}
+
+// lib/ramp.ts
+/** Glyph density measured in the font actually in use. See STYLE.md, principle 2. */
+
+/** Used when no glyphs are given: ten steps from space to at-sign. */
+const FALLBACK_RAMP = " .:-=+*#%@";
+
+interface Ramp {
+  /** Glyphs from least to most ink. */
+  readonly glyphs: readonly string[];
+  /** Ink per glyph, scaled so the lightest is 0 and the darkest is 1. */
+  readonly levels: readonly number[];
+}
+
+interface Shapes {
+  readonly glyphs: readonly string[];
+  /** Sub-cells per side. */
+  readonly n: number;
+  /** Ink per glyph in an n by n grid of sub-cells, row-major, scaled so the inkiest sub-cell of any glyph is 1. */
+  readonly cells: readonly (readonly number[])[];
+}
+
+const rampCache = new Map<string, Ramp>();
+const shapeCache = new Map<string, Shapes>();
+
+function uniqueGlyphs(chars: string): string[] {
+  return Array.from(new Set(Array.from(chars.length > 0 ? chars : FALLBACK_RAMP)));
+}
+
+/** A measurement taken before a web font loads describes the fallback font, so it is not cached. */
+function fontSettled(fontFamily: string): boolean {
+  try {
+    return document.fonts.check(`12px ${fontFamily}`);
+  } catch {
+    return true;
+  }
+}
+
+/** Draws each glyph in one cell and reads its ink per sub-cell. Null where there is no canvas. */
+function inkMaps(glyphs: readonly string[], fontFamily: string, lineHeight: number, n: number): number[][] | null {
+  if (typeof document === "undefined") return null;
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return null;
+  const fontPx = 40;
+  ctx.font = `${fontPx}px ${fontFamily}`;
+  const w = Math.max(1, Math.ceil(ctx.measureText("M").width || fontPx * 0.6));
+  const h = Math.max(1, Math.ceil(fontPx * lineHeight));
+  canvas.width = w;
+  canvas.height = h;
+  ctx.font = `${fontPx}px ${fontFamily}`;
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "#000";
+  return glyphs.map((glyph) => {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillText(glyph, 0, h / 2);
+    const alpha = ctx.getImageData(0, 0, w, h).data;
+    const sums = new Array<number>(n * n).fill(0);
+    for (let y = 0; y < h; y++) {
+      const sy = Math.min(n - 1, Math.floor((y / h) * n));
+      for (let x = 0; x < w; x++) {
+        const k = sy * n + Math.min(n - 1, Math.floor((x / w) * n));
+        sums[k] = (sums[k] ?? 0) + (alpha[(y * w + x) * 4 + 3] ?? 0);
+      }
+    }
+    return sums;
+  });
+}
+
+/** Orders `chars` by the ink each glyph puts down in `fontFamily`. Where there is no canvas
+ *  (server rendering, tests) it keeps the given order, evenly spaced. */
+function measureRamp(chars: string, fontFamily: string, lineHeight = 1.2): Ramp {
+  const glyphs = uniqueGlyphs(chars);
+  const key = `${fontFamily}|${lineHeight}|${glyphs.join("")}`;
+  const cached = rampCache.get(key);
+  if (cached) return cached;
+  const maps = inkMaps(glyphs, fontFamily, lineHeight, 1);
+  if (!maps) {
+    const last = Math.max(1, glyphs.length - 1);
+    return { glyphs, levels: glyphs.map((_, i) => i / last) };
+  }
+  const order = glyphs
+    .map((glyph, i) => ({ glyph, ink: maps[i]?.[0] ?? 0 }))
+    .sort((a, b) => a.ink - b.ink);
+  const lightest = order[0]?.ink ?? 0;
+  const span = (order[order.length - 1]?.ink ?? 1) - lightest || 1;
+  const ramp: Ramp = {
+    glyphs: order.map((o) => o.glyph),
+    levels: order.map((o) => (o.ink - lightest) / span),
+  };
+  if (fontSettled(fontFamily)) rampCache.set(key, ramp);
+  return ramp;
+}
+
+/** The glyph whose measured ink is nearest `v`, where 0 is no ink and 1 is the darkest glyph. */
+function pick(ramp: Ramp, v: number): string {
+  const { glyphs, levels } = ramp;
+  const last = glyphs.length - 1;
+  if (last < 0) return " ";
+  if (v <= 0) return glyphs[0] ?? " ";
+  if (v >= 1) return glyphs[last] ?? " ";
+  let lo = 0;
+  let hi = last;
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1;
+    if ((levels[mid] ?? 0) < v) lo = mid;
+    else hi = mid;
+  }
+  const nearer = v - (levels[lo] ?? 0) <= (levels[hi] ?? 1) - v ? lo : hi;
+  return glyphs[nearer] ?? " ";
+}
+
+/** Measures where inside its cell each glyph puts its ink. Null where there is no canvas. */
+function measureShapes(chars: string, fontFamily: string, lineHeight = 1.2, n = 3): Shapes | null {
+  const glyphs = uniqueGlyphs(chars);
+  const key = `${fontFamily}|${lineHeight}|${n}|${glyphs.join("")}`;
+  const cached = shapeCache.get(key);
+  if (cached) return cached;
+  const maps = inkMaps(glyphs, fontFamily, lineHeight, n);
+  if (!maps) return null;
+  let max = 1;
+  for (const m of maps) for (const v of m) if (v > max) max = v;
+  const shapes: Shapes = { glyphs, n, cells: maps.map((m) => m.map((v) => v / max)) };
+  if (fontSettled(fontFamily)) shapeCache.set(key, shapes);
+  return shapes;
+}
+
+/** The glyph whose sub-cell ink is closest to `sample`: n by n values in 0..1, row-major. */
+function matchShape(shapes: Shapes, sample: ArrayLike<number>): string {
+  let best = 0;
+  let bestDistance = Infinity;
+  for (let g = 0; g < shapes.cells.length; g++) {
+    const cells = shapes.cells[g] ?? [];
+    let d = 0;
+    for (let i = 0; i < cells.length; i++) {
+      const e = (cells[i] ?? 0) - (sample[i] ?? 0);
+      d += e * e;
+    }
+    if (d < bestDistance) {
+      bestDistance = d;
+      best = g;
+    }
+  }
+  return shapes.glyphs[best] ?? " ";
+}
+
+// registry/ascii/ascii-exhibition-map/core.ts
+/** One room on the plan. Its rectangle is in plan units, counted from the plan's top left corner. */
+export interface AsciiExhibitionMapRoom {
+  /** The room's name, drawn after its number inside the plan and on its button. */
+  name: string;
+  /** One line about the room, shown first when it is selected. */
+  subject: string;
+  /** A short paragraph about what the room holds. */
+  note: string;
+  /** Practical access notes, set as a label under the note. */
+  access: string;
+  /** The left edge, in plan units. */
+  x: number;
+  /** The top edge, in plan units. */
+  y: number;
+  /** The width, in plan units. */
+  w: number;
+  /** The height, in plan units. */
+  h: number;
+  /** Openings one plan unit wide: the wall each one cuts, and which unit along it, counted from 0 at the room's left or top corner. */
+  doors?: readonly { side: "n" | "e" | "s" | "w"; at: number }[];
+}
+
+export interface AsciiExhibitionMapProps {
+  /** Names the region and prints as the plan's caption. Empty leaves no caption and no role. */
+  label: string;
+  /** The plan's size in plan units. It grows to hold every room. */
+  plan: { cols: number; rows: number };
+  /** The rooms in route order, numbered from 01. Rooms that touch share one wall, and a door cuts it for both. */
+  rooms: readonly AsciiExhibitionMapRoom[];
+  /** The selected room's index while controlled, or null to let the component keep its own selection. */
+  value: number | null;
+  /** The room selected at mount while uncontrolled, or -1 for none. */
+  defaultValue: number;
+}
+
+export interface AsciiExhibitionMapEvents {
+  /** The index of the room a visitor chose, from its button or from the plan. */
+  valueChange: number;
+}
+
+export const defaults: AsciiExhibitionMapProps = {
+  label: "Ground floor plan",
+  plan: { cols: 16, rows: 11 },
+  rooms: [
+    {
+      name: "Entrance",
+      subject: "Desk, lockers and the start of the route",
+      note: "Pick up a printed plan at the desk. Lockers sit beside the street door, and the route begins through the opening in the north wall.",
+      access: "Level street entrance / Seats at the desk",
+      x: 0,
+      y: 7,
+      w: 11,
+      h: 4,
+      doors: [{ side: "s", at: 5 }, { side: "n", at: 2 }],
+    },
+    {
+      name: "Measure",
+      subject: "Tools for agreeing on a length",
+      note: "A folded ruler, a marked string and a workshop gauge show three ways of making a measurement repeatable. Read the wear marks beside the numbered divisions.",
+      access: "Level access / Seating by the east wall",
+      x: 0,
+      y: 0,
+      w: 5,
+      h: 7,
+      doors: [{ side: "e", at: 3 }],
+    },
+    {
+      name: "Mend",
+      subject: "Repair as a visible record",
+      note: "Patched cloth and a joined ceramic bowl preserve the decision to keep an object in use. A handling sample lets visitors feel the seam without touching the exhibited pieces.",
+      access: "Level access / Seated handling sample",
+      x: 5,
+      y: 0,
+      w: 6,
+      h: 7,
+      doors: [{ side: "e", at: 2 }],
+    },
+    {
+      name: "Carry",
+      subject: "The shape of a daily journey",
+      note: "A market basket, a tool roll and a parcel wrapper are arranged around the routes they served. Each label traces a repeated trip from the maker to the place of use.",
+      access: "Level access / Large print labels",
+      x: 11,
+      y: 0,
+      w: 5,
+      h: 6,
+      doors: [{ side: "s", at: 2 }],
+    },
+    {
+      name: "Keep",
+      subject: "Where each tool waits between jobs",
+      note: "Shadow boards, labelled drawers and a mended tool chest show how a workshop keeps its things in order. The last opening leads back to the entrance.",
+      access: "Level access / Drawers at seated height",
+      x: 11,
+      y: 6,
+      w: 5,
+      h: 5,
+      doors: [{ side: "w", at: 2 }],
+    },
+  ],
+  value: null,
+  defaultValue: 0,
+};
+
+/** Wall glyphs indexed by the sides a wall cell joins: north 1, east 2, south 4, west 8. A cell that joins
+ *  on one side only is a door's jamb. */
+const EXHIBIT_WALLS = "─╵╶└╷│┌├╴┘─┴┐┤┬┼";
+
+let exhibitProbe: CanvasRenderingContext2D | null | undefined;
+
+function exhibitEl<K extends keyof HTMLElementTagNameMap>(tag: K, parent: Node, part = ""): HTMLElementTagNameMap[K] {
+  const el = document.createElement(tag);
+  el.setAttribute("data-pica", "");
+  if (part) el.setAttribute("data-part", part);
+  parent.appendChild(el);
+  return el;
+}
+
+/** The row height as a multiple of the glyph size: the measured ink of a vertical rule, less a quarter pixel
+ *  and rounded down to whole pixels, so the rules of consecutive rows always overlap. Kept between 1 and 1.25. */
+function exhibitLine(size: number): number {
+  if (exhibitProbe === undefined) exhibitProbe = document.createElement("canvas").getContext("2d");
+  let ink = size * 1.2;
+  if (exhibitProbe) {
+    exhibitProbe.font = `${size}px ${GRID_FONT}`;
+    const m = exhibitProbe.measureText("│");
+    ink = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent || ink;
+  }
+  return Math.max(1, Math.floor(Math.min(1.25 * size, Math.max(size, ink - 0.25)))) / size;
+}
+
+/** Greedy word wrap. A word longer than the width keeps a line of its own, so the caller can reject the fit. */
+function exhibitWrap(text: string, width: number): string[] {
+  const lines: string[] = [];
+  for (const word of text.split(/\s+/)) {
+    const last = lines[lines.length - 1];
+    if (last !== undefined && last.length + word.length < width) lines[lines.length - 1] = `${last} ${word}`;
+    else if (word) lines.push(word);
+  }
+  return lines;
+}
+
+const exhibitUnit = (value: unknown, min: number): number => Math.max(min, Math.round(Number(value)) || 0);
+
+function exhibitRules(map: string): string {
+  const fg = cssVar("fg");
+  const muted = cssVar("muted");
+  const accent = cssVar("accent");
+  const rule = `1px solid color-mix(in srgb, ${fg} 24%, transparent)`;
+  return [
+    `:where(${map}){box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);gap:1.5rem 2.5rem;align-items:start;padding:clamp(1rem,4%,2.5rem);color:${fg}}`,
+    `${map}[data-layout=split]{grid-template-columns:repeat(2,minmax(0,1fr))}`,
+    `${map}[data-layout=split]>figure{grid-column:1/-1}`,
+    `${map}[data-layout=wide]{grid-template-columns:minmax(0,1fr) 22rem;grid-template-rows:auto 1fr}`,
+    `${map}[data-layout=wide]>figure{grid-row:span 2}`,
+    `${map} figure{min-width:0;margin:0;overflow-x:auto;overflow-y:hidden}`,
+    `${map} p{margin:0}`,
+    `${map} figcaption,${map} [data-part=empty],${map} [data-part=access]{font:.75em/1.4 ${GRID_FONT};letter-spacing:.04em;text-transform:uppercase;color:${muted}}`,
+    `${map} figcaption{margin-bottom:1rem}`,
+    `${map} pre{margin:0;font-family:${GRID_FONT};letter-spacing:0;word-spacing:0;font-kerning:none;font-variant-ligatures:none;white-space:pre;user-select:none}`,
+    `${map} [data-tone=accent]{color:${accent}}`,
+    `${map} [data-room]{cursor:pointer}`,
+    `${map} ol{margin:0;padding:0;list-style:none;border-top:${rule}}`,
+    `${map} li{border-bottom:${rule}}`,
+    `${map} button{box-sizing:border-box;display:flex;align-items:baseline;gap:.9em;width:100%;min-height:2.75rem;margin:0;padding:.6em .75em;border:0;border-left:3px solid transparent;border-radius:0;background:none;color:inherit;font:inherit;line-height:1.3;text-align:left;cursor:pointer}`,
+    `${map} button:hover{background:color-mix(in srgb, ${fg} 8%, transparent)}`,
+    `${map} button[aria-pressed=true]{border-left-color:${accent}}`,
+    `${map} button:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+    `${map} button>span{font:.8em/1 ${GRID_FONT};color:${muted}}`,
+    `${map} button[aria-pressed=true]>span{color:inherit}`,
+    `${map} [data-part=detail]{max-width:62ch}`,
+    `${map} [data-part=detail] p+p{margin-top:.75em}`,
+    `${map} [data-part=subject]{font-size:1.125em;line-height:1.35}`,
+    `${map} [data-part=note]{line-height:1.6}`,
+  ].join("\n");
+}
+
+export const mount: Mount<AsciiExhibitionMapProps> = (host, initial = {}) => {
+  let props: AsciiExhibitionMapProps = { ...defaults, ...initial };
+  let chosen = props.defaultValue;
+  let width = -1;
+  let base = 0;
+  let shown = "";
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const attrs = hostAttributes(host);
+  const sheet = scope(host);
+  const emit = emitter<AsciiExhibitionMapEvents>(host);
+  const root = exhibitEl("div", host, "map");
+  const figure = exhibitEl("figure", root, "plan");
+  const caption = exhibitEl("figcaption", figure);
+  const pre = exhibitEl("pre", figure, "drawing");
+  const empty = exhibitEl("p", figure, "empty");
+  const list = exhibitEl("ol", root, "rooms");
+  const detail = exhibitEl("div", root, "detail");
+  pre.setAttribute("aria-hidden", "true");
+  detail.setAttribute("aria-live", "polite");
+  empty.textContent = "No rooms";
+  sheet.setRules(exhibitRules(`${sheet.selector}>[data-part=map]`));
+
+  const current = (): number => {
+    const index = typeof props.value === "number" ? props.value : chosen;
+    return Number.isInteger(index) && index >= 0 && index < props.rooms.length ? index : -1;
+  };
+
+  function draw(): void {
+    base = parseFloat(getComputedStyle(host).fontSize) || 16;
+    width = root.clientWidth;
+    root.setAttribute("data-layout", width >= 72 * base ? "wide" : width >= 40 * base ? "split" : "stack");
+    const units = props.rooms.map((room) => ({ room, x: exhibitUnit(room.x, 0), y: exhibitUnit(room.y, 0), w: exhibitUnit(room.w, 1), h: exhibitUnit(room.h, 1) }));
+    if (units.length === 0) {
+      pre.replaceChildren();
+      return;
+    }
+    let cols = exhibitUnit(props.plan?.cols, 1);
+    let rows = exhibitUnit(props.plan?.rows, 1);
+    for (const u of units) {
+      cols = Math.max(cols, u.x + u.w);
+      rows = Math.max(rows, u.y + u.h);
+    }
+    // Two columns per unit keep doors open and units near square, so glyphs shrink, down to 10 px, before a
+    // plan falls back to one column per unit.
+    const avail = figure.clientWidth - 1;
+    const advance = measureCell(GRID_FONT, base, 1).w / base;
+    const fit = (per: number): number => Math.floor((avail / ((per * cols + 1) * advance)) * 10) / 10;
+    const size = fit(2) >= base ? base : fit(2) >= 10 ? fit(2) : Math.max(10, Math.min(base, fit(1)));
+    const lh = exhibitLine(size);
+    const cell = measureCell(GRID_FONT, size, lh);
+    // A unit is sx columns by a whole number of rows, so it can come out far from square. One column fewer is
+    // taken when that brings the plan's proportions much closer, so the drawing keeps its shape at every width.
+    const rowsFor = (per: number): number => Math.max(1, Math.round((per * cell.w) / cell.h));
+    const skew = (per: number): number => Math.abs(Math.log((per * cell.w) / (rowsFor(per) * cell.h)));
+    let sx = Math.max(1, Math.floor((avail / cell.w - 1) / cols + 1e-6));
+    if (sx > 2 && skew(sx) > 0.22 && skew(sx - 1) < skew(sx)) sx -= 1;
+    const sy = rowsFor(sx);
+    const stride = cols * sx + 1;
+    const n = stride * (rows * sy + 1);
+    const walls = new Uint8Array(n);
+    const owner = new Int16Array(n).fill(-1);
+    const glyphs = new Array<string>(n).fill(" ");
+    const tinted = new Uint8Array(n);
+    const join = (at: number, sides: number): void => {
+      walls[at] = (walls[at] ?? 0) | sides;
+    };
+    const cut = (at: number, sides: number): void => {
+      walls[at] = (walls[at] ?? 0) & ~sides;
+    };
+    units.forEach(({ x, y, w, h }, i) => {
+      for (let r = y * sy; r <= (y + h) * sy; r++) {
+        for (let c = x * sx; c <= (x + w) * sx; c++) {
+          const at = r * stride + c;
+          const across = r === y * sy || r === (y + h) * sy;
+          const down = c === x * sx || c === (x + w) * sx;
+          if (across) join(at, (c < (x + w) * sx ? 2 : 0) | (c > x * sx ? 8 : 0));
+          if (down) join(at, (r < (y + h) * sy ? 4 : 0) | (r > y * sy ? 1 : 0));
+          if (!across && !down) owner[at] = i;
+        }
+      }
+    });
+    for (const { room, x, y, w, h } of units) {
+      for (const door of room.doors ?? []) {
+        const across = door.side === "n" || door.side === "s";
+        const step = across ? sx : sy;
+        const from = exhibitUnit(door.at, 0) * step;
+        if (from + step > (across ? w * sx : h * sy)) continue;
+        const next = across ? 1 : stride;
+        const origin = across ? (door.side === "n" ? y : y + h) * sy * stride + x * sx : y * sy * stride + (door.side === "w" ? x : x + w) * sx;
+        // A door cuts the wall's own links between two unit lines, so the opening is one unit at every scale, the
+        // cells at either end join one way only and draw as jambs, and a wall that meets the opening keeps its links.
+        for (let k = from; k < from + step; k++) {
+          cut(origin + k * next, across ? 2 : 4);
+          cut(origin + (k + 1) * next, across ? 8 : 1);
+        }
+      }
+    }
+    const index = current();
+    const dot = measureRamp("·.", GRID_FONT, lh).glyphs[0] ?? ".";
+    units.forEach(({ room, x, y, w, h }, i) => {
+      const inner = w * sx - 1;
+      const tall = h * sy - 1;
+      const number = String(i + 1).padStart(2, "0");
+      let lines = exhibitWrap(`${number} ${room.name ?? ""}`, inner - 2);
+      if (lines.length + 2 > tall || lines.some((line) => line.length > inner - 2)) lines = tall > 0 && number.length <= inner - 2 ? [number] : [];
+      if (i === index) {
+        owner.forEach((o, at) => {
+          if (o === i && !walls[at]) {
+            glyphs[at] = dot;
+            tinted[at] = 1;
+          }
+        });
+      }
+      // Each label line keeps a clear cell on either side, and a lone fill cell left between it and a wall is
+      // cleared as well, so the label reads against the fill.
+      const top = y * sy + 1 + ((tall - lines.length) >> 1);
+      lines.forEach((line, k) => {
+        const left = x * sx + 1 + ((inner - line.length) >> 1);
+        const lo = left - 1 === x * sx + 2 ? left - 2 : left - 1;
+        const hi = left + line.length === (x + w) * sx - 2 ? left + line.length + 1 : left + line.length;
+        for (let c = lo; c <= hi; c++) {
+          const at = (top + k) * stride + c;
+          glyphs[at] = line[c - left] ?? " ";
+          tinted[at] = 0;
+        }
+      });
+    });
+    const out = document.createDocumentFragment();
+    for (let at = 0; at < n; ) {
+      if (at > 0 && at % stride === 0) out.append("\n");
+      const room = walls[at] ? -1 : (owner[at] ?? -1);
+      const tone = tinted[at] ?? 0;
+      const end = at - (at % stride) + stride;
+      let text = "";
+      while (at < end && (walls[at] ? -1 : (owner[at] ?? -1)) === room && (tinted[at] ?? 0) === tone) {
+        text += walls[at] ? (EXHIBIT_WALLS[walls[at] ?? 0] ?? "") : (glyphs[at] ?? " ");
+        at++;
+      }
+      const run = exhibitEl("span", out);
+      run.setAttribute("data-tone", tone ? "accent" : "fg");
+      if (room >= 0) run.setAttribute("data-room", String(room));
+      run.textContent = text;
+    }
+    pre.style.cssText = `font-size:${size}px;line-height:${cell.h}px`;
+    pre.replaceChildren(out);
+  }
+
+  function render(): void {
+    const index = current();
+    const room = props.rooms[index];
+    const none = props.rooms.length === 0;
+    caption.textContent = props.label;
+    caption.hidden = !props.label;
+    empty.hidden = !none;
+    pre.hidden = list.hidden = detail.hidden = none;
+    figure.setAttribute("data-selected", String(index));
+    list.querySelectorAll("button").forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
+    const text: [string, string][] = room ? [["subject", room.subject], ["note", room.note], ["access", room.access]] : [];
+    if (JSON.stringify(text) !== shown) {
+      shown = JSON.stringify(text);
+      detail.replaceChildren();
+      for (const [part, line] of text) if (line) exhibitEl("p", detail, part).textContent = line;
+    }
+    draw();
+  }
+
+  function buildList(): void {
+    list.replaceChildren();
+    props.rooms.forEach((room, i) => {
+      const button = exhibitEl("button", exhibitEl("li", list));
+      button.type = "button";
+      button.setAttribute("data-index", String(i));
+      exhibitEl("span", button).textContent = String(i + 1).padStart(2, "0");
+      button.append(` ${room.name ?? ""}`);
+    });
+  }
+
+  function nameRegion(): void {
+    attrs.set("role", props.label ? "region" : null);
+    attrs.set("aria-label", props.label || null);
+  }
+
+  root.addEventListener("click", (event) => {
+    const hit = (event.target as Element | null)?.closest?.("[data-room],[data-index]");
+    if (!hit) return;
+    const index = Number(hit.getAttribute("data-room") ?? hit.getAttribute("data-index"));
+    if (typeof props.value !== "number") {
+      chosen = index;
+      render();
+    }
+    emit("valueChange", index);
+  });
+
+  // A redraw changes the host's height, so it waits for the next task instead of running inside the
+  // observer's own callback, where it would trip the resize loop error.
+  const observer = typeof ResizeObserver === "function"
+    ? new ResizeObserver(() => {
+        if (root.clientWidth === width && (parseFloat(getComputedStyle(host).fontSize) || 16) === base) return;
+        clearTimeout(timer);
+        timer = setTimeout(draw);
+      })
+    : null;
+  observer?.observe(host);
+  document.fonts?.addEventListener("loadingdone", draw);
+
+  nameRegion();
+  buildList();
+  render();
+  attrs.set("data-pica-ready", "true");
+
+  return {
+    update(next) {
+      const before = props;
+      props = { ...props, ...next };
+      if (sameJson(before, props)) return;
+      nameRegion();
+      if (!sameJson(before.rooms, props.rooms)) buildList();
+      render();
+    },
+    destroy() {
+      clearTimeout(timer);
+      observer?.disconnect();
+      document.fonts?.removeEventListener("loadingdone", draw);
       root.remove();
-      style.remove();
+      sheet.destroy();
       attrs.restore();
     },
   };
@@ -603,7 +1298,7 @@ export const mount: Mount<AsciiExhibitionMapProps> = (host, initial = {}) => {
 
 // registry/ascii/ascii-exhibition-map/index.tsx
 export type AsciiExhibitionMapComponentProps = Partial<AsciiExhibitionMapProps> & WrapperProps & Handlers<AsciiExhibitionMapEvents>;
-/** An exhibition guide with an aligned character floor plan, numbered room selection, practical access notes and a linear visiting route. */
+/** A floor plan drawn in box-drawing glyphs from room rectangles and doors, with a route-ordered room list that selects one room. */
 export function AsciiExhibitionMap({ className, style, palette, ...props }: AsciiExhibitionMapComponentProps) {
   const ref = usePica(mount, props);
   return <div ref={ref} className={className} style={{ width: "100%", height: "100%", ...paletteStyle(palette), ...style }} />;
@@ -666,14 +1361,24 @@ var PicaAsciiExhibitionMap = (() => {
     mount: () => mount
   });
 
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
   // lib/host.ts
   function nextSerial() {
     const g = globalThis;
     g.__picaSerial = (g.__picaSerial ?? 0) + 1;
     return g.__picaSerial;
-  }
-  function nextId(prefix) {
-    return `${prefix}-${nextSerial()}`;
   }
   function hostAttributes(host) {
     const original = /* @__PURE__ */ new Map();
@@ -691,6 +1396,46 @@ var PicaAsciiExhibitionMap = (() => {
         original.clear();
       }
     };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // lib/glyph-grid.ts
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function measureCell(fontFamily, fontSize, lineHeight) {
+    return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
   }
 
   // lib/json.ts
@@ -714,197 +1459,398 @@ var PicaAsciiExhibitionMap = (() => {
     return true;
   }
 
-  // lib/palette.ts
-  var TOKEN_FALLBACK = {
-    fg: "currentColor",
-    bg: "transparent",
-    accent: "#13C4A3",
-    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
-  };
-  function cssVar(token) {
-    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  // lib/ramp.ts
+  var FALLBACK_RAMP = " .:-=+*#%@";
+  var rampCache = /* @__PURE__ */ new Map();
+  function uniqueGlyphs(chars) {
+    return Array.from(new Set(Array.from(chars.length > 0 ? chars : FALLBACK_RAMP)));
   }
-
-  // lib/font.ts
-  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
-
-  // lib/events.ts
-  function eventType(name) {
-    return `pica:${name.toLowerCase()}`;
+  function fontSettled(fontFamily) {
+    try {
+      return document.fonts.check(`12px ${fontFamily}`);
+    } catch {
+      return true;
+    }
   }
-  function emitter(host) {
-    return (name, detail) => {
-      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+  function inkMaps(glyphs, fontFamily, lineHeight, n) {
+    if (typeof document === "undefined") return null;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    const fontPx = 40;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    const w = Math.max(1, Math.ceil(ctx.measureText("M").width || fontPx * 0.6));
+    const h = Math.max(1, Math.ceil(fontPx * lineHeight));
+    canvas.width = w;
+    canvas.height = h;
+    ctx.font = `${fontPx}px ${fontFamily}`;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#000";
+    return glyphs.map((glyph) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillText(glyph, 0, h / 2);
+      const alpha = ctx.getImageData(0, 0, w, h).data;
+      const sums = new Array(n * n).fill(0);
+      for (let y = 0; y < h; y++) {
+        const sy = Math.min(n - 1, Math.floor(y / h * n));
+        for (let x = 0; x < w; x++) {
+          const k = sy * n + Math.min(n - 1, Math.floor(x / w * n));
+          sums[k] = (sums[k] ?? 0) + (alpha[(y * w + x) * 4 + 3] ?? 0);
+        }
+      }
+      return sums;
+    });
+  }
+  function measureRamp(chars, fontFamily, lineHeight = 1.2) {
+    const glyphs = uniqueGlyphs(chars);
+    const key = `${fontFamily}|${lineHeight}|${glyphs.join("")}`;
+    const cached = rampCache.get(key);
+    if (cached) return cached;
+    const maps = inkMaps(glyphs, fontFamily, lineHeight, 1);
+    if (!maps) {
+      const last = Math.max(1, glyphs.length - 1);
+      return { glyphs, levels: glyphs.map((_, i) => i / last) };
+    }
+    const order = glyphs.map((glyph, i) => ({ glyph, ink: maps[i]?.[0] ?? 0 })).sort((a, b) => a.ink - b.ink);
+    const lightest = order[0]?.ink ?? 0;
+    const span = (order[order.length - 1]?.ink ?? 1) - lightest || 1;
+    const ramp = {
+      glyphs: order.map((o) => o.glyph),
+      levels: order.map((o) => (o.ink - lightest) / span)
     };
+    if (fontSettled(fontFamily)) rampCache.set(key, ramp);
+    return ramp;
   }
 
   // registry/ascii/ascii-exhibition-map/core.ts
   var defaults = {
-    "label": "The Holding Room / Exhibition guide",
-    "title": "Objects that remember work",
-    "rooms": [
+    label: "Ground floor plan",
+    plan: { cols: 16, rows: 11 },
+    rooms: [
       {
-        "name": "01 / Measure",
-        "subject": "Tools for agreeing on a length",
-        "note": "A folded ruler, a marked string and a workshop gauge show three ways of making a measurement repeatable. Read the wear marks beside the numbered divisions.",
-        "access": "Level access / Seating by the east wall"
+        name: "Entrance",
+        subject: "Desk, lockers and the start of the route",
+        note: "Pick up a printed plan at the desk. Lockers sit beside the street door, and the route begins through the opening in the north wall.",
+        access: "Level street entrance / Seats at the desk",
+        x: 0,
+        y: 7,
+        w: 11,
+        h: 4,
+        doors: [{ side: "s", at: 5 }, { side: "n", at: 2 }]
       },
       {
-        "name": "02 / Mend",
-        "subject": "Repair as a visible record",
-        "note": "Patched cloth and a joined ceramic bowl preserve the decision to keep an object in use. A handling sample lets visitors feel the seam without touching the exhibited pieces.",
-        "access": "Level access / Handling sample at seated height"
+        name: "Measure",
+        subject: "Tools for agreeing on a length",
+        note: "A folded ruler, a marked string and a workshop gauge show three ways of making a measurement repeatable. Read the wear marks beside the numbered divisions.",
+        access: "Level access / Seating by the east wall",
+        x: 0,
+        y: 0,
+        w: 5,
+        h: 7,
+        doors: [{ side: "e", at: 3 }]
       },
       {
-        "name": "03 / Carry",
-        "subject": "The shape of a daily journey",
-        "note": "A market basket, a tool roll and a parcel wrapper are arranged around the routes they served. Each label traces a repeated trip from the maker to the place of use.",
-        "access": "Level access / Large print labels at the entry"
+        name: "Mend",
+        subject: "Repair as a visible record",
+        note: "Patched cloth and a joined ceramic bowl preserve the decision to keep an object in use. A handling sample lets visitors feel the seam without touching the exhibited pieces.",
+        access: "Level access / Seated handling sample",
+        x: 5,
+        y: 0,
+        w: 6,
+        h: 7,
+        doors: [{ side: "e", at: 2 }]
+      },
+      {
+        name: "Carry",
+        subject: "The shape of a daily journey",
+        note: "A market basket, a tool roll and a parcel wrapper are arranged around the routes they served. Each label traces a repeated trip from the maker to the place of use.",
+        access: "Level access / Large print labels",
+        x: 11,
+        y: 0,
+        w: 5,
+        h: 6,
+        doors: [{ side: "s", at: 2 }]
+      },
+      {
+        name: "Keep",
+        subject: "Where each tool waits between jobs",
+        note: "Shadow boards, labelled drawers and a mended tool chest show how a workshop keeps its things in order. The last opening leads back to the entrance.",
+        access: "Level access / Drawers at seated height",
+        x: 11,
+        y: 6,
+        w: 5,
+        h: 5,
+        doors: [{ side: "w", at: 2 }]
       }
-    ]
+    ],
+    value: null,
+    defaultValue: 0
   };
-  function exhibitionNode(parent, tag, text = "", cls = "") {
+  var EXHIBIT_WALLS = "─╵╶└╷│┌├╴┘─┴┐┤┬┼";
+  var exhibitProbe;
+  function exhibitEl(tag, parent, part = "") {
     const el = document.createElement(tag);
     el.setAttribute("data-pica", "");
-    el.className = cls;
-    el.textContent = text;
-    parent.append(el);
+    if (part) el.setAttribute("data-part", part);
+    parent.appendChild(el);
     return el;
   }
-  function exhibitionLink(parent, text, target) {
-    const a = exhibitionNode(parent, "a", text);
-    a.href = target;
-    return a;
-  }
-  function exhibitionArt(parent, wide, compact, caption) {
-    const figure = exhibitionNode(parent, "figure");
-    exhibitionNode(figure, "pre", wide, "art wide-art").setAttribute("aria-hidden", "true");
-    exhibitionNode(figure, "pre", compact, "art small-art").setAttribute("aria-hidden", "true");
-    exhibitionNode(figure, "figcaption", caption, "label muted");
-  }
-  function exhibitionDisclosure(parent, heading, body) {
-    const d = exhibitionNode(parent, "details");
-    exhibitionNode(d, "summary", heading);
-    exhibitionNode(d, "p", body);
-  }
-  function exhibitionRules(s) {
-    const fg = cssVar("fg"), bg = cssVar("bg"), muted = cssVar("muted"), accent = cssVar("accent");
-    return `
-${s}{box-sizing:border-box;max-width:1400px;margin:auto;padding:clamp(20px,4vw,52px);color:${fg};background:${bg};line-height:1.6;overflow-wrap:anywhere}
-${s} *{box-sizing:border-box;min-width:0}
-${s} h1,${s} h2,${s} h3,${s} p,${s} pre,${s} figure{margin:0}
-${s} h1{font-size:clamp(2.5rem,5.4vw,5rem);font-weight:500;line-height:1.04;letter-spacing:-.045em;max-width:15ch}
-${s} h2{font-weight:500;font-size:1.6rem;line-height:1.25;margin-bottom:1rem}
-${s} h3{font-size:1.15rem;font-weight:600;line-height:1.35}
-${s} p+p{margin-top:1rem}
-${s} .label{font-family:${GRID_FONT};font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
-${s} .muted{color:${muted}}
-${s} .mast{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-bottom:1px solid ${fg};padding-bottom:1rem}
-${s} .mark{display:inline-block;width:10px;height:10px;background:${accent};margin-right:10px}
-${s} a{color:inherit;text-underline-offset:.3em}
-${s} nav{display:flex;gap:1.4rem;flex-wrap:wrap}
-${s} a:focus-visible,${s} summary:focus-visible,${s} button:focus-visible{outline:2px solid ${accent};outline-offset:4px}
-${s} button{font:inherit;font-family:${GRID_FONT};font-size:.8rem;padding:.8rem 1rem;color:inherit;background:transparent;border:1px solid ${muted};cursor:pointer;text-align:left}
-${s} button[aria-pressed=true]{border-color:${fg};border-left:5px solid ${accent};padding-left:calc(1rem - 4px)}
-${s} .art{font-family:${GRID_FONT};font-size:clamp(11px,1.2vw,15px);line-height:1.35;white-space:pre;overflow-wrap:normal}
-${s} .small-art{display:none}
-${s} .intro{font-size:1.2rem;max-width:46ch;margin:1.5rem 0 2rem}
-${s} .rule{border-top:1px solid ${muted};padding-top:1.5rem;margin-top:2rem}
-${s} details{border-top:1px solid ${muted};padding:1rem 0}
-${s} summary{cursor:pointer;font-family:${GRID_FONT};font-size:.8rem}
-${s} details p{padding-top:1rem;max-width:62ch}
-${s} .foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:3rem;border-top:1px solid ${fg};padding-top:1rem}
-${s} .row{border-top:1px solid ${muted};padding:1.3rem 0;display:grid;grid-template-columns:4rem 1fr 7rem;gap:1.2rem}
-${s} .row p{max-width:58ch;margin-top:.5rem}
-${s} .columns{display:grid;grid-template-columns:1.4fr 1fr;gap:3rem;margin-top:2rem}
-${s} .choices{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.5rem 0}
-${s} .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0;padding:1rem 0;border-block:1px solid ${muted}}
-${s} .facts strong{display:block;font-family:${GRID_FONT};font-size:1.4rem;font-weight:400}
-${s} ul,${s} ol{padding-left:1.4rem;margin:1rem 0}
-${s} li+li{margin-top:.7rem}
-@media(max-width:600px){${s}{padding:20px}${s} h1{font-size:2.7rem}${s} .columns{grid-template-columns:1fr;gap:2rem}${s} .art{font-size:11px}${s} .wide-art{display:none}${s} .small-art{display:block}${s} .row{grid-template-columns:2rem 1fr;gap:.6rem}${s} .row>.label:last-child{grid-column:2}${s} nav{gap:.7rem}${s} .facts{gap:.7rem}${s} .intro{font-size:1.1rem}}
-${s} .exhibitionhead{margin:2rem 0}${s} .exhibitionhead h1{max-width:19ch;margin-top:1rem}${s} .mapgrid{display:grid;grid-template-columns:1fr 1.1fr;gap:4rem;border-top:1px solid ${fg};padding-top:2rem}${s} .mapgrid figure{margin-bottom:2rem}${s} .mapgrid figcaption{margin-top:1rem;max-width:38ch}${s} .mapgrid .choices{flex-direction:column}${s} .mapgrid .choices button{width:100%}${s} .access{margin-top:1.5rem;padding-left:1rem;border-left:3px solid ${accent}}${s} .programline{white-space:pre-line}${s} .roomdetail{min-height:260px}@media(max-width:800px){${s} .mapgrid{gap:2rem}}@media(max-width:600px){${s} .mapgrid{grid-template-columns:1fr}${s} .roomdetail{min-height:0}}
-`;
-  }
-  function exhibitionRender(root, p, id, choose, selected) {
-    root.replaceChildren();
-    const mast = exhibitionNode(root, "header", "", "mast label");
-    const brand = exhibitionNode(mast, "span");
-    exhibitionNode(brand, "span", "", "mark").setAttribute("aria-hidden", "true");
-    exhibitionNode(brand, "span", p.label);
-    const intro = exhibitionNode(root, "header", "", "exhibitionhead");
-    exhibitionNode(intro, "p", "Open Thursday to Sunday / 10:00–17:00", "label muted");
-    const h = exhibitionNode(intro, "h1", p.title);
-    h.id = `${id}-title`;
-    exhibitionNode(intro, "p", "An exhibition about measuring, repairing and carrying. Follow the numbered route or choose a room below.", "intro");
-    const grid = exhibitionNode(root, "div", "", "mapgrid");
-    const map = exhibitionNode(grid, "section");
-    exhibitionArt(map, "+-------------+-------------+\n| 01 MEASURE  | 02 MEND     |\n|  [] []      |  ~~~  ()    |\n|             :             |\n+------:------+------:------+\n| ENTRY       | 03 CARRY    |\n|  >  DESK    :  /_\\  [ ]   |\n+-------------+-------------+", "+----------+----------+\n|01 MEASURE:02 MEND   |\n+----:-----+----:-----+\n|ENTRY  >  :03 CARRY  |\n+----------+----------+", "Floor plan / Colons mark openings / All rooms on one level");
-    exhibitionNode(map, "h2", "Visit in your own order");
-    exhibitionNode(map, "p", "The entrance desk supplies a printed guide and a large print room list. Bags may remain with you. Quiet seats are available in each room.");
-    const program = exhibitionNode(map, "section", "", "rule");
-    exhibitionNode(program, "h2", "Public program");
-    exhibitionNode(program, "p", "11:30 / Reading an object\nA twenty minute guided conversation at the entrance desk.", "programline");
-    exhibitionNode(program, "p", "14:00 / The visible mend\nA repair demonstration in room 02. Drop in; no booking needed.", "programline");
-    const rooms = exhibitionNode(grid, "section");
-    exhibitionNode(rooms, "h2", "Room index");
-    const choices = exhibitionNode(rooms, "div", "", "choices");
-    p.rooms.forEach((x2, i) => {
-      const b = exhibitionNode(choices, "button", x2.name);
-      b.type = "button";
-      b.setAttribute("aria-pressed", String(i === selected));
-      b.onclick = () => choose(i);
-    });
-    const detail = exhibitionNode(rooms, "section", "", "roomdetail rule");
-    detail.setAttribute("aria-live", "polite");
-    const x = p.rooms[selected] ?? p.rooms[0];
-    if (x) {
-      exhibitionNode(detail, "p", x.name, "label muted");
-      exhibitionNode(detail, "h2", x.subject);
-      exhibitionNode(detail, "p", x.note);
-      exhibitionNode(detail, "p", x.access, "access label");
+  function exhibitLine(size) {
+    if (exhibitProbe === void 0) exhibitProbe = document.createElement("canvas").getContext("2d");
+    let ink = size * 1.2;
+    if (exhibitProbe) {
+      exhibitProbe.font = `${size}px ${GRID_FONT}`;
+      const m = exhibitProbe.measureText("│");
+      ink = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent || ink;
     }
-    const route = exhibitionNode(rooms, "section", "", "rule");
-    exhibitionNode(route, "h2", "A linear route");
-    const list = exhibitionNode(route, "ol");
-    p.rooms.forEach((x2) => exhibitionNode(list, "li", `${x2.name}: ${x2.subject}. ${x2.access}.`));
-    exhibitionDisclosure(route, "Plan your visit", "Entry is free. Allow forty minutes for the three rooms. The accessible entrance is beside the street desk, and the entire exhibition is on one level. Ask the desk for the tactile handling guide.");
-    const foot = exhibitionNode(root, "footer", "", "foot label");
-    exhibitionNode(foot, "span", "Exhibition study / Three rooms, one route");
-    exhibitionLink(foot, "Back to top", `#${id}-title`);
+    return Math.max(1, Math.floor(Math.min(1.25 * size, Math.max(size, ink - 0.25)))) / size;
+  }
+  function exhibitWrap(text, width) {
+    const lines = [];
+    for (const word of text.split(/\s+/)) {
+      const last = lines[lines.length - 1];
+      if (last !== void 0 && last.length + word.length < width) lines[lines.length - 1] = `${last} ${word}`;
+      else if (word) lines.push(word);
+    }
+    return lines;
+  }
+  var exhibitUnit = (value, min) => Math.max(min, Math.round(Number(value)) || 0);
+  function exhibitRules(map) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const rule = `1px solid color-mix(in srgb, ${fg} 24%, transparent)`;
+    return [
+      `:where(${map}){box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);gap:1.5rem 2.5rem;align-items:start;padding:clamp(1rem,4%,2.5rem);color:${fg}}`,
+      `${map}[data-layout=split]{grid-template-columns:repeat(2,minmax(0,1fr))}`,
+      `${map}[data-layout=split]>figure{grid-column:1/-1}`,
+      `${map}[data-layout=wide]{grid-template-columns:minmax(0,1fr) 22rem;grid-template-rows:auto 1fr}`,
+      `${map}[data-layout=wide]>figure{grid-row:span 2}`,
+      `${map} figure{min-width:0;margin:0;overflow-x:auto;overflow-y:hidden}`,
+      `${map} p{margin:0}`,
+      `${map} figcaption,${map} [data-part=empty],${map} [data-part=access]{font:.75em/1.4 ${GRID_FONT};letter-spacing:.04em;text-transform:uppercase;color:${muted}}`,
+      `${map} figcaption{margin-bottom:1rem}`,
+      `${map} pre{margin:0;font-family:${GRID_FONT};letter-spacing:0;word-spacing:0;font-kerning:none;font-variant-ligatures:none;white-space:pre;user-select:none}`,
+      `${map} [data-tone=accent]{color:${accent}}`,
+      `${map} [data-room]{cursor:pointer}`,
+      `${map} ol{margin:0;padding:0;list-style:none;border-top:${rule}}`,
+      `${map} li{border-bottom:${rule}}`,
+      `${map} button{box-sizing:border-box;display:flex;align-items:baseline;gap:.9em;width:100%;min-height:2.75rem;margin:0;padding:.6em .75em;border:0;border-left:3px solid transparent;border-radius:0;background:none;color:inherit;font:inherit;line-height:1.3;text-align:left;cursor:pointer}`,
+      `${map} button:hover{background:color-mix(in srgb, ${fg} 8%, transparent)}`,
+      `${map} button[aria-pressed=true]{border-left-color:${accent}}`,
+      `${map} button:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${map} button>span{font:.8em/1 ${GRID_FONT};color:${muted}}`,
+      `${map} button[aria-pressed=true]>span{color:inherit}`,
+      `${map} [data-part=detail]{max-width:62ch}`,
+      `${map} [data-part=detail] p+p{margin-top:.75em}`,
+      `${map} [data-part=subject]{font-size:1.125em;line-height:1.35}`,
+      `${map} [data-part=note]{line-height:1.6}`
+    ].join("\n");
   }
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
+    let chosen = props.defaultValue;
+    let width = -1;
+    let base = 0;
+    let shown = "";
+    let timer;
     const attrs = hostAttributes(host);
-    const id = nextId("ascii-exhibition-map");
-    attrs.set("role", "region");
-    attrs.set("aria-label", props.label);
-    const style = exhibitionNode(host, "style");
-    const root = exhibitionNode(host, "article");
-    root.id = id;
-    style.textContent = exhibitionRules(`[id="${id}"]`);
-    let selected = 0;
+    const sheet = scope(host);
     const emit = emitter(host);
-    const choose = (index) => {
-      selected = index;
-      draw();
-      root.querySelectorAll("button")[index]?.focus();
-      emit("selectionChange", index);
+    const root = exhibitEl("div", host, "map");
+    const figure = exhibitEl("figure", root, "plan");
+    const caption = exhibitEl("figcaption", figure);
+    const pre = exhibitEl("pre", figure, "drawing");
+    const empty = exhibitEl("p", figure, "empty");
+    const list = exhibitEl("ol", root, "rooms");
+    const detail = exhibitEl("div", root, "detail");
+    pre.setAttribute("aria-hidden", "true");
+    detail.setAttribute("aria-live", "polite");
+    empty.textContent = "No rooms";
+    sheet.setRules(exhibitRules(`${sheet.selector}>[data-part=map]`));
+    const current = () => {
+      const index = typeof props.value === "number" ? props.value : chosen;
+      return Number.isInteger(index) && index >= 0 && index < props.rooms.length ? index : -1;
     };
-    const draw = () => exhibitionRender(root, props, id, choose, selected);
-    draw();
+    function draw() {
+      base = parseFloat(getComputedStyle(host).fontSize) || 16;
+      width = root.clientWidth;
+      root.setAttribute("data-layout", width >= 72 * base ? "wide" : width >= 40 * base ? "split" : "stack");
+      const units = props.rooms.map((room) => ({ room, x: exhibitUnit(room.x, 0), y: exhibitUnit(room.y, 0), w: exhibitUnit(room.w, 1), h: exhibitUnit(room.h, 1) }));
+      if (units.length === 0) {
+        pre.replaceChildren();
+        return;
+      }
+      let cols = exhibitUnit(props.plan?.cols, 1);
+      let rows = exhibitUnit(props.plan?.rows, 1);
+      for (const u of units) {
+        cols = Math.max(cols, u.x + u.w);
+        rows = Math.max(rows, u.y + u.h);
+      }
+      const avail = figure.clientWidth - 1;
+      const advance = measureCell(GRID_FONT, base, 1).w / base;
+      const fit = (per) => Math.floor(avail / ((per * cols + 1) * advance) * 10) / 10;
+      const size = fit(2) >= base ? base : fit(2) >= 10 ? fit(2) : Math.max(10, Math.min(base, fit(1)));
+      const lh = exhibitLine(size);
+      const cell = measureCell(GRID_FONT, size, lh);
+      const rowsFor = (per) => Math.max(1, Math.round(per * cell.w / cell.h));
+      const skew = (per) => Math.abs(Math.log(per * cell.w / (rowsFor(per) * cell.h)));
+      let sx = Math.max(1, Math.floor((avail / cell.w - 1) / cols + 1e-6));
+      if (sx > 2 && skew(sx) > 0.22 && skew(sx - 1) < skew(sx)) sx -= 1;
+      const sy = rowsFor(sx);
+      const stride = cols * sx + 1;
+      const n = stride * (rows * sy + 1);
+      const walls = new Uint8Array(n);
+      const owner = new Int16Array(n).fill(-1);
+      const glyphs = new Array(n).fill(" ");
+      const tinted = new Uint8Array(n);
+      const join = (at, sides) => {
+        walls[at] = (walls[at] ?? 0) | sides;
+      };
+      const cut = (at, sides) => {
+        walls[at] = (walls[at] ?? 0) & ~sides;
+      };
+      units.forEach(({ x, y, w, h }, i) => {
+        for (let r = y * sy; r <= (y + h) * sy; r++) {
+          for (let c = x * sx; c <= (x + w) * sx; c++) {
+            const at = r * stride + c;
+            const across = r === y * sy || r === (y + h) * sy;
+            const down = c === x * sx || c === (x + w) * sx;
+            if (across) join(at, (c < (x + w) * sx ? 2 : 0) | (c > x * sx ? 8 : 0));
+            if (down) join(at, (r < (y + h) * sy ? 4 : 0) | (r > y * sy ? 1 : 0));
+            if (!across && !down) owner[at] = i;
+          }
+        }
+      });
+      for (const { room, x, y, w, h } of units) {
+        for (const door of room.doors ?? []) {
+          const across = door.side === "n" || door.side === "s";
+          const step = across ? sx : sy;
+          const from = exhibitUnit(door.at, 0) * step;
+          if (from + step > (across ? w * sx : h * sy)) continue;
+          const next = across ? 1 : stride;
+          const origin = across ? (door.side === "n" ? y : y + h) * sy * stride + x * sx : y * sy * stride + (door.side === "w" ? x : x + w) * sx;
+          for (let k = from; k < from + step; k++) {
+            cut(origin + k * next, across ? 2 : 4);
+            cut(origin + (k + 1) * next, across ? 8 : 1);
+          }
+        }
+      }
+      const index = current();
+      const dot = measureRamp("·.", GRID_FONT, lh).glyphs[0] ?? ".";
+      units.forEach(({ room, x, y, w, h }, i) => {
+        const inner = w * sx - 1;
+        const tall = h * sy - 1;
+        const number = String(i + 1).padStart(2, "0");
+        let lines = exhibitWrap(`${number} ${room.name ?? ""}`, inner - 2);
+        if (lines.length + 2 > tall || lines.some((line) => line.length > inner - 2)) lines = tall > 0 && number.length <= inner - 2 ? [number] : [];
+        if (i === index) {
+          owner.forEach((o, at) => {
+            if (o === i && !walls[at]) {
+              glyphs[at] = dot;
+              tinted[at] = 1;
+            }
+          });
+        }
+        const top = y * sy + 1 + (tall - lines.length >> 1);
+        lines.forEach((line, k) => {
+          const left = x * sx + 1 + (inner - line.length >> 1);
+          const lo = left - 1 === x * sx + 2 ? left - 2 : left - 1;
+          const hi = left + line.length === (x + w) * sx - 2 ? left + line.length + 1 : left + line.length;
+          for (let c = lo; c <= hi; c++) {
+            const at = (top + k) * stride + c;
+            glyphs[at] = line[c - left] ?? " ";
+            tinted[at] = 0;
+          }
+        });
+      });
+      const out = document.createDocumentFragment();
+      for (let at = 0; at < n; ) {
+        if (at > 0 && at % stride === 0) out.append("\n");
+        const room = walls[at] ? -1 : owner[at] ?? -1;
+        const tone = tinted[at] ?? 0;
+        const end = at - at % stride + stride;
+        let text = "";
+        while (at < end && (walls[at] ? -1 : owner[at] ?? -1) === room && (tinted[at] ?? 0) === tone) {
+          text += walls[at] ? EXHIBIT_WALLS[walls[at] ?? 0] ?? "" : glyphs[at] ?? " ";
+          at++;
+        }
+        const run = exhibitEl("span", out);
+        run.setAttribute("data-tone", tone ? "accent" : "fg");
+        if (room >= 0) run.setAttribute("data-room", String(room));
+        run.textContent = text;
+      }
+      pre.style.cssText = `font-size:${size}px;line-height:${cell.h}px`;
+      pre.replaceChildren(out);
+    }
+    function render() {
+      const index = current();
+      const room = props.rooms[index];
+      const none = props.rooms.length === 0;
+      caption.textContent = props.label;
+      caption.hidden = !props.label;
+      empty.hidden = !none;
+      pre.hidden = list.hidden = detail.hidden = none;
+      figure.setAttribute("data-selected", String(index));
+      list.querySelectorAll("button").forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
+      const text = room ? [["subject", room.subject], ["note", room.note], ["access", room.access]] : [];
+      if (JSON.stringify(text) !== shown) {
+        shown = JSON.stringify(text);
+        detail.replaceChildren();
+        for (const [part, line] of text) if (line) exhibitEl("p", detail, part).textContent = line;
+      }
+      draw();
+    }
+    function buildList() {
+      list.replaceChildren();
+      props.rooms.forEach((room, i) => {
+        const button = exhibitEl("button", exhibitEl("li", list));
+        button.type = "button";
+        button.setAttribute("data-index", String(i));
+        exhibitEl("span", button).textContent = String(i + 1).padStart(2, "0");
+        button.append(` ${room.name ?? ""}`);
+      });
+    }
+    function nameRegion() {
+      attrs.set("role", props.label ? "region" : null);
+      attrs.set("aria-label", props.label || null);
+    }
+    root.addEventListener("click", (event) => {
+      const hit = event.target?.closest?.("[data-room],[data-index]");
+      if (!hit) return;
+      const index = Number(hit.getAttribute("data-room") ?? hit.getAttribute("data-index"));
+      if (typeof props.value !== "number") {
+        chosen = index;
+        render();
+      }
+      emit("valueChange", index);
+    });
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (root.clientWidth === width && (parseFloat(getComputedStyle(host).fontSize) || 16) === base) return;
+      clearTimeout(timer);
+      timer = setTimeout(draw);
+    }) : null;
+    observer?.observe(host);
+    document.fonts?.addEventListener("loadingdone", draw);
+    nameRegion();
+    buildList();
+    render();
     attrs.set("data-pica-ready", "true");
     return {
       update(next) {
-        const merged = { ...props, ...next };
-        if (sameJson(merged, props)) return;
-        props = merged;
-        attrs.set("aria-label", props.label);
-        draw();
+        const before = props;
+        props = { ...props, ...next };
+        if (sameJson(before, props)) return;
+        nameRegion();
+        if (!sameJson(before.rooms, props.rooms)) buildList();
+        render();
       },
       destroy() {
+        clearTimeout(timer);
+        observer?.disconnect();
+        document.fonts?.removeEventListener("loadingdone", draw);
         root.remove();
-        style.remove();
+        sheet.destroy();
         attrs.restore();
       }
     };
@@ -928,7 +1874,7 @@ ${s} .exhibitionhead{margin:2rem 0}${s} .exhibitionhead h1{max-width:19ch;margin
   }
   var initial = Object.assign({}, {}, window.PICA_PROPS || {});
   var instance = PicaAsciiExhibitionMap.mount(host, take(initial));
-  ["selectionChange"].forEach(function (name) {
+  ["valueChange"].forEach(function (name) {
     host.addEventListener("pica:" + name.toLowerCase(), function (event) {
       if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
     });
