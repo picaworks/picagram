@@ -68,6 +68,10 @@ describe.each(entries.map((e) => [e.meta.slug, e] as const))("%s", (_slug, entry
         }
       }
     }
+    for (const [prop, steps] of Object.entries(meta.controlledInteractions ?? {})) {
+      expect(Object.keys(meta.controlled ?? {}), "probe names a controlled prop").toContain(prop);
+      expect(steps.some((step) => step.step === "press" || step.step === "click"), "probe supplies input").toBe(true);
+    }
     // scripts/verify/interact.ts drives a controlled prop by replaying only the presses and clicks of the
     // first interaction, so a list that opens with a pointer step alone would leave it nothing to replay.
     if (Object.keys(meta.controlled ?? {}).length > 0) {

@@ -7,23 +7,29 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 ## ASCII
 
 - [Archive tree](https://picagram.dev/c/ascii-archive-tree.md): An expandable archival finding aid with character branch prefixes and editable collection metadata.
+- [ASCII Binary Tide](https://picagram.dev/c/ascii-binary-tide.md): Slow analytic waves gather binary glyphs into broad density bands, with an optional clear center for reading content.
 - [Campus directory](https://picagram.dev/c/ascii-campus-directory.md): A campus guide with a character site map, department selection and accessible visiting directions.
+- [ASCII Cellular Tape](https://picagram.dev/c/ascii-cellular-tape.md): An elementary cellular automaton unfolds row by row into a numbered ASCII tape, with its rule table and current generation always visible.
 - [Circuit Board](https://picagram.dev/c/ascii-circuit-board.md): A character series circuit schematic with a selectable component inventory and readable terminal facts.
 - [Comparison Grid](https://picagram.dev/c/ascii-comparison-grid.md): An aligned character specimen matrix with selectable columns and readable material measurements.
-- [ASCII Exhibition Map](https://picagram.dev/c/ascii-exhibition-map.md): An exhibition guide with an aligned character floor plan, numbered room selection, practical access notes and a linear visiting route.
+- [ASCII Exhibition Map](https://picagram.dev/c/ascii-exhibition-map.md): A floor plan drawn in box-drawing glyphs from room rectangles and doors, with a route-ordered room list that selects and fills one room.
 - [Expedition log](https://picagram.dev/c/ascii-expedition-log.md): An expedition dossier with an elevation transect, field observations and a working supply checklist.
 - [ASCII Folio Ledger](https://picagram.dev/c/ascii-folio-ledger.md): A portfolio ledger with a character index, open project register, case disclosures and a practical contact brief.
+- [ASCII Fretboard](https://picagram.dev/c/ascii-fretboard.md): A monospace fretboard maps MIDI string tuning and root-relative scale intervals to real pitches, marking roots with brackets.
 - [Garden Plan](https://picagram.dev/c/ascii-garden-plan.md): A fixed character planting bed with seasonal layouts, crop spacing records, and practical notes.
 - [ASCII Image](https://picagram.dev/c/ascii-image.md): An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.
 - [Isometric room](https://picagram.dev/c/ascii-isometric-room.md): A fixed-cell character room elevation with a compact mobile plan, object selection and inventory facts.
 - [ASCII Library Catalog](https://picagram.dev/c/ascii-library-catalog.md): A reading collection with a character bookshelf, selectable catalogue rows, useful book notes and a curated reading route.
+- [ASCII Lissajous Scope](https://picagram.dev/c/ascii-lissajous-scope.md): Two oscillator harmonics form a measured glyph trace with equal amplitude scales, a fading persistence trail, and labeled X-phase landmarks.
+- [Loom draft](https://picagram.dev/c/ascii-loom-draft.md): A weaving draft in glyphs, where toggling a tie-up cell redraws the crossings of its woven repeat.
 - [ASCII Morph](https://picagram.dev/c/ascii-morph.md): Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.
 - [ASCII Noise Field](https://picagram.dev/c/ascii-noise-field.md): A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.
 - [ASCII Observatory Console](https://picagram.dev/c/ascii-observatory-console.md): An observatory notebook with a character sky diagram, selectable observation records, a session ledger and instrument notes.
 - [Packet Route](https://picagram.dev/c/ascii-packet-route.md): A supplied network route drawn as a character hop map with selectable latency records and an ordered route.
+- [ASCII Piano Roll](https://picagram.dev/c/ascii-piano-roll.md): Supplied notes align by pitch and beat on a monospace grid, with duration-sized bars and accessible controlled selection.
 - [ASCII Pointer Ripple](https://picagram.dev/c/ascii-pointer-ripple.md): A glyph field of low-density noise that sends rippling rings outward from the pointer, as if the grid were water.
 - [ASCII Press Wire](https://picagram.dev/c/ascii-press-wire.md): A local wire edition with a character teletype masthead, lead dispatch, timestamped reports and transparent corrections.
-- [Process map](https://picagram.dev/c/ascii-process-map.md): A reusable character decision map with editable steps and native choices that update the route summary.
+- [Process map](https://picagram.dev/c/ascii-process-map.md): A decision flow drawn in box-drawing characters, with native choices that trace the selected route.
 - [ASCII Rain](https://picagram.dev/c/ascii-rain.md): Columns of glyphs fall at their own speed, each with a bright head and a trail that fades down the measured ramp.
 - [Release room](https://picagram.dev/c/ascii-release-room.md): A software release page with a character branch graph, version selection and compatibility notes.
 - [ASCII Reveal](https://picagram.dev/c/ascii-reveal.md): Text that resolves from scrambled glyphs into its final characters, left to right.
@@ -32,7 +38,9 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [ASCII Terminal Journal](https://picagram.dev/c/ascii-terminal-journal.md): An authored reading page with a text mode masthead, chapter links, margin observations and a field note prompt.
 - [ASCII Text](https://picagram.dev/c/ascii-text.md): A headline rastered from a display face, then redrawn as a grid of glyphs chosen by measured ink and shape.
 - [ASCII Topo](https://picagram.dev/c/ascii-topo.md): Contour lines of a slowly drifting noise height field, drawn like a topographic survey in text.
+- [ASCII Tree Rings](https://picagram.dev/c/ascii-tree-rings.md): Annual growth values determine the spacing of nested, irregular ASCII tree rings, with a selected year's band accented.
 - [ASCII Video](https://picagram.dev/c/ascii-video.md): A video or webcam feed drawn as a live grid of glyphs, chosen each frame by the ink they put down in the font in use.
+- [ASCII Wave Tank](https://picagram.dev/c/ascii-wave-tank.md): A bounded shallow-water simulation uses measured ASCII density as timed impulses reflect from tank walls and supplied solid barriers.
 - [ASCII Waves](https://picagram.dev/c/ascii-waves.md): Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.
 - [Weather Station](https://picagram.dev/c/ascii-weather-station.md): Historical weather samples with a character wind rose, seven day rainfall plot, and readable measurements.
 - [ASCII Workshop Index](https://picagram.dev/c/ascii-workshop-index.md): An open workshop portfolio with character tool studies, a material register, a making sequence and a commission brief.
@@ -65,25 +73,31 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 
 - [Block Glitch Image](https://picagram.dev/c/block-glitch-image.md): A photograph that sits still, then briefly shows rectangular blocks copied in from the wrong place.
 - [Channel Shift Image](https://picagram.dev/c/channel-shift-image.md): An image split into a dark layer and a light layer, each posterized flat and slid apart along one axis.
+- [Contour Wipe Image](https://picagram.dev/c/contour-wipe-image.md): A progress-controlled monochrome image reveal traverses ordered luminance bands, with a single accent contour tracing the active threshold.
 - [Cylinder Roll](https://picagram.dev/c/cylinder-roll.md): Printed stripes turn through a cylindrical projection along the page margin.
 - [Duotone Image](https://picagram.dev/c/duotone-image.md): An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.
 - [Echo Arcs](https://picagram.dev/c/echo-arcs.md): Off centre arc segments expand and decay gradually around a protected reading area.
+- [Edge Fold Image](https://picagram.dev/c/edge-fold-image.md): A monochrome image's edge rotates around a fixed crease, foreshortening its texture in perspective and exposing a controllable opening.
 - [Edge Trace Image](https://picagram.dev/c/edge-trace-image.md): A photograph reduced to its outlines: crisp one-pixel Sobel edges kept by Canny's two-threshold rule.
+- [Engraved Relief Image](https://picagram.dev/c/engraved-relief-image.md): Image luminance becomes a recessed height field with fine tool cuts, its fixed geometry revealed by a slowly rotating grazing light.
 - [Falling Sutures](https://picagram.dev/c/falling-sutures.md): Sparse stitched leaders drift down constrained side margins beside an uninterrupted reading centre.
 - [Folded Light](https://picagram.dev/c/folded-light.md): Triangular crease planes carry a slow shifting illumination in the page margins.
 - [Glitch Text](https://picagram.dev/c/glitch-text.md): Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.
 - [Grain Overlay](https://picagram.dev/c/grain-overlay.md): An SVG turbulence tile rendered once as a data URI and laid over content as film grain that jitters a few pixels several times a second.
 - [Halftone CSS](https://picagram.dev/c/halftone-css.md): A halftone dot pattern made entirely of layered CSS gradients, for use as a background.
 - [Ink Erosion](https://picagram.dev/c/ink-erosion.md): Geometric printed bands lose and regain small edge cells through a slow structured erosion front.
-- [Magnetic Filings](https://picagram.dev/c/magnetic-filings.md): Short filings align with a moving dipole field in the margins of a protected reading area.
+- [Lenticular Image](https://picagram.dev/c/lenticular-image.md): Two registered images share parallel lenticular strips, with viewing position revealing different source content through each strip.
+- [Magnetic Filings](https://picagram.dev/c/magnetic-filings.md): Orientation glyphs follow the field of slowly drifting charges behind the content they wrap, leaving it a clear margin.
 - [Moire Interference](https://picagram.dev/c/moire-interference.md): Two sparse line screens create broad slowly drifting interference bands at the page edges.
 - [Orbital Threads](https://picagram.dev/c/orbital-threads.md): Inclined orbit threads carry moving stitch segments while leaving the reading centre unpainted.
 - [Paper Shutters](https://picagram.dev/c/paper-shutters.md): Staggered rectangular shutters reveal an original printed field along the page edges.
 - [Perforation Drift](https://picagram.dev/c/perforation-drift.md): Paired punched film perforations travel quietly along continuous margin rails.
 - [Photocopy Image](https://picagram.dev/c/photocopy-image.md): An image pushed through an adaptive threshold into pure ink and ground, with seeded toner specks and short streaks off its strong edges.
 - [Pixel Displace Image](https://picagram.dev/c/pixel-displace-image.md): A photograph sheared into horizontal bands that slide sideways on a slow noise field, like a printout pulled crooked.
-- [Pixel Louver](https://picagram.dev/c/pixel-louver.md): A bounded grid of mechanical louvers changes projected width in a slow traveling phase.
+- [Pixel Louver](https://picagram.dev/c/pixel-louver.md): Eighth-block louver blades turn in whole cells beside the content, or in every cell around it, and never draw under it.
 - [Pixel Sort](https://picagram.dev/c/pixel-sort.md): An image whose pixel rows or columns are sorted by brightness within threshold bands, smearing tone into streaks.
+- [Pixel Weft Image](https://picagram.dev/c/pixel-weft-image.md): Registered image rows and columns enter from alternating edges and interlace at checkerboard over-and-under crossings.
+- [Pressure Print Image](https://picagram.dev/c/pressure-print-image.md): A local circular contact field reveals an image as a monochrome print; increasing pressure expands its footprint and deposits denser ink.
 - [Print Registration](https://picagram.dev/c/print-registration.md): Registration crosses and a slowly rotating alignment target describe two offset printed layers.
 - [Radar Sweep](https://picagram.dev/c/radar-sweep.md): Slow range rings and a rotating sector reveal fixed target echoes around a protected reading area.
 - [Ribbon Current](https://picagram.dev/c/ribbon-current.md): Ordered stream ribbons bend through a narrow channel with moving seams and a protected reading area.
@@ -104,16 +118,19 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 ## Patterns
 
 - [Brick Lattice](https://picagram.dev/c/brick-lattice.md): A quiet masonry lattice with running or stacked courses drawn behind content.
+- [Cairo Pentagons](https://picagram.dev/c/cairo-pentagons.md): Exact interlocking Cairo pentagons form quiet one-pixel seams behind content, with adjustable scale, orientation, and opacity.
 - [Cell Mosaic](https://picagram.dev/c/cell-mosaic.md): A seeded field of even polygonal cells drawn as quiet hairlines behind page content.
 - [Checkerboard](https://picagram.dev/c/checkerboard.md): A quiet field of alternating ink and transparent squares drawn beneath page content.
 - [Circuit Traces](https://picagram.dev/c/circuit-traces.md): Seeded circuit traces follow an orthogonal grid with accent pads and optional via rings.
 - [Diagonal Stripes](https://picagram.dev/c/diagonal-stripes.md): Fine diagonal rules form a quiet drafting ground behind page content.
 - [Dot Lattice](https://picagram.dev/c/dot-lattice.md): A calm field of small ink points on a regular or staggered lattice behind page content.
+- [Dragon Fold](https://picagram.dev/c/dragon-fold.md): A deterministic paper-fold sequence draws one connected angular dragon path in quiet ink behind page-owned content.
 - [Grid Paper](https://picagram.dev/c/grid-paper.md): A quiet square mesh with darker major rules aligned to regular minor intervals.
 - [Hatch Lines](https://picagram.dev/c/hatch-lines.md): Fine crossing ink lines make a restrained engraved background for text.
 - [Hex Lattice](https://picagram.dev/c/hex-lattice.md): A regular hexagonal hairline lattice that sits quietly behind page content.
 - [Isometric Grid](https://picagram.dev/c/isometric-grid.md): A quiet isometric lattice of equilateral triangles that can resolve into staggered drafting points.
 - [Moire Rings](https://picagram.dev/c/moire-rings.md): Two concentric hairline ring fields drift out of step to form a quiet radial moire behind content.
+- [Penrose Tiles](https://picagram.dev/c/penrose-tiles.md): Golden-ratio substitution forms a bounded patch of thin and thick Penrose rhombi, drawn quietly behind page-owned content.
 - [Scallop Arches](https://picagram.dev/c/scallop-arches.md): Offset courses of nested open semicircle arches drawn as hairlines behind page content.
 - [Step Diagonals](https://picagram.dev/c/step-diagonals.md): Staircases of square steps cross the page as pixel grid diagonals with no oblique stroke.
 - [Triangular Mesh](https://picagram.dev/c/triangular-mesh.md): An irregular triangulated wireframe with a dot at every node and a few accent vertices behind content.
@@ -131,12 +148,17 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Ripple Field](https://picagram.dev/c/ripple-field.md): Rings spread from seeded drops on a still surface, dispersing as they travel and cancelling where they cross, dithered on the GPU.
 - [Scan Beam](https://picagram.dev/c/scan-beam.md): A radar plan position display whose accent beam sweeps hairline rings and spokes, lighting seeded echoes that decay in dithered steps.
 - [Shader Flow](https://picagram.dev/c/shader-flow.md): Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.
+- [Shadow Lattice](https://picagram.dev/c/shadow-lattice.md): A slowly moving grazing light casts coherent, dithered shadows through shallow crossed ribs, with a palette-based CSS fallback.
 - [Tunnel Grid](https://picagram.dev/c/tunnel-grid.md): A slow flight down a tunnel drawn as a hairline grid, mapped by angle and inverse distance into a receding texture.
 - [Voronoi Drift](https://picagram.dev/c/voronoi-drift.md): A plane divided into territories around slowly drifting sites, each cell a flat dithered accent tone behind a fg hairline.
 
 ## Motion
 
 - [Marquee](https://picagram.dev/c/marquee.md): Scrolls its children sideways in an endless loop, like a ticker.
+- [Pendulum Chain](https://picagram.dev/c/pendulum-chain.md): Linked glyph pendulums exchange motion slowly across fixed cells, with real coupling controlling phase and energy transfer.
+- [Scroll Ruler](https://picagram.dev/c/scroll-ruler.md): A measured local scroll ruler shows position and extent, with pixel or percent ticks and pointer and keyboard seeking.
+- [Split-Flap Display](https://picagram.dev/c/split-flap-display.md): A short label in aligned split-flap cells, where only the characters that changed turn through the drum to their new glyph.
+- [Spring Trace](https://picagram.dev/c/spring-trace.md): A damped spring approaches its target along a glyph trace, with analytic overshoot, continuous retargeting, and automatic settling.
 
 ## Data
 
@@ -144,16 +166,22 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Box Plot](https://picagram.dev/c/box-plot.md): The spread of several groups on one value axis, with quartile boxes, medians, whiskers, and outliers, as SVG or a glyph grid.
 - [Bullet Chart](https://picagram.dev/c/bullet-chart.md): Rows showing measures as bars over muted bands that give qualitative ranges, with targets marked as ticks.
 - [Candlestick Chart](https://picagram.dev/c/candlestick-chart.md): Price series drawn as hollow or filled candles, with high and low wicks, from RFC 3339 timestamps and OHLC data.
+- [Chord Diagram](https://picagram.dev/c/chord-diagram.md): A directed relationship matrix becomes a ring of proportional ribbons with direct endpoint labels, group selection, and an accessible numeric matrix.
+- [Dendrogram](https://picagram.dev/c/dendrogram.md): Merge distances set branch lengths in a selectable hierarchy with aligned leaves, horizontal or vertical layouts, and SVG or glyph rendering.
 - [Donut Chart](https://picagram.dev/c/donut-chart.md): Parts of a whole drawn as a ring, either as SVG segments or a monospace glyph grid, with a hidden data table.
+- [Fan Chart](https://picagram.dev/c/fan-chart.md): A central series and supplied uncertainty bounds form nested forecast envelopes in SVG or measured glyph density, with an accessible numeric table.
 - [Gauge Chart](https://picagram.dev/c/gauge-chart.md): One number against its range, drawn as an arc with threshold ticks and the value in the middle.
 - [Heatmap](https://picagram.dev/c/heatmap.md): A matrix of values displayed as tone-stepped cells with row and column labels and a stepped key.
+- [Horizon Chart](https://picagram.dev/c/horizon-chart.md): Signed series fold into compact density bands with a shared magnitude scale, negative slash hatching, and an accessible sample table.
 - [Kanban Board](https://picagram.dev/c/kanban-board.md): Columns of cards that move between columns by keyboard or by pointer drag.
 - [Line Chart](https://picagram.dev/c/line-chart.md): One or more series plotted as lines over a shared set of labels, in an svg or braille glyph look.
 - [Lollipop Chart](https://picagram.dev/c/lollipop-chart.md): Ranked horizontal rows, each a hairline stem to a dot at its value, as SVG or a glyph grid, with a hidden data table.
+- [Parallel Coordinate Plot](https://picagram.dev/c/parallel-coordinate-plot.md): Supplied records traverse normalized vertical axes with direct labels, selectable paths, missing-value gaps, and an accessible numeric table.
 - [Radar Chart](https://picagram.dev/c/radar-chart.md): Three to eight axes radiating from a centre with closed polygon series, drawn as SVG or a monospace glyph grid, with a hidden data table.
 - [Scatter Plot](https://picagram.dev/c/scatter-plot.md): Points from JSON on two linear axes, with highlighted points labeled directly beside them and an optional fit line.
 - [Slope Chart](https://picagram.dev/c/slope-chart.md): Two periods on two shared-scale axes with one straight line per item, labelled at both ends, in an svg or braille glyph look.
 - [Streamgraph](https://picagram.dev/c/streamgraph.md): A stacked area chart centred on a middle line, where each layer's thickness is its value, in an svg or braille glyph look.
+- [Ternary Plot](https://picagram.dev/c/ternary-plot.md): Three-part compositions normalized to a triangular chart, with directly labeled samples, keyboard selection, and an accessible table of weights and proportions.
 - [Timeline Chart](https://picagram.dev/c/timeline-chart.md): Rows of labeled spans and point events over one shared time axis, for a project plan or a chronology.
 - [Waterfall Chart](https://picagram.dev/c/waterfall-chart.md): A start value, signed changes floating between running totals, and an end total, with hairline connectors.
 
@@ -172,6 +200,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Combobox](https://picagram.dev/c/combobox.md): An editable field filters a listbox while preserving typed text during suggestion navigation.
 - [Command Palette](https://picagram.dev/c/command-palette.md): A modal command palette that filters a flat command list and supports keyboard and pointer selection.
 - [Context Menu](https://picagram.dev/c/context-menu.md): A framed content region with an accessible action menu at the pointer or keyboard anchor.
+- [Crop Window](https://picagram.dev/c/crop-window.md): Four pointer and keyboard edges constrain a normalized crop over child content, with optional pixel aspect ratio and coordinate events.
 - [Dialog](https://picagram.dev/c/dialog.md): A modal dialog on the native dialog element, with focus containment, Escape, and the top layer handled by the browser.
 - [Drawer](https://picagram.dev/c/drawer.md): A native modal panel pinned to the left, right, or bottom edge of the viewport.
 - [Empty State](https://picagram.dev/c/empty-state.md): A measured empty state with a box drawn mark, supporting copy, and one quiet action.
@@ -187,6 +216,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Preview Card](https://picagram.dev/c/preview-card.md): A link that reveals a compact reference preview after a short hover or when focused.
 - [Progress](https://picagram.dev/c/progress.md): A labelled determinate progress bar drawn as flat block cells with an exact accessible value.
 - [Radio Group](https://picagram.dev/c/radio-group.md): A single-choice group with square marks, roving focus, and selection that follows focus.
+- [Range Brush](https://picagram.dev/c/range-brush.md): A two-handle numeric interval brush with ordered, stepped pointer and keyboard input.
 - [Scroll Area](https://picagram.dev/c/scroll-area.md): A native scroll container with quiet edge rules and a position marker that leave content and keyboard behavior untouched.
 - [Segmented Control](https://picagram.dev/c/segmented-control.md): A single-choice radio group drawn as one ruled strip, with selection following keyboard focus.
 - [Select](https://picagram.dev/c/select.md): A single-choice select with a keyboard-driven listbox, styled after the WAI-ARIA select-only combobox pattern.
@@ -197,10 +227,12 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Table](https://picagram.dev/c/table.md): A semantic data table with tabular figures, quiet row rules, and optional three-state sorting.
 - [Tabs](https://picagram.dev/c/tabs.md): A tabbed view for switching between panels, with the active tab following keyboard focus.
 - [Textarea](https://picagram.dev/c/textarea.md): A labelled text field that grows with its content and reports every input.
+- [Timecode Editor](https://picagram.dev/c/timecode-editor.md): Four native inputs edit non-drop hours, minutes, seconds, and frames with frame-rate-aware carrying and keyboard stepping.
 - [Toast](https://picagram.dev/c/toast.md): A polite live stack of dismissible notices with pausable expiry and four corner positions.
 - [Toggle Group](https://picagram.dev/c/toggle-group.md): A toolbar of independent buttons that can each be pressed or released.
 - [Toolbar](https://picagram.dev/c/toolbar.md): A labeled band of action and toggle controls with roving keyboard focus.
 - [Tree View](https://picagram.dev/c/tree-view.md): A keyboard navigable hierarchical tree with internal expansion and controllable selection.
+- [XY pad](https://picagram.dev/c/xy-pad.md): A square two-axis pad with a crosshair, paired with numeric fields so both axes move by pointer and keyboard.
 
 ## Sections
 
@@ -273,13 +305,17 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 
 ## Immersive
 
-- [Archive aisle](https://picagram.dev/c/archive-aisle.md): A perspective archive aisle with collection records, access notes and a readable finding aid.
+- [Archive aisle](https://picagram.dev/c/archive-aisle.md): A one-point archive aisle on canvas whose camera walks to each collection's bay, with numbered markers, a register and a readable detail.
 - [City Grid](https://picagram.dev/c/city-grid.md): A seeded city of blocks on a street grid, seen from above at a fixed tilt and panning slowly past.
 - [Exhibit constellation](https://picagram.dev/c/exhibit-constellation.md): An open artefact board with thematic paths, connected objects and readable exhibition records.
+- [Folded Atlas](https://picagram.dev/c/folded-atlas.md): Supplied polygon panels form a connected accordion atlas with projected hinges, accessible panel buttons, and independent selected content.
+- [Geodesic Shell](https://picagram.dev/c/geodesic-shell.md): A subdivided icosahedral dome maps supplied panel records to selectable facets, with camera controls and accessible panel buttons.
 - [Globe](https://picagram.dev/c/globe.md): A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.
 - [Memory palace](https://picagram.dev/c/memory-palace.md): A museum room plan with spatial selection, object stories and a linear visiting register.
 - [Orbit View](https://picagram.dev/c/orbit-view.md): The Earth's limb seen from a spacecraft, with dotted land below the horizon and a stepped dithered atmosphere.
 - [Paper theatre](https://picagram.dev/c/paper-theatre.md): An original paper stage with an act program, chapter cues and company notes.
+- [Perspective Maze](https://picagram.dev/c/perspective-maze.md): A supplied wall grid becomes a perspective viewport with collision-safe navigation, native controls, and a text-map fallback.
+- [Strata Stack](https://picagram.dev/c/strata-stack.md): Supplied geological thicknesses form an exploded stack with adjustable gaps, three views, and accessible layer selection.
 - [Terrain Field](https://picagram.dev/c/terrain-field.md): A landscape of profile lines that drift toward the viewer, each ridge hiding the rows behind it.
 - [Watershed walk](https://picagram.dev/c/watershed-walk.md): A watershed section with connected field stations, supplied observations and a linear walking route.
 - [World Map](https://picagram.dev/c/world-map.md): A world map on the Equal Earth projection, its land an even grid of dots with named places marked.

@@ -2,6 +2,7 @@
 import type { RefObject } from "react";
 import {
   CATEGORY_TITLES,
+  catalogCategory,
   type CatalogItem,
   type Facet,
   type PaletteProp,
@@ -120,7 +121,7 @@ function Details({ p, item }: { p: InspectorProps; item: CatalogItem }) {
     <>
       <header className="inspector-head">
         <p className="label">
-          {CATEGORY_TITLES[item.category]} · {item.animated ? "animated" : "static"}
+          {CATEGORY_TITLES[catalogCategory(item)]} · {item.animated ? "animated" : "static"}
         </p>
         <h1 className="inspector-title">{item.title}</h1>
         <p className="inspector-desc">{item.description}</p>

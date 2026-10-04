@@ -51,8 +51,9 @@ async function animates(ctx: Ctx, props: Record<string, unknown>, shape: Shape):
     // slow machine. Each shot is clipped to the host, which keeps it quick.
     const clip = await clipOf(page, page.locator(READY).first());
     const shot = () => page.screenshot(clip ? { clip } : {});
-    const started = Date.now();
     const before = await shot();
+    // Initial capture latency cannot consume the window before any comparison is made.
+    const started = Date.now();
     let moved = 0;
     // changedPixels, not diffPixels: pixelmatch asks whether a person would notice a difference between two
     // frames, and at its 0.1 threshold a flat grey shift under 27 levels scores as identical. A field that

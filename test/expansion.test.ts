@@ -2,7 +2,8 @@ import { runInNewContext } from "node:vm";
 import { describe, expect, it } from "vitest";
 import { loadAll } from "../scripts/catalog";
 import { vanillaParts } from "../scripts/single-file";
-import { CURRENT_RELEASE, items, isNew, inRelease, readRelease, matches, type CatalogItem } from "../src/lib/catalog";
+import { CURRENT_RELEASE, items, isNew, inRelease, readRelease, matches, catalogCategory, groupByCategory, type CatalogItem } from "../src/lib/catalog";
+import { FULL_SITE_SLUGS } from "../lib/collection";
 
 const originals = await loadAll(["clay-hero", "glass-hero", "liquid-glass-hero", "ethereal-hero", "minimal-hero"]);
 
@@ -27,7 +28,7 @@ describe("standalone first mount", () => {
 });
 
 describe("release filters", () => {
-  const item: CatalogItem = { ...items[0]!, slug: "forum-rome", title: "Forum Rome", description: "Civic exhibition.", release: CURRENT_RELEASE, category: "sections", facets: ["static", "text"], tags: ["rome"] };
+  const item: CatalogItem = { ...items[0]!, slug: "test-section", title: "Forum Rome", description: "Civic exhibition.", release: CURRENT_RELEASE, category: "sections", facets: ["static", "text"], tags: ["rome"] };
   it("composes batch, search, facets and category", () => {
     expect(matches(item, "rome", ["text"], true, "sections")).toBe(true);
     expect(matches(item, "rome", [], true, "patterns")).toBe(false);
@@ -53,10 +54,27 @@ describe("release filters", () => {
   });
 });
 
+describe("full site collection", () => {
+  it("groups explicit complete pages while retaining source categories and stable release membership", () => {
+    const groups = groupByCategory(items);
+    expect(groups.find((group) => group.category === "full-sites")?.items).toHaveLength(45);
+    expect(new Set(FULL_SITE_SLUGS).size).toBe(45);
+    const page = items.find((item) => item.slug === "ascii-folio-ledger")!;
+    expect(page.category).toBe("ascii");
+    expect(catalogCategory(page)).toBe("full-sites");
+    expect(matches(page, "folio", [], true, "full-sites", "ascii-motion-2026-10-04")).toBe(true);
+    expect(matches(page, "", [], false, "ascii")).toBe(false);
+    for (const slug of ["ascii-process-map", "ascii-exhibition-map", "ascii-archive-tree", "ascii-image"]) {
+      expect(catalogCategory(items.find((item) => item.slug === slug)!)).toBe("ascii");
+    }
+    expect(items.filter((item) => item.release === "microsites-2026-10-04").every((item) => catalogCategory(item) === "full-sites")).toBe(true);
+  });
+});
+
 describe("ASCII and motion release inventory", () => {
   it("adds the exact distinct batch and retains the approved microsites", async () => {
     const entries = await loadAll();
-    const latest = entries.filter((entry) => entry.meta.release === CURRENT_RELEASE);
+    const latest = entries.filter((entry) => entry.meta.release === "ascii-motion-2026-10-04");
     expect(latest).toHaveLength(47);
     expect(new Set(latest.map((entry) => entry.meta.slug)).size).toBe(47);
     expect(latest.every((entry) => entry.meta.wave === 14)).toBe(true);
@@ -64,8 +82,8 @@ describe("ASCII and motion release inventory", () => {
     expect(latest.filter((entry) => entry.meta.category === "effects" && entry.meta.animated)).toHaveLength(23);
     expect(latest.filter((entry) => entry.meta.category === "immersive")).toHaveLength(5);
     expect(entries.filter((entry) => entry.meta.release === "microsites-2026-10-04")).toHaveLength(36);
-    expect(entries.filter((entry) => entry.meta.category === "ascii")).toHaveLength(30);
-    expect(entries.filter((entry) => entry.meta.category === "effects" && entry.meta.animated)).toHaveLength(30);
-    expect(entries.filter((entry) => entry.meta.category === "immersive")).toHaveLength(10);
+    expect(entries.filter((entry) => entry.meta.category === "ascii" && entry.meta.wave < 15)).toHaveLength(30);
+    expect(entries.filter((entry) => entry.meta.category === "effects" && entry.meta.animated && entry.meta.wave < 15)).toHaveLength(30);
+    expect(entries.filter((entry) => entry.meta.category === "immersive" && entry.meta.wave < 15)).toHaveLength(10);
   });
 });

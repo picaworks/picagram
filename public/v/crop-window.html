@@ -1,0 +1,467 @@
+<!doctype html>
+<!--
+  Pica · Crop Window · crop-window
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Crop Window · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaCropWindow = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/crop-window/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+
+  // registry/ui/crop-window/core.ts
+  var defaults = {
+    value: null,
+    defaultValue: { left: 0.16, top: 0.18, right: 0.84, bottom: 0.82 },
+    aspectRatio: null,
+    label: "Crop region"
+  };
+  var CROP_EDGES = ["left", "top", "right", "bottom"];
+  var CROP_MIN = 0.03;
+  function cropNumber(value, fallback) {
+    return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+  }
+  function cropClamp(value, low, high) {
+    return Math.min(high, Math.max(low, value));
+  }
+  function cropPart(tag, part) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute("data-part", part);
+    return node;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let alive = true;
+    let current = constrain(props.value ?? props.defaultValue);
+    let drag = null;
+    const attributes = hostAttributes(host);
+    attributes.set("data-pica-id", host.getAttribute("data-pica-id"));
+    const sheet = scope(host);
+    const restore = styleHost(host, {
+      ...getComputedStyle(host).position === "static" ? { position: "relative" } : {},
+      overflow: "hidden",
+      "background-color": cssVar("bg")
+    });
+    const emit = emitter(host);
+    const abort = new AbortController();
+    const on = { signal: abort.signal };
+    const root = cropPart("div", "crop-overlay");
+    const frame = cropPart("div", "crop-frame");
+    frame.setAttribute("aria-hidden", "true");
+    for (const part of ["third-x-1", "third-x-2", "third-y-1", "third-y-2"]) {
+      frame.append(cropPart("div", part));
+    }
+    root.append(frame);
+    const handles = CROP_EDGES.map((edge) => {
+      const handle = cropPart("button", `edge-${edge}`);
+      handle.type = "button";
+      handle.setAttribute("role", "slider");
+      handle.setAttribute("aria-orientation", edge === "left" || edge === "right" ? "horizontal" : "vertical");
+      handle.textContent = edge === "left" || edge === "right" ? "|" : "--";
+      root.append(handle);
+      return handle;
+    });
+    host.append(root);
+    const s = sheet.selector;
+    const p = (name) => `${s} [data-part="${name}"]`;
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    const bg = cssVar("bg");
+    sheet.setRules([
+      `${p("crop-overlay")}{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden}`,
+      `${p("crop-frame")}{position:absolute;box-sizing:border-box;border:1px solid ${fg};box-shadow:0 0 0 100vmax color-mix(in srgb,${fg} 13%,transparent);pointer-events:none}`,
+      `${p("crop-frame")} [data-part]{position:absolute;pointer-events:none;background:color-mix(in srgb,${fg} 24%,transparent)}`,
+      `${p("third-x-1")},${p("third-x-2")}{top:0;bottom:0;width:1px}`,
+      `${p("third-x-1")}{left:33.333333%}${p("third-x-2")}{left:66.666667%}`,
+      `${p("third-y-1")},${p("third-y-2")}{left:0;right:0;height:1px}`,
+      `${p("third-y-1")}{top:33.333333%}${p("third-y-2")}{top:66.666667%}`,
+      `${s} [data-part^="edge-"]{position:absolute;box-sizing:border-box;width:44px;height:44px;margin:0;padding:0;transform:translate(-50%,-50%);display:grid;place-items:center;pointer-events:auto;touch-action:none;user-select:none;border:0;border-radius:0;background:transparent;color:${fg};font:inherit;line-height:1;cursor:ew-resize}`,
+      `${s} [data-part^="edge-"]::before{content:"";position:absolute;inset:13px;border:2px solid ${accent};background:${bg};z-index:-1}`,
+      `${p("edge-top")},${p("edge-bottom")}{cursor:ns-resize}`,
+      `${s} [data-part^="edge-"]:hover::before,${s} [data-part^="edge-"][data-dragging="true"]::before{background:${accent}}`,
+      `${s} [data-part^="edge-"]:hover,${s} [data-part^="edge-"][data-dragging="true"]{color:${cssOn("accent")}}`,
+      `${s} [data-part^="edge-"]:focus-visible{outline:none}`,
+      `${s} [data-part^="edge-"]:focus-visible::before{outline:2px solid ${fg};outline-offset:3px}`
+    ].join("\n"));
+    function ratio() {
+      const raw = props.aspectRatio;
+      if (raw === null || !Number.isFinite(raw) || raw <= 0) return null;
+      return cropClamp(raw * Math.max(1, host.clientHeight) / Math.max(1, host.clientWidth), 1e-3, 1e3);
+    }
+    function constrain(raw) {
+      const fallback = defaults.defaultValue;
+      let left = cropClamp(cropNumber(raw?.left, fallback.left), 0, 1);
+      let right = cropClamp(cropNumber(raw?.right, fallback.right), 0, 1);
+      let top = cropClamp(cropNumber(raw?.top, fallback.top), 0, 1);
+      let bottom = cropClamp(cropNumber(raw?.bottom, fallback.bottom), 0, 1);
+      if (right < left) [left, right] = [right, left];
+      if (bottom < top) [top, bottom] = [bottom, top];
+      const r = ratio();
+      let width = Math.max(CROP_MIN, right - left);
+      let height = Math.max(CROP_MIN, bottom - top);
+      if (r !== null) {
+        const minWidth = CROP_MIN * Math.min(1, r);
+        width = cropClamp(Math.sqrt(width * height * r), minWidth, Math.min(1, r));
+        height = width / r;
+      }
+      const cx = cropClamp((left + right) / 2, width / 2, 1 - width / 2);
+      const cy = cropClamp((top + bottom) / 2, height / 2, 1 - height / 2);
+      return { left: cx - width / 2, top: cy - height / 2, right: cx + width / 2, bottom: cy + height / 2 };
+    }
+    function shown() {
+      return constrain(props.value ?? current);
+    }
+    function moveEdge(base, edge, position) {
+      const next = { ...base };
+      const r = ratio();
+      if (r === null) {
+        if (edge === "left") next.left = cropClamp(position, 0, base.right - CROP_MIN);
+        if (edge === "right") next.right = cropClamp(position, base.left + CROP_MIN, 1);
+        if (edge === "top") next.top = cropClamp(position, 0, base.bottom - CROP_MIN);
+        if (edge === "bottom") next.bottom = cropClamp(position, base.top + CROP_MIN, 1);
+        return next;
+      }
+      if (edge === "left" || edge === "right") {
+        const cy = (base.top + base.bottom) / 2;
+        const opposite = edge === "left" ? base.right : base.left;
+        const room = edge === "left" ? opposite : 1 - opposite;
+        const width = cropClamp(
+          Math.abs(opposite - cropClamp(position, edge === "left" ? 0 : opposite, edge === "left" ? opposite : 1)),
+          CROP_MIN * Math.min(1, r),
+          Math.min(room, 2 * Math.min(cy, 1 - cy) * r)
+        );
+        next.left = edge === "left" ? opposite - width : opposite;
+        next.right = edge === "left" ? opposite : opposite + width;
+        next.top = cy - width / r / 2;
+        next.bottom = cy + width / r / 2;
+      } else {
+        const cx = (base.left + base.right) / 2;
+        const opposite = edge === "top" ? base.bottom : base.top;
+        const room = edge === "top" ? opposite : 1 - opposite;
+        const height = cropClamp(
+          Math.abs(opposite - cropClamp(position, edge === "top" ? 0 : opposite, edge === "top" ? opposite : 1)),
+          CROP_MIN * Math.min(1, 1 / r),
+          Math.min(room, 2 * Math.min(cx, 1 - cx) / r)
+        );
+        next.top = edge === "top" ? opposite - height : opposite;
+        next.bottom = edge === "top" ? opposite : opposite + height;
+        next.left = cx - height * r / 2;
+        next.right = cx + height * r / 2;
+      }
+      return next;
+    }
+    function paint() {
+      if (!alive) return;
+      const rect = shown();
+      const label = String(props.label ?? "").trim();
+      attributes.set("role", "group");
+      attributes.set("aria-label", label || null);
+      attributes.set("aria-hidden", null);
+      const percent = (value) => `${value * 100}%`;
+      frame.style.left = percent(rect.left);
+      frame.style.top = percent(rect.top);
+      frame.style.width = percent(rect.right - rect.left);
+      frame.style.height = percent(rect.bottom - rect.top);
+      for (const [index, edge] of CROP_EDGES.entries()) {
+        const handle = handles[index];
+        const horizontal = edge === "left" || edge === "right";
+        handle.style.left = percent(horizontal ? rect[edge] : (rect.left + rect.right) / 2);
+        handle.style.top = percent(horizontal ? (rect.top + rect.bottom) / 2 : rect[edge]);
+        handle.setAttribute("aria-label", `${label || "Crop"} ${edge} edge`);
+        const min = moveEdge(rect, edge, 0)[edge];
+        const max = moveEdge(rect, edge, 1)[edge];
+        handle.setAttribute("aria-valuemin", (min * 100).toFixed(3));
+        handle.setAttribute("aria-valuemax", (max * 100).toFixed(3));
+        handle.setAttribute("aria-valuenow", (rect[edge] * 100).toFixed(3));
+        handle.setAttribute("aria-valuetext", `${(rect[edge] * 100).toFixed(1)} percent; crop ${(rect.right - rect.left) * 100 > 0 ? ((rect.right - rect.left) * 100).toFixed(1) : "0"} percent wide, ${((rect.bottom - rect.top) * 100).toFixed(1)} percent high`);
+      }
+      attributes.set("data-pica-ready", "true");
+    }
+    function choose(candidate) {
+      const next = Object.fromEntries(CROP_EDGES.map((edge) => [edge, Number(cropClamp(candidate[edge], 0, 1).toFixed(6))]));
+      const previous = shown();
+      const equal = CROP_EDGES.every((edge) => Math.abs(next[edge] - previous[edge]) < 5e-7);
+      if (equal) return;
+      if (props.value === null) current = next;
+      paint();
+      emit("valueChange", { ...next });
+    }
+    function endDrag() {
+      if (!drag) return;
+      const ended = drag;
+      drag = null;
+      ended.handle.removeAttribute("data-dragging");
+      if (ended.handle.hasPointerCapture(ended.pointer)) ended.handle.releasePointerCapture(ended.pointer);
+    }
+    for (const [index, edge] of CROP_EDGES.entries()) {
+      const handle = handles[index];
+      handle.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0 || drag) return;
+        event.preventDefault();
+        handle.focus({ preventScroll: true });
+        const box = host.getBoundingClientRect();
+        drag = {
+          edge,
+          pointer: event.pointerId,
+          x: event.clientX,
+          y: event.clientY,
+          width: Math.max(1, box.width),
+          height: Math.max(1, box.height),
+          start: shown(),
+          handle
+        };
+        handle.setAttribute("data-dragging", "true");
+        handle.setPointerCapture(event.pointerId);
+      }, on);
+      handle.addEventListener("pointermove", (event) => {
+        if (!drag || drag.pointer !== event.pointerId) return;
+        const horizontal = edge === "left" || edge === "right";
+        const delta = horizontal ? (event.clientX - drag.x) / drag.width : (event.clientY - drag.y) / drag.height;
+        choose(moveEdge(drag.start, edge, drag.start[edge] + delta));
+      }, on);
+      for (const name of ["pointerup", "pointercancel", "lostpointercapture"]) {
+        handle.addEventListener(name, (event) => {
+          if (drag?.pointer === event.pointerId) endDrag();
+        }, on);
+      }
+      handle.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && drag) {
+          event.preventDefault();
+          const start = drag.start;
+          endDrag();
+          choose(start);
+          return;
+        }
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        const horizontal = edge === "left" || edge === "right";
+        const positive = horizontal ? "ArrowRight" : "ArrowDown";
+        const negative = horizontal ? "ArrowLeft" : "ArrowUp";
+        const rect = shown();
+        let position;
+        if (event.key === "Home") position = 0;
+        else if (event.key === "End") position = 1;
+        else if (event.key === positive || event.key === "PageUp") position = rect[edge] + (event.shiftKey || event.key === "PageUp" ? 0.05 : 0.01);
+        else if (event.key === negative || event.key === "PageDown") position = rect[edge] - (event.shiftKey || event.key === "PageDown" ? 0.05 : 0.01);
+        else return;
+        event.preventDefault();
+        choose(moveEdge(rect, edge, position));
+      }, on);
+    }
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (!alive) return;
+      endDrag();
+      if (props.value === null) current = constrain(current);
+      paint();
+    }) : null;
+    observer?.observe(host);
+    paint();
+    return {
+      update(next) {
+        if (!alive) return;
+        const previous = shown();
+        const before = props;
+        props = { ...props, ...next };
+        const valueChanged = !sameJson(before.value, props.value);
+        const ratioChanged = before.aspectRatio !== props.aspectRatio;
+        if (valueChanged || ratioChanged) {
+          if (ratioChanged) endDrag();
+          current = constrain(props.value ?? previous);
+        }
+        if (valueChanged || ratioChanged || before.label !== props.label) paint();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        endDrag();
+        abort.abort();
+        observer?.disconnect();
+        root.remove();
+        sheet.destroy();
+        restore();
+        attributes.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaCropWindow.mount(host, take(initial));
+  ["valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!doctype html>
+<!--
+  Pica · Geodesic Shell · geodesic-shell
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Geodesic Shell · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaGeodesicShell = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/immersive/geodesic-shell/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  function cssOn(token) {
+    return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // registry/immersive/geodesic-shell/core.ts
+  var defaults = {
+    frequency: 3,
+    panels: [
+      { id: "panel-a", facet: 4, label: "Crown A", description: "Crown cladding panel" },
+      { id: "panel-b", facet: 13, label: "Crown B", description: "Second crown cladding panel" },
+      { id: "panel-c", facet: 22, label: "Crown C", description: "Third crown cladding panel" },
+      { id: "panel-d", facet: 31, label: "Crown D", description: "Fourth crown cladding panel" }
+    ],
+    value: null,
+    defaultValue: "panel-a",
+    view: { azimuth: 25, elevation: 28, zoom: 1 },
+    label: "Geodesic dome with selectable cladding panels"
+  };
+  function shellNumber(value, fallback, min, max) {
+    return Math.min(max, Math.max(min, Number.isFinite(value) ? value : fallback));
+  }
+  function shellNormalize(point) {
+    const length = Math.hypot(...point) || 1;
+    return [point[0] / length, point[1] / length, point[2] / length];
+  }
+  function shellCross(a, b) {
+    return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  }
+  function shellClip(triangle) {
+    const result = [];
+    triangle.forEach((point, index) => {
+      const prior = triangle[(index + 2) % 3];
+      if (!prior) return;
+      if (prior[1] >= 0 !== point[1] >= 0) {
+        const t = prior[1] / (prior[1] - point[1]);
+        result.push([prior[0] + (point[0] - prior[0]) * t, 0, prior[2] + (point[2] - prior[2]) * t]);
+      }
+      if (point[1] >= 0) result.push(point);
+    });
+    return result;
+  }
+  function shellMesh(frequency) {
+    const upper = [];
+    const lower = [];
+    const ringY = 1 / Math.sqrt(5);
+    const radius = 2 / Math.sqrt(5);
+    for (let index = 0; index < 5; index++) {
+      const angle = index * Math.PI * 2 / 5;
+      upper.push([radius * Math.cos(angle), ringY, radius * Math.sin(angle)]);
+      lower.push([radius * Math.cos(angle + Math.PI / 5), -ringY, radius * Math.sin(angle + Math.PI / 5)]);
+    }
+    const faces = [];
+    const north = [0, 1, 0];
+    const south = [0, -1, 0];
+    for (let index = 0; index < 5; index++) {
+      const a = upper[index], b = upper[(index + 1) % 5];
+      if (a && b) faces.push([north, a, b]);
+    }
+    for (let index = 0; index < 5; index++) {
+      const a = upper[index], b = upper[(index + 1) % 5], c = lower[index], d = lower[(index + 4) % 5];
+      if (a && b && c && d) {
+        faces.push([a, c, b]);
+        faces.push([a, d, c]);
+      }
+    }
+    for (let index = 0; index < 5; index++) {
+      const a = lower[index], b = lower[(index + 1) % 5];
+      if (a && b) faces.push([south, b, a]);
+    }
+    const facets = [];
+    for (const face of faces) {
+      const sample = (i, j) => {
+        const a = 1 - (i + j) / frequency, b = i / frequency, c = j / frequency;
+        return shellNormalize([face[0][0] * a + face[1][0] * b + face[2][0] * c, face[0][1] * a + face[1][1] * b + face[2][1] * c, face[0][2] * a + face[1][2] * b + face[2][2] * c]);
+      };
+      const add = (triangle) => {
+        const vertices = shellClip(triangle);
+        if (vertices.length < 3) return;
+        const [a, b, c] = triangle;
+        const rawNormal = shellCross([b[0] - a[0], b[1] - a[1], b[2] - a[2]], [c[0] - a[0], c[1] - a[1], c[2] - a[2]]);
+        const center = [vertices.reduce((sum, point) => sum + point[0], 0) / vertices.length, vertices.reduce((sum, point) => sum + point[1], 0) / vertices.length, vertices.reduce((sum, point) => sum + point[2], 0) / vertices.length];
+        if (center[1] < 1e-8) return;
+        const sign = rawNormal[0] * center[0] + rawNormal[1] * center[1] + rawNormal[2] * center[2] < 0 ? -1 : 1;
+        const normal = shellNormalize([rawNormal[0] * sign, rawNormal[1] * sign, rawNormal[2] * sign]);
+        facets.push({ vertices, normal, center });
+      };
+      for (let i = 0; i < frequency; i++) {
+        for (let j = 0; j < frequency - i; j++) {
+          add([sample(i, j), sample(i + 1, j), sample(i, j + 1)]);
+          if (i + j < frequency - 1) add([sample(i + 1, j), sample(i + 1, j + 1), sample(i, j + 1)]);
+        }
+      }
+    }
+    return facets;
+  }
+  function shellInside(points, x, y) {
+    let inside = false;
+    for (let index = 0, prior = points.length - 1; index < points.length; prior = index++) {
+      const a = points[index], b = points[prior];
+      if (!a || !b) continue;
+      if (a[1] > y !== b[1] > y && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) inside = !inside;
+    }
+    return inside;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let internalValue = props.defaultValue;
+    let alive = true;
+    let frequency = Math.round(shellNumber(props.frequency, 3, 1, 6));
+    let facets = shellMesh(frequency);
+    let records = [];
+    let projected = [];
+    const attrs = hostAttributes(host);
+    attrs.set("data-pica-id", host.getAttribute("data-pica-id"));
+    const sheet = scope(host);
+    const selector = sheet.selector;
+    const surface = createCanvas(host, { maxPixels: 4e6, css: "pointer-events:auto;cursor:crosshair", onResize: () => draw() });
+    const ctx = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => draw());
+    const emit = emitter(host);
+    const controls = document.createElement("div");
+    controls.setAttribute("data-pica", "");
+    controls.setAttribute("data-shell-controls", "");
+    controls.setAttribute("role", "group");
+    controls.setAttribute("aria-label", "Dome panels");
+    const status = document.createElement("span");
+    status.setAttribute("data-pica", "");
+    status.id = nextId("shell-status");
+    status.setAttribute("aria-live", "polite");
+    status.setAttribute("aria-atomic", "true");
+    status.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0";
+    host.append(controls, status);
+    sheet.setRules(`
+    ${selector} [data-shell-controls] { position:absolute; bottom:12px; left:12px; right:12px; display:flex; flex-wrap:wrap; justify-content:center; gap:6px; z-index:1; }
+    ${selector} [data-shell-panel] { appearance:none; border:1px solid ${cssVar("muted")}; padding:6px 9px; background:${cssVar("bg")}; color:${cssVar("fg")}; font:11px ${GRID_FONT}; border-radius:0; cursor:pointer; }
+    ${selector} [data-shell-panel][aria-pressed="true"] { border-color:${cssVar("accent")}; background:${cssVar("accent")}; color:${cssOn("accent")}; }
+    ${selector} [data-shell-panel]:focus-visible { outline:2px solid ${cssVar("fg")}; outline-offset:3px; }
+  `);
+    function selected() {
+      return props.value === null ? internalValue : props.value;
+    }
+    function synchronize() {
+      for (const button of controls.querySelectorAll("[data-shell-panel]")) button.setAttribute("aria-pressed", String(button.dataset.shellPanel === selected()));
+      const record = records.find((panel) => panel.id === selected());
+      status.textContent = record ? `${record.label}, facet ${record.facet}. ${record.description}` : "No panel selected. Choose a panel button or click its facet. Arrow keys move between panels.";
+    }
+    function accessibility() {
+      const label = props.label.trim();
+      attrs.set("role", label ? "group" : null);
+      attrs.set("aria-label", label || null);
+      attrs.set("aria-hidden", label ? null : "true");
+      attrs.set("aria-describedby", label ? status.id : null);
+    }
+    function rebuildControls() {
+      const focused = document.activeElement instanceof HTMLElement && controls.contains(document.activeElement) ? document.activeElement.dataset.shellPanel : void 0;
+      controls.replaceChildren();
+      records = [];
+      const ids = /* @__PURE__ */ new Set();
+      const occupied = /* @__PURE__ */ new Set();
+      for (const raw of Array.isArray(props.panels) ? props.panels : []) {
+        if (!raw || typeof raw.id !== "string" || !raw.id || ids.has(raw.id) || !Number.isInteger(raw.facet) || raw.facet < 0 || raw.facet >= facets.length || occupied.has(raw.facet)) continue;
+        ids.add(raw.id);
+        occupied.add(raw.facet);
+        const record = { id: raw.id, facet: raw.facet, label: typeof raw.label === "string" ? raw.label : raw.id, description: typeof raw.description === "string" ? raw.description : "" };
+        records.push(record);
+        const button = document.createElement("button");
+        button.setAttribute("data-pica", "");
+        button.setAttribute("data-shell-panel", record.id);
+        button.type = "button";
+        button.textContent = record.label || record.id;
+        button.setAttribute("aria-label", `${record.label || record.id}, facet ${record.facet}. ${record.description}`);
+        button.title = `${record.description || record.label} · facet ${record.facet}`;
+        controls.append(button);
+        if (record.id === focused) button.focus({ preventScroll: true });
+      }
+      synchronize();
+    }
+    function rotate(point) {
+      const azimuth = shellNumber(props.view.azimuth, 25, -360, 360) * Math.PI / 180;
+      const elevation = shellNumber(props.view.elevation, 28, 0, 85) * Math.PI / 180;
+      const x = point[0] * Math.cos(azimuth) + point[2] * Math.sin(azimuth);
+      const z = point[2] * Math.cos(azimuth) - point[0] * Math.sin(azimuth);
+      return [x, point[1] * Math.cos(elevation) - z * Math.sin(elevation), point[1] * Math.sin(elevation) + z * Math.cos(elevation)];
+    }
+    function draw() {
+      if (!alive) return;
+      if (!ctx) {
+        attrs.set("data-pica-ready", "true");
+        return;
+      }
+      const width = surface.cssWidth, height = surface.cssHeight;
+      const colors = palette.colors;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, surface.width, surface.height);
+      ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+      ctx.fillStyle = colors.bg;
+      ctx.fillRect(0, 0, width, height);
+      const rotated = facets.flatMap((facet) => facet.vertices.map(rotate));
+      const minX = Math.min(...rotated.map((point) => point[0])), maxX = Math.max(...rotated.map((point) => point[0]));
+      const minY = Math.min(...rotated.map((point) => point[1])), maxY = Math.max(...rotated.map((point) => point[1]));
+      const availableHeight = Math.max(1, height - controls.offsetHeight - 42);
+      const zoom = shellNumber(props.view.zoom, 1, 0.5, 1.5);
+      const scale = Math.max(1, Math.min(width * 0.86 / Math.max(0.01, maxX - minX), availableHeight * 0.88 / Math.max(0.01, maxY - minY))) * zoom;
+      const cx = width / 2, cy = availableHeight / 2 + 10;
+      const centerY = (minY + maxY) / 2;
+      const screen = (point) => {
+        const p = rotate(point);
+        return [cx + p[0] * scale, cy - (p[1] - centerY) * scale];
+      };
+      projected = facets.map((facet, index) => ({ index, points: facet.vertices.map(screen), depth: rotate(facet.center)[2], shade: rotate(facet.normal)[2] })).sort((a, b) => a.depth - b.depth);
+      const active = records.find((panel) => panel.id === selected());
+      const path = (points) => {
+        ctx.beginPath();
+        points.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point[0], point[1]);
+          else ctx.lineTo(point[0], point[1]);
+        });
+        ctx.closePath();
+      };
+      for (const facet of projected) {
+        const selectedFacet = active?.facet === facet.index;
+        path(facet.points);
+        ctx.fillStyle = selectedFacet ? colors.accent : colors.fg;
+        ctx.globalAlpha = selectedFacet ? 0.38 : facet.shade > 0 ? 0.035 + 0.105 * facet.shade : 0.015;
+        ctx.fill();
+        ctx.strokeStyle = selectedFacet ? colors.accent : facet.shade > 0 ? colors.fg : colors.muted;
+        ctx.globalAlpha = selectedFacet ? 1 : facet.shade > 0 ? 0.56 : 0.25;
+        ctx.lineWidth = selectedFacet ? 1.8 : 0.75;
+        ctx.stroke();
+      }
+      const rim = [];
+      for (let index = 0; index < 80; index++) {
+        const angle = index * Math.PI * 2 / 80;
+        rim.push(screen([Math.cos(angle), 0, Math.sin(angle)]));
+      }
+      path(rim);
+      ctx.globalAlpha = 0.65;
+      ctx.strokeStyle = colors.fg;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      if (active) {
+        const selectedFacet = projected.find((facet) => facet.index === active.facet);
+        if (selectedFacet) {
+          path(selectedFacet.points);
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = colors.accent;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+      synchronize();
+      attrs.set("data-pica-ready", "true");
+    }
+    function select(record) {
+      if (props.value === null) internalValue = record.id;
+      draw();
+      emit("valueChange", record.id);
+      emit("panelSelect", { ...record });
+    }
+    function buttonClick(event) {
+      const button = event.target instanceof Element ? event.target.closest("[data-shell-panel]") : null;
+      const record = records.find((panel) => panel.id === button?.dataset.shellPanel);
+      if (record) select(record);
+    }
+    function keyboard(event) {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (!target?.hasAttribute("data-shell-panel") || !records.length) return;
+      const current = records.findIndex((panel) => panel.id === target.dataset.shellPanel);
+      let index;
+      switch (event.key) {
+        case "ArrowRight":
+        case "ArrowDown":
+          index = (current + 1) % records.length;
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+          index = (current + records.length - 1) % records.length;
+          break;
+        case "Home":
+          index = 0;
+          break;
+        case "End":
+          index = records.length - 1;
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+      const record = records[index];
+      if (!record) return;
+      for (const button of controls.querySelectorAll("[data-shell-panel]")) if (button.dataset.shellPanel === record.id) button.focus({ preventScroll: true });
+      select(record);
+    }
+    function facetClick(event) {
+      const rect = surface.canvas.getBoundingClientRect();
+      const x = (event.clientX - rect.left) * surface.cssWidth / Math.max(1, rect.width);
+      const y = (event.clientY - rect.top) * surface.cssHeight / Math.max(1, rect.height);
+      const hit = [...projected].reverse().find((facet) => shellInside(facet.points, x, y));
+      const record = records.find((panel) => panel.facet === hit?.index);
+      if (record) select(record);
+    }
+    controls.addEventListener("click", buttonClick);
+    controls.addEventListener("keydown", keyboard);
+    surface.canvas.addEventListener("click", facetClick);
+    accessibility();
+    rebuildControls();
+    draw();
+    return {
+      update(next) {
+        if (!alive) return;
+        const before = props;
+        props = { ...props, ...next };
+        const nextFrequency = Math.round(shellNumber(props.frequency, 3, 1, 6));
+        const geometryChanged = nextFrequency !== frequency;
+        if (geometryChanged) {
+          frequency = nextFrequency;
+          facets = shellMesh(frequency);
+        }
+        if (geometryChanged || changed(before, props, ["panels"])) rebuildControls();
+        if (before.label !== props.label) accessibility();
+        palette.refresh();
+        draw();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        controls.removeEventListener("click", buttonClick);
+        controls.removeEventListener("keydown", keyboard);
+        surface.canvas.removeEventListener("click", facetClick);
+        palette.destroy();
+        surface.destroy();
+        controls.remove();
+        status.remove();
+        sheet.destroy();
+        attrs.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaGeodesicShell.mount(host, take(initial));
+  ["valueChange","panelSelect"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

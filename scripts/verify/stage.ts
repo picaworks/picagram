@@ -55,12 +55,12 @@ export interface Staged {
  *  one prop from its event (window.PICA_ECHO). */
 function harness(entry: Entry): string {
   const inline = entry.meta.stage === "inline";
-  return `import { createElement, useState, type ReactNode } from "react";
+  return `import { createElement, useEffect, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { ${entry.exportName} } from "./react";
 
 type Echo = { prop: string; event: string; mode: "echo" | "ignore" };
-const w = window as unknown as { PICA_PROPS?: Record<string, unknown>; PICA_CHILDREN?: string; PICA_ECHO?: Echo; PICA_LOG: unknown[] };
+const w = window as unknown as { PICA_PROPS?: Record<string, unknown>; PICA_CHILDREN?: string; PICA_ECHO?: Echo; PICA_ECHO_APPLIED?: unknown; PICA_LOG: unknown[] };
 const EVENTS: string[] = ${JSON.stringify(Object.keys(entry.events))};
 const DEMO = ${JSON.stringify(entry.meta.demo?.children ?? "")};
 
@@ -79,6 +79,7 @@ function App() {
   const initial = { ...${JSON.stringify(entry.meta.demo?.props ?? {}).replace(/</g, "\\u003c")}, ...(w.PICA_PROPS ?? {}) };
   const echo = w.PICA_ECHO;
   const [held, setHeld] = useState<unknown>(echo ? initial[echo.prop] : undefined);
+  useEffect(() => { if (echo) w.PICA_ECHO_APPLIED = held; }, [held]);
   const handlers: Record<string, (detail: unknown) => void> = {};
   for (const name of EVENTS) {
     handlers["on" + name.charAt(0).toUpperCase() + name.slice(1)] = (detail) => {

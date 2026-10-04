@@ -129,6 +129,138 @@
     "gzipBytes": 2986
   },
   {
+    "slug": "ascii-binary-tide",
+    "title": "ASCII Binary Tide",
+    "category": "ascii",
+    "description": "Slow analytic waves gather binary glyphs into broad density bands, with an optional clear center for reading content.",
+    "tags": [
+      "binary",
+      "waves",
+      "density",
+      "reading-zone",
+      "animated"
+    ],
+    "facets": [
+      "animated",
+      "background"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": false,
+    "wraps": "content",
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "chars": {
+        "type": "string"
+      },
+      "density": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.02
+      },
+      "wavelength": {
+        "type": "number",
+        "min": 8,
+        "max": 160,
+        "step": 2
+      },
+      "speed": {
+        "type": "number",
+        "min": -3,
+        "max": 3,
+        "step": 0.05
+      },
+      "readingZone": {
+        "type": "boolean"
+      },
+      "label": {
+        "type": "string"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 6,
+        "max": 32,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 2,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiBinaryTide",
+    "defaults": {
+      "chars": "01",
+      "density": 0.76,
+      "wavelength": 48,
+      "speed": 0.42,
+      "readingZone": false,
+      "label": "Binary tide",
+      "fontSize": 12,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.35,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "chars": "Printable ASCII glyphs, sorted by measured ink; empty input falls back to 01.",
+      "density": "Maximum occupied-cell density, from 0 to 1.",
+      "wavelength": "Distance between wave crests in cell-width units.",
+      "speed": "Wave travel speed in radians per second; negative values reverse the tide.",
+      "readingZone": "Clear the central 64% by 46% rectangle for optional reading content.",
+      "label": "Accessible name for the tide and its optional content.",
+      "fontSize": "Glyph size in CSS pixels.",
+      "fontFamily": "Monospace font-family stack for the grid.",
+      "lineHeight": "Cell height as a multiple of the glyph size.",
+      "fps": "Frames per second ceiling."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "chars": "string",
+      "density": "number",
+      "wavelength": "number",
+      "speed": "number",
+      "readingZone": "boolean",
+      "label": "string",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 4885
+  },
+  {
     "slug": "ascii-campus-directory",
     "title": "Campus directory",
     "category": "ascii",
@@ -187,6 +319,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "AsciiCampusDirectory",
     "defaults": {
       "title": "Northbank campus",
@@ -240,6 +373,97 @@
     },
     "events": {},
     "gzipBytes": 3447
+  },
+  {
+    "slug": "ascii-cellular-tape",
+    "title": "ASCII Cellular Tape",
+    "category": "ascii",
+    "description": "An elementary cellular automaton unfolds row by row into a numbered ASCII tape, with its rule table and current generation always visible.",
+    "tags": [
+      "cellular-automaton",
+      "rule-tape",
+      "generative",
+      "ascii",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "capture": 2400,
+    "controls": {
+      "rule": {
+        "type": "number",
+        "min": 0,
+        "max": 255,
+        "step": 1
+      },
+      "columns": {
+        "type": "number",
+        "min": 15,
+        "max": 121,
+        "step": 1
+      },
+      "generations": {
+        "type": "number",
+        "min": 8,
+        "max": 80,
+        "step": 1
+      },
+      "initialCells": {
+        "type": "string"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiCellularTape",
+    "defaults": {
+      "rule": 110,
+      "columns": 61,
+      "generations": 32,
+      "initialCells": "",
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "rule": "Elementary cellular automaton rule, from 0 to 255.",
+      "columns": "Number of cells in each generation, from 15 to 121.",
+      "generations": "Number of generations on the tape, including the initial row, from 8 to 80.",
+      "initialCells": "Centered initial binary pattern; an empty string creates a sparse pattern from seed."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "rule": "number",
+      "columns": "number",
+      "generations": "number",
+      "initialCells": "string"
+    },
+    "events": {},
+    "gzipBytes": 3591
   },
   {
     "slug": "ascii-circuit-board",
@@ -563,12 +787,13 @@
     "slug": "ascii-exhibition-map",
     "title": "ASCII Exhibition Map",
     "category": "ascii",
-    "description": "An exhibition guide with an aligned character floor plan, numbered room selection, practical access notes and a linear visiting route.",
+    "description": "A floor plan drawn in box-drawing glyphs from room rectangles and doors, with a route-ordered room list that selects and fills one room.",
     "tags": [
       "ascii",
-      "page",
-      "layout",
-      "exhibition-map"
+      "floor plan",
+      "map",
+      "box drawing",
+      "selection"
     ],
     "facets": [
       "static",
@@ -582,16 +807,18 @@
     "stage": "flow",
     "palette": [
       "fg",
-      "bg",
-      "accent",
-      "muted"
+      "muted",
+      "accent"
     ],
+    "controlled": {
+      "value": "valueChange"
+    },
     "controls": {
       "label": {
         "type": "string"
       },
-      "title": {
-        "type": "string"
+      "plan": {
+        "type": "json"
       },
       "rooms": {
         "type": "json"
@@ -603,18 +830,24 @@
       [
         {
           "step": "click",
-          "selector": "button:nth-child(2)"
+          "selector": "[data-part=rooms] li:nth-child(2) button"
         },
         {
           "step": "expectEvent",
-          "name": "selectionChange",
+          "name": "valueChange",
           "detail": 1
         },
         {
           "step": "expectAttr",
-          "selector": "button:nth-child(2)",
+          "selector": "[data-part=rooms] li:nth-child(2) button",
           "name": "aria-pressed",
           "value": "true"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=plan]",
+          "name": "data-selected",
+          "value": "1"
         }
       ],
       [
@@ -624,7 +857,7 @@
         },
         {
           "step": "expectFocus",
-          "selector": "button"
+          "selector": "[data-part=rooms] button"
         },
         {
           "step": "press",
@@ -632,59 +865,157 @@
         },
         {
           "step": "expectEvent",
-          "name": "selectionChange",
+          "name": "valueChange",
           "detail": 0
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-room=\"2\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 2
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=plan]",
+          "name": "data-selected",
+          "value": "2"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=rooms] li:nth-child(3) button",
+          "name": "aria-pressed",
+          "value": "true"
         }
       ]
     ],
     "exportName": "AsciiExhibitionMap",
     "defaults": {
-      "label": "The Holding Room / Exhibition guide",
-      "title": "Objects that remember work",
+      "label": "Ground floor plan",
+      "plan": {
+        "cols": 16,
+        "rows": 11
+      },
       "rooms": [
         {
-          "name": "01 / Measure",
+          "name": "Entrance",
+          "subject": "Desk, lockers and the start of the route",
+          "note": "Pick up a printed plan at the desk. Lockers sit beside the street door, and the route begins through the opening in the north wall.",
+          "access": "Level street entrance / Seats at the desk",
+          "x": 0,
+          "y": 7,
+          "w": 11,
+          "h": 4,
+          "doors": [
+            {
+              "side": "s",
+              "at": 5
+            },
+            {
+              "side": "n",
+              "at": 2
+            }
+          ]
+        },
+        {
+          "name": "Measure",
           "subject": "Tools for agreeing on a length",
           "note": "A folded ruler, a marked string and a workshop gauge show three ways of making a measurement repeatable. Read the wear marks beside the numbered divisions.",
-          "access": "Level access / Seating by the east wall"
+          "access": "Level access / Seating by the east wall",
+          "x": 0,
+          "y": 0,
+          "w": 5,
+          "h": 7,
+          "doors": [
+            {
+              "side": "e",
+              "at": 3
+            }
+          ]
         },
         {
-          "name": "02 / Mend",
+          "name": "Mend",
           "subject": "Repair as a visible record",
           "note": "Patched cloth and a joined ceramic bowl preserve the decision to keep an object in use. A handling sample lets visitors feel the seam without touching the exhibited pieces.",
-          "access": "Level access / Handling sample at seated height"
+          "access": "Level access / Seated handling sample",
+          "x": 5,
+          "y": 0,
+          "w": 6,
+          "h": 7,
+          "doors": [
+            {
+              "side": "e",
+              "at": 2
+            }
+          ]
         },
         {
-          "name": "03 / Carry",
+          "name": "Carry",
           "subject": "The shape of a daily journey",
           "note": "A market basket, a tool roll and a parcel wrapper are arranged around the routes they served. Each label traces a repeated trip from the maker to the place of use.",
-          "access": "Level access / Large print labels at the entry"
+          "access": "Level access / Large print labels",
+          "x": 11,
+          "y": 0,
+          "w": 5,
+          "h": 6,
+          "doors": [
+            {
+              "side": "s",
+              "at": 2
+            }
+          ]
+        },
+        {
+          "name": "Keep",
+          "subject": "Where each tool waits between jobs",
+          "note": "Shadow boards, labelled drawers and a mended tool chest show how a workshop keeps its things in order. The last opening leads back to the entrance.",
+          "access": "Level access / Drawers at seated height",
+          "x": 11,
+          "y": 6,
+          "w": 5,
+          "h": 5,
+          "doors": [
+            {
+              "side": "w",
+              "at": 2
+            }
+          ]
         }
-      ]
+      ],
+      "value": null,
+      "defaultValue": 0
     },
     "docs": {
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "label": "The exhibition name.",
-      "title": "The exhibition headline.",
-      "rooms": "Numbered rooms and their program details."
+      "label": "Names the region and prints as the plan's caption. Empty leaves no caption and no role.",
+      "plan": "The plan's size in plan units. It grows to hold every room.",
+      "rooms": "The rooms in route order, numbered from 01. Rooms that touch share one wall, and a door cuts it for both.",
+      "value": "The selected room's index while controlled, or null to let the component keep its own selection.",
+      "defaultValue": "The room selected at mount while uncontrolled, or -1 for none."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
       "label": "string",
-      "title": "string",
-      "rooms": "readonly { name: string; subject: string; note: string; access: string }[]"
+      "plan": "{ cols: number; rows: number }",
+      "rooms": "readonly AsciiExhibitionMapRoom[]",
+      "value": "number | null",
+      "defaultValue": "number"
     },
     "events": {
-      "selectionChange": {
-        "doc": "The selected record index after a visitor chooses a record.",
+      "valueChange": {
+        "doc": "The index of the room a visitor chose, from its button or from the plan.",
         "detail": "number"
       }
     },
-    "gzipBytes": 4002
+    "gzipBytes": 5558
   },
   {
     "slug": "ascii-expedition-log",
@@ -752,6 +1083,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "AsciiExpeditionLog",
     "defaults": {
       "title": "Across the upper basin",
@@ -877,6 +1209,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "AsciiFolioLedger",
     "defaults": {
       "label": "Mara Sen / Independent design",
@@ -929,6 +1262,106 @@
     },
     "events": {},
     "gzipBytes": 3733
+  },
+  {
+    "slug": "ascii-fretboard",
+    "title": "ASCII Fretboard",
+    "category": "ascii",
+    "description": "A monospace fretboard maps MIDI string tuning and root-relative scale intervals to real pitches, marking roots with brackets.",
+    "tags": [
+      "music",
+      "pitch",
+      "scale",
+      "guitar",
+      "fretboard"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "chart"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg",
+      "muted"
+    ],
+    "controls": {
+      "tuning": {
+        "type": "numbers",
+        "label": "Open pitches (MIDI, top to bottom)"
+      },
+      "frets": {
+        "type": "number",
+        "min": 1,
+        "max": 24,
+        "step": 1
+      },
+      "intervals": {
+        "type": "numbers",
+        "label": "Scale intervals (semitones)"
+      },
+      "root": {
+        "type": "number",
+        "min": 0,
+        "max": 11,
+        "step": 1,
+        "label": "Root (C = 0)"
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiFretboard",
+    "defaults": {
+      "tuning": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "frets": 12,
+      "intervals": [
+        0,
+        2,
+        4,
+        5,
+        7,
+        9,
+        11
+      ],
+      "root": 0,
+      "label": "Fretboard"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "tuning": "Open-string MIDI pitches, in display order from top to bottom; at most 12 strings.",
+      "frets": "Last fret displayed, from 1 to 24; fret zero is always included.",
+      "intervals": "Scale intervals in semitones relative to root; values wrap into one octave.",
+      "root": "Root pitch class, with C = 0, C sharp = 1, through B = 11; values wrap.",
+      "label": "Accessible name; an empty name hides the diagram from assistive technology."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "tuning": "number[]",
+      "frets": "number",
+      "intervals": "number[]",
+      "root": "number",
+      "label": "string"
+    },
+    "events": {},
+    "gzipBytes": 2427
   },
   {
     "slug": "ascii-garden-plan",
@@ -1488,6 +1921,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "AsciiLibraryCatalog",
     "defaults": {
       "label": "Shelf 04 / A small reading collection",
@@ -1539,6 +1973,365 @@
       }
     },
     "gzipBytes": 3907
+  },
+  {
+    "slug": "ascii-lissajous-scope",
+    "title": "ASCII Lissajous Scope",
+    "category": "ascii",
+    "description": "Two oscillator harmonics form a measured glyph trace with equal amplitude scales, a fading persistence trail, and labeled X-phase landmarks.",
+    "tags": [
+      "lissajous",
+      "oscilloscope",
+      "signal",
+      "phase",
+      "glyph-grid",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg",
+      "muted",
+      "accent"
+    ],
+    "capture": 2400,
+    "controls": {
+      "frequencyX": {
+        "type": "number",
+        "min": 1,
+        "max": 9,
+        "step": 1
+      },
+      "frequencyY": {
+        "type": "number",
+        "min": 1,
+        "max": 9,
+        "step": 1
+      },
+      "phase": {
+        "type": "number",
+        "min": -180,
+        "max": 180,
+        "step": 5
+      },
+      "persistence": {
+        "type": "number",
+        "min": 0,
+        "max": 12,
+        "step": 0.25
+      },
+      "label": {
+        "type": "string"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 6,
+        "max": 28,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiLissajousScope",
+    "defaults": {
+      "frequencyX": 3,
+      "frequencyY": 2,
+      "phase": 90,
+      "persistence": 4.5,
+      "label": "Lissajous signal scope",
+      "fontSize": 12,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.35,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "frequencyX": "Whole-number X oscillator harmonic, from 1 to 9; the two harmonics define the ratio.",
+      "frequencyY": "Whole-number Y oscillator harmonic, from 1 to 9; the two harmonics define the ratio.",
+      "phase": "X input phase offset in degrees; positive values lead the Y input.",
+      "persistence": "Length of the bright measured trail in seconds, from 0 to 12.",
+      "label": "Accessible scope name; an empty label hides the scope from assistive technology.",
+      "fontSize": "Monospace glyph size in CSS pixels.",
+      "fontFamily": "Monospace font-family stack used for trace and measurements.",
+      "lineHeight": "Cell height as a multiple of the glyph size.",
+      "fps": "Animation frame-rate ceiling, from 1 to 30."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "frequencyX": "number",
+      "frequencyY": "number",
+      "phase": "number",
+      "persistence": "number",
+      "label": "string",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5748
+  },
+  {
+    "slug": "ascii-loom-draft",
+    "title": "Loom draft",
+    "category": "ascii",
+    "description": "A weaving draft in glyphs, where toggling a tie-up cell redraws the crossings of its woven repeat.",
+    "tags": [
+      "weaving",
+      "draft",
+      "tie-up",
+      "drawdown",
+      "editable grid",
+      "twill"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "controls": {
+      "label": {
+        "type": "string",
+        "label": "Label"
+      },
+      "draft": {
+        "type": "json",
+        "label": "Threading and treadling"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "palette": [
+      "fg",
+      "muted",
+      "accent"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-cell='4,1']"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-cell='3,1']"
+        },
+        {
+          "step": "press",
+          "key": "Space"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            "1001",
+            "1100",
+            "1110",
+            "0011"
+          ]
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-cell='3,1']",
+          "name": "aria-pressed",
+          "value": "true"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part='cells']",
+          "name": "data-weave",
+          "value": "11101110/01100110/00110011/10011001/11101110/01100110/00110011/10011001"
+        }
+      ],
+      [
+        {
+          "step": "expectAttr",
+          "selector": "[data-part='cells']",
+          "name": "data-weave",
+          "value": "11001100/01100110/00110011/10011001/11001100/01100110/00110011/10011001"
+        },
+        {
+          "step": "click",
+          "selector": "[data-cell='1,1']"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            "0001",
+            "1100",
+            "0110",
+            "0011"
+          ]
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-cell='1,1']",
+          "name": "aria-pressed",
+          "value": "false"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part='cells']",
+          "name": "data-weave",
+          "value": "01000100/01100110/00110011/10011001/01000100/01100110/00110011/10011001"
+        },
+        {
+          "step": "click",
+          "selector": "[data-cell='1,1']"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            "1001",
+            "1100",
+            "0110",
+            "0011"
+          ]
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-cell='1,1']",
+          "name": "aria-pressed",
+          "value": "true"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part='cells']",
+          "name": "data-weave",
+          "value": "11001100/01100110/00110011/10011001/11001100/01100110/00110011/10011001"
+        }
+      ]
+    ],
+    "demo": {
+      "props": {
+        "label": "Straight twill draft",
+        "draft": {
+          "threading": [
+            1,
+            2,
+            3,
+            4,
+            1,
+            2,
+            3,
+            4
+          ],
+          "treadling": [
+            1,
+            2,
+            3,
+            4,
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      }
+    },
+    "exportName": "AsciiLoomDraft",
+    "defaults": {
+      "label": "Weaving draft",
+      "draft": {
+        "threading": [
+          1,
+          2,
+          3,
+          4,
+          4,
+          3,
+          2,
+          1
+        ],
+        "treadling": [
+          1,
+          2,
+          3,
+          4,
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      "value": null,
+      "defaultValue": [
+        "1001",
+        "1100",
+        "0110",
+        "0011"
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "Names the draft for assistive technology. Empty leaves the group unnamed.",
+      "draft": "The shaft each warp thread passes through, left to right, and the treadle each weft pick presses, top to bottom. Both count from 1 and run to 16 long.",
+      "value": "The tie-up: one string per shaft, starting at shaft 1, with a 1 wherever a treadle lifts that shaft. Up to 8 by 8. Null leaves it uncontrolled, so it keeps its own edits.",
+      "defaultValue": "The tie-up at mount, read once, while value is null."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "draft": "{ threading: number[]; treadling: number[] }",
+      "value": "string[] | null",
+      "defaultValue": "string[]"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The whole tie-up after a cell is toggled, from its button.",
+        "detail": "string[]"
+      }
+    },
+    "gzipBytes": 4516
   },
   {
     "slug": "ascii-morph",
@@ -1896,6 +2689,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "AsciiObservatoryConsole",
     "defaults": {
       "label": "North Ridge / Community observatory",
@@ -2099,6 +2893,227 @@
       }
     },
     "gzipBytes": 3110
+  },
+  {
+    "slug": "ascii-piano-roll",
+    "title": "ASCII Piano Roll",
+    "category": "ascii",
+    "description": "Supplied notes align by pitch and beat on a monospace grid, with duration-sized bars and accessible controlled selection.",
+    "tags": [
+      "music",
+      "notes",
+      "piano-roll",
+      "selection",
+      "glyph-grid"
+    ],
+    "facets": [
+      "static",
+      "interactive",
+      "chart"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg",
+      "muted",
+      "accent"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "controls": {
+      "notes": {
+        "type": "json"
+      },
+      "beats": {
+        "type": "number",
+        "min": 1,
+        "max": 32,
+        "step": 1
+      },
+      "pitches": {
+        "type": "json"
+      },
+      "defaultValue": {
+        "type": "string"
+      },
+      "cellsPerBeat": {
+        "type": "number",
+        "min": 2,
+        "max": 12,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 10,
+        "max": 24,
+        "step": 1
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-note-id='lead-2']"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "lead-2"
+        },
+        {
+          "step": "expectEvent",
+          "name": "noteSelect",
+          "detail": {
+            "id": "lead-2",
+            "pitch": "A4",
+            "start": 1.5,
+            "duration": 0.5,
+            "index": 1
+          }
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-note-id='lead-2']",
+          "name": "aria-pressed",
+          "value": "true"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-note-id='lead-3']"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-note-id='lead-3']",
+          "name": "aria-pressed",
+          "value": "true"
+        }
+      ]
+    ],
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiPianoRoll",
+    "defaults": {
+      "notes": [
+        {
+          "id": "lead-1",
+          "pitch": "G4",
+          "start": 0,
+          "duration": 1.5
+        },
+        {
+          "id": "lead-2",
+          "pitch": "A4",
+          "start": 1.5,
+          "duration": 0.5
+        },
+        {
+          "id": "lead-3",
+          "pitch": "C5",
+          "start": 2,
+          "duration": 1
+        },
+        {
+          "id": "lead-4",
+          "pitch": "B4",
+          "start": 3,
+          "duration": 1
+        },
+        {
+          "id": "lead-5",
+          "pitch": "G4",
+          "start": 4,
+          "duration": 1.5
+        },
+        {
+          "id": "lead-6",
+          "pitch": "E4",
+          "start": 5.5,
+          "duration": 0.5
+        },
+        {
+          "id": "lead-7",
+          "pitch": "D4",
+          "start": 6,
+          "duration": 1
+        },
+        {
+          "id": "lead-8",
+          "pitch": "C4",
+          "start": 7,
+          "duration": 1
+        },
+        {
+          "id": "bass-1",
+          "pitch": "C4",
+          "start": 0,
+          "duration": 3
+        }
+      ],
+      "beats": 8,
+      "pitches": [
+        "C5",
+        "B4",
+        "A4",
+        "G4",
+        "F4",
+        "E4",
+        "D4",
+        "C4"
+      ],
+      "value": null,
+      "defaultValue": "lead-1",
+      "cellsPerBeat": 4,
+      "label": "Piano roll. Select a note to inspect its pitch, start, and duration.",
+      "fontSize": 14
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "notes": "Notes to draw; out-of-range notes are clipped and invalid notes are omitted.",
+      "beats": "Visible beat count, from 1 to 32.",
+      "pitches": "Pitch rows in display order, from top to bottom.",
+      "value": "Selected note ID; null enables internal selection. An empty string clears selection.",
+      "defaultValue": "Initial selected note ID, read once when mounting in uncontrolled mode.",
+      "cellsPerBeat": "Horizontal cells per beat, from 2 to 12; durations snap outward to cell boundaries.",
+      "label": "Accessible name for the roll; an empty name hides it from assistive technology.",
+      "fontSize": "Monospace glyph size in CSS pixels, from 10 to 24."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "notes": "AsciiPianoRollNote[]",
+      "beats": "number",
+      "pitches": "string[]",
+      "value": "string | null",
+      "defaultValue": "string",
+      "cellsPerBeat": "number",
+      "label": "string",
+      "fontSize": "number"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "Selected note ID, emitted only after pointer or keyboard input.",
+        "detail": "string"
+      },
+      "noteSelect": {
+        "doc": "The supplied note's musical values and original array index.",
+        "detail": "AsciiPianoRollNote & { index: number }"
+      }
+    },
+    "gzipBytes": 3624
   },
   {
     "slug": "ascii-pointer-ripple",
@@ -2320,6 +3335,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "AsciiPressWire",
     "defaults": {
       "label": "Common Ground Wire",
@@ -2368,11 +3384,13 @@
     "slug": "ascii-process-map",
     "title": "Process map",
     "category": "ascii",
-    "description": "A reusable character decision map with editable steps and native choices that update the route summary.",
+    "description": "A decision flow drawn in box-drawing characters, with native choices that trace the selected route.",
     "tags": [
-      "asset",
       "diagram",
-      "process"
+      "flowchart",
+      "process",
+      "decision",
+      "box-drawing"
     ],
     "facets": [
       "static",
@@ -2384,7 +3402,7 @@
     "animated": false,
     "decorative": false,
     "controls": {
-      "title": {
+      "label": {
         "type": "string"
       },
       "start": {
@@ -2401,36 +3419,85 @@
     "original": true,
     "palette": [
       "fg",
-      "bg",
-      "accent",
-      "muted"
+      "muted",
+      "accent"
     ],
     "stage": "flow",
+    "controlled": {
+      "value": "valueChange"
+    },
     "interactions": [
       [
         {
           "step": "click",
-          "selector": "button:nth-of-type(2)"
+          "selector": "[data-index='1']"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 1
         },
         {
           "step": "expectAttr",
-          "selector": "[data-route]",
-          "name": "data-route",
-          "value": "1"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "button:nth-of-type(2)",
+          "selector": "[data-index='1']",
           "name": "aria-pressed",
           "value": "true"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part='diagram']",
+          "name": "data-selected",
+          "value": "1"
+        }
+      ],
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-index='0']"
+        },
+        {
+          "step": "press",
+          "key": "Space"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 0
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-index='0']",
+          "name": "aria-pressed",
+          "value": "true"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-route-index='2']"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 2
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part='diagram']",
+          "name": "data-selected",
+          "value": "2"
         }
       ]
     ],
     "exportName": "AsciiProcessMap",
     "defaults": {
-      "title": "Document intake",
+      "label": "Document intake",
       "start": "Receive submission",
-      "decision": "Is the record complete?",
+      "decision": "Can it be reviewed?",
       "routes": [
         {
           "choice": "Ready for review",
@@ -2448,30 +3515,50 @@
             "Return to contributor",
             "Receive amended record"
           ],
-          "outcome": "The contributor supplies the missing information before review."
+          "outcome": "The amended record returns to intake."
+        },
+        {
+          "choice": "Out of scope",
+          "steps": [
+            "Record the reason",
+            "Refer to another archive",
+            "Close the submission"
+          ],
+          "outcome": "The contributor receives a referral."
         }
-      ]
+      ],
+      "value": null,
+      "defaultValue": 0
     },
     "docs": {
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "title": "The process title.",
-      "start": "The entry step.",
-      "decision": "The decision prompt.",
-      "routes": "Decision choices and the ordered steps for each branch."
+      "label": "Names the region and prints as the drawing's caption. Empty leaves out both the caption and the region role.",
+      "start": "The entry step, drawn in a light box above the decision. Empty leaves the box out.",
+      "decision": "The question the routes answer, drawn in a double box. Empty leaves the box out.",
+      "routes": "Each answer with its ordered steps and its outcome. At most four are drawn and listed.",
+      "value": "The selected route's index. Null leaves the component uncontrolled, so it keeps its own choice.",
+      "defaultValue": "The route selected at mount, read once, while value is null."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
-      "title": "string",
+      "label": "string",
       "start": "string",
       "decision": "string",
-      "routes": "{ choice: string; steps: string[]; outcome: string }[]"
+      "routes": "{ choice: string; steps: string[]; outcome: string }[]",
+      "value": "number | null",
+      "defaultValue": "number"
     },
-    "events": {},
-    "gzipBytes": 2887
+    "events": {
+      "valueChange": {
+        "doc": "The index of the route chosen, from its button or from its head box in the drawing.",
+        "detail": "number"
+      }
+    },
+    "gzipBytes": 4858
   },
   {
     "slug": "ascii-rain",
@@ -2675,6 +3762,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "AsciiReleaseRoom",
     "defaults": {
       "title": "Relay / release room",
@@ -3222,6 +4310,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "AsciiTerminalJournal",
     "defaults": {
       "label": "Margins / A journal of everyday systems",
@@ -3504,6 +4593,104 @@
     "gzipBytes": 4416
   },
   {
+    "slug": "ascii-tree-rings",
+    "title": "ASCII Tree Rings",
+    "category": "ascii",
+    "description": "Annual growth values determine the spacing of nested, irregular ASCII tree rings, with a selected year's band accented.",
+    "tags": [
+      "tree",
+      "rings",
+      "growth",
+      "cross-section",
+      "annual"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "growth": {
+        "type": "numbers",
+        "label": "Annual radial growth"
+      },
+      "years": {
+        "type": "numbers",
+        "label": "Calendar years"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
+      },
+      "selectedYear": {
+        "type": "number",
+        "min": 1000,
+        "max": 3000,
+        "step": 1,
+        "label": "Selected year"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "AsciiTreeRings",
+    "defaults": {
+      "growth": [
+        1.8,
+        2.6,
+        1.2,
+        3.4,
+        2.1,
+        0.9,
+        2.8,
+        1.5,
+        2.4,
+        1.7
+      ],
+      "years": [
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023
+      ],
+      "seed": 1,
+      "selectedYear": 2018
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Deterministic seed for the pith offset and irregular annual contours.",
+      "growth": "Annual radial growth, from the oldest central ring outward; nonpositive values add no width.",
+      "years": "Calendar year for each growth value; a missing year uses its one-based position.",
+      "selectedYear": "Calendar year whose annual band is accented; null leaves all rings in the foreground color."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "growth": "number[]",
+      "years": "number[]",
+      "selectedYear": "number | null"
+    },
+    "events": {},
+    "gzipBytes": 4278
+  },
+  {
     "slug": "ascii-video",
     "title": "ASCII Video",
     "category": "ascii",
@@ -3652,6 +4839,164 @@
     },
     "events": {},
     "gzipBytes": 5749
+  },
+  {
+    "slug": "ascii-wave-tank",
+    "title": "ASCII Wave Tank",
+    "category": "ascii",
+    "description": "A bounded shallow-water simulation uses measured ASCII density as timed impulses reflect from tank walls and supplied solid barriers.",
+    "tags": [
+      "waves",
+      "water",
+      "simulation",
+      "obstacles",
+      "reflections"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": false,
+    "original": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "capture": 1800,
+    "controls": {
+      "obstacles": {
+        "type": "json"
+      },
+      "impulses": {
+        "type": "json"
+      },
+      "damping": {
+        "type": "number",
+        "min": 0,
+        "max": 4,
+        "step": 0.05
+      },
+      "speed": {
+        "type": "number",
+        "min": 0.03,
+        "max": 0.4,
+        "step": 0.01
+      },
+      "chars": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 6,
+        "max": 32,
+        "step": 1
+      },
+      "lineHeight": {
+        "type": "number",
+        "min": 0.8,
+        "max": 2,
+        "step": 0.05
+      },
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 30,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "exportName": "AsciiWaveTank",
+    "defaults": {
+      "obstacles": [
+        {
+          "x": 0.55,
+          "y": 0.32,
+          "width": 0.055,
+          "height": 0.34
+        },
+        {
+          "x": 0.2,
+          "y": 0.73,
+          "width": 0.24,
+          "height": 0.045
+        }
+      ],
+      "impulses": [
+        {
+          "x": 0.17,
+          "y": 0.32,
+          "amplitude": 1.1,
+          "radius": 0.036,
+          "time": 0,
+          "repeat": 4800
+        },
+        {
+          "x": 0.83,
+          "y": 0.65,
+          "amplitude": -0.85,
+          "radius": 0.03,
+          "time": 620,
+          "repeat": 6100
+        }
+      ],
+      "damping": 0.48,
+      "speed": 0.26,
+      "chars": " .:-=+*#%@",
+      "label": "Shallow water waves reflecting from a bounded tank and solid barriers",
+      "fontSize": 12,
+      "fontFamily": "\"JetBrains Mono\", \"IBM Plex Mono\", ui-monospace, \"SFMono-Regular\", Menlo, monospace",
+      "lineHeight": 1.25,
+      "fps": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "obstacles": "Solid rectangular barriers in normalized interior coordinates.",
+      "impulses": "Gaussian disturbances; impulses inside a solid barrier are ignored.",
+      "damping": "Velocity damping per second, from 0 to 4; lower values preserve reflections.",
+      "speed": "Wave speed in tank widths per second, from 0.03 to 0.4.",
+      "chars": "Printable ASCII glyphs ordered by their measured ink coverage.",
+      "label": "Accessible description of the wave field; empty hides it from assistive technology.",
+      "fontSize": "Glyph size in CSS pixels.",
+      "fontFamily": "Monospace font-family stack for the grid.",
+      "lineHeight": "Cell height as a multiple of glyph size.",
+      "fps": "Frame rate ceiling, from 1 to 30."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "obstacles": "WaveTankObstacle[]",
+      "impulses": "WaveTankImpulse[]",
+      "damping": "number",
+      "speed": "number",
+      "chars": "string",
+      "label": "string",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "lineHeight": "number",
+      "fps": "number"
+    },
+    "events": {},
+    "gzipBytes": 5879
   },
   {
     "slug": "ascii-waves",
@@ -4030,6 +5375,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "AsciiWorkshopIndex",
     "defaults": {
       "label": "Open Bench / Wood & useful objects",
@@ -4900,6 +6246,366 @@
     "gzipBytes": 5867
   },
   {
+    "slug": "chord-diagram",
+    "title": "Chord Diagram",
+    "category": "data",
+    "description": "A directed relationship matrix becomes a ring of proportional ribbons with direct endpoint labels, group selection, and an accessible numeric matrix.",
+    "tags": [
+      "chord",
+      "matrix",
+      "relationships",
+      "ribbons",
+      "braille",
+      "svg",
+      "data table",
+      "keyboard"
+    ],
+    "facets": [
+      "static",
+      "chart",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "original": true,
+    "controls": {
+      "matrix": {
+        "type": "json",
+        "label": "Relationship matrix"
+      },
+      "labels": {
+        "type": "json",
+        "label": "Endpoint labels"
+      },
+      "label": {
+        "type": "string",
+        "label": "Accessible chart name"
+      },
+      "defaultValue": {
+        "type": "number",
+        "min": -1,
+        "max": 23,
+        "step": 1,
+        "label": "Initial selected group"
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "glyph",
+          "svg"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": ""
+        },
+        {
+          "step": "expectFocus",
+          "selector": ""
+        },
+        {
+          "step": "press",
+          "key": "Home"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 0
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 1
+        }
+      ]
+    ],
+    "credits": [],
+    "exportName": "ChordDiagram",
+    "defaults": {
+      "matrix": [
+        [
+          0,
+          24,
+          15,
+          7,
+          0
+        ],
+        [
+          10,
+          0,
+          36,
+          18,
+          4
+        ],
+        [
+          5,
+          12,
+          0,
+          44,
+          14
+        ],
+        [
+          3,
+          8,
+          20,
+          0,
+          32
+        ],
+        [
+          16,
+          0,
+          12,
+          9,
+          0
+        ]
+      ],
+      "labels": [
+        "RESEARCH",
+        "DESIGN",
+        "PRODUCT",
+        "BUILD",
+        "SUPPORT"
+      ],
+      "label": "Relationships between research, design, product, build, and support",
+      "value": null,
+      "defaultValue": 2,
+      "look": "glyph"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "matrix": "Directed square matrix: row sends to column. Up to 24 groups; missing, negative or nonfinite weights become zero.",
+      "labels": "Direct endpoint names in matrix order; missing names use the one-based group number.",
+      "label": "Accessible name for the diagram and the numeric matrix table.",
+      "value": "Selected zero-based group index. Null uses internal selection; -1 selects nothing.",
+      "defaultValue": "Initial group selection, read once on mount when value is null.",
+      "look": "Glyph renders the same ribbons as cell-aligned braille; SVG renders continuous ribbon boundaries."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "matrix": "number[][]",
+      "labels": "string[]",
+      "label": "string",
+      "value": "number | null",
+      "defaultValue": "number",
+      "look": "\"glyph\" | \"svg\""
+    },
+    "events": {
+      "valueChange": {
+        "doc": "Selected zero-based endpoint index, emitted only after user input.",
+        "detail": "number"
+      }
+    },
+    "gzipBytes": 7571
+  },
+  {
+    "slug": "dendrogram",
+    "title": "Dendrogram",
+    "category": "data",
+    "description": "Merge distances set branch lengths in a selectable hierarchy with aligned leaves, horizontal or vertical layouts, and SVG or glyph rendering.",
+    "tags": [
+      "hierarchy",
+      "cluster",
+      "distance",
+      "tree",
+      "glyph",
+      "svg",
+      "keyboard",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "tree": {
+        "type": "json"
+      },
+      "orientation": {
+        "type": "select",
+        "options": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      "defaultValue": {
+        "type": "string"
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "glyph",
+          "svg"
+        ]
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": ""
+        },
+        {
+          "step": "expectFocus",
+          "selector": ""
+        },
+        {
+          "step": "press",
+          "key": "Home"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "all"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "warm"
+        }
+      ]
+    ],
+    "credits": [],
+    "original": true,
+    "exportName": "Dendrogram",
+    "defaults": {
+      "tree": {
+        "id": "all",
+        "label": "All samples",
+        "distance": 12,
+        "children": [
+          {
+            "id": "warm",
+            "label": "Warm tones",
+            "distance": 5,
+            "children": [
+              {
+                "id": "amber",
+                "label": "Amber",
+                "distance": 0
+              },
+              {
+                "id": "ochre",
+                "label": "Ochre",
+                "distance": 0
+              },
+              {
+                "id": "ivory",
+                "label": "Ivory",
+                "distance": 0
+              }
+            ]
+          },
+          {
+            "id": "cool",
+            "label": "Cool tones",
+            "distance": 8,
+            "children": [
+              {
+                "id": "indigo",
+                "label": "Indigo",
+                "distance": 0
+              },
+              {
+                "id": "teal",
+                "label": "Green pair",
+                "distance": 2,
+                "children": [
+                  {
+                    "id": "cyan",
+                    "label": "Cyan",
+                    "distance": 0
+                  },
+                  {
+                    "id": "jade",
+                    "label": "Jade",
+                    "distance": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "orientation": "horizontal",
+      "value": null,
+      "defaultValue": "warm",
+      "look": "glyph",
+      "label": "Hierarchical sample distances"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "tree": "Hierarchical merge distances, with unique IDs; null or invalid data shows an empty state.",
+      "orientation": "Horizontal places leaves on the right; vertical places leaves below the root.",
+      "value": "Selected node ID; null uses internal selection, and an empty string selects nothing.",
+      "defaultValue": "Initial selected node ID, read once at mount.",
+      "look": "SVG uses exact distances; glyph quantizes the same geometry onto monospace cells.",
+      "label": "Accessible chart name; an empty name hides the chart from assistive technology."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "tree": "DendrogramNode | null",
+      "orientation": "\"horizontal\" | \"vertical\"",
+      "value": "string | null",
+      "defaultValue": "string",
+      "look": "\"glyph\" | \"svg\"",
+      "label": "string"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "Selected node ID, emitted only in response to pointer or keyboard input.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 5254
+  },
+  {
     "slug": "donut-chart",
     "title": "Donut Chart",
     "category": "data",
@@ -5025,6 +6731,208 @@
     },
     "events": {},
     "gzipBytes": 5242
+  },
+  {
+    "slug": "fan-chart",
+    "title": "Fan Chart",
+    "category": "data",
+    "description": "A central series and supplied uncertainty bounds form nested forecast envelopes in SVG or measured glyph density, with an accessible numeric table.",
+    "tags": [
+      "forecast",
+      "uncertainty",
+      "intervals",
+      "time-series",
+      "glyph-grid",
+      "svg",
+      "data-table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "original": true,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "series": {
+        "type": "json"
+      },
+      "intervals": {
+        "type": "json"
+      },
+      "labels": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "glyph",
+          "svg"
+        ]
+      }
+    },
+    "credits": [],
+    "exportName": "FanChart",
+    "defaults": {
+      "series": [
+        74,
+        76,
+        73,
+        78,
+        80,
+        83,
+        85,
+        88,
+        91,
+        94,
+        97,
+        100
+      ],
+      "intervals": [
+        {
+          "label": "50%",
+          "lower": [
+            null,
+            null,
+            null,
+            null,
+            80,
+            81,
+            82,
+            84,
+            86,
+            88,
+            90,
+            92
+          ],
+          "upper": [
+            null,
+            null,
+            null,
+            null,
+            80,
+            85,
+            88,
+            92,
+            96,
+            100,
+            104,
+            108
+          ]
+        },
+        {
+          "label": "80%",
+          "lower": [
+            null,
+            null,
+            null,
+            null,
+            80,
+            79,
+            79,
+            79,
+            80,
+            81,
+            82,
+            83
+          ],
+          "upper": [
+            null,
+            null,
+            null,
+            null,
+            80,
+            87,
+            91,
+            97,
+            102,
+            107,
+            112,
+            117
+          ]
+        },
+        {
+          "label": "95%",
+          "lower": [
+            null,
+            null,
+            null,
+            null,
+            80,
+            77,
+            75,
+            74,
+            73,
+            72,
+            71,
+            70
+          ],
+          "upper": [
+            null,
+            null,
+            null,
+            null,
+            80,
+            89,
+            95,
+            102,
+            109,
+            116,
+            123,
+            130
+          ]
+        }
+      ],
+      "labels": [
+        "Q1 '25",
+        "Q2 '25",
+        "Q3 '25",
+        "Q4 '25",
+        "Q1 '26",
+        "Q2 '26",
+        "Q3 '26",
+        "Q4 '26",
+        "Q1 '27",
+        "Q2 '27",
+        "Q3 '27",
+        "Q4 '27"
+      ],
+      "label": "Quarterly central forecast with supplied 50%, 80%, and 95% uncertainty bounds",
+      "look": "glyph"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "series": "Central values in time order; null leaves a gap rather than implying zero.",
+      "intervals": "Supplied uncertainty envelopes; reversed or nonfinite bound pairs are omitted.",
+      "labels": "Time labels aligned with the central series and bounds.",
+      "label": "Accessible chart name and numeric table caption; empty hides the chart.",
+      "look": "Glyph uses measured ink density; SVG draws exact piecewise-linear envelopes."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "series": "(number | null)[]",
+      "intervals": "FanChartInterval[]",
+      "labels": "string[]",
+      "label": "string",
+      "look": "\"glyph\" | \"svg\""
+    },
+    "events": {},
+    "gzipBytes": 7619
   },
   {
     "slug": "gauge-chart",
@@ -5369,6 +7277,212 @@
     },
     "events": {},
     "gzipBytes": 5464
+  },
+  {
+    "slug": "horizon-chart",
+    "title": "Horizon Chart",
+    "category": "data",
+    "description": "Signed series fold into compact density bands with a shared magnitude scale, negative slash hatching, and an accessible sample table.",
+    "tags": [
+      "horizon",
+      "signed",
+      "deviation",
+      "density",
+      "glyph grid",
+      "svg",
+      "data table"
+    ],
+    "facets": [
+      "static",
+      "chart"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg",
+      "muted"
+    ],
+    "controls": {
+      "series": {
+        "type": "json"
+      },
+      "baseline": {
+        "type": "number",
+        "min": -1000,
+        "max": 1000,
+        "step": 0.5
+      },
+      "bands": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1
+      },
+      "labels": {
+        "type": "json"
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "glyph",
+          "svg"
+        ]
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "HorizonChart",
+    "defaults": {
+      "series": [
+        {
+          "name": "North",
+          "values": [
+            0,
+            1,
+            3,
+            5,
+            7,
+            8,
+            6,
+            4,
+            1,
+            -2,
+            -4,
+            -6,
+            -7,
+            -5,
+            -3,
+            0,
+            2,
+            4,
+            6,
+            5,
+            3,
+            1,
+            -1,
+            -3
+          ]
+        },
+        {
+          "name": "Central",
+          "values": [
+            -3,
+            -4,
+            -2,
+            0,
+            2,
+            4,
+            3,
+            1,
+            -1,
+            -3,
+            -5,
+            -4,
+            -2,
+            1,
+            3,
+            5,
+            7,
+            6,
+            4,
+            2,
+            0,
+            -2,
+            -4,
+            -2
+          ]
+        },
+        {
+          "name": "South",
+          "values": [
+            4,
+            3,
+            1,
+            -2,
+            -4,
+            -6,
+            -8,
+            -7,
+            -5,
+            -2,
+            1,
+            3,
+            5,
+            4,
+            2,
+            0,
+            -1,
+            -3,
+            -4,
+            -2,
+            0,
+            2,
+            4,
+            5
+          ]
+        }
+      ],
+      "baseline": 0,
+      "bands": 4,
+      "labels": [
+        "00:00",
+        "01:00",
+        "02:00",
+        "03:00",
+        "04:00",
+        "05:00",
+        "06:00",
+        "07:00",
+        "08:00",
+        "09:00",
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00",
+        "14:00",
+        "15:00",
+        "16:00",
+        "17:00",
+        "18:00",
+        "19:00",
+        "20:00",
+        "21:00",
+        "22:00",
+        "23:00"
+      ],
+      "look": "glyph",
+      "label": "Hourly signed deviations by region"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "series": "Named equally spaced series; null or nonfinite values leave gaps instead of implying zero.",
+      "baseline": "Value from which every signed deviation is measured.",
+      "bands": "Number of magnitude bands folded into each row, from 2 to 6.",
+      "labels": "Shared sample labels in order; missing labels fall back to one-based sample numbers.",
+      "look": "Glyph uses measured ink density; SVG uses exact folded areas with stippled density.",
+      "label": "Accessible chart and data-table name; empty input hides the chart from assistive technology."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "series": "{ name: string; values: (number | null)[] }[]",
+      "baseline": "number",
+      "bands": "number",
+      "labels": "string[]",
+      "look": "\"glyph\" | \"svg\"",
+      "label": "string"
+    },
+    "events": {},
+    "gzipBytes": 6827
   },
   {
     "slug": "kanban-board",
@@ -5838,6 +7952,215 @@
     },
     "events": {},
     "gzipBytes": 5770
+  },
+  {
+    "slug": "parallel-coordinate-plot",
+    "title": "Parallel Coordinate Plot",
+    "category": "data",
+    "description": "Supplied records traverse normalized vertical axes with direct labels, selectable paths, missing-value gaps, and an accessible numeric table.",
+    "tags": [
+      "parallel coordinates",
+      "multivariate",
+      "comparison",
+      "selection",
+      "glyph grid",
+      "svg",
+      "data table",
+      "keyboard"
+    ],
+    "facets": [
+      "static",
+      "chart",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "original": true,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "controls": {
+      "axes": {
+        "type": "json"
+      },
+      "records": {
+        "type": "json"
+      },
+      "defaultValue": {
+        "type": "string"
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "glyph",
+          "svg"
+        ]
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": ""
+        },
+        {
+          "step": "expectFocus",
+          "selector": ""
+        },
+        {
+          "step": "press",
+          "key": "Home"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "aster"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "birch"
+        }
+      ]
+    ],
+    "credits": [],
+    "exportName": "ParallelCoordinatePlot",
+    "defaults": {
+      "axes": [
+        {
+          "key": "output",
+          "label": "OUTPUT",
+          "min": 0,
+          "max": 100,
+          "unit": "",
+          "invert": false
+        },
+        {
+          "key": "efficiency",
+          "label": "EFFICIENCY",
+          "min": 0,
+          "max": 100,
+          "unit": "%",
+          "invert": false
+        },
+        {
+          "key": "mass",
+          "label": "MASS",
+          "min": 0,
+          "max": 5,
+          "unit": " kg",
+          "invert": true
+        },
+        {
+          "key": "cost",
+          "label": "COST",
+          "min": 0,
+          "max": 1000,
+          "unit": "",
+          "invert": true
+        }
+      ],
+      "records": [
+        {
+          "id": "aster",
+          "label": "Aster",
+          "values": {
+            "output": 88,
+            "efficiency": 64,
+            "mass": 4.1,
+            "cost": 760
+          }
+        },
+        {
+          "id": "birch",
+          "label": "Birch",
+          "values": {
+            "output": 54,
+            "efficiency": 91,
+            "mass": 1.2,
+            "cost": 410
+          }
+        },
+        {
+          "id": "cedar",
+          "label": "Cedar",
+          "values": {
+            "output": 72,
+            "efficiency": 82,
+            "mass": 2.3,
+            "cost": 570
+          }
+        },
+        {
+          "id": "delta",
+          "label": "Delta",
+          "values": {
+            "output": 96,
+            "efficiency": 52,
+            "mass": 3.6,
+            "cost": 920
+          }
+        },
+        {
+          "id": "elm",
+          "label": "Elm",
+          "values": {
+            "output": 42,
+            "efficiency": 76,
+            "mass": 0.8,
+            "cost": 230
+          }
+        }
+      ],
+      "value": null,
+      "defaultValue": "cedar",
+      "look": "glyph",
+      "label": "Parallel coordinate comparison of output, efficiency, mass, and cost"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "axes": "Ordered numeric dimensions with independent domains; at least two axes reveal comparisons.",
+      "records": "Supplied records; duplicate IDs and records with no finite axis values are omitted.",
+      "value": "Selected record ID; null uses internal selection, and an empty string selects nothing.",
+      "defaultValue": "Initial selected ID, read once at mount in uncontrolled mode.",
+      "look": "Glyph draws cell-aligned paths; SVG draws exact normalized positions.",
+      "label": "Accessible name for the comparison chart and numeric table; empty hides the component."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "axes": "ParallelCoordinateAxis[]",
+      "records": "ParallelCoordinateRecord[]",
+      "value": "string | null",
+      "defaultValue": "string",
+      "look": "\"glyph\" | \"svg\"",
+      "label": "string"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "Selected record ID, emitted only after pointer or keyboard input.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 7029
   },
   {
     "slug": "radar-chart",
@@ -6651,6 +8974,171 @@
     },
     "events": {},
     "gzipBytes": 7647
+  },
+  {
+    "slug": "ternary-plot",
+    "title": "Ternary Plot",
+    "category": "data",
+    "description": "Three-part compositions normalized to a triangular chart, with directly labeled samples, keyboard selection, and an accessible table of weights and proportions.",
+    "tags": [
+      "ternary",
+      "composition",
+      "proportions",
+      "triangle",
+      "glyph grid",
+      "svg",
+      "data table",
+      "keyboard"
+    ],
+    "facets": [
+      "static",
+      "chart",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "original": true,
+    "controls": {
+      "points": {
+        "type": "json"
+      },
+      "labels": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      },
+      "defaultValue": {
+        "type": "string"
+      },
+      "look": {
+        "type": "select",
+        "options": [
+          "glyph",
+          "svg"
+        ]
+      }
+    },
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": ""
+        },
+        {
+          "step": "expectFocus",
+          "selector": ""
+        },
+        {
+          "step": "press",
+          "key": "Home"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "clay"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "silt"
+        }
+      ]
+    ],
+    "credits": [],
+    "exportName": "TernaryPlot",
+    "defaults": {
+      "points": [
+        {
+          "id": "clay",
+          "label": "Clay",
+          "a": 72,
+          "b": 18,
+          "c": 10
+        },
+        {
+          "id": "silt",
+          "label": "Silt",
+          "a": 14,
+          "b": 76,
+          "c": 10
+        },
+        {
+          "id": "sand",
+          "label": "Sand",
+          "a": 10,
+          "b": 12,
+          "c": 78
+        },
+        {
+          "id": "loam",
+          "label": "Loam",
+          "a": 32,
+          "b": 36,
+          "c": 32
+        },
+        {
+          "id": "sandy-loam",
+          "label": "Sandy loam",
+          "a": 22,
+          "b": 22,
+          "c": 56
+        }
+      ],
+      "labels": [
+        "CLAY",
+        "SILT",
+        "SAND"
+      ],
+      "label": "Soil composition: clay, silt, and sand",
+      "value": null,
+      "defaultValue": "loam",
+      "look": "glyph"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "points": "Samples with unique IDs and three nonnegative weights; positive totals are normalized to 100%. Invalid samples are omitted.",
+      "labels": "Names of the top, bottom-left, and bottom-right components, in that order.",
+      "label": "Accessible name for the chart and its data table.",
+      "value": "Selected sample ID. Null uses internal selection; an empty string selects nothing.",
+      "defaultValue": "Initial selected sample ID, read once when mounted in uncontrolled mode.",
+      "look": "Glyph draws cell-aligned marks and guides; SVG draws exact barycentric positions."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "points": "{ id: string; label: string; a: number; b: number; c: number }[]",
+      "labels": "[string, string, string]",
+      "label": "string",
+      "value": "string | null",
+      "defaultValue": "string",
+      "look": "\"glyph\" | \"svg\""
+    },
+    "events": {
+      "valueChange": {
+        "doc": "Selected sample ID, emitted only after pointer or keyboard input.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 5980
   },
   {
     "slug": "timeline-chart",
@@ -8783,6 +11271,97 @@
     "gzipBytes": 3916
   },
   {
+    "slug": "contour-wipe-image",
+    "title": "Contour Wipe Image",
+    "category": "effects",
+    "description": "A progress-controlled monochrome image reveal traverses ordered luminance bands, with a single accent contour tracing the active threshold.",
+    "tags": [
+      "image",
+      "contour",
+      "luminance",
+      "wipe",
+      "progress",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "progress": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "label": "Reveal progress"
+      },
+      "bands": {
+        "type": "number",
+        "min": 2,
+        "max": 32,
+        "step": 1,
+        "label": "Contour bands"
+      },
+      "invert": {
+        "type": "boolean",
+        "label": "Dark contours first"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "contain",
+          "cover"
+        ]
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "ContourWipeImage",
+    "defaults": {
+      "src": "",
+      "progress": 0.62,
+      "bands": 12,
+      "invert": false,
+      "fit": "contain"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI; empty input uses the built-in sphere without a network request.",
+      "progress": "Reveal progress from 0 (empty) to 1 (the complete monochrome image).",
+      "bands": "Number of ordered luminance contour bands, from 2 to 32.",
+      "invert": "Reveal dark contours first instead of bright contours; the final image stays the same.",
+      "fit": "Cover crops to the host; contain keeps the whole supplied image visible."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "progress": "number",
+      "bands": "number",
+      "invert": "boolean",
+      "fit": "\"cover\" | \"contain\""
+    },
+    "events": {},
+    "gzipBytes": 3844
+  },
+  {
     "slug": "cylinder-roll",
     "title": "Cylinder Roll",
     "category": "effects",
@@ -9128,6 +11707,89 @@
     "gzipBytes": 3395
   },
   {
+    "slug": "edge-fold-image",
+    "title": "Edge Fold Image",
+    "category": "effects",
+    "description": "A monochrome image's edge rotates around a fixed crease, foreshortening its texture in perspective and exposing a controllable opening.",
+    "tags": [
+      "image",
+      "fold",
+      "edge",
+      "crease",
+      "perspective"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "edge": {
+        "type": "select",
+        "options": [
+          "left",
+          "right",
+          "top",
+          "bottom"
+        ]
+      },
+      "fold": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "crease": {
+        "type": "number",
+        "min": 0.04,
+        "max": 0.46,
+        "step": 0.01,
+        "label": "Crease depth"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "EdgeFoldImage",
+    "defaults": {
+      "src": "",
+      "edge": "right",
+      "fold": 0.68,
+      "crease": 0.32
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI; empty uses the built-in sphere without a network request.",
+      "edge": "Edge whose strip folds toward the viewer around its fixed crease.",
+      "fold": "Fold amount from 0 (flat) to 1 (a 76-degree rotation), changing projection and exposed area.",
+      "crease": "Depth of the crease measured inward from the chosen edge, as a fraction from 0.04 to 0.46."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "edge": "\"left\" | \"right\" | \"top\" | \"bottom\"",
+      "fold": "number",
+      "crease": "number"
+    },
+    "events": {},
+    "gzipBytes": 4208
+  },
+  {
     "slug": "edge-trace-image",
     "title": "Edge Trace Image",
     "category": "effects",
@@ -9257,6 +11919,103 @@
     },
     "events": {},
     "gzipBytes": 4109
+  },
+  {
+    "slug": "engraved-relief-image",
+    "title": "Engraved Relief Image",
+    "category": "effects",
+    "description": "Image luminance becomes a recessed height field with fine tool cuts, its fixed geometry revealed by a slowly rotating grazing light.",
+    "tags": [
+      "image",
+      "engraving",
+      "relief",
+      "light",
+      "canvas"
+    ],
+    "facets": [
+      "animated",
+      "image",
+      "canvas"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "depth": {
+        "type": "number",
+        "min": 0,
+        "max": 48,
+        "step": 1,
+        "label": "Carving depth"
+      },
+      "lightAngle": {
+        "type": "number",
+        "min": -180,
+        "max": 180,
+        "step": 1,
+        "label": "Light angle"
+      },
+      "speed": {
+        "type": "number",
+        "min": -20,
+        "max": 20,
+        "step": 0.5,
+        "label": "Light speed"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1,
+        "label": "Tool-cut seed"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "EngravedReliefImage",
+    "defaults": {
+      "src": "",
+      "depth": 28,
+      "lightAngle": -38,
+      "speed": 7,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI. Empty uses a built-in sphere without a network request.",
+      "depth": "Engraving depth in working pixels, from 0 to 48.",
+      "lightAngle": "Starting azimuth of the grazing light, in degrees.",
+      "speed": "Light rotation speed in degrees per second; zero holds the light still."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "depth": "number",
+      "lightAngle": "number",
+      "speed": "number"
+    },
+    "events": {},
+    "gzipBytes": 4802
   },
   {
     "slug": "falling-sutures",
@@ -9907,20 +12666,105 @@
     "gzipBytes": 3484
   },
   {
+    "slug": "lenticular-image",
+    "title": "Lenticular Image",
+    "category": "effects",
+    "description": "Two registered images share parallel lenticular strips, with viewing position revealing different source content through each strip.",
+    "tags": [
+      "image",
+      "lenticular",
+      "interlace",
+      "strips",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "canvas"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "sources": {
+        "type": "json",
+        "label": "Two image URLs"
+      },
+      "position": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "label": "Viewing position"
+      },
+      "pitch": {
+        "type": "number",
+        "min": 4,
+        "max": 64,
+        "step": 1,
+        "label": "Strip pitch"
+      },
+      "axis": {
+        "type": "select",
+        "options": [
+          "vertical",
+          "horizontal"
+        ],
+        "label": "Strip direction"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "LenticularImage",
+    "defaults": {
+      "sources": [
+        "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%22600%22%20viewBox%3D%220%200%20800%20600%22%20fill%3D%22currentColor%22%3E%3Ccircle%20cx%3D%22400%22%20cy%3D%22292%22%20r%3D%22182%22%20opacity%3D%22.12%22%2F%3E%3Cpath%20d%3D%22M400%20110a182%20182%200%201%200%200%20364a182%20182%200%200%200%200-364Zm0%2045a137%20137%200%201%201%200%20274a137%20137%200%200%201%200-274Z%22%20fill-rule%3D%22evenodd%22%2F%3E%3Ccircle%20cx%3D%22400%22%20cy%3D%22292%22%20r%3D%2263%22%2F%3E%3Cpath%20d%3D%22M150%20506h500v4H150Z%22%20opacity%3D%22.45%22%2F%3E%3C%2Fsvg%3E",
+        "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%22600%22%20viewBox%3D%220%200%20800%20600%22%20fill%3D%22currentColor%22%3E%3Cpath%20d%3D%22M138%20443L326%20137l111%20168%2056-86%20169%20224Z%22%20opacity%3D%22.22%22%2F%3E%3Cpath%20d%3D%22M138%20443L326%20137l111%20168-57%2088-53-161-128%20211Z%22%2F%3E%3Cpath%20d%3D%22m380%20393%20113-174%20169%20224H538L493%20315l-67%20128H199Z%22%20opacity%3D%22.65%22%2F%3E%3Cpath%20d%3D%22M150%20506h500v4H150Z%22%20opacity%3D%22.45%22%2F%3E%3C%2Fsvg%3E"
+      ],
+      "position": 0.42,
+      "pitch": 12,
+      "axis": "vertical"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "sources": "Two image URLs or data URIs, registered in the same frame; empty entries use the built-in sphere.",
+      "position": "Viewing position from 0 (first image) to 1 (second image).",
+      "pitch": "Width of one lenticular strip in CSS pixels, from 4 to 64.",
+      "axis": "Direction of the parallel lens strips."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "sources": "[string, string]",
+      "position": "number",
+      "pitch": "number",
+      "axis": "\"vertical\" | \"horizontal\""
+    },
+    "events": {},
+    "gzipBytes": 4485
+  },
+  {
     "slug": "magnetic-filings",
     "title": "Magnetic Filings",
     "category": "effects",
-    "description": "Short filings align with a moving dipole field in the margins of a protected reading area.",
+    "description": "Orientation glyphs follow the field of slowly drifting charges behind the content they wrap, leaving it a clear margin.",
     "tags": [
-      "geometry",
       "field",
-      "canvas",
+      "vector",
+      "glyphs",
+      "charges",
       "reading"
     ],
     "facets": [
       "animated",
-      "overlay",
-      "interactive",
+      "background",
       "canvas"
     ],
     "wave": 14,
@@ -9930,27 +12774,53 @@
     "wraps": "content",
     "palette": [
       "fg",
+      "muted",
       "accent"
     ],
     "controls": {
-      "pitch": {
+      "sources": {
+        "type": "json"
+      },
+      "spacing": {
         "type": "number",
-        "min": 20,
-        "max": 48,
-        "step": 1
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Spacing (columns)"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 10,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size (px)"
+      },
+      "quiet": {
+        "type": "number",
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "label": "Quiet band (cells)"
+      },
+      "layout": {
+        "type": "select",
+        "options": [
+          "none",
+          "center"
+        ]
       },
       "period": {
         "type": "number",
         "min": 12,
         "max": 60,
         "step": 1,
-        "label": "Traversal (s)"
+        "label": "Loop (s)"
       },
       "opacity": {
         "type": "number",
         "min": 0.1,
-        "max": 0.6,
-        "step": 0.01
+        "max": 1,
+        "step": 0.05
       },
       "fps": {
         "type": "number",
@@ -9961,61 +12831,42 @@
       "paused": {
         "type": "boolean"
       },
-      "showPause": {
-        "type": "boolean",
-        "label": "Pause control"
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
       }
     },
     "demo": {
-      "children": "<article class=\"field-note\"><p class=\"field-index\">Dipole / 03 · Field study</p><h2>Lines of attraction</h2><p>A pair of slowly moving sources aligns short filings. The source geometry gives each mark a reason to turn.</p><details><summary>Read the field note</summary><p>Field direction sums opposite inverse square sources; filings are capped to a fixed lattice.</p></details></article>"
+      "props": {
+        "layout": "center"
+      },
+      "children": "<p>Bearings were taken from the ridge every quarter mile, each one written in pencil beside the last.</p><p>By noon the readings agreed: north had moved four degrees since the old chart was drawn.</p>"
     },
-    "interactions": [
-      [
-        {
-          "step": "click",
-          "selector": "[data-pica-pause]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "true"
-        },
-        {
-          "step": "expectFocus",
-          "selector": "[data-pica-pause]"
-        },
-        {
-          "step": "press",
-          "key": "Enter"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "false"
-        },
-        {
-          "step": "press",
-          "key": "Space"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "true"
-        }
-      ]
-    ],
     "original": true,
     "credits": [],
     "exportName": "MagneticFilings",
     "defaults": {
-      "pitch": 26,
+      "sources": [
+        {
+          "x": 0.2,
+          "y": 0.25,
+          "charge": 1
+        },
+        {
+          "x": 0.8,
+          "y": 0.75,
+          "charge": -1
+        }
+      ],
+      "spacing": 2,
+      "fontSize": 13,
+      "quiet": 3,
+      "layout": "none",
       "period": 24,
-      "opacity": 0.38,
-      "fps": 18,
-      "showPause": true,
+      "opacity": 0.6,
+      "fps": 15,
       "paused": false,
       "time": null,
       "seed": 1
@@ -10024,24 +12875,30 @@
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "pitch": "Distance between dipole filings in CSS pixels.",
-      "period": "Seconds for one slow traversal of the field.",
-      "opacity": "Ink strength of the decorative geometry, from zero to one.",
-      "showPause": "Show a native keyboard accessible pause toggle below the field.",
-      "fps": "Frames per second ceiling, bounded between twelve and twenty four."
+      "sources": "Up to four charges: x and y place each one as a fraction of the host, and charge runs from -1 to 1. Each is marked [+] or [−] in the accent, drifts on its own small figure eight, and moves to the nearest free place when its path would meet the content.",
+      "spacing": "Glyph columns from one filing to the next, 1 to 3. At 2 each filing sits in a square cell.",
+      "fontSize": "Glyph size in CSS pixels, 10 to 20.",
+      "quiet": "Cells around the content, past the one cell kept clear, that draw only the faintest glyph, 0 to 6.",
+      "layout": "\"center\" makes the host a grid that centers its children in a column up to 34em wide, inside two cells of padding. \"none\" leaves layout to the page.",
+      "period": "Seconds for each charge to close its path, 12 to 60.",
+      "opacity": "Ink strength of the filings, from zero to one: the strongest draw in fg at this strength, the rest in muted.",
+      "fps": "Frames per second ceiling, 12 to 24."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
-      "pitch": "number",
+      "sources": "{ x: number; y: number; charge: number }[]",
+      "spacing": "number",
+      "fontSize": "number",
+      "quiet": "number",
+      "layout": "\"none\" | \"center\"",
       "period": "number",
       "opacity": "number",
-      "showPause": "boolean",
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 3513
+    "gzipBytes": 6037
   },
   {
     "slug": "moire-interference",
@@ -10826,16 +13683,18 @@
     "slug": "pixel-louver",
     "title": "Pixel Louver",
     "category": "effects",
-    "description": "A bounded grid of mechanical louvers changes projected width in a slow traveling phase.",
+    "description": "Eighth-block louver blades turn in whole cells beside the content, or in every cell around it, and never draw under it.",
     "tags": [
       "material",
+      "louver",
+      "shutters",
+      "blocks",
       "geometric",
       "motion"
     ],
     "facets": [
       "animated",
       "background",
-      "interactive",
       "canvas"
     ],
     "wave": 14,
@@ -10846,9 +13705,43 @@
     "original": true,
     "credits": [],
     "palette": [
-      "fg"
+      "fg",
+      "muted"
     ],
     "controls": {
+      "area": {
+        "type": "select",
+        "options": [
+          "margins",
+          "full"
+        ]
+      },
+      "axis": {
+        "type": "select",
+        "options": [
+          "x",
+          "y"
+        ]
+      },
+      "columns": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1
+      },
+      "quiet": {
+        "type": "number",
+        "min": 0,
+        "max": 6,
+        "step": 1
+      },
+      "layout": {
+        "type": "select",
+        "options": [
+          "none",
+          "center"
+        ]
+      },
       "speed": {
         "type": "number",
         "min": 0.2,
@@ -10877,35 +13770,19 @@
         "step": 1
       }
     },
-    "interactions": [
-      [
-        {
-          "step": "click",
-          "selector": "[data-pica-pause]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "true"
-        },
-        {
-          "step": "press",
-          "key": "Space"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-pica-pause]",
-          "name": "aria-pressed",
-          "value": "false"
-        }
-      ]
-    ],
     "demo": {
-      "children": "<article data-demo-copy><p>BUILDING STUDIES / SHADING</p><h2>Light, measured in sections.</h2><p>Compare screen spacing, projected shade and maintenance notes for the east facade study.</p><details><summary>Read the design record</summary><p>Facade study E02 uses equal blade spacing with alternating projected shade. Check the sight line from the reading area before choosing a maintenance interval.</p></details></article>"
+      "props": {
+        "layout": "center"
+      },
+      "children": "<p>Shade moves across the east elevation through the afternoon.</p><p>By evening the blades stand open to the street.</p>"
     },
     "exportName": "PixelLouver",
     "defaults": {
+      "area": "margins",
+      "columns": 6,
+      "axis": "x",
+      "quiet": 2,
+      "layout": "none",
       "speed": 1,
       "opacity": 0.34,
       "scale": 1,
@@ -10917,20 +13794,30 @@
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "speed": "Motion rate multiplier, clamped from 0.2 to 2.",
-      "opacity": "Printed mark opacity, clamped from 0.1 to 0.65.",
-      "scale": "Mechanical detail scale, clamped from 0.6 to 1.8."
+      "area": "\"margins\" sets a bank of blades beside the content on each side, or above and below it where a side has too little room; \"full\" fills every cell except the content and its quiet cells, which the rail frames, and turns in a broader wave. A full field draws its blades at 0.35 of the opacity and never closes them past five eighths, so the screen stays behind the type.",
+      "columns": "Blades across each bank beside the content, or rows of blades in a bank above or below it, from 2 to 16. Unused when area is \"full\".",
+      "axis": "\"x\" turns upright blades, filled from the left, across a bank beside the content, and level slats, filled from the bottom, along a bank above or below it; \"y\" does the reverse.",
+      "quiet": "The fewest empty cells between the content and the nearest blade or rail, from 0 to 6.",
+      "layout": "\"center\" sets the children in one centered column, flush left, with two cells of padding; \"none\" leaves their layout to the page.",
+      "speed": "Motion rate multiplier, clamped from 0.2 to 2. At 1 every blade turns through one cycle in 24 s.",
+      "opacity": "Opacity of the blades, clamped from 0.1 to 0.65, and 0.35 of it in a full field. The rail draws at twice this, up to 1.",
+      "scale": "Glyph size as a multiple of the host's font size, clamped from 0.6 to 1.8."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
+      "area": "\"margins\" | \"full\"",
+      "columns": "number",
+      "axis": "\"x\" | \"y\"",
+      "quiet": "number",
+      "layout": "\"none\" | \"center\"",
       "speed": "number",
       "opacity": "number",
       "scale": "number"
     },
     "events": {},
-    "gzipBytes": 3476
+    "gzipBytes": 4624
   },
   {
     "slug": "pixel-sort",
@@ -11047,6 +13934,195 @@
     },
     "events": {},
     "gzipBytes": 3562
+  },
+  {
+    "slug": "pixel-weft-image",
+    "title": "Pixel Weft Image",
+    "category": "effects",
+    "description": "Registered image rows and columns enter from alternating edges and interlace at checkerboard over-and-under crossings.",
+    "tags": [
+      "image",
+      "weave",
+      "interlace",
+      "reveal",
+      "canvas"
+    ],
+    "facets": [
+      "animated",
+      "image",
+      "canvas"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg",
+      "muted"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "cellSize": {
+        "type": "number",
+        "min": 8,
+        "max": 64,
+        "step": 1,
+        "label": "Crossing size"
+      },
+      "progress": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "label": "Reveal progress"
+      },
+      "speed": {
+        "type": "number",
+        "min": -0.15,
+        "max": 0.15,
+        "step": 0.005,
+        "label": "Reveal speed"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1,
+        "label": "Weave seed"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "PixelWeftImage",
+    "defaults": {
+      "src": "",
+      "cellSize": 20,
+      "progress": 0.74,
+      "speed": 0.025,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI; empty uses the built-in sphere without a network request.",
+      "cellSize": "Square crossing size in CSS pixels, from 8 to 64.",
+      "progress": "Starting reveal fraction, from 0 to 1; set speed to zero to hold this position.",
+      "speed": "Reveal fraction per second, from -0.15 to 0.15; stops advancing at either endpoint."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "cellSize": "number",
+      "progress": "number",
+      "speed": "number"
+    },
+    "events": {},
+    "gzipBytes": 4795
+  },
+  {
+    "slug": "pressure-print-image",
+    "title": "Pressure Print Image",
+    "category": "effects",
+    "description": "A local circular contact field reveals an image as a monochrome print; increasing pressure expands its footprint and deposits denser ink.",
+    "tags": [
+      "image",
+      "pressure",
+      "print",
+      "impression",
+      "halftone",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "image",
+      "canvas"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "src": {
+        "type": "string",
+        "label": "Image URL"
+      },
+      "pressure": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "label": "Contact pressure"
+      },
+      "radius": {
+        "type": "number",
+        "min": 0.05,
+        "max": 1.5,
+        "step": 0.01,
+        "label": "Contact radius"
+      },
+      "position": {
+        "type": "numbers",
+        "label": "Contact center [x, y]"
+      },
+      "fit": {
+        "type": "select",
+        "options": [
+          "contain",
+          "cover"
+        ]
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "PressurePrintImage",
+    "defaults": {
+      "src": "",
+      "pressure": 0.78,
+      "radius": 0.48,
+      "position": [
+        0.48,
+        0.52
+      ],
+      "fit": "contain"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "src": "Image URL or data URI; empty input uses a built-in sphere without a network request.",
+      "pressure": "Contact pressure from 0 to 1; stronger pressure increases footprint and ink density.",
+      "radius": "Base contact radius as a fraction of the host's shorter side, from 0.05 to 1.5.",
+      "position": "Contact center as [x, y] host fractions from 0 to 1; y increases downward.",
+      "fit": "Contain keeps the complete image visible; cover fills the host and crops its edges."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "src": "string",
+      "pressure": "number",
+      "radius": "number",
+      "position": "[number, number]",
+      "fit": "\"contain\" | \"cover\""
+    },
+    "events": {},
+    "gzipBytes": 4069
   },
   {
     "slug": "print-registration",
@@ -13157,11 +16233,12 @@
     "slug": "archive-aisle",
     "title": "Archive aisle",
     "category": "immersive",
-    "description": "A perspective archive aisle with collection records, access notes and a readable finding aid.",
+    "description": "A one-point archive aisle on canvas whose camera walks to each collection's bay, with numbered markers, a register and a readable detail.",
     "tags": [
       "navigation",
       "collection",
-      "scene",
+      "perspective",
+      "camera",
       "original"
     ],
     "facets": [
@@ -13179,19 +16256,30 @@
     "palette": [
       "fg",
       "bg",
-      "accent",
       "muted"
     ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "capture": 4000,
     "controls": {
-      "title": {
+      "label": {
         "type": "string"
-      },
-      "introduction": {
-        "type": "textarea",
-        "rows": 3
       },
       "collections": {
         "type": "json"
+      },
+      "defaultValue": {
+        "type": "number",
+        "min": -1,
+        "max": 11,
+        "step": 1
+      },
+      "headingLevel": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1
       },
       "fps": {
         "type": "number",
@@ -13203,17 +16291,189 @@
         "type": "boolean"
       }
     },
+    "demo": {
+      "props": {
+        "collections": [
+          {
+            "name": "Town plans",
+            "reference": "CA 61/09",
+            "title": "The unbuilt crossing",
+            "description": "Nine folded drawings trace a footbridge proposed in 1961. Pencil revisions move its landing away from the market, and the final envelope carries no approval stamp.",
+            "facts": "9 drawings · 1961–1968",
+            "note": "Open. Unfolding needs a support board from the desk.",
+            "chapters": [
+              "Scope and content",
+              "Arrangement",
+              "Access"
+            ]
+          },
+          {
+            "name": "Oral histories",
+            "reference": "OH 84/24",
+            "title": "Voices from the night shift",
+            "description": "Transcripts of 24 interviews document the mill after dark, from the sound of each machine to the signals passed across the floor.",
+            "facts": "24 transcripts · 1984",
+            "note": "Edited transcripts are open. Personal addresses remain closed.",
+            "chapters": [
+              "Scope and content",
+              "Names and places",
+              "Access"
+            ]
+          },
+          {
+            "name": "Correspondence",
+            "reference": "CO 72/76",
+            "title": "Letters from the allotments",
+            "description": "A bundle of 76 letters follows the making of a shared garden, with seed requests, minutes and a map drawn on an envelope.",
+            "facts": "76 letters · 1972–1975",
+            "note": "Open. Keep the bundle in its original order when asking for scans.",
+            "chapters": [
+              "Scope and content",
+              "Original order",
+              "Access"
+            ]
+          },
+          {
+            "name": "Workshop ledgers",
+            "reference": "WL 49/04",
+            "title": "A repair for every season",
+            "description": "Four ledgers from a bicycle repair shop show how regular maintenance tied a street together through tools, parts and trust.",
+            "facts": "4 volumes · 1949–1963",
+            "note": "Open. The fourth volume is served as a copy.",
+            "chapters": [
+              "Scope and content",
+              "Related records",
+              "Access"
+            ]
+          },
+          {
+            "name": "Street photographs",
+            "reference": "PH 90/31",
+            "title": "One street, one morning",
+            "description": "Thirty-one prints record every shopfront on the high street on the morning before it was widened.",
+            "facts": "31 prints · 1990",
+            "note": "Open. Prints are served in sleeves.",
+            "chapters": [
+              "Scope and content",
+              "Sequence",
+              "Access"
+            ]
+          },
+          {
+            "name": "Lamp committee",
+            "reference": "MN 55/18",
+            "title": "Minutes of the lamp committee",
+            "description": "Eighteen years of minutes argue over where the first electric street lamps should stand, with a pencilled count of every post.",
+            "facts": "3 volumes · 1955–1973",
+            "note": "Open. The 1961 volume is fragile and served by appointment.",
+            "chapters": [
+              "Scope and content",
+              "Arrangement",
+              "Related records",
+              "Access"
+            ]
+          }
+        ]
+      }
+    },
     "interactions": [
       [
         {
           "step": "click",
-          "selector": "[data-action=\"enter\"]"
+          "selector": "[data-part=\"markers\"] [data-index=\"1\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 1
         },
         {
           "step": "expectAttr",
-          "selector": "[data-part=\"page\"]",
+          "selector": "[data-part=\"aisle\"]",
+          "name": "data-view",
+          "value": "detail"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"heading\"]"
+        },
+        {
+          "step": "press",
+          "key": "Escape"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": -1
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"aisle\"]",
           "name": "data-view",
           "value": "overview"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"markers\"] [data-index=\"1\"]"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=\"register\"] [data-index=\"2\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 2
+        },
+        {
+          "step": "click",
+          "selector": "[data-action=\"next\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 3
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"markers\"] [data-index=\"3\"]",
+          "name": "aria-pressed",
+          "value": "true"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-action=\"next\"]"
+        },
+        {
+          "step": "click",
+          "selector": "[data-action=\"back\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": -1
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"aisle\"]",
+          "name": "data-view",
+          "value": "overview"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"markers\"] [data-index=\"3\"]"
+        },
+        {
+          "step": "hover",
+          "selector": "[data-part=\"register\"] [data-index=\"4\"]"
+        }
+      ],
+      [
+        {
+          "step": "press",
+          "key": "Tab"
         },
         {
           "step": "expectFocus",
@@ -13224,102 +16484,33 @@
           "key": "Enter"
         },
         {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 0
+        },
+        {
           "step": "expectAttr",
-          "selector": "[data-part=\"page\"]",
+          "selector": "[data-part=\"aisle\"]",
           "name": "data-view",
           "value": "detail"
         },
         {
           "step": "expectFocus",
-          "selector": "[data-part=\"detail-title\"]"
-        },
-        {
-          "step": "click",
-          "selector": "[data-action=\"next\"]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-part=\"markers\"] [data-index=\"1\"]",
-          "name": "aria-pressed",
-          "value": "true"
-        },
-        {
-          "step": "press",
-          "key": "Escape"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-part=\"page\"]",
-          "name": "data-view",
-          "value": "overview"
-        },
-        {
-          "step": "press",
-          "key": "Escape"
-        },
-        {
-          "step": "expectFocus",
-          "selector": "[data-action=\"enter\"]"
-        }
-      ],
-      [
-        {
-          "step": "click",
-          "selector": "[data-part=\"register\"] [data-index=\"2\"]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-part=\"page\"]",
-          "name": "data-view",
-          "value": "detail"
-        },
-        {
-          "step": "click",
-          "selector": "[data-action=\"back\"]"
-        },
-        {
-          "step": "expectFocus",
-          "selector": "[data-part=\"markers\"] [data-index=\"2\"]"
-        }
-      ],
-      [
-        {
-          "step": "click",
-          "selector": "[data-action=\"pause\"]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-action=\"pause\"]",
-          "name": "aria-pressed",
-          "value": "true"
-        },
-        {
-          "step": "click",
-          "selector": "[data-action=\"pause\"]"
-        },
-        {
-          "step": "expectAttr",
-          "selector": "[data-action=\"pause\"]",
-          "name": "aria-pressed",
-          "value": "false"
+          "selector": "[data-part=\"heading\"]"
         }
       ]
     ],
     "exportName": "ArchiveAisle",
     "defaults": {
-      "title": "Aisle seven",
-      "introduction": "Walk the shelves of a fictional civic archive. Four collections trace a town through plans, voices, letters and working records.",
+      "label": "Aisle seven",
       "collections": [
         {
           "name": "Town plans",
-          "reference": "A7 / COLLECTION 01",
+          "reference": "CA 61/09",
           "title": "The unbuilt crossing",
-          "description": "Nine folded drawings trace a proposed footbridge from 1961 to 1968. Pencil revisions move its landing away from the market. The final envelope carries no approval stamp.",
-          "facts": "CA 61/09 · 9 drawings · 1961–1968",
-          "note": "Access: open. Unfolding requires a support board; ask the reading room desk.",
-          "x": 25,
-          "y": 30,
-          "group": "Plans",
+          "description": "Nine folded drawings trace a footbridge proposed in 1961. Pencil revisions move its landing away from the market, and the final envelope carries no approval stamp.",
+          "facts": "9 drawings · 1961–1968",
+          "note": "Open. Unfolding needs a support board from the desk.",
           "chapters": [
             "Scope and content",
             "Arrangement",
@@ -13328,14 +16519,11 @@
         },
         {
           "name": "Oral histories",
-          "reference": "A7 / COLLECTION 02",
+          "reference": "OH 84/24",
           "title": "Voices from the night shift",
-          "description": "Transcripts of 24 interviews document the mill after dark. Speakers describe the sound of each machine and the informal signals used across the floor.",
-          "facts": "OH 84/24 · 24 transcripts · 1984",
-          "note": "Access: edited transcripts are open. Personal addresses remain closed.",
-          "x": 74,
-          "y": 36,
-          "group": "Voices",
+          "description": "Transcripts of 24 interviews document the mill after dark, from the sound of each machine to the signals passed across the floor.",
+          "facts": "24 transcripts · 1984",
+          "note": "Edited transcripts are open. Personal addresses remain closed.",
           "chapters": [
             "Scope and content",
             "Names and places",
@@ -13344,14 +16532,11 @@
         },
         {
           "name": "Correspondence",
-          "reference": "A7 / COLLECTION 03",
+          "reference": "CO 72/76",
           "title": "Letters from the allotments",
-          "description": "A bundle of 76 letters follows the creation of a shared garden. Seed requests sit alongside meeting minutes and a map drawn on the back of an envelope.",
-          "facts": "CO 72/76 · 76 letters · 1972–1975",
-          "note": "Access: open. Keep the original bundle order when requesting scans.",
-          "x": 28,
-          "y": 70,
-          "group": "Letters",
+          "description": "A bundle of 76 letters follows the making of a shared garden, with seed requests, minutes and a map drawn on an envelope.",
+          "facts": "76 letters · 1972–1975",
+          "note": "Open. Keep the bundle in its original order when asking for scans.",
           "chapters": [
             "Scope and content",
             "Original order",
@@ -13360,14 +16545,11 @@
         },
         {
           "name": "Workshop ledgers",
-          "reference": "A7 / COLLECTION 04",
+          "reference": "WL 49/04",
           "title": "A repair for every season",
-          "description": "Four ledgers list work from a bicycle repair shop. Their ruled columns show how recurring maintenance connected neighbours through tools, parts and trust.",
-          "facts": "WL 49/04 · 4 volumes · 1949–1963",
-          "note": "Access: open. The fourth volume is available as a reading copy.",
-          "x": 71,
-          "y": 72,
-          "group": "Work",
+          "description": "Four ledgers from a bicycle repair shop show how regular maintenance tied a street together through tools, parts and trust.",
+          "facts": "4 volumes · 1949–1963",
+          "note": "Open. The fourth volume is served as a copy.",
           "chapters": [
             "Scope and content",
             "Related records",
@@ -13375,7 +16557,10 @@
           ]
         }
       ],
-      "fps": 24,
+      "value": null,
+      "defaultValue": -1,
+      "headingLevel": 3,
+      "fps": 30,
       "paused": false,
       "time": null,
       "seed": 1
@@ -13384,22 +16569,31 @@
       "paused": "Stop animating and hold the current frame.",
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
-      "title": "Heading of the complete entry experience.",
-      "introduction": "Introduction displayed above the spatial scene.",
-      "collections": "Editable records, with spatial positions and full readable details; an empty array displays an empty register.",
-      "fps": "Frames per second ceiling, between 1 and 30."
+      "label": "Accessible name of the aisle region. Empty leaves the host without a role.",
+      "collections": "Collections in bay order, up to 12. Collection i is shelved on the left wall for even i and on the right for odd i, floor(i / 2) bays in.",
+      "value": "The open collection's index, -1 for the overview, or null to let the component manage its own view.",
+      "defaultValue": "The view at mount while value is null: a collection's index, or -1 for the overview.",
+      "headingLevel": "Level of the detail heading, from 2 to 6.",
+      "fps": "Frames per second ceiling while the camera moves, from 1 to 30."
     },
     "types": {
       "paused": "boolean",
       "time": "number | null",
       "seed": "number",
-      "title": "string",
-      "introduction": "string",
-      "collections": "readonly ArchiveAisleRecord[]",
+      "label": "string",
+      "collections": "readonly ArchiveAisleCollection[]",
+      "value": "number | null",
+      "defaultValue": "number",
+      "headingLevel": "number",
       "fps": "number"
     },
-    "events": {},
-    "gzipBytes": 7148
+    "events": {
+      "valueChange": {
+        "doc": "A visitor opened a collection, giving its index, or went back to the overview, giving -1.",
+        "detail": "number"
+      }
+    },
+    "gzipBytes": 7765
   },
   {
     "slug": "city-grid",
@@ -13805,6 +16999,657 @@
     },
     "events": {},
     "gzipBytes": 7229
+  },
+  {
+    "slug": "folded-atlas",
+    "title": "Folded Atlas",
+    "category": "immersive",
+    "description": "Supplied polygon panels form a connected accordion atlas with projected hinges, accessible panel buttons, and independent selected content.",
+    "tags": [
+      "atlas",
+      "accordion",
+      "fold",
+      "panels",
+      "geometry",
+      "selection",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "canvas",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "original": true,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "panels": {
+        "type": "json",
+        "label": "Panel shapes and content"
+      },
+      "fold": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "label": "Accordion fold"
+      },
+      "defaultValue": {
+        "type": "string",
+        "label": "Initial panel ID"
+      },
+      "label": {
+        "type": "string",
+        "label": "Accessible atlas name"
+      }
+    },
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-atlas-panel=coast]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "coast"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-atlas-panel=coast]",
+          "name": "aria-pressed",
+          "value": "true"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "estuary"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-atlas-panel=estuary]"
+        }
+      ]
+    ],
+    "credits": [],
+    "exportName": "FoldedAtlas",
+    "defaults": {
+      "panels": [
+        {
+          "id": "coast",
+          "label": "Coast",
+          "description": "A broken coastline surrounds sheltered bays and offshore islands.",
+          "shapes": [
+            [
+              [
+                0,
+                0.14
+              ],
+              [
+                0.37,
+                0.12
+              ],
+              [
+                0.52,
+                0.27
+              ],
+              [
+                0.33,
+                0.39
+              ],
+              [
+                0.51,
+                0.54
+              ],
+              [
+                0.37,
+                0.69
+              ],
+              [
+                0.57,
+                0.8
+              ],
+              [
+                0.38,
+                0.9
+              ],
+              [
+                0,
+                0.91
+              ]
+            ],
+            [
+              [
+                0.73,
+                0.29
+              ],
+              [
+                0.89,
+                0.36
+              ],
+              [
+                0.81,
+                0.47
+              ],
+              [
+                0.67,
+                0.4
+              ]
+            ],
+            [
+              [
+                0.69,
+                0.63
+              ],
+              [
+                0.83,
+                0.7
+              ],
+              [
+                0.74,
+                0.79
+              ],
+              [
+                0.63,
+                0.72
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "estuary",
+          "label": "Estuary",
+          "description": "Tidal channels divide the estuary into long, low islands.",
+          "shapes": [
+            [
+              [
+                0,
+                0.14
+              ],
+              [
+                0.63,
+                0.1
+              ],
+              [
+                1,
+                0.22
+              ],
+              [
+                1,
+                0.43
+              ],
+              [
+                0.72,
+                0.33
+              ],
+              [
+                0.43,
+                0.4
+              ],
+              [
+                0.15,
+                0.3
+              ],
+              [
+                0,
+                0.36
+              ]
+            ],
+            [
+              [
+                0,
+                0.5
+              ],
+              [
+                0.23,
+                0.42
+              ],
+              [
+                0.59,
+                0.53
+              ],
+              [
+                1,
+                0.46
+              ],
+              [
+                1,
+                0.74
+              ],
+              [
+                0.67,
+                0.65
+              ],
+              [
+                0.38,
+                0.7
+              ],
+              [
+                0.13,
+                0.63
+              ],
+              [
+                0,
+                0.76
+              ]
+            ],
+            [
+              [
+                0.08,
+                0.82
+              ],
+              [
+                0.46,
+                0.77
+              ],
+              [
+                0.81,
+                0.86
+              ],
+              [
+                0.53,
+                0.94
+              ],
+              [
+                0.16,
+                0.91
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "highlands",
+          "label": "Highlands",
+          "description": "Three ridges rise inland, separated by narrow valleys.",
+          "shapes": [
+            [
+              [
+                0,
+                0.22
+              ],
+              [
+                0.26,
+                0.13
+              ],
+              [
+                0.37,
+                0.28
+              ],
+              [
+                0.2,
+                0.41
+              ],
+              [
+                0.35,
+                0.57
+              ],
+              [
+                0.18,
+                0.74
+              ],
+              [
+                0,
+                0.74
+              ]
+            ],
+            [
+              [
+                0.36,
+                0.17
+              ],
+              [
+                0.63,
+                0.1
+              ],
+              [
+                0.7,
+                0.32
+              ],
+              [
+                0.54,
+                0.46
+              ],
+              [
+                0.72,
+                0.67
+              ],
+              [
+                0.48,
+                0.81
+              ],
+              [
+                0.35,
+                0.61
+              ],
+              [
+                0.45,
+                0.4
+              ]
+            ],
+            [
+              [
+                0.76,
+                0.17
+              ],
+              [
+                1,
+                0.23
+              ],
+              [
+                1,
+                0.87
+              ],
+              [
+                0.79,
+                0.93
+              ],
+              [
+                0.85,
+                0.73
+              ],
+              [
+                0.71,
+                0.51
+              ],
+              [
+                0.86,
+                0.36
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "interior",
+          "label": "Interior",
+          "description": "A broad interior basin holds an enclosed lake and a winding southern outlet.",
+          "shapes": [
+            [
+              [
+                0,
+                0.23
+              ],
+              [
+                0.38,
+                0.11
+              ],
+              [
+                0.8,
+                0.19
+              ],
+              [
+                0.96,
+                0.43
+              ],
+              [
+                0.86,
+                0.71
+              ],
+              [
+                0.63,
+                0.77
+              ],
+              [
+                0.7,
+                0.49
+              ],
+              [
+                0.49,
+                0.36
+              ],
+              [
+                0.3,
+                0.49
+              ],
+              [
+                0.42,
+                0.68
+              ],
+              [
+                0.31,
+                0.9
+              ],
+              [
+                0,
+                0.87
+              ]
+            ],
+            [
+              [
+                0.49,
+                0.47
+              ],
+              [
+                0.63,
+                0.51
+              ],
+              [
+                0.58,
+                0.61
+              ],
+              [
+                0.46,
+                0.58
+              ]
+            ]
+          ]
+        }
+      ],
+      "fold": 0.46,
+      "value": null,
+      "defaultValue": "estuary",
+      "label": "Folded landscape atlas"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "panels": "Up to twelve connected panels with normalized polygon shapes; duplicate or empty IDs are omitted.",
+      "fold": "Accordion fold from 0 (flat) to 1 (72-degree alternating hinges).",
+      "value": "Selected panel ID. Null uses internal selection; an empty string selects none.",
+      "defaultValue": "Initial selected panel ID, read once when mounted in uncontrolled mode.",
+      "label": "Accessible name for the atlas and its independent panel controls."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "panels": "FoldedAtlasPanel[]",
+      "fold": "number",
+      "value": "string | null",
+      "defaultValue": "string",
+      "label": "string"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "Panel ID requested by pointer or keyboard input, including repeated controlled selections.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 5199
+  },
+  {
+    "slug": "geodesic-shell",
+    "title": "Geodesic Shell",
+    "category": "immersive",
+    "description": "A subdivided icosahedral dome maps supplied panel records to selectable facets, with camera controls and accessible panel buttons.",
+    "tags": [
+      "geodesic",
+      "dome",
+      "facets",
+      "3d",
+      "panels",
+      "canvas",
+      "keyboard"
+    ],
+    "facets": [
+      "static",
+      "canvas",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "original": true,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "controls": {
+      "frequency": {
+        "type": "number",
+        "min": 1,
+        "max": 6,
+        "step": 1
+      },
+      "panels": {
+        "type": "json"
+      },
+      "defaultValue": {
+        "type": "string"
+      },
+      "view": {
+        "type": "json"
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-shell-panel='panel-b']"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "panel-b"
+        },
+        {
+          "step": "expectEvent",
+          "name": "panelSelect",
+          "detail": {
+            "id": "panel-b",
+            "facet": 13,
+            "label": "Crown B",
+            "description": "Second crown cladding panel"
+          }
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-shell-panel='panel-b']",
+          "name": "aria-pressed",
+          "value": "true"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-shell-panel='panel-c']"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-shell-panel='panel-c']",
+          "name": "aria-pressed",
+          "value": "true"
+        }
+      ]
+    ],
+    "credits": [],
+    "exportName": "GeodesicShell",
+    "defaults": {
+      "frequency": 3,
+      "panels": [
+        {
+          "id": "panel-a",
+          "facet": 4,
+          "label": "Crown A",
+          "description": "Crown cladding panel"
+        },
+        {
+          "id": "panel-b",
+          "facet": 13,
+          "label": "Crown B",
+          "description": "Second crown cladding panel"
+        },
+        {
+          "id": "panel-c",
+          "facet": 22,
+          "label": "Crown C",
+          "description": "Third crown cladding panel"
+        },
+        {
+          "id": "panel-d",
+          "facet": 31,
+          "label": "Crown D",
+          "description": "Fourth crown cladding panel"
+        }
+      ],
+      "value": null,
+      "defaultValue": "panel-a",
+      "view": {
+        "azimuth": 25,
+        "elevation": 28,
+        "zoom": 1
+      },
+      "label": "Geodesic dome with selectable cladding panels"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "frequency": "Subdivision frequency of each icosahedron face, from 1 to 6; facet indices depend on frequency.",
+      "panels": "Panel records mapped to actual facet indices; invalid mappings and duplicate IDs or facets are omitted.",
+      "value": "Selected panel ID; null enables internal selection, and an empty string selects nothing.",
+      "defaultValue": "Initial selected panel ID, read once in uncontrolled mode.",
+      "view": "Camera azimuth and elevation in degrees, plus zoom from 0.5 to 1.5.",
+      "label": "Accessible name for the faceted dome and panel controls; empty hides the component."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "frequency": "number",
+      "panels": "GeodesicShellPanel[]",
+      "value": "string | null",
+      "defaultValue": "string",
+      "view": "{ azimuth: number; elevation: number; zoom: number }",
+      "label": "string"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "Panel ID selected by facet click or keyboard/button input.",
+        "detail": "string"
+      },
+      "panelSelect": {
+        "doc": "A copy of the supplied record belonging to the selected facet.",
+        "detail": "GeodesicShellPanel"
+      }
+    },
+    "gzipBytes": 5349
   },
   {
     "slug": "globe",
@@ -14663,6 +18508,330 @@
     "gzipBytes": 7567
   },
   {
+    "slug": "perspective-maze",
+    "title": "Perspective Maze",
+    "category": "immersive",
+    "description": "A supplied wall grid becomes a perspective viewport with collision-safe navigation, native controls, and a text-map fallback.",
+    "tags": [
+      "maze",
+      "perspective",
+      "raycasting",
+      "navigation",
+      "keyboard",
+      "canvas"
+    ],
+    "facets": [
+      "static",
+      "canvas",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "original": true,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "position": "positionChange",
+      "direction": "directionChange"
+    },
+    "controlledInteractions": {
+      "position": [
+        {
+          "step": "click",
+          "selector": "[data-part=\"forward\"]"
+        }
+      ],
+      "direction": [
+        {
+          "step": "click",
+          "selector": "[data-part=\"right\"]"
+        }
+      ]
+    },
+    "controls": {
+      "grid": {
+        "type": "json"
+      },
+      "defaultPosition": {
+        "type": "numbers"
+      },
+      "defaultDirection": {
+        "type": "select",
+        "options": [
+          "north",
+          "east",
+          "south",
+          "west"
+        ]
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=\"forward\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "positionChange",
+          "detail": [
+            2,
+            1
+          ]
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "directionChange",
+          "detail": "south"
+        },
+        {
+          "step": "press",
+          "key": "ArrowLeft"
+        },
+        {
+          "step": "expectEvent",
+          "name": "directionChange",
+          "detail": "east"
+        },
+        {
+          "step": "press",
+          "key": "ArrowUp"
+        },
+        {
+          "step": "expectEvent",
+          "name": "positionChange",
+          "detail": [
+            3,
+            1
+          ]
+        }
+      ]
+    ],
+    "credits": [],
+    "exportName": "PerspectiveMaze",
+    "defaults": {
+      "grid": [
+        "#########",
+        "#......E#",
+        "#.###.#.#",
+        "#.#...#.#",
+        "#.#.###.#",
+        "#...#...#",
+        "#########"
+      ],
+      "position": null,
+      "defaultPosition": [
+        1,
+        1
+      ],
+      "direction": null,
+      "defaultDirection": "east",
+      "label": "Perspective maze"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "grid": "Grid rows: # is a wall, . or a space is a passage, E is an exit; all other and missing cells are solid.",
+      "position": "Controlled zero-based [column, row]; null uses internal navigation. Invalid cells resolve to the nearest passage.",
+      "defaultPosition": "Initial [column, row], read once when mounted in uncontrolled mode.",
+      "direction": "Controlled cardinal heading; null uses internal turning.",
+      "defaultDirection": "Initial cardinal heading, read once when mounted in uncontrolled mode.",
+      "label": "Accessible name for the viewport, controls, and location summary; empty hides the component."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "grid": "string[]",
+      "position": "[number, number] | null",
+      "defaultPosition": "[number, number]",
+      "direction": "MazeDirection | null",
+      "defaultDirection": "MazeDirection",
+      "label": "string"
+    },
+    "events": {
+      "positionChange": {
+        "doc": "A collision-safe destination cell, emitted only in response to navigation input.",
+        "detail": "[number, number]"
+      },
+      "directionChange": {
+        "doc": "A proposed cardinal heading, emitted only in response to a turn.",
+        "detail": "MazeDirection"
+      }
+    },
+    "gzipBytes": 5207
+  },
+  {
+    "slug": "strata-stack",
+    "title": "Strata Stack",
+    "category": "immersive",
+    "description": "Supplied geological thicknesses form an exploded stack with adjustable gaps, three views, and accessible layer selection.",
+    "tags": [
+      "geology",
+      "strata",
+      "layers",
+      "thickness",
+      "exploded-view"
+    ],
+    "facets": [
+      "static",
+      "canvas",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-layer-id=\"shale\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "shale"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-layer-id=\"shale\"]",
+          "name": "aria-pressed",
+          "value": "true"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": "limestone"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-layer-id=\"limestone\"]"
+        }
+      ]
+    ],
+    "controls": {
+      "layers": {
+        "type": "json",
+        "label": "Layer records (metres)"
+      },
+      "separation": {
+        "type": "number",
+        "min": 0,
+        "max": 30,
+        "step": 0.5,
+        "label": "Gap (metres)"
+      },
+      "defaultValue": {
+        "type": "string",
+        "label": "Initial layer ID"
+      },
+      "view": {
+        "type": "select",
+        "options": [
+          "isometric",
+          "oblique",
+          "front"
+        ]
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "StrataStack",
+    "defaults": {
+      "layers": [
+        {
+          "id": "sandstone",
+          "label": "Sandstone",
+          "thickness": 22
+        },
+        {
+          "id": "shale",
+          "label": "Shale",
+          "thickness": 9
+        },
+        {
+          "id": "limestone",
+          "label": "Limestone",
+          "thickness": 34
+        },
+        {
+          "id": "siltstone",
+          "label": "Siltstone",
+          "thickness": 14
+        },
+        {
+          "id": "basalt",
+          "label": "Basalt",
+          "thickness": 18
+        }
+      ],
+      "separation": 8,
+      "value": null,
+      "defaultValue": "limestone",
+      "view": "isometric",
+      "label": "Geological strata"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layers": "Geological records ordered from the top surface downward.",
+      "separation": "Gap between adjacent layers in metres, from 0 to 30.",
+      "value": "Controlled selected record ID, or null to let the stack manage selection.",
+      "defaultValue": "Initial selected record ID, read once while value is null.",
+      "view": "Orthographic camera used to show the stack's thickness and exposed section faces.",
+      "label": "Accessible name for the stack and its current selected geological record."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layers": "readonly StrataLayer[]",
+      "separation": "number",
+      "value": "string | null",
+      "defaultValue": "string",
+      "view": "\"isometric\" | \"oblique\" | \"front\"",
+      "label": "string"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "Layer ID requested by pointer or keyboard input, including repeated controlled selections.",
+        "detail": "string"
+      }
+    },
+    "gzipBytes": 4860
+  },
+  {
     "slug": "terrain-field",
     "title": "Terrain Field",
     "category": "immersive",
@@ -15302,6 +19471,429 @@
     "gzipBytes": 2190
   },
   {
+    "slug": "pendulum-chain",
+    "title": "Pendulum Chain",
+    "category": "motion",
+    "description": "Linked glyph pendulums exchange motion slowly across fixed cells, with real coupling controlling phase and energy transfer.",
+    "tags": [
+      "pendulum",
+      "coupling",
+      "glyph",
+      "physics"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": false,
+    "controls": {
+      "count": {
+        "type": "number",
+        "min": 2,
+        "max": 16,
+        "step": 1,
+        "label": "Pendulums"
+      },
+      "coupling": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Neighbor coupling"
+      },
+      "amplitude": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "label": "Swing amplitude"
+      },
+      "period": {
+        "type": "number",
+        "min": 2,
+        "max": 30,
+        "step": 0.5,
+        "label": "Period (seconds)"
+      },
+      "label": {
+        "type": "string",
+        "label": "Accessible name"
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "credits": [],
+    "original": true,
+    "exportName": "PendulumChain",
+    "defaults": {
+      "count": 7,
+      "coupling": 0.65,
+      "amplitude": 0.8,
+      "period": 7,
+      "label": "A chain of coupled pendulums transferring motion between neighbors",
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "count": "Number of linked pendulums, from 2 to 16.",
+      "coupling": "Strength of the neighbor springs; zero isolates each pendulum.",
+      "amplitude": "Maximum swing as a fraction of each fixed cell's width, from 0 to 1.",
+      "period": "Natural period of an isolated pendulum, in seconds.",
+      "label": "Accessible name; an empty name hides the drawing from assistive technology."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "count": "number",
+      "coupling": "number",
+      "amplitude": "number",
+      "period": "number",
+      "label": "string"
+    },
+    "events": {},
+    "gzipBytes": 4320
+  },
+  {
+    "slug": "scroll-ruler",
+    "title": "Scroll Ruler",
+    "category": "motion",
+    "description": "A measured local scroll ruler shows position and extent, with pixel or percent ticks and pointer and keyboard seeking.",
+    "tags": [
+      "scroll",
+      "ruler",
+      "progress",
+      "ticks",
+      "local",
+      "keyboard"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "original": true,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "orientation": {
+        "type": "select",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      "unit": {
+        "type": "select",
+        "options": [
+          "px",
+          "percent"
+        ],
+        "label": "Measured unit"
+      },
+      "label": {
+        "type": "string",
+        "label": "Accessible name"
+      },
+      "tickStep": {
+        "type": "number",
+        "min": 1,
+        "max": 1000,
+        "step": 1,
+        "label": "Major tick interval"
+      }
+    },
+    "demo": {
+      "children": "<pre>000  ┼────┼────┼────┼────┼────┼────┼────┼────\n001  │    │    │    │    │    │    │    │    \n002  │    │    │    │    │    │    │    │    \n003  │    │    │    │    │    │    │    │    \n004  │    │    │    │    │    │    │    │    \n005  ┼────┼────┼────┼────┼────┼────┼────┼────\n006  │    │    │    │    │    │    │    │    \n007  │    │    │    │    │    │    │    │    \n008  │    │    │    │    │    │    │    │    \n009  │    │    │    │    │    │    │    │    \n010  ┼────┼────┼────┼────┼────┼────┼────┼────\n011  │    │    │    │    │    │    │    │    \n012  │    │    │    │    │    │    │    │    \n013  │    │    │    │    │    │    │    │    \n014  │    │    │    │    │    │    │    │    \n015  ┼────┼────┼────┼────┼────┼────┼────┼────\n016  │    │    │    │    │    │    │    │    \n017  │    │    │    │    │    │    │    │    \n018  │    │    │    │    │    │    │    │    \n019  │    │    │    │    │    │    │    │    \n020  ┼────┼────┼────┼────┼────┼────┼────┼────\n021  │    │    │    │    │    │    │    │    \n022  │    │    │    │    │    │    │    │    \n023  │    │    │    │    │    │    │    │    \n024  │    │    │    │    │    │    │    │    \n025  ┼────┼────┼────┼────┼────┼────┼────┼────\n026  │    │    │    │    │    │    │    │    \n027  │    │    │    │    │    │    │    │    \n028  │    │    │    │    │    │    │    │    \n029  │    │    │    │    │    │    │    │    \n030  ┼────┼────┼────┼────┼────┼────┼────┼────\n031  │    │    │    │    │    │    │    │    \n032  │    │    │    │    │    │    │    │    \n033  │    │    │    │    │    │    │    │    \n034  │    │    │    │    │    │    │    │    \n035  ┼────┼────┼────┼────┼────┼────┼────┼────\n036  │    │    │    │    │    │    │    │    \n037  │    │    │    │    │    │    │    │    \n038  │    │    │    │    │    │    │    │    \n039  │    │    │    │    │    │    │    │    \n040  ┼────┼────┼────┼────┼────┼────┼────┼────\n041  │    │    │    │    │    │    │    │    \n042  │    │    │    │    │    │    │    │    \n043  │    │    │    │    │    │    │    │    \n044  │    │    │    │    │    │    │    │    \n045  ┼────┼────┼────┼────┼────┼────┼────┼────\n046  │    │    │    │    │    │    │    │    \n047  │    │    │    │    │    │    │    │    \n048  │    │    │    │    │    │    │    │    \n049  │    │    │    │    │    │    │    │    \n050  ┼────┼────┼────┼────┼────┼────┼────┼────\n051  │    │    │    │    │    │    │    │    \n052  │    │    │    │    │    │    │    │    \n053  │    │    │    │    │    │    │    │    \n054  │    │    │    │    │    │    │    │    \n055  ┼────┼────┼────┼────┼────┼────┼────┼────\n056  │    │    │    │    │    │    │    │    \n057  │    │    │    │    │    │    │    │    \n058  │    │    │    │    │    │    │    │    \n059  │    │    │    │    │    │    │    │    \n060  ┼────┼────┼────┼────┼────┼────┼────┼────\n061  │    │    │    │    │    │    │    │    \n062  │    │    │    │    │    │    │    │    \n063  │    │    │    │    │    │    │    │    \n064  │    │    │    │    │    │    │    │    \n065  ┼────┼────┼────┼────┼────┼────┼────┼────\n066  │    │    │    │    │    │    │    │    \n067  │    │    │    │    │    │    │    │    \n068  │    │    │    │    │    │    │    │    \n069  │    │    │    │    │    │    │    │    \n070  ┼────┼────┼────┼────┼────┼────┼────┼────\n071  │    │    │    │    │    │    │    │    \n072  │    │    │    │    │    │    │    │    \n073  │    │    │    │    │    │    │    │    \n074  │    │    │    │    │    │    │    │    \n075  ┼────┼────┼────┼────┼────┼────┼────┼────\n076  │    │    │    │    │    │    │    │    \n077  │    │    │    │    │    │    │    │    \n078  │    │    │    │    │    │    │    │    \n079  │    │    │    │    │    │    │    │    \n080  ┼────┼────┼────┼────┼────┼────┼────┼────\n081  │    │    │    │    │    │    │    │    \n082  │    │    │    │    │    │    │    │    \n083  │    │    │    │    │    │    │    │    \n084  │    │    │    │    │    │    │    │    \n085  ┼────┼────┼────┼────┼────┼────┼────┼────\n086  │    │    │    │    │    │    │    │    \n087  │    │    │    │    │    │    │    │    \n088  │    │    │    │    │    │    │    │    \n089  │    │    │    │    │    │    │    │    \n090  ┼────┼────┼────┼────┼────┼────┼────┼────\n091  │    │    │    │    │    │    │    │    \n092  │    │    │    │    │    │    │    │    \n093  │    │    │    │    │    │    │    │    \n094  │    │    │    │    │    │    │    │    \n095  ┼────┼────┼────┼────┼────┼────┼────┼────\n096  │    │    │    │    │    │    │    │    \n097  │    │    │    │    │    │    │    │    \n098  │    │    │    │    │    │    │    │    \n099  │    │    │    │    │    │    │    │    </pre>"
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-scroll-ruler]"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-scroll-ruler]"
+        },
+        {
+          "step": "press",
+          "key": "End"
+        },
+        {
+          "step": "expectEvent",
+          "name": "positionChange"
+        },
+        {
+          "step": "press",
+          "key": "Home"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-scroll-ruler]",
+          "name": "aria-valuenow",
+          "value": "0"
+        }
+      ]
+    ],
+    "credits": [],
+    "exportName": "ScrollRuler",
+    "defaults": {
+      "orientation": "vertical",
+      "unit": "px",
+      "label": "Local scroll position",
+      "tickStep": 100
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "orientation": "Axis measured and controlled within this host's own scrollable content.",
+      "unit": "Tick and readout units: local CSS pixels or percentage of the available scroll range.",
+      "label": "Accessible name for the local scroll container and its ruler.",
+      "tickStep": "Major tick interval in the chosen unit; crowded labels use integer multiples of this step."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "orientation": "\"vertical\" | \"horizontal\"",
+      "unit": "\"px\" | \"percent\"",
+      "label": "string",
+      "tickStep": "number"
+    },
+    "events": {
+      "positionChange": {
+        "doc": "Actual local position and extent in CSS pixels, plus normalized progress; emitted after scrolling input.",
+        "detail": "{ position: number; extent: number; progress: number }"
+      }
+    },
+    "gzipBytes": 3176
+  },
+  {
+    "slug": "split-flap-display",
+    "title": "Split-Flap Display",
+    "category": "motion",
+    "description": "A short label in aligned split-flap cells, where only the characters that changed turn through the drum to their new glyph.",
+    "tags": [
+      "split-flap",
+      "departure board",
+      "flip",
+      "label",
+      "text",
+      "mechanical"
+    ],
+    "facets": [
+      "animated",
+      "text"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": false,
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "bg",
+      "muted"
+    ],
+    "controls": {
+      "text": {
+        "type": "string",
+        "label": "Text"
+      },
+      "label": {
+        "type": "string",
+        "label": "Caption"
+      },
+      "duration": {
+        "type": "number",
+        "min": 800,
+        "max": 6000,
+        "step": 100,
+        "label": "Drum turn (ms)"
+      },
+      "chars": {
+        "type": "string",
+        "label": "Drum glyphs"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "original": true,
+    "capture": 2000,
+    "demo": {
+      "props": {
+        "text": "ON TIME",
+        "label": "Status"
+      }
+    },
+    "exportName": "SplitFlapDisplay",
+    "defaults": {
+      "text": "SPLIT FLAP",
+      "duration": 2400,
+      "chars": " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:.-",
+      "label": "",
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "text": "The label to show. Assistive technology reads it whole, and every cell lands on its own character.",
+      "duration": "Milliseconds one cell takes to turn through the whole drum. A cell turns only as far as its glyph needs, so most changes finish sooner.",
+      "chars": "The drum: the glyphs in the order a cell turns through them. A cell only turns forward, and a character the drum lacks becomes one last flap.",
+      "label": "A small caption above the cells, read before the text and set in the host's own font. Empty shows none."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "text": "string",
+      "duration": "number",
+      "chars": "string",
+      "label": "string"
+    },
+    "events": {},
+    "gzipBytes": 2729
+  },
+  {
+    "slug": "spring-trace",
+    "title": "Spring Trace",
+    "category": "motion",
+    "description": "A damped spring approaches its target along a glyph trace, with analytic overshoot, continuous retargeting, and automatic settling.",
+    "tags": [
+      "spring",
+      "damping",
+      "overshoot",
+      "settling",
+      "physics",
+      "glyph trace"
+    ],
+    "facets": [
+      "animated",
+      "chart"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "target": {
+        "type": "number",
+        "min": -1000,
+        "max": 1000,
+        "step": 1
+      },
+      "stiffness": {
+        "type": "number",
+        "min": 0.1,
+        "max": 100,
+        "step": 0.1
+      },
+      "damping": {
+        "type": "number",
+        "min": 0.1,
+        "max": 40,
+        "step": 0.1
+      },
+      "range": {
+        "type": "json",
+        "label": "Vertical range [minimum, maximum]"
+      },
+      "from": {
+        "type": "number",
+        "min": -1000,
+        "max": 1000,
+        "step": 1,
+        "label": "Initial position"
+      },
+      "label": {
+        "type": "string"
+      },
+      "paused": {
+        "type": "boolean"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "SpringTrace",
+    "defaults": {
+      "target": 60,
+      "stiffness": 18,
+      "damping": 4.2,
+      "range": [
+        0,
+        100
+      ],
+      "from": 0,
+      "label": "Damped spring response toward a target",
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "target": "Target equilibrium value; retargeting preserves the current position and velocity.",
+      "stiffness": "Spring stiffness for unit mass, from 0.1 to 100; larger values respond faster.",
+      "damping": "Viscous damping for unit mass, from 0.1 to 40; larger values suppress overshoot.",
+      "range": "Vertical plotting bounds; reversed bounds are reordered, and equal bounds expand by one.",
+      "from": "Initial position with zero velocity; changing it restarts the response.",
+      "label": "Accessible name; an empty name hides the trace from assistive technology."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "target": "number",
+      "stiffness": "number",
+      "damping": "number",
+      "range": "[number, number]",
+      "from": "number",
+      "label": "string"
+    },
+    "events": {},
+    "gzipBytes": 5112
+  },
+  {
     "slug": "brick-lattice",
     "title": "Brick Lattice",
     "category": "patterns",
@@ -15395,6 +19987,81 @@
     },
     "events": {},
     "gzipBytes": 1487
+  },
+  {
+    "slug": "cairo-pentagons",
+    "title": "Cairo Pentagons",
+    "category": "patterns",
+    "description": "Exact interlocking Cairo pentagons form quiet one-pixel seams behind content, with adjustable scale, orientation, and opacity.",
+    "tags": [
+      "cairo",
+      "pentagons",
+      "tiling",
+      "architectural",
+      "css",
+      "background"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "scale": {
+        "type": "number",
+        "min": 20,
+        "max": 160,
+        "step": 2,
+        "label": "Junction spacing (px)"
+      },
+      "orientation": {
+        "type": "number",
+        "min": -180,
+        "max": 180,
+        "step": 5,
+        "label": "Orientation (degrees)"
+      },
+      "opacity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "CairoPentagons",
+    "defaults": {
+      "scale": 54,
+      "orientation": 0,
+      "opacity": 0.22
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "scale": "Distance between neighboring four-way junctions in CSS pixels, from 20 to 160.",
+      "orientation": "Orientation of the complete tiling in degrees, from -180 to 180.",
+      "opacity": "Seam opacity from 0 to 1; background color remains owned by the palette."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "scale": "number",
+      "orientation": "number",
+      "opacity": "number"
+    },
+    "events": {},
+    "gzipBytes": 1805
   },
   {
     "slug": "cell-mosaic",
@@ -15832,6 +20499,91 @@
     "gzipBytes": 1564
   },
   {
+    "slug": "dragon-fold",
+    "title": "Dragon Fold",
+    "category": "patterns",
+    "description": "A deterministic paper-fold sequence draws one connected angular dragon path in quiet ink behind page-owned content.",
+    "tags": [
+      "dragon",
+      "paper-fold",
+      "fractal",
+      "angular",
+      "background",
+      "deterministic"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": true,
+    "original": true,
+    "wraps": "content",
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "iterations": {
+        "type": "number",
+        "min": 1,
+        "max": 14,
+        "step": 1
+      },
+      "scale": {
+        "type": "number",
+        "min": 2,
+        "max": 32,
+        "step": 1,
+        "label": "Segment length (px)"
+      },
+      "orientation": {
+        "type": "select",
+        "options": [
+          "east",
+          "south",
+          "west",
+          "north"
+        ]
+      },
+      "opacity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      }
+    },
+    "credits": [],
+    "exportName": "DragonFold",
+    "defaults": {
+      "iterations": 12,
+      "scale": 8,
+      "orientation": "east",
+      "opacity": 0.32
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "iterations": "Paper-fold iterations, from 1 to 14; each fold doubles the connected path's segments.",
+      "scale": "Length of each right-angle path segment in CSS pixels, from 2 to 32.",
+      "orientation": "Direction of the initial segment before folding; rotates the whole path in quarter turns.",
+      "opacity": "Opacity of the ink behind page-owned content, from 0 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "iterations": "number",
+      "scale": "number",
+      "orientation": "\"east\" | \"south\" | \"west\" | \"north\"",
+      "opacity": "number"
+    },
+    "events": {},
+    "gzipBytes": 1832
+  },
+  {
     "slug": "grid-paper",
     "title": "Grid Paper",
     "category": "patterns",
@@ -16228,6 +20980,89 @@
     },
     "events": {},
     "gzipBytes": 1323
+  },
+  {
+    "slug": "penrose-tiles",
+    "title": "Penrose Tiles",
+    "category": "patterns",
+    "description": "Golden-ratio substitution forms a bounded patch of thin and thick Penrose rhombi, drawn quietly behind page-owned content.",
+    "tags": [
+      "penrose",
+      "quasiperiodic",
+      "rhombi",
+      "substitution",
+      "geometry",
+      "background"
+    ],
+    "facets": [
+      "static",
+      "background"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": true,
+    "wraps": "content",
+    "original": true,
+    "palette": [
+      "fg"
+    ],
+    "controls": {
+      "depth": {
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "label": "Substitution depth"
+      },
+      "scale": {
+        "type": "number",
+        "min": 12,
+        "max": 120,
+        "step": 1,
+        "label": "Tile edge (px)"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 999,
+        "step": 1,
+        "label": "Patch seed"
+      },
+      "opacity": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "label": "Surface opacity"
+      }
+    },
+    "credits": [],
+    "exportName": "PenroseTiles",
+    "defaults": {
+      "depth": 6,
+      "scale": 38,
+      "seed": 1,
+      "opacity": 0.26
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Deterministic position and orientation of the complete quasiperiodic patch.",
+      "depth": "Golden-ratio substitution rounds, from 1 to 8; more rounds extend the bounded patch.",
+      "scale": "Final rhombus edge length in CSS pixels, from 12 to 120.",
+      "opacity": "Opacity of the whole background surface, from 0 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "depth": "number",
+      "scale": "number",
+      "opacity": "number"
+    },
+    "events": {},
+    "gzipBytes": 2428
   },
   {
     "slug": "scallop-arches",
@@ -16795,6 +21630,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "ArchitectDossier",
     "defaults": {
       "label": "Architecture project dossier",
@@ -16937,6 +21773,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "ArchiveFindingAid",
     "defaults": {
       "title": "Morrow Print Workshop records",
@@ -17598,6 +22435,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "BotanicalAtelier",
     "defaults": {
       "label": "Botanical atelier portfolio",
@@ -17853,6 +22691,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "CartographicStory",
     "defaults": {
       "title": "Following the\nwaterline",
@@ -17969,6 +22808,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "CeramicStudio",
     "defaults": {
       "label": "Ceramic studio collection",
@@ -18107,6 +22947,7 @@
     },
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "ChoreographicScore",
     "defaults": {
       "company": "Common Weight / Contemporary dance",
@@ -18248,6 +23089,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "CinematequeProgram",
     "defaults": {
       "title": "The city after dark",
@@ -18373,6 +23215,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "CityAtlas",
     "defaults": {
       "publication": "City Atlas / Local Studies",
@@ -18682,6 +23525,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "ConservationReport",
     "defaults": {
       "title": "Keeping the\nmarks of time",
@@ -18971,6 +23815,7 @@
     },
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "CulinaryNotebook",
     "defaults": {
       "author": "The small table / Kitchen notebook",
@@ -19281,6 +24126,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "DesertTransmission",
     "defaults": {
       "title": "Nothing here\nis silent.",
@@ -19842,6 +24688,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "ExhibitionLabels",
     "defaults": {
       "title": "A measure of silence",
@@ -19955,6 +24802,7 @@
     },
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "FashionLookbook",
     "defaults": {
       "label": "STILL FORM / Atelier 04",
@@ -20066,6 +24914,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "FestivalRoute",
     "defaults": {
       "title": "Take the long way.",
@@ -20208,6 +25057,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "FieldDispatch",
     "defaults": {
       "publication": "Field Dispatch / No. 024",
@@ -20325,6 +25175,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "FolioIndex",
     "defaults": {
       "label": "Designer portfolio",
@@ -20454,6 +25305,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "ForumRome",
     "defaults": {
       "title": "THE CITY\nIN COMMON",
@@ -20846,6 +25698,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "HomewardVoyage",
     "defaults": {
       "title": "The long way\nhome.",
@@ -20939,6 +25792,7 @@
     },
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "LandscapeStudy",
     "defaults": {
       "practice": "Groundwork / Landscape studies",
@@ -21060,6 +25914,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "LetterpressBroadside",
     "defaults": {
       "title": "The right to\ncommon ground",
@@ -21486,6 +26341,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "MarginJournal",
     "defaults": {
       "publication": "Margin Journal",
@@ -21596,6 +26452,7 @@
     },
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "MaterialLibrary",
     "defaults": {
       "practice": "FORM / Architectural research",
@@ -21988,6 +26845,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "MonographSpread",
     "defaults": {
       "title": "Making space\nfor silence",
@@ -22093,6 +26951,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "MuseumAcquisition",
     "defaults": {
       "title": "Portable reading lamp",
@@ -22351,6 +27210,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "NocturneFilm",
     "defaults": {
       "title": "NOCTURNE",
@@ -22449,6 +27309,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "ObservatoryBulletin",
     "defaults": {
       "title": "A night at the\nedge of winter",
@@ -22553,6 +27414,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "OralHistory",
     "defaults": {
       "publication": "Oral History / Working Lives",
@@ -22679,6 +27541,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "OrbitalLog",
     "defaults": {
       "title": "THE VIEW\nFROM HERE",
@@ -22783,6 +27646,7 @@
     },
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "PhotoContactSheet",
     "defaults": {
       "photographer": "Mara Ellis / Photography",
@@ -23066,6 +27930,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "PolarExpedition",
     "defaults": {
       "title": "At the edge\nof the known.",
@@ -23327,6 +28192,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "PublicLecture",
     "defaults": {
       "title": "Can a city\nlearn to listen?",
@@ -23534,6 +28400,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "ReadingRoom",
     "defaults": {
       "publication": "The Reading Room",
@@ -23647,6 +28514,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "RepertoryPlaybill",
     "defaults": {
       "title": "A room for the sea",
@@ -24111,6 +28979,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "SoundPractice",
     "defaults": {
       "label": "Sound design portfolio",
@@ -24249,6 +29118,7 @@
         }
       ]
     ],
+    "collection": "full-sites",
     "exportName": "SpecimenReview",
     "defaults": {
       "publication": "Specimen / Quarterly Review 06",
@@ -25018,6 +29888,7 @@
     ],
     "original": true,
     "credits": [],
+    "collection": "full-sites",
     "exportName": "TypeFoundry",
     "defaults": {
       "label": "Typeface specimen",
@@ -26927,6 +31798,105 @@
     },
     "events": {},
     "gzipBytes": 5308
+  },
+  {
+    "slug": "shadow-lattice",
+    "title": "Shadow Lattice",
+    "category": "shaders",
+    "description": "A slowly moving grazing light casts coherent, dithered shadows through shallow crossed ribs, with a palette-based CSS fallback.",
+    "tags": [
+      "lattice",
+      "shadows",
+      "grazing-light",
+      "occlusion",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "pitch": {
+        "type": "number",
+        "min": 24,
+        "max": 160,
+        "step": 1,
+        "label": "Rib pitch (px)"
+      },
+      "depth": {
+        "type": "number",
+        "min": 0,
+        "max": 32,
+        "step": 0.5,
+        "label": "Rib height (px)"
+      },
+      "lightAngle": {
+        "type": "number",
+        "min": -180,
+        "max": 180,
+        "step": 1,
+        "label": "Light angle"
+      },
+      "speed": {
+        "type": "number",
+        "min": -12,
+        "max": 12,
+        "step": 0.5,
+        "label": "Light speed (degrees/s)"
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "ShadowLattice",
+    "defaults": {
+      "pitch": 64,
+      "depth": 13,
+      "lightAngle": -32,
+      "speed": 6,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "pitch": "Distance between adjacent lattice ribs in CSS pixels, from 24 to 160.",
+      "depth": "Height of the shallow ribs in CSS pixels, from 0 to 32; higher ribs cast longer shadows.",
+      "lightAngle": "Starting azimuth of the grazing light in degrees.",
+      "speed": "Light rotation in degrees per second, from -12 to 12; zero keeps the light still."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "pitch": "number",
+      "depth": "number",
+      "lightAngle": "number",
+      "speed": "number"
+    },
+    "events": {},
+    "gzipBytes": 5942
   },
   {
     "slug": "tunnel-grid",
@@ -29460,6 +34430,139 @@
     "gzipBytes": 3157
   },
   {
+    "slug": "crop-window",
+    "title": "Crop Window",
+    "category": "ui",
+    "description": "Four pointer and keyboard edges constrain a normalized crop over child content, with optional pixel aspect ratio and coordinate events.",
+    "tags": [
+      "crop",
+      "rectangle",
+      "edges",
+      "coordinates",
+      "keyboard"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "wraps": "content",
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=\"edge-left\"]"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"edge-left\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": {
+            "left": 0.17,
+            "top": 0.18,
+            "right": 0.84,
+            "bottom": 0.82
+          }
+        },
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"edge-top\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": {
+            "left": 0.17,
+            "top": 0.19,
+            "right": 0.84,
+            "bottom": 0.82
+          }
+        }
+      ]
+    ],
+    "controls": {
+      "defaultValue": {
+        "type": "json",
+        "label": "Initial normalized edges"
+      },
+      "aspectRatio": {
+        "type": "number",
+        "min": 0.1,
+        "max": 4,
+        "step": 0.01,
+        "label": "Width/height ratio"
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "CropWindow",
+    "defaults": {
+      "value": null,
+      "defaultValue": {
+        "left": 0.16,
+        "top": 0.18,
+        "right": 0.84,
+        "bottom": 0.82
+      },
+      "aspectRatio": null,
+      "label": "Crop region"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "Controlled normalized edges, or null to let the crop manage its own rectangle.",
+      "defaultValue": "Initial normalized edges, read once when value is null.",
+      "aspectRatio": "Positive crop width/height ratio in rendered pixels; null permits independent edges.",
+      "label": "Accessible name for the crop and its four keyboard-adjustable edges."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "CropWindowRect | null",
+      "defaultValue": "CropWindowRect",
+      "aspectRatio": "number | null",
+      "label": "string"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "Requested normalized crop edges, constrained to the host and optional aspect ratio.",
+        "detail": "CropWindowRect"
+      }
+    },
+    "gzipBytes": 3803
+  },
+  {
     "slug": "dialog",
     "title": "Dialog",
     "category": "ui",
@@ -31276,6 +36379,209 @@
     "gzipBytes": 2457
   },
   {
+    "slug": "range-brush",
+    "title": "Range Brush",
+    "category": "ui",
+    "description": "A two-handle numeric interval brush with ordered, stepped pointer and keyboard input.",
+    "tags": [
+      "range",
+      "interval",
+      "brush",
+      "slider",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"lower\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            26,
+            75
+          ]
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"lower\"]",
+          "name": "aria-valuenow",
+          "value": "26"
+        },
+        {
+          "step": "press",
+          "key": "End"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            75,
+            75
+          ]
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"lower\"]",
+          "name": "aria-valuenow",
+          "value": "75"
+        },
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"upper\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowRight"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            75,
+            76
+          ]
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"upper\"]",
+          "name": "aria-valuenow",
+          "value": "76"
+        },
+        {
+          "step": "press",
+          "key": "Home"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            75,
+            75
+          ]
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=\"upper\"]",
+          "name": "aria-valuenow",
+          "value": "75"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=\"track\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange"
+        }
+      ]
+    ],
+    "controls": {
+      "min": {
+        "type": "number",
+        "min": -1000,
+        "max": 1000,
+        "step": 1
+      },
+      "max": {
+        "type": "number",
+        "min": -1000,
+        "max": 1000,
+        "step": 1
+      },
+      "step": {
+        "type": "number",
+        "min": 0.1,
+        "max": 100,
+        "step": 0.1
+      },
+      "defaultValue": {
+        "type": "numbers"
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "credits": [],
+    "original": true,
+    "exportName": "RangeBrush",
+    "defaults": {
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "value": null,
+      "defaultValue": [
+        25,
+        75
+      ],
+      "label": "Selected window"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "min": "The lowest selectable value.",
+      "max": "The highest selectable value.",
+      "step": "The positive increment between selectable values.",
+      "value": "The current ordered interval, or null for internal state.",
+      "defaultValue": "The initial interval, read once at mount.",
+      "label": "The visible and accessible name of the interval."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "min": "number",
+      "max": "number",
+      "step": "number",
+      "value": "[number, number] | null",
+      "defaultValue": "[number, number]",
+      "label": "string"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The ordered interval requested by keyboard or pointer input.",
+        "detail": "[number, number]"
+      }
+    },
+    "gzipBytes": 3160
+  },
+  {
     "slug": "scroll-area",
     "title": "Scroll Area",
     "category": "ui",
@@ -32476,6 +37782,143 @@
     "gzipBytes": 2030
   },
   {
+    "slug": "timecode-editor",
+    "title": "Timecode Editor",
+    "category": "ui",
+    "description": "Four native inputs edit non-drop hours, minutes, seconds, and frames with frame-rate-aware carrying and keyboard stepping.",
+    "tags": [
+      "timecode",
+      "frames",
+      "video",
+      "native inputs",
+      "keyboard",
+      "form"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "original": true,
+    "stage": "inline",
+    "host": "div",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "controls": {
+      "fps": {
+        "type": "number",
+        "min": 1,
+        "max": 120,
+        "step": 1
+      },
+      "defaultValue": {
+        "type": "number",
+        "min": 0,
+        "max": 8639999,
+        "step": 1
+      },
+      "label": {
+        "type": "string"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=\"frames\"]"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"frames\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowUp"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 2010
+        },
+        {
+          "step": "press",
+          "key": "End"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 2015
+        },
+        {
+          "step": "press",
+          "key": "ArrowUp"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": 2016
+        },
+        {
+          "step": "press",
+          "key": "ArrowLeft"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"seconds\"]"
+        }
+      ]
+    ],
+    "credits": [],
+    "exportName": "TimecodeEditor",
+    "defaults": {
+      "fps": 24,
+      "value": null,
+      "defaultValue": 2009,
+      "label": "Timecode",
+      "disabled": false
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "fps": "Nominal frames per second, rounded and clamped to 1–120; counting is non-drop.",
+      "value": "Total frame count; null uses internal state. Changing fps reformats the same frame count.",
+      "defaultValue": "Initial total frame count, read once when mounted in uncontrolled mode.",
+      "label": "Visible and accessible name of the grouped timecode editor; empty hides it from assistive technology.",
+      "disabled": "Disable all four native inputs."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "fps": "number",
+      "value": "number | null",
+      "defaultValue": "number",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "New total frame count, emitted only after a user commits or steps a segment.",
+        "detail": "number"
+      }
+    },
+    "gzipBytes": 3301
+  },
+  {
     "slug": "toast",
     "title": "Toast",
     "category": "ui",
@@ -33108,5 +38551,195 @@
       }
     },
     "gzipBytes": 2985
+  },
+  {
+    "slug": "xy-pad",
+    "title": "XY pad",
+    "category": "ui",
+    "description": "A square two-axis pad with a crosshair, paired with numeric fields so both axes move by pointer and keyboard.",
+    "tags": [
+      "xy-pad",
+      "two-axis",
+      "crosshair",
+      "position",
+      "form",
+      "ui"
+    ],
+    "facets": [
+      "static",
+      "interactive"
+    ],
+    "wave": 15,
+    "release": "components-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "original": true,
+    "host": "div",
+    "stage": "inline",
+    "palette": [
+      "fg",
+      "accent",
+      "muted"
+    ],
+    "controlled": {
+      "value": "valueChange"
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"x\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowUp"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            41,
+            -60
+          ]
+        },
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "[data-part=\"y\"]"
+        },
+        {
+          "step": "press",
+          "key": "ArrowDown"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange",
+          "detail": [
+            41,
+            -61
+          ]
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=\"pad\"]"
+        },
+        {
+          "step": "expectEvent",
+          "name": "valueChange"
+        }
+      ],
+      [
+        {
+          "step": "hover",
+          "selector": "[data-part=\"thumb\"]"
+        }
+      ]
+    ],
+    "controls": {
+      "defaultValue": {
+        "type": "numbers",
+        "label": "Start (x, y)"
+      },
+      "bounds": {
+        "type": "numbers",
+        "label": "Bounds (xMin, xMax, yMin, yMax)"
+      },
+      "step": {
+        "type": "number",
+        "min": 0.001,
+        "max": 100,
+        "step": 0.001
+      },
+      "label": {
+        "type": "string"
+      },
+      "axes": {
+        "type": "json",
+        "label": "Axis names"
+      },
+      "size": {
+        "type": "number",
+        "min": 8,
+        "max": 32,
+        "step": 1
+      }
+    },
+    "credits": [],
+    "demo": {
+      "props": {
+        "label": "Offset",
+        "bounds": [
+          -100,
+          100,
+          -100,
+          100
+        ],
+        "defaultValue": [
+          40,
+          -60
+        ]
+      }
+    },
+    "exportName": "XyPad",
+    "defaults": {
+      "value": null,
+      "defaultValue": [
+        50,
+        50
+      ],
+      "bounds": [
+        0,
+        100,
+        0,
+        100
+      ],
+      "step": 1,
+      "label": "Position",
+      "axes": [
+        "X",
+        "Y"
+      ],
+      "size": 16
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "value": "The current [x, y] position, or null to let the pad manage its own.",
+      "defaultValue": "The initial [x, y] position when value is null.",
+      "bounds": "The limits of the two axes as [xMin, xMax, yMin, yMax].",
+      "step": "The interval between selectable values on both axes.",
+      "label": "The visible and accessible name of the pad.",
+      "axes": "The names of the two numeric fields, x first.",
+      "size": "The side of the pad in rem."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "value": "[number, number] | null",
+      "defaultValue": "[number, number]",
+      "bounds": "[number, number, number, number]",
+      "step": "number",
+      "label": "string",
+      "axes": "[string, string]",
+      "size": "number"
+    },
+    "events": {
+      "valueChange": {
+        "doc": "The user chose a position with the pad or a numeric field, as [x, y].",
+        "detail": "[number, number]"
+      }
+    },
+    "gzipBytes": 3605
   }
 ]

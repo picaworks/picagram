@@ -146,6 +146,11 @@ function splitProps<P>(props: Partial<P>): { data: Partial<P>; handlers: Record<
   return { data: data as Partial<P>, handlers };
 }
 
+// lib/font.ts
+/** The monospace stack glyph components default to. It lives in its own module, so a text component that
+ *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
+const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
 // lib/host.ts
 /** What a core may change on its host, and the nodes it adds, each undone on destroy. A core never writes
  *  to, moves, or removes a node it did not create, and every node it adds carries data-pica.
@@ -273,11 +278,6 @@ function scope(host: HTMLElement): Scope {
   };
 }
 
-// lib/font.ts
-/** The monospace stack glyph components default to. It lives in its own module, so a text component that
- *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
-const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
-
 // lib/palette.ts
 /** The four colors every component draws with. They live in CSS custom properties, so they cascade: set
  *  them once on a page or a section and every component follows, including on a theme switch. A wrapper's
@@ -392,6 +392,288 @@ function watchPalette(host: HTMLElement, onChange: (colors: Colors) => void): Pa
   };
 }
 
+// lib/glyph-grid.ts
+/** A monospace cell grid painted as text rows or onto a canvas. See docs/architecture/contract.md. */
+
+interface GridOptions {
+  /** CSS font-family stack. Must be monospace. */
+  fontFamily: string;
+  /** Glyph size in CSS pixels. Ignored when `columns` is above zero. */
+  fontSize: number;
+  /** Fit exactly this many columns across the host and derive the glyph size from it. 0 uses `fontSize`. */
+  columns: number;
+  /** Line height as a multiple of the glyph size. */
+  lineHeight: number;
+  /** "dom" keeps glyphs as text and is cheapest up to DOM_CELL_LIMIT cells. "canvas" handles more
+   *  cells and per-cell color. "auto" picks by cell count. */
+  renderer: "dom" | "canvas" | "auto";
+  /** Glyph color. Empty uses --pica-fg, and failing that the host's inherited color. */
+  color: string;
+}
+
+/** Above this many cells, "auto" paints to a canvas instead of text rows. */
+const DOM_CELL_LIMIT = 12000;
+
+interface Grid {
+  readonly cols: number;
+  readonly rows: number;
+  /** Cell width over cell height, for sampling images and fields without stretching them. */
+  readonly aspect: number;
+  /** Cell width in CSS pixels, for mapping a pointer or a layout onto cells. */
+  readonly cellWidth: number;
+  /** Cell height in CSS pixels. */
+  readonly cellHeight: number;
+  /** The CSS font shorthand glyphs are drawn in. */
+  readonly font: string;
+  /** Writes one glyph into the back buffer. `color` is honored by the canvas renderer only. */
+  set(x: number, y: number, glyph: string, color?: string): void;
+  /** Writes a string starting at (x, y), clipped to the grid. */
+  write(x: number, y: number, text: string, color?: string): void;
+  /** Fills the back buffer. */
+  clear(glyph?: string): void;
+  /** Paints the rows that changed since the last flush. */
+  flush(): void;
+  update(options: Partial<GridOptions>): void;
+  destroy(): void;
+}
+
+let measurer: CanvasRenderingContext2D | null | undefined;
+
+/** A glyph's advance as a share of the font size, or 0.6 where nothing can be measured. Measured on every
+ *  call, because a web font can finish loading between calls. */
+function advanceOf(fontFamily: string): number {
+  if (measurer === undefined) measurer = document.createElement("canvas").getContext("2d");
+  if (!measurer) return 0.6;
+  measurer.font = `100px ${fontFamily}`;
+  return measurer.measureText("M").width / 100 || 0.6;
+}
+
+/** The cell a glyph grid draws for this font, in CSS pixels. */
+function measureCell(fontFamily: string, fontSize: number, lineHeight: number): { w: number; h: number } {
+  return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
+}
+
+/** Creates a grid inside `host`. `onLayout` runs whenever the cell count changes (resize, font load),
+ *  after which the back buffer is blank and the caller should draw again. */
+function createGrid(host: HTMLElement, options: GridOptions, onLayout: () => void): Grid {
+  let opts: GridOptions = { ...options };
+  let cols = 1;
+  let rows = 1;
+  let cellW = 7.2;
+  let cellH = 14;
+  let fontPx = 12;
+  let width = -1;
+  let height = -1;
+  let cells: string[] = [" "];
+  let tints: (string | undefined)[] = [undefined];
+  let shown: string[] = [];
+  let view: HTMLElement | null = null;
+  let lines: HTMLElement[] = [];
+  let ctx: CanvasRenderingContext2D | null = null;
+  let ink = "";
+  let alive = true;
+
+  const restoreHost = styleHost(
+    host,
+    getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" },
+  );
+  const font = (): string => `${fontPx}px ${opts.fontFamily}`;
+
+  /** Recomputes the cell grid from the host's size. Returns true when the grid was rebuilt. */
+  function layout(force: boolean): boolean {
+    const w = host.clientWidth;
+    const h = host.clientHeight;
+    const advance = advanceOf(opts.fontFamily);
+    const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+    const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+    const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+    const nextRows = Math.max(1, Math.floor(h / nextCellH));
+    if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+    width = w;
+    height = h;
+    fontPx = px;
+    cellW = px * advance;
+    cellH = nextCellH;
+    cols = nextCols;
+    rows = nextRows;
+    cells = new Array<string>(cols * rows).fill(" ");
+    tints = new Array<string | undefined>(cols * rows).fill(undefined);
+    mountView();
+    return true;
+  }
+
+  function mountView(): void {
+    view?.remove();
+    lines = [];
+    ctx = null;
+    const color = opts.color || cssVar("fg");
+    const mode = opts.renderer === "auto" ? (cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom") : opts.renderer;
+    if (mode === "dom") {
+      const pre = document.createElement("pre");
+      pre.style.cssText = [
+        "position:absolute", "inset:0", "margin:0", "padding:0", "overflow:hidden",
+        "white-space:pre", "letter-spacing:0", "user-select:none", "pointer-events:none",
+        "font-kerning:none", "font-variant-ligatures:none",
+        `font-family:${opts.fontFamily}`, `font-size:${fontPx}px`, `line-height:${cellH}px`, `color:${color}`,
+      ].join(";");
+      for (let y = 0; y < rows; y++) {
+        const line = document.createElement("span");
+        line.style.display = "block";
+        line.style.height = `${cellH}px`;
+        pre.appendChild(line);
+        lines.push(line);
+      }
+      view = pre;
+    } else {
+      const canvas = document.createElement("canvas");
+      // Text rows follow a palette change through CSS on their own; a canvas has to be painted again. A 1 ms
+      // color transition turns any change to its ink into a transitionend, which repaints it, for far fewer
+      // bytes than a palette watcher.
+      canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+      canvas.addEventListener("transitionend", (event) => {
+        event.stopPropagation();
+        if (ctx && view === canvas) paintCanvas(ctx, canvas);
+      });
+      const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.textBaseline = "middle";
+        ctx.font = font();
+      }
+      view = canvas;
+    }
+    view.setAttribute("data-pica", "");
+    view.setAttribute("aria-hidden", "true");
+    shown = new Array<string>(rows).fill("\u0000");
+    ink = "";
+    host.appendChild(view);
+  }
+
+  function paintCanvas(context: CanvasRenderingContext2D, target: HTMLElement): void {
+    const color = getComputedStyle(target).color;
+    if (color !== ink) {
+      ink = color;
+      shown.fill("\u0000");
+    }
+    for (let y = 0; y < rows; y++) {
+      const start = y * cols;
+      const text = cells.slice(start, start + cols).join("");
+      let tinted = false;
+      for (let x = 0; x < cols; x++) {
+        if (tints[start + x] !== undefined) {
+          tinted = true;
+          break;
+        }
+      }
+      const key = tinted ? `${text}\u0000${tints.slice(start, start + cols).join(",")}` : text;
+      if (key === shown[y]) continue;
+      shown[y] = key;
+      const top = y * cellH;
+      context.clearRect(0, top, width, cellH);
+      if (!tinted) {
+        context.fillStyle = ink;
+        context.fillText(text, 0, top + cellH / 2);
+        continue;
+      }
+      // One fillText per run of same-colored cells: monospace advances keep every glyph on its cell.
+      let x = 0;
+      while (x < cols) {
+        const tint = tints[start + x] ?? ink;
+        let end = x + 1;
+        while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+        context.fillStyle = tint;
+        context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+        x = end;
+      }
+    }
+  }
+
+  function paintText(): void {
+    for (let y = 0; y < rows; y++) {
+      const row = cells.slice(y * cols, (y + 1) * cols).join("");
+      if (row === shown[y]) continue;
+      shown[y] = row;
+      const line = lines[y];
+      if (line) line.textContent = row;
+    }
+  }
+
+  function set(x: number, y: number, glyph: string, color?: string): void {
+    if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+    const i = y * cols + x;
+    cells[i] = glyph;
+    tints[i] = color;
+  }
+
+  const resizeObserver = typeof ResizeObserver === "function"
+    ? new ResizeObserver(() => {
+        if (alive && layout(false)) onLayout();
+      })
+    : null;
+  resizeObserver?.observe(host);
+
+  const onFonts = (): void => {
+    if (alive && layout(true)) onLayout();
+  };
+  document.fonts.addEventListener("loadingdone", onFonts);
+
+  layout(true);
+
+  return {
+    get cols() {
+      return cols;
+    },
+    get rows() {
+      return rows;
+    },
+    get aspect() {
+      return cellW / cellH;
+    },
+    get cellWidth() {
+      return cellW;
+    },
+    get cellHeight() {
+      return cellH;
+    },
+    get font() {
+      return font();
+    },
+    set,
+    write(x, y, text, color) {
+      let i = 0;
+      for (const glyph of text) {
+        set(x + i, y, glyph, color);
+        i++;
+      }
+    },
+    clear(glyph = " ") {
+      cells.fill(glyph);
+      tints.fill(undefined);
+    },
+    flush() {
+      if (!view) return;
+      if (ctx) paintCanvas(ctx, view);
+      else paintText();
+    },
+    update(next) {
+      opts = { ...opts, ...next };
+      layout(true);
+      onLayout();
+    },
+    destroy() {
+      alive = false;
+      resizeObserver?.disconnect();
+      document.fonts.removeEventListener("loadingdone", onFonts);
+      view?.remove();
+      view = null;
+      restoreHost();
+    },
+  };
+}
+
 // lib/json.ts
 /** Comparing props that hold JSON. React passes fresh arrays and objects on every render, so a core compares
  *  them by content before deciding what to rebuild. */
@@ -424,122 +706,430 @@ function changed<P>(before: P, after: P, keys: readonly (keyof P)[]): boolean {
 
 // registry/ascii/ascii-process-map/core.ts
 export interface AsciiProcessMapProps {
-  /** The process title. */
-  title: string;
-  /** The entry step. */
+  /** Names the region and prints as the drawing's caption. Empty leaves out both the caption and the region role. */
+  label: string;
+  /** The entry step, drawn in a light box above the decision. Empty leaves the box out. */
   start: string;
-  /** The decision prompt. */
+  /** The question the routes answer, drawn in a double box. Empty leaves the box out. */
   decision: string;
-  /** Decision choices and the ordered steps for each branch. */
+  /** Each answer with its ordered steps and its outcome. At most four are drawn and listed. */
   routes: { choice: string; steps: string[]; outcome: string }[];
+  /** The selected route's index. Null leaves the component uncontrolled, so it keeps its own choice. */
+  value: number | null;
+  /** The route selected at mount, read once, while value is null. */
+  defaultValue: number;
 }
+
+export interface AsciiProcessMapEvents {
+  /** The index of the route chosen, from its button or from its head box in the drawing. */
+  valueChange: number;
+}
+
 export const defaults: AsciiProcessMapProps = {
-  "title": "Document intake",
-  "start": "Receive submission",
-  "decision": "Is the record complete?",
-  "routes": [
-    {
-      "choice": "Ready for review",
-      "steps": [
-        "Validate identifiers",
-        "Assign an editor",
-        "Schedule review"
-      ],
-      "outcome": "The document enters the review queue."
-    },
-    {
-      "choice": "Needs information",
-      "steps": [
-        "List missing fields",
-        "Return to contributor",
-        "Receive amended record"
-      ],
-      "outcome": "The contributor supplies the missing information before review."
-    }
-  ]
+  label: "Document intake",
+  start: "Receive submission",
+  decision: "Can it be reviewed?",
+  routes: [
+    { choice: "Ready for review", steps: ["Validate identifiers", "Assign an editor", "Schedule review"], outcome: "The document enters the review queue." },
+    { choice: "Needs information", steps: ["List missing fields", "Return to contributor", "Receive amended record"], outcome: "The amended record returns to intake." },
+    { choice: "Out of scope", steps: ["Record the reason", "Refer to another archive", "Close the submission"], outcome: "The contributor receives a referral." },
+  ],
+  value: null,
+  defaultValue: 0,
 };
 
+type ProcessRoute = AsciiProcessMapProps["routes"][number];
+
+/** One cell of the drawing: a glyph set directly, its tone, the light lines that meet in it as bits (up 1,
+ *  down 2, left 4, right 8), and the route whose head it belongs to, or -1. */
+interface ProcessCell {
+  c: string;
+  t: string;
+  l: number;
+  r: number;
+}
+
+/** Frame glyphs by weight: four corners, the rule, the side, then the junctions where a light line meets the
+ *  top, the bottom, and the left edge. */
+const PROCESS_LIGHT = "┌┐└┘─│┴┬┤";
+const PROCESS_HEAVY = "┏┓┗┛━┃┷┯┨";
+const PROCESS_DOUBLE = "╔╗╚╝═║╧╤╢";
+/** The light line through a cell for each set of directions, indexed by ProcessCell.l. */
+const PROCESS_LINES = " ╵╷│╴┘┐┤╶└┌├─┴┬┼";
+
+/** Measures glyph ink. Made on first use, because the build imports every core in Node. */
+let processInk: CanvasRenderingContext2D | null | undefined;
+
+/** Greedy word wrap that never truncates. A word longer than a line breaks across lines with no ellipsis, and
+ *  lines after the first start with `hang`. */
+function processWrap(text: string, width: number, hang = ""): string[] {
+  const lines: string[] = [];
+  let line = "";
+  for (let word of text.split(/\s+/).filter(Boolean)) {
+    for (;;) {
+      const room = Math.max(1, width - (lines.length ? hang.length : 0));
+      const next = line ? `${line} ${word}` : word;
+      if (next.length <= room) {
+        line = next;
+        break;
+      }
+      if (line) lines.push(line);
+      else {
+        lines.push(word.slice(0, room));
+        word = word.slice(room);
+      }
+      line = "";
+    }
+  }
+  lines.push(line);
+  return lines.map((s, i) => (i ? hang + s : s));
+}
+
+/** Lays the map out in cells across `cols` columns. Route heads stand side by side under a bus while each box
+ *  keeps 20 columns, and otherwise hang from a trunk down the left. Only the selected route draws its steps.
+ *  Every rule and frame takes an opaque tone, fg or accent: a translucent tone darkens wherever neighboring
+ *  glyphs overlap, which beads a rule at every cell. Muted is kept for the step counts. */
+function processLayout(props: AsciiProcessMapProps, sel: number, cols: number): ProcessCell[][] {
+  const grid: ProcessCell[][] = [];
+  const at = (x: number, y: number): ProcessCell => {
+    const row = (grid[y] ??= []);
+    return (row[x] ??= { c: " ", t: "", l: 0, r: -1 });
+  };
+  const put = (x: number, y: number, c: string, t: string, r = -1): void => {
+    Object.assign(at(x, y), { c, t, r });
+  };
+  const write = (x: number, y: number, text: string, t: string, r = -1): void => {
+    [...text].forEach((c, i) => put(x + i, y, c, t, r));
+  };
+  /** Gives a junction on the selected route's line the accent, whichever frame it belongs to. */
+  const mark = (x: number, y: number): void => {
+    at(x, y).t = "accent";
+  };
+  /** A straight light line between two cells. A cell that already holds a glyph keeps it, and its tone. */
+  const line = (x0: number, y0: number, x1: number, y1: number, t: string): void => {
+    const down = x0 === x1;
+    const a = down ? Math.min(y0, y1) : Math.min(x0, x1);
+    const b = down ? Math.max(y0, y1) : Math.max(x0, x1);
+    for (let i = a; a < b && i <= b; i++) {
+      const k = down ? at(x0, i) : at(i, y0);
+      k.l |= (i > a ? (down ? 1 : 4) : 0) | (i < b ? (down ? 2 : 8) : 0);
+      if (k.c === " ") k.t = t;
+    }
+  };
+  /** A framed box of wrapped lines. `legs` adds the junctions where a line enters the top (1), leaves the
+   *  bottom (2), or enters the left edge at the first line (4). Returns the bottom row. */
+  const box = (x: number, y: number, w: number, lines: string[], f: string, t: string, r: number, legs: number, lx = x + ((w - 1) >> 1)): number => {
+    const end = y + lines.length + 1;
+    const rule = f.charAt(4).repeat(w - 2);
+    write(x, y, f.charAt(0) + rule + f.charAt(1), t, r);
+    write(x, end, f.charAt(2) + rule + f.charAt(3), t, r);
+    lines.forEach((text, i) => {
+      put(x, y + i + 1, f.charAt(legs & 4 && !i ? 8 : 5), t, r);
+      write(x + 1, y + i + 1, ` ${text}`.padEnd(w - 2), "fg", r);
+      put(x + w - 1, y + i + 1, f.charAt(5), t, r);
+    });
+    if (legs & 1) put(lx, y, f.charAt(6), t, r);
+    if (legs & 2) put(lx, end, f.charAt(7), t, r);
+    return end;
+  };
+  /** The selected route's steps under its head, each joined to the box above, then an arrow into the outcome.
+   *  The line and the junctions it passes through take the accent, so it reads as one stroke; frames stay fg. */
+  const chain = (x: number, w: number, y: number, item: ProcessRoute): number => {
+    const cx = x + ((w - 1) >> 1);
+    const outcome = item.outcome.trim();
+    item.steps.forEach((step, i) => {
+      const top = y + 2;
+      const more = Boolean(outcome) || i < item.steps.length - 1;
+      line(cx, y, cx, top, "accent");
+      y = box(x, top, w, processWrap(step, w - 4), PROCESS_LIGHT, "fg", -1, more ? 3 : 1);
+      mark(cx, top);
+      if (more) mark(cx, y);
+    });
+    if (outcome) {
+      put(cx, y + 1, "▼", "accent");
+      y = box(x, y + 2, w, processWrap(outcome, w - 4), PROCESS_LIGHT, "fg", -1, 0);
+    }
+    return y;
+  };
+
+  const routes = props.routes.slice(0, 4);
+  const n = routes.length;
+  const trunk = ([[props.start, PROCESS_LIGHT], [props.decision, PROCESS_DOUBLE]] as [string, string][]).filter(([text]) => text.trim());
+  const heads = routes.map((item, i) => `${String(i + 1).padStart(2, "0")} ${item.choice}`);
+  const texts = [...trunk.map(([text]) => text), ...heads, ...routes.flatMap((item) => [...item.steps, item.outcome])];
+  const per = n ? Math.floor((cols - 2 * (n - 1)) / n) : cols;
+  const wide = n < 2 || per >= 20;
+  const w = wide ? Math.min(28, per, Math.max(20, ...texts.map((text) => text.length + 4))) : Math.min(cols, 44) - 4;
+  const h = (w - 1) >> 1;
+  const colX = (i: number): number => (wide ? i * (w + 2) : 4);
+  const mid = wide ? h + ((Math.max(0, n - 1) * (w + 2)) >> 1) : 2;
+  const tw = wide ? w : w + 4;
+  const count = (item: ProcessRoute): string => `${item.steps.length} step${item.steps.length === 1 ? "" : "s"}`;
+  const exit = (item: ProcessRoute, on: boolean): number => (on && (item.steps.length || item.outcome.trim()) ? 2 : 0);
+  let y = -1;
+  trunk.forEach(([text, f], i) => {
+    const ty = y + (i ? 2 : 1);
+    if (i) line(mid, y, mid, ty, "fg");
+    y = box(mid - (wide ? h : 2), ty, tw, processWrap(text, tw - 4), f, "fg", -1, (i ? 1 : 0) | (n || i < trunk.length - 1 ? 2 : 0), mid);
+  });
+  if (n && trunk.length) mark(mid, y);
+  if (!n) write(2, trunk.length ? y + 2 : 0, "No routes", "muted");
+  const labels = heads.map((text) => processWrap(text, w - 4, "   "));
+  const top = trunk.length ? y + (wide ? (n > 1 ? 4 : 2) : 1) : 0;
+  if (wide) {
+    const cs = colX(sel) + h;
+    const tall = Math.max(1, ...labels.map((text) => text.length));
+    if (trunk.length && n > 1) {
+      const bus = y + 2;
+      line(h, bus, colX(n - 1) + h, bus, "fg");
+      routes.forEach((_, i) => line(colX(i) + h, bus, colX(i) + h, top, "fg"));
+      line(mid, bus, cs, bus, "accent");
+      line(cs, bus, cs, top, "accent");
+      line(mid, y, mid, bus, "accent");
+    } else if (trunk.length && n) line(mid, y, mid, top, "accent");
+    routes.forEach((item, i) => {
+      const on = i === sel;
+      const text = labels[i] ?? [];
+      while (text.length < tall) text.push("");
+      const end = box(colX(i), top, w, text, on ? PROCESS_HEAVY : PROCESS_LIGHT, on ? "accent" : "fg", i, (trunk.length ? 1 : 0) | exit(item, on));
+      if (on) chain(colX(i), w, end, item);
+      else write(colX(i) + ((w - count(item).length) >> 1), end + 1, count(item), "muted", i);
+    });
+  } else {
+    let pick = 0;
+    let last = 0;
+    y = top - 1;
+    routes.forEach((item, i) => {
+      const on = i === sel;
+      const end = box(4, y + 1, w, labels[i] ?? [], on ? PROCESS_HEAVY : PROCESS_LIGHT, on ? "accent" : "fg", i, 4 | exit(item, on));
+      last = y + 2;
+      if (on) pick = last;
+      line(2, last, 4, last, "fg");
+      if (on) y = chain(4, w, end, item) + (i < n - 1 ? 1 : 0);
+      else {
+        write(6, end + 1, count(item), "muted", i);
+        y = end + 1;
+      }
+    });
+    if (n) {
+      const first = trunk.length ? top - 1 : top + 1;
+      line(2, first, 2, last, "fg");
+      line(2, first, 2, pick, "accent");
+      line(2, pick, 4, pick, "accent");
+    }
+  }
+  return grid;
+}
+
 export const mount: Mount<AsciiProcessMapProps> = (host, initial = {}) => {
-  let props = { ...defaults, ...initial };
+  let props: AsciiProcessMapProps = { ...defaults, ...initial };
+  let internal = props.defaultValue;
+  let cols = 0;
+  let rowPx = 0;
+  let metrics = "";
+  let listed = "";
+  let pending: ReturnType<typeof setTimeout> | undefined;
+  let buttons: HTMLButtonElement[] = [];
+  const emit = emitter<AsciiProcessMapEvents>(host);
   const attrs = hostAttributes(host);
-  const id = nextId("pica-ascii-system");
-  attrs.set("data-pica-id", id);
-  const sheet = document.createElement("style"); sheet.setAttribute("data-pica", ""); host.append(sheet);
-  const s = `[data-pica-id="${id}"]`;
-  sheet.textContent = `${s}{color:${cssVar("fg")};background:${cssVar("bg")};font:inherit;line-height:1.6}
-${s} [data-root]{max-width:1120px;margin:auto;padding:clamp(20px,4vw,52px);box-sizing:border-box}
-${s} *{box-sizing:border-box}
-${s} h1{font-size:clamp(32px,5vw,64px);line-height:1.05;font-weight:500;letter-spacing:-.035em;margin:16px 0 24px;max-width:16ch}
-${s} h2{font-size:20px;font-weight:500;margin:0 0 16px}
-${s} h3{font-size:16px;font-weight:500;margin:0 0 8px}
-${s} p{margin:0 0 16px;max-width:65ch}
-${s} [data-kicker],${s} dt,${s} button,${s} select,${s} summary,${s} [data-mono]{font-family:${GRID_FONT};font-size:12px;letter-spacing:.04em}
-${s} [data-kicker]{text-transform:uppercase;color:${cssVar("muted")}}
-${s} pre{font-family:${GRID_FONT};font-size:13px;line-height:1.35;white-space:pre;margin:0;overflow:auto}
-${s} figure{margin:0}
-${s} figcaption{font-family:${GRID_FONT};font-size:11px;color:${cssVar("muted")};margin-top:16px}
-${s} button,${s} select{color:inherit;background:${cssVar("bg")};border:1px solid ${cssVar("muted")};border-radius:0;padding:10px 12px;min-height:44px;cursor:pointer}
-${s} button[aria-pressed="true"]{border-bottom:4px solid ${cssVar("accent")}}
-${s} :focus-visible{outline:2px solid ${cssVar("accent")};outline-offset:3px}
-${s} [data-rule]{border-top:1px solid ${cssVar("muted")};padding-top:24px;margin-top:32px}
-${s} details{border-top:1px solid ${cssVar("muted")};padding:12px 0}
-${s} summary{cursor:pointer;min-height:32px}
-${s} details p{margin:12px 0}
-${s} ul,${s} ol{padding-left:20px;margin:12px 0}
-${s} li{margin:8px 0}
-${s} dl{margin:0}
-${s} dt{color:${cssVar("muted")};text-transform:uppercase}
-${s} dd{margin:0 0 16px}
-${s} [data-compact]{display:none}
-@media(max-width:620px){${s} [data-wide]{display:none}${s} [data-compact]{display:block}${s} h1{font-size:38px}${s} pre{font-size:12px}}
-${s} [data-root]{max-width:880px}
-${s} [data-root]>h2{font-size:30px;margin:16px 0 24px}
-${s} [data-diagram]{border-left:4px solid ${cssVar("accent")};padding:24px 24px 24px 0;margin-bottom:24px}
-${s} [data-choices]{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0 28px}
-${s} [data-route]{display:grid;grid-template-columns:1fr 1.4fr;gap:0 32px;border-top:1px solid ${cssVar("muted")};padding-top:24px}
-${s} [data-route] ol{grid-column:2;grid-row:1 / 4}
-@media(max-width:620px){${s} [data-route]{display:block}}
-`;
-  const root = document.createElement("div"); root.setAttribute("data-pica", ""); root.setAttribute("data-root", ""); host.append(root);
-  function el<K extends keyof HTMLElementTagNameMap>(tag: K, text = "", parent: HTMLElement = root): HTMLElementTagNameMap[K] {
-    const node = document.createElement(tag); node.setAttribute("data-pica", ""); node.textContent = text; parent.append(node); return node;
+  const sheet = scope(host);
+  const s = sheet.selector;
+  const fg = cssVar("fg");
+  const muted = cssVar("muted");
+  const accent = cssVar("accent");
+  sheet.setRules(
+    [
+      `:where(${s}){display:block;box-sizing:border-box;padding:clamp(1rem,3%,2.5rem);color:${fg}}`,
+      `${s} [data-part=diagram]{margin:0}`,
+      `${s} [data-part=drawing]{margin:0;font:400 1em/1.2 ${GRID_FONT};letter-spacing:0;word-spacing:0;font-kerning:none;font-variant-ligatures:none;text-transform:none;text-align:left;text-indent:0;direction:ltr;white-space:pre}`,
+      `${s} [data-tone=muted]{color:${muted}}`,
+      `${s} [data-tone=accent]{color:${accent}}`,
+      `${s} [data-route-index]{cursor:pointer}`,
+      `${s} [data-part=caption]{margin-top:.75em;color:${muted};font-size:.875em}`,
+      `${s} [data-part=choices]{display:flex;flex-wrap:wrap;gap:.5em;margin-top:1.25em}`,
+      `${s} [data-part=choices]:empty{display:none}`,
+      `${s} [data-index]{box-sizing:border-box;min-width:44px;min-height:44px;max-width:100%;margin:0;padding:.5em .9em;border:1px solid ${muted};border-radius:0;background:none;color:inherit;font:inherit;line-height:1.3;text-align:left;cursor:pointer}`,
+      `${s} [data-index]:hover{background:color-mix(in srgb,${fg} 10%,transparent)}`,
+      `${s} [data-index][aria-pressed=true]{border-color:${fg};box-shadow:inset 0 -2px ${accent}}`,
+      `${s} [data-index]:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${s} [data-part=index]{font-family:${GRID_FONT};font-size:.875em;color:${muted}}`,
+      `${s} [data-part=route]{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}`,
+    ].join("\n"),
+  );
+
+  function make<K extends keyof HTMLElementTagNameMap>(tag: K, part = "", parent?: Node): HTMLElementTagNameMap[K] {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    if (part) node.setAttribute("data-part", part);
+    parent?.appendChild(node);
+    return node;
   }
-  function marked<K extends keyof HTMLElementTagNameMap>(tag: K, mark: string, text = "", parent: HTMLElement = root): HTMLElementTagNameMap[K] {
-    const node = el(tag, text, parent); node.setAttribute(`data-${mark}`, ""); return node;
+
+  const figure = make("figure", "diagram", host);
+  const pre = make("pre", "drawing", figure);
+  const caption = make("figcaption", "caption");
+  const choices = make("div", "choices", host);
+  const route = make("div", "route", host);
+  pre.setAttribute("aria-hidden", "true");
+  choices.setAttribute("role", "group");
+  route.setAttribute("aria-live", "polite");
+
+  const selected = (): number => Math.min(Math.min(4, props.routes.length) - 1, Math.max(0, (props.value ?? internal) | 0));
+
+  function choose(index: number): void {
+    if (props.value === null) {
+      internal = index;
+      sync();
+    }
+    emit("valueChange", index);
   }
-  function drawing(parent: HTMLElement, wide: string, compact: string, caption: string): void {
-    const figure = el("figure", "", parent);
-    marked("pre", "wide", wide, figure).setAttribute("aria-hidden", "true");
-    marked("pre", "compact", compact, figure).setAttribute("aria-hidden", "true");
-    el("figcaption", caption, figure);
+
+  function build(): void {
+    buttons = props.routes.slice(0, 4).map((item, i) => {
+      const button = make("button");
+      button.type = "button";
+      button.setAttribute("data-index", String(i));
+      make("span", "index", button).textContent = String(i + 1).padStart(2, "0");
+      button.append(` ${item.choice}`);
+      button.addEventListener("click", () => choose(i));
+      return button;
+    });
+    choices.replaceChildren(...buttons);
   }
-  function render(): void {
-    root.replaceChildren();
-    attrs.set("role", "region"); attrs.set("aria-label", props.title.trim() || "Process map"); attrs.set("aria-hidden", null);
-    marked("p", "kicker", "PROCESS / DECISION REGISTER"); el("h2", props.title.trim() || "Process map");
-    const diagram = marked("div", "diagram");
-    const intake = props.start.slice(0, 14).padEnd(14);
-    const branchOne = (props.routes[0]?.choice ?? "No route").slice(0, 14).padEnd(14);
-    const branchTwo = (props.routes[1]?.choice ?? "No route").slice(0, 14).padEnd(14);
-    drawing(diagram, `                 ┌──────────────┐\n                 │${intake}│\n                 └──────┬───────┘\n                        │\n                 ◇   DECISION   ◇\n                 ╱              ╲\n        ┌───────┴──────┐  ┌──────┴───────┐\n        │${branchOne}│  │${branchTwo}│\n        └───────┬──────┘  └──────┬───────┘\n                ▼                ▼\n             ROUTE 01         ROUTE 02`, `      [ INTAKE ]\n           │\n      ◇ DECISION ◇\n       ╱       ╲\n  ROUTE 01   ROUTE 02\n     │          │\n  READ STEPS BELOW`, "Entry leads to a decision. Choose a route below to read its exact steps. Additional supplied routes remain available as choices.");
-    marked("p", "mono", `START / ${props.start}`); el("h3", props.decision);
-    const choices = marked("div", "choices"); const route = marked("section", "route"); route.setAttribute("aria-live", "polite");
-    const buttons: HTMLButtonElement[] = [];
-    const choose = (i: number): void => { buttons.forEach((b,j) => b.setAttribute("aria-pressed", String(i === j))); route.replaceChildren(); const record = props.routes[i]; if (!record) { el("p", "No routes supplied. Add a choice and its steps.", route); return; } route.setAttribute("data-route", String(i)); marked("p", "kicker", `SELECTED ROUTE / ${String(i + 1).padStart(2,"0")}`, route); el("h3", record.choice, route); const list = el("ol", "", route); el("li", props.start, list); for (const step of record.steps) el("li", step, list); el("p", record.outcome, route); };
-    props.routes.forEach((record,i) => { const button = el("button", `${String(i+1).padStart(2,"0")} / ${record.choice}`, choices); button.type = "button"; buttons.push(button); button.addEventListener("click", () => choose(i)); }); choose(0);
+
+  /** Takes the glyph size from the host and the cell from the font. A row is the measured ink of a vertical rule,
+   *  rounded down to whole pixels with a quarter pixel to spare, so vertical runs overlap and never part.
+   *  Reports whether anything the drawing depends on changed. */
+  function measure(): boolean {
+    const size = parseFloat(getComputedStyle(host).fontSize) || 16;
+    if (processInk === undefined) processInk = document.createElement("canvas").getContext("2d");
+    let lh = 1.2;
+    if (processInk) {
+      processInk.font = `${size}px ${GRID_FONT}`;
+      const bar = processInk.measureText("│");
+      lh = Math.min(1.25, Math.max(1, Math.floor(bar.actualBoundingBoxAscent + bar.actualBoundingBoxDescent - 0.25) / size));
+    }
+    const cell = measureCell(GRID_FONT, size, lh);
+    const next = Math.max(12, Math.floor(figure.clientWidth / cell.w));
+    const key = `${size} ${cell.w} ${cell.h} ${next}`;
+    if (key === metrics) return false;
+    metrics = key;
+    cols = next;
+    rowPx = cell.h;
+    pre.style.fontSize = `${size}px`;
+    pre.style.lineHeight = `${cell.h}px`;
+    return true;
+  }
+
+  /** Paints the cell buffer as text runs, one span per stretch of cells that share a tone and a route. */
+  function draw(): void {
+    const index = selected();
+    const grids = props.routes.slice(0, 4).map((_, i) => processLayout(props, i, cols));
+    const grid = grids[index] ?? processLayout(props, index, cols);
+    // Every route reserves the tallest drawing, so choosing one never moves the controls below it.
+    pre.style.minHeight = `${Math.max(grid.length, ...grids.map((rows) => rows.length)) * rowPx}px`;
+    const frag = document.createDocumentFragment();
+    for (let y = 0; y < grid.length; y++) {
+      const row = grid[y] ?? [];
+      for (let x = 0; x < row.length; ) {
+        const tone = row[x]?.t ?? "";
+        const owner = row[x]?.r ?? -1;
+        let text = "";
+        while (x < row.length && (row[x]?.t ?? "") === tone && (row[x]?.r ?? -1) === owner) {
+          const k = row[x++];
+          text += !k ? " " : k.c !== " " ? k.c : PROCESS_LINES.charAt(k.l);
+        }
+        if (!tone) frag.append(text);
+        else {
+          const span = make("span", "", frag);
+          span.setAttribute("data-tone", tone);
+          if (owner >= 0) span.setAttribute("data-route-index", String(owner));
+          span.textContent = text;
+        }
+      }
+      if (y < grid.length - 1) frag.append("\n");
+    }
+    pre.replaceChildren(frag);
+  }
+
+  /** Applies the props and the selection: the host's name, the caption, the pressed choice, the route that
+   *  assistive technology reads, and the drawing. */
+  function sync(): void {
+    const label = props.label.trim();
+    const decision = props.decision.trim();
+    const index = selected();
+    const item = props.routes[index];
+    attrs.set("role", label ? "region" : null);
+    attrs.set("aria-label", label || null);
+    caption.textContent = label;
+    if (label) figure.append(caption);
+    else caption.remove();
+    if (decision) choices.setAttribute("aria-label", decision);
+    else choices.removeAttribute("aria-label");
+    buttons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
+    if (item) figure.setAttribute("data-selected", String(index));
+    else figure.removeAttribute("data-selected");
+    const steps = item ? [props.start, ...item.steps].filter((text) => text.trim()) : [];
+    const end = item ? item.outcome.trim() : "No routes";
+    const key = JSON.stringify([steps, end]);
+    if (key !== listed) {
+      listed = key;
+      const list = make("ol");
+      for (const text of steps) make("li", "", list).textContent = text;
+      const outcome = make("p");
+      outcome.textContent = end;
+      route.replaceChildren(...(steps.length ? [list] : []), ...(end ? [outcome] : []));
+    }
+    draw();
     attrs.set("data-pica-ready", "true");
   }
-  render();
+
+  const relayout = (): void => {
+    if (measure()) draw();
+  };
+  // A redraw changes the host's height, so it runs in a task of its own rather than inside the observer's
+  // callback, where the new height would leave a notification undelivered.
+  const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+    clearTimeout(pending);
+    pending = setTimeout(relayout);
+  }) : null;
+  pre.addEventListener("click", (event) => {
+    const hit = (event.target as Element).closest("[data-route-index]");
+    if (hit && pre.contains(hit)) choose(Number(hit.getAttribute("data-route-index")));
+  });
+  build();
+  measure();
+  sync();
+  observer?.observe(host);
+  document.fonts.addEventListener("loadingdone", relayout);
+
   return {
-    update(partial) { const next = { ...props, ...partial }; if (!sameJson(props, next)) { props = next; render(); } },
-    destroy() { root.remove(); sheet.remove(); attrs.restore(); },
+    update(next) {
+      const before = props;
+      props = { ...props, ...next };
+      if (sameJson(before, props)) return;
+      if (!sameJson(before.routes, props.routes)) build();
+      measure();
+      sync();
+    },
+    destroy() {
+      clearTimeout(pending);
+      observer?.disconnect();
+      document.fonts.removeEventListener("loadingdone", relayout);
+      figure.remove();
+      choices.remove();
+      route.remove();
+      sheet.destroy();
+      attrs.restore();
+    },
   };
 };
 
 // registry/ascii/ascii-process-map/index.tsx
-export type AsciiProcessMapComponentProps = Partial<AsciiProcessMapProps> & WrapperProps;
-/** A reusable character decision map with editable steps and native choices that update the route summary. */
+export type AsciiProcessMapComponentProps = Partial<AsciiProcessMapProps> & Handlers<AsciiProcessMapEvents> & WrapperProps;
+
+/** A decision flow drawn in box-drawing characters, with native choices that trace the selected route. */
 export function AsciiProcessMap({ className, style, palette, ...props }: AsciiProcessMapComponentProps) {
-  const ref = usePica(mount, props);
+  const ref = usePica<AsciiProcessMapProps>(mount, props);
   return <div ref={ref} className={className} style={{ width: "100%", ...paletteStyle(palette), ...style }} />;
 }

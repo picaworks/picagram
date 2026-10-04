@@ -1,8 +1,8 @@
 # Pixel Louver
 
-> A bounded grid of mechanical louvers changes projected width in a slow traveling phase.
+> Eighth-block louver blades turn in whole cells beside the content, or in every cell around it, and never draw under it.
 
-Category: effects. Tags: material, geometric, motion. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 3.4 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
+Category: effects. Tags: material, louver, shutters, blocks, geometric, motion. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 4.5 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
@@ -16,9 +16,14 @@ Or paste one of the two files below. The React file imports only `react`. The HT
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `speed` | number | `1` | Motion rate multiplier, clamped from 0.2 to 2. |
-| `opacity` | number | `0.34` | Printed mark opacity, clamped from 0.1 to 0.65. |
-| `scale` | number | `1` | Mechanical detail scale, clamped from 0.6 to 1.8. |
+| `area` | "margins" \| "full" | `"margins"` | "margins" sets a bank of blades beside the content on each side, or above and below it where a side has too little room; "full" fills every cell except the content and its quiet cells, which the rail frames, and turns in a broader wave. A full field draws its blades at 0.35 of the opacity and never closes them past five eighths, so the screen stays behind the type. |
+| `columns` | number | `6` | Blades across each bank beside the content, or rows of blades in a bank above or below it, from 2 to 16. Unused when area is "full". |
+| `axis` | "x" \| "y" | `"x"` | "x" turns upright blades, filled from the left, across a bank beside the content, and level slats, filled from the bottom, along a bank above or below it; "y" does the reverse. |
+| `quiet` | number | `2` | The fewest empty cells between the content and the nearest blade or rail, from 0 to 6. |
+| `layout` | "none" \| "center" | `"none"` | "center" sets the children in one centered column, flush left, with two cells of padding; "none" leaves their layout to the page. |
+| `speed` | number | `1` | Motion rate multiplier, clamped from 0.2 to 2. At 1 every blade turns through one cycle in 24 s. |
+| `opacity` | number | `0.34` | Opacity of the blades, clamped from 0.1 to 0.65, and 0.35 of it in a full field. The rail draws at twice this, up to 1. |
+| `scale` | number | `1` | Glyph size as a multiple of the host's font size, clamped from 0.6 to 1.8. |
 | `paused` | boolean | `false` | Stop animating and hold the current frame. |
 | `time` | number \| null | `null` | Render exactly this animation time, in milliseconds, and do not animate. Null animates. |
 | `seed` | number | `1` | Seed for every random choice, so the same seed always draws the same frame. |
@@ -29,7 +34,7 @@ Put content inside the component. It decorates that content and never changes it
 
 ## Colors
 
-Draws with `--pica-fg`. Set it on any ancestor, pass `palette` to the React component, or put `palette` in `window.PICA_PROPS` for the HTML file.
+Draws with `--pica-fg`, `--pica-muted`. Set them on any ancestor, pass `palette` to the React component, or put `palette` in `window.PICA_PROPS` for the HTML file.
 
 ## React
 
@@ -180,6 +185,59 @@ function splitProps<P>(props: Partial<P>): { data: Partial<P>; handlers: Record<
     else data[name] = value;
   }
   return { data: data as Partial<P>, handlers };
+}
+
+// lib/blocks.ts
+/** Unicode block and braille glyphs for text-mode drawing. Every glyph here is one UTF-16 code unit, so a
+ *  table can be indexed like an array. */
+
+/** The braille pattern with no dots raised. Add dot bits to it. */
+const BRAILLE_BASE = 0x2800;
+
+/** The bit for the braille dot at `row` 0 to 3 and `col` 0 or 1. Rows 0 to 2 are dots 1 to 3 on the left
+ *  and 4 to 6 on the right. Row 3 holds dots 7 and 8, which Unicode added later, so their bits come last. */
+function brailleDot(row: number, col: number): number {
+  if (row === 3) return col === 0 ? 0x40 : 0x80;
+  return 1 << (col === 0 ? row : row + 3);
+}
+
+/** The braille glyph for a set of dot bits. */
+function braille(bits: number): string {
+  return String.fromCharCode(BRAILLE_BASE + (bits & 0xff));
+}
+
+/** Quadrant glyphs, indexed by top left 1, top right 2, bottom left 4, and bottom right 8. */
+const QUADRANTS = " ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█";
+
+/** The glyph that inks the given quadrants of a cell. */
+function quadrant(tl: boolean, tr: boolean, bl: boolean, br: boolean): string {
+  return QUADRANTS[(tl ? 1 : 0) | (tr ? 2 : 0) | (bl ? 4 : 0) | (br ? 8 : 0)] ?? " ";
+}
+
+/** A cell filled from the bottom by 0 to 8 eighths. */
+const LOWER_EIGHTHS = " ▁▂▃▄▅▆▇█";
+
+/** A cell filled from the left by 0 to 8 eighths. */
+const LEFT_EIGHTHS = " ▏▎▍▌▋▊▉█";
+
+/** Blank, light shade, medium shade, dark shade, and full block. */
+const SHADES = " ░▒▓█";
+
+const clampEighths = (n: number): number => Math.max(0, Math.min(8, Math.round(n)));
+
+/** The glyph filling `n` eighths of a cell from the bottom, clamped to 0 to 8. */
+function lowerEighth(n: number): string {
+  return LOWER_EIGHTHS[clampEighths(n)] ?? " ";
+}
+
+/** The shade glyph for level `n`, clamped to 0 (blank) through 4 (full block). */
+function shade(n: number): string {
+  return SHADES[Math.max(0, Math.min(4, Math.round(n)))] ?? " ";
+}
+
+/** The glyph filling `n` eighths of a cell from the left, clamped to 0 to 8. */
+function leftEighth(n: number): string {
+  return LEFT_EIGHTHS[clampEighths(n)] ?? " ";
 }
 
 // lib/host.ts
@@ -409,6 +467,407 @@ function createCanvas(host: HTMLElement, options: Partial<CanvasOptions> = {}): 
   };
 }
 
+// lib/font.ts
+/** The monospace stack glyph components default to. It lives in its own module, so a text component that
+ *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
+const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+// lib/palette.ts
+/** The four colors every component draws with. They live in CSS custom properties, so they cascade: set
+ *  them once on a page or a section and every component follows, including on a theme switch. A wrapper's
+ *  palette prop writes the same properties onto one host. This is the only module that reads them.
+ *  See STYLE.md and docs/decisions/0005-palette.md. */
+
+type Token = "fg" | "bg" | "accent" | "muted";
+
+const TOKENS: readonly Token[] = ["fg", "bg", "accent", "muted"];
+
+/** What each token falls back to when neither the page nor a palette prop sets it. Muted is the ink at 65%,
+ *  which keeps 4.5:1 contrast on both the dark and the light ground. */
+const TOKEN_FALLBACK: Readonly<Record<Token, string>> = {
+  fg: "currentColor",
+  bg: "transparent",
+  accent: "#13C4A3",
+  muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)",
+};
+
+/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #13C4A3). */
+function cssVar(token: Token): string {
+  return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+}
+
+/** A readable ink for text set on a token's color: black on a light color, white on a dark one. Relative
+ *  color syntax does it in CSS alone, so it follows any palette without script. */
+function cssOn(token: Token): string {
+  return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+}
+
+/** Each token's color as the browser computes it, usable as a canvas fill. */
+type Colors = Readonly<Record<Token, string>>;
+
+/** Event types the probe stops, so its transitions never reach the page's own listeners. */
+const PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"] as const;
+
+/** A zero-size probe inside the host whose color properties are the four tokens, so currentColor,
+ *  light-dark(), and color-mix() resolve exactly as they do on the page. */
+function createProbe(host: HTMLElement): HTMLElement {
+  const probe = document.createElement("span");
+  probe.setAttribute("data-pica", "");
+  probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText = [
+    "position:absolute",
+    "width:0",
+    "height:0",
+    "overflow:hidden",
+    "visibility:hidden",
+    "pointer-events:none",
+    `color:${cssVar("fg")}`,
+    `background-color:${cssVar("bg")}`,
+    `border-top:0 solid ${cssVar("accent")}`,
+    `outline:0 solid ${cssVar("muted")}`,
+    // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+    "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms",
+  ].join(";");
+  host.appendChild(probe);
+  return probe;
+}
+
+function probeColors(probe: HTMLElement): Colors {
+  const style = getComputedStyle(probe);
+  return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+}
+
+/** Reads the four colors once. A core that needs them every frame keeps a watchPalette handle instead. */
+function readPalette(host: HTMLElement): Colors {
+  const probe = createProbe(host);
+  const colors = probeColors(probe);
+  probe.remove();
+  return colors;
+}
+
+interface PaletteWatch {
+  /** The colors as of the last read. */
+  readonly colors: Colors;
+  /** Reads again now, for example in update() or after a resize. Returns true when any color changed. */
+  refresh(): boolean;
+  /** Removes the probe and its listeners. */
+  destroy(): void;
+}
+
+/** Keeps a probe in the host and calls `onChange` whenever a token's color changes, however it changed: a
+ *  theme class, a media query, a palette prop, or a React style. Canvas and WebGL components repaint there.
+ *  A page that turns every transition off hides these changes, so cores also call refresh() in update(). */
+function watchPalette(host: HTMLElement, onChange: (colors: Colors) => void): PaletteWatch {
+  const probe = createProbe(host);
+  let colors = probeColors(probe);
+
+  function refresh(): boolean {
+    const next = probeColors(probe);
+    const differs = TOKENS.some((token) => next[token] !== colors[token]);
+    colors = next;
+    return differs;
+  }
+
+  const onEvent = (event: Event): void => {
+    event.stopPropagation();
+    if (event.type === "transitionend" && refresh()) onChange(colors);
+  };
+  for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+
+  return {
+    get colors() {
+      return colors;
+    },
+    refresh,
+    destroy() {
+      for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+      probe.remove();
+    },
+  };
+}
+
+// lib/glyph-grid.ts
+/** A monospace cell grid painted as text rows or onto a canvas. See docs/architecture/contract.md. */
+
+interface GridOptions {
+  /** CSS font-family stack. Must be monospace. */
+  fontFamily: string;
+  /** Glyph size in CSS pixels. Ignored when `columns` is above zero. */
+  fontSize: number;
+  /** Fit exactly this many columns across the host and derive the glyph size from it. 0 uses `fontSize`. */
+  columns: number;
+  /** Line height as a multiple of the glyph size. */
+  lineHeight: number;
+  /** "dom" keeps glyphs as text and is cheapest up to DOM_CELL_LIMIT cells. "canvas" handles more
+   *  cells and per-cell color. "auto" picks by cell count. */
+  renderer: "dom" | "canvas" | "auto";
+  /** Glyph color. Empty uses --pica-fg, and failing that the host's inherited color. */
+  color: string;
+}
+
+/** Above this many cells, "auto" paints to a canvas instead of text rows. */
+const DOM_CELL_LIMIT = 12000;
+
+interface Grid {
+  readonly cols: number;
+  readonly rows: number;
+  /** Cell width over cell height, for sampling images and fields without stretching them. */
+  readonly aspect: number;
+  /** Cell width in CSS pixels, for mapping a pointer or a layout onto cells. */
+  readonly cellWidth: number;
+  /** Cell height in CSS pixels. */
+  readonly cellHeight: number;
+  /** The CSS font shorthand glyphs are drawn in. */
+  readonly font: string;
+  /** Writes one glyph into the back buffer. `color` is honored by the canvas renderer only. */
+  set(x: number, y: number, glyph: string, color?: string): void;
+  /** Writes a string starting at (x, y), clipped to the grid. */
+  write(x: number, y: number, text: string, color?: string): void;
+  /** Fills the back buffer. */
+  clear(glyph?: string): void;
+  /** Paints the rows that changed since the last flush. */
+  flush(): void;
+  update(options: Partial<GridOptions>): void;
+  destroy(): void;
+}
+
+let measurer: CanvasRenderingContext2D | null | undefined;
+
+/** A glyph's advance as a share of the font size, or 0.6 where nothing can be measured. Measured on every
+ *  call, because a web font can finish loading between calls. */
+function advanceOf(fontFamily: string): number {
+  if (measurer === undefined) measurer = document.createElement("canvas").getContext("2d");
+  if (!measurer) return 0.6;
+  measurer.font = `100px ${fontFamily}`;
+  return measurer.measureText("M").width / 100 || 0.6;
+}
+
+/** The cell a glyph grid draws for this font, in CSS pixels. */
+function measureCell(fontFamily: string, fontSize: number, lineHeight: number): { w: number; h: number } {
+  return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
+}
+
+/** Creates a grid inside `host`. `onLayout` runs whenever the cell count changes (resize, font load),
+ *  after which the back buffer is blank and the caller should draw again. */
+function createGrid(host: HTMLElement, options: GridOptions, onLayout: () => void): Grid {
+  let opts: GridOptions = { ...options };
+  let cols = 1;
+  let rows = 1;
+  let cellW = 7.2;
+  let cellH = 14;
+  let fontPx = 12;
+  let width = -1;
+  let height = -1;
+  let cells: string[] = [" "];
+  let tints: (string | undefined)[] = [undefined];
+  let shown: string[] = [];
+  let view: HTMLElement | null = null;
+  let lines: HTMLElement[] = [];
+  let ctx: CanvasRenderingContext2D | null = null;
+  let ink = "";
+  let alive = true;
+
+  const restoreHost = styleHost(
+    host,
+    getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" },
+  );
+  const font = (): string => `${fontPx}px ${opts.fontFamily}`;
+
+  /** Recomputes the cell grid from the host's size. Returns true when the grid was rebuilt. */
+  function layout(force: boolean): boolean {
+    const w = host.clientWidth;
+    const h = host.clientHeight;
+    const advance = advanceOf(opts.fontFamily);
+    const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+    const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+    const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+    const nextRows = Math.max(1, Math.floor(h / nextCellH));
+    if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+    width = w;
+    height = h;
+    fontPx = px;
+    cellW = px * advance;
+    cellH = nextCellH;
+    cols = nextCols;
+    rows = nextRows;
+    cells = new Array<string>(cols * rows).fill(" ");
+    tints = new Array<string | undefined>(cols * rows).fill(undefined);
+    mountView();
+    return true;
+  }
+
+  function mountView(): void {
+    view?.remove();
+    lines = [];
+    ctx = null;
+    const color = opts.color || cssVar("fg");
+    const mode = opts.renderer === "auto" ? (cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom") : opts.renderer;
+    if (mode === "dom") {
+      const pre = document.createElement("pre");
+      pre.style.cssText = [
+        "position:absolute", "inset:0", "margin:0", "padding:0", "overflow:hidden",
+        "white-space:pre", "letter-spacing:0", "user-select:none", "pointer-events:none",
+        "font-kerning:none", "font-variant-ligatures:none",
+        `font-family:${opts.fontFamily}`, `font-size:${fontPx}px`, `line-height:${cellH}px`, `color:${color}`,
+      ].join(";");
+      for (let y = 0; y < rows; y++) {
+        const line = document.createElement("span");
+        line.style.display = "block";
+        line.style.height = `${cellH}px`;
+        pre.appendChild(line);
+        lines.push(line);
+      }
+      view = pre;
+    } else {
+      const canvas = document.createElement("canvas");
+      // Text rows follow a palette change through CSS on their own; a canvas has to be painted again. A 1 ms
+      // color transition turns any change to its ink into a transitionend, which repaints it, for far fewer
+      // bytes than a palette watcher.
+      canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+      canvas.addEventListener("transitionend", (event) => {
+        event.stopPropagation();
+        if (ctx && view === canvas) paintCanvas(ctx, canvas);
+      });
+      const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.textBaseline = "middle";
+        ctx.font = font();
+      }
+      view = canvas;
+    }
+    view.setAttribute("data-pica", "");
+    view.setAttribute("aria-hidden", "true");
+    shown = new Array<string>(rows).fill("\u0000");
+    ink = "";
+    host.appendChild(view);
+  }
+
+  function paintCanvas(context: CanvasRenderingContext2D, target: HTMLElement): void {
+    const color = getComputedStyle(target).color;
+    if (color !== ink) {
+      ink = color;
+      shown.fill("\u0000");
+    }
+    for (let y = 0; y < rows; y++) {
+      const start = y * cols;
+      const text = cells.slice(start, start + cols).join("");
+      let tinted = false;
+      for (let x = 0; x < cols; x++) {
+        if (tints[start + x] !== undefined) {
+          tinted = true;
+          break;
+        }
+      }
+      const key = tinted ? `${text}\u0000${tints.slice(start, start + cols).join(",")}` : text;
+      if (key === shown[y]) continue;
+      shown[y] = key;
+      const top = y * cellH;
+      context.clearRect(0, top, width, cellH);
+      if (!tinted) {
+        context.fillStyle = ink;
+        context.fillText(text, 0, top + cellH / 2);
+        continue;
+      }
+      // One fillText per run of same-colored cells: monospace advances keep every glyph on its cell.
+      let x = 0;
+      while (x < cols) {
+        const tint = tints[start + x] ?? ink;
+        let end = x + 1;
+        while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+        context.fillStyle = tint;
+        context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+        x = end;
+      }
+    }
+  }
+
+  function paintText(): void {
+    for (let y = 0; y < rows; y++) {
+      const row = cells.slice(y * cols, (y + 1) * cols).join("");
+      if (row === shown[y]) continue;
+      shown[y] = row;
+      const line = lines[y];
+      if (line) line.textContent = row;
+    }
+  }
+
+  function set(x: number, y: number, glyph: string, color?: string): void {
+    if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+    const i = y * cols + x;
+    cells[i] = glyph;
+    tints[i] = color;
+  }
+
+  const resizeObserver = typeof ResizeObserver === "function"
+    ? new ResizeObserver(() => {
+        if (alive && layout(false)) onLayout();
+      })
+    : null;
+  resizeObserver?.observe(host);
+
+  const onFonts = (): void => {
+    if (alive && layout(true)) onLayout();
+  };
+  document.fonts.addEventListener("loadingdone", onFonts);
+
+  layout(true);
+
+  return {
+    get cols() {
+      return cols;
+    },
+    get rows() {
+      return rows;
+    },
+    get aspect() {
+      return cellW / cellH;
+    },
+    get cellWidth() {
+      return cellW;
+    },
+    get cellHeight() {
+      return cellH;
+    },
+    get font() {
+      return font();
+    },
+    set,
+    write(x, y, text, color) {
+      let i = 0;
+      for (const glyph of text) {
+        set(x + i, y, glyph, color);
+        i++;
+      }
+    },
+    clear(glyph = " ") {
+      cells.fill(glyph);
+      tints.fill(undefined);
+    },
+    flush() {
+      if (!view) return;
+      if (ctx) paintCanvas(ctx, view);
+      else paintText();
+    },
+    update(next) {
+      opts = { ...opts, ...next };
+      layout(true);
+      onLayout();
+    },
+    destroy() {
+      alive = false;
+      resizeObserver?.disconnect();
+      document.fonts.removeEventListener("loadingdone", onFonts);
+      view?.remove();
+      view = null;
+      restoreHost();
+    },
+  };
+}
+
 // lib/loop.ts
 /** The only place Pica schedules frames. Cores never call requestAnimationFrame themselves.
  *  A loop animates only while its element is on screen, the tab is visible, motion is allowed,
@@ -533,120 +992,6 @@ function createLoop(options: LoopOptions): Loop {
   };
 }
 
-// lib/palette.ts
-/** The four colors every component draws with. They live in CSS custom properties, so they cascade: set
- *  them once on a page or a section and every component follows, including on a theme switch. A wrapper's
- *  palette prop writes the same properties onto one host. This is the only module that reads them.
- *  See STYLE.md and docs/decisions/0005-palette.md. */
-
-type Token = "fg" | "bg" | "accent" | "muted";
-
-const TOKENS: readonly Token[] = ["fg", "bg", "accent", "muted"];
-
-/** What each token falls back to when neither the page nor a palette prop sets it. Muted is the ink at 65%,
- *  which keeps 4.5:1 contrast on both the dark and the light ground. */
-const TOKEN_FALLBACK: Readonly<Record<Token, string>> = {
-  fg: "currentColor",
-  bg: "transparent",
-  accent: "#13C4A3",
-  muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)",
-};
-
-/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #13C4A3). */
-function cssVar(token: Token): string {
-  return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
-}
-
-/** A readable ink for text set on a token's color: black on a light color, white on a dark one. Relative
- *  color syntax does it in CSS alone, so it follows any palette without script. */
-function cssOn(token: Token): string {
-  return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
-}
-
-/** Each token's color as the browser computes it, usable as a canvas fill. */
-type Colors = Readonly<Record<Token, string>>;
-
-/** Event types the probe stops, so its transitions never reach the page's own listeners. */
-const PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"] as const;
-
-/** A zero-size probe inside the host whose color properties are the four tokens, so currentColor,
- *  light-dark(), and color-mix() resolve exactly as they do on the page. */
-function createProbe(host: HTMLElement): HTMLElement {
-  const probe = document.createElement("span");
-  probe.setAttribute("data-pica", "");
-  probe.setAttribute("aria-hidden", "true");
-  probe.style.cssText = [
-    "position:absolute",
-    "width:0",
-    "height:0",
-    "overflow:hidden",
-    "visibility:hidden",
-    "pointer-events:none",
-    `color:${cssVar("fg")}`,
-    `background-color:${cssVar("bg")}`,
-    `border-top:0 solid ${cssVar("accent")}`,
-    `outline:0 solid ${cssVar("muted")}`,
-    // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
-    "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms",
-  ].join(";");
-  host.appendChild(probe);
-  return probe;
-}
-
-function probeColors(probe: HTMLElement): Colors {
-  const style = getComputedStyle(probe);
-  return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
-}
-
-/** Reads the four colors once. A core that needs them every frame keeps a watchPalette handle instead. */
-function readPalette(host: HTMLElement): Colors {
-  const probe = createProbe(host);
-  const colors = probeColors(probe);
-  probe.remove();
-  return colors;
-}
-
-interface PaletteWatch {
-  /** The colors as of the last read. */
-  readonly colors: Colors;
-  /** Reads again now, for example in update() or after a resize. Returns true when any color changed. */
-  refresh(): boolean;
-  /** Removes the probe and its listeners. */
-  destroy(): void;
-}
-
-/** Keeps a probe in the host and calls `onChange` whenever a token's color changes, however it changed: a
- *  theme class, a media query, a palette prop, or a React style. Canvas and WebGL components repaint there.
- *  A page that turns every transition off hides these changes, so cores also call refresh() in update(). */
-function watchPalette(host: HTMLElement, onChange: (colors: Colors) => void): PaletteWatch {
-  const probe = createProbe(host);
-  let colors = probeColors(probe);
-
-  function refresh(): boolean {
-    const next = probeColors(probe);
-    const differs = TOKENS.some((token) => next[token] !== colors[token]);
-    colors = next;
-    return differs;
-  }
-
-  const onEvent = (event: Event): void => {
-    event.stopPropagation();
-    if (event.type === "transitionend" && refresh()) onChange(colors);
-  };
-  for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
-
-  return {
-    get colors() {
-      return colors;
-    },
-    refresh,
-    destroy() {
-      for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
-      probe.remove();
-    },
-  };
-}
-
 // lib/rng.ts
 /** Seeded pseudo-random numbers in [0, 1), mulberry32. The same seed gives the same sequence,
  *  which is what makes every capture reproducible. */
@@ -676,102 +1021,304 @@ function hashSeed(seed: number, a: number, b = 0): number {
 
 // registry/effects/pixel-louver/core.ts
 export interface PixelLouverProps extends MotionProps {
-  /** Motion rate multiplier, clamped from 0.2 to 2. */
+  /** "margins" sets a bank of blades beside the content on each side, or above and below it where a side has too little room; "full" fills every cell except the content and its quiet cells, which the rail frames, and turns in a broader wave. A full field draws its blades at 0.35 of the opacity and never closes them past five eighths, so the screen stays behind the type. */
+  area: "margins" | "full";
+  /** Blades across each bank beside the content, or rows of blades in a bank above or below it, from 2 to 16. Unused when area is "full". */
+  columns: number;
+  /** "x" turns upright blades, filled from the left, across a bank beside the content, and level slats, filled from the bottom, along a bank above or below it; "y" does the reverse. */
+  axis: "x" | "y";
+  /** The fewest empty cells between the content and the nearest blade or rail, from 0 to 6. */
+  quiet: number;
+  /** "center" sets the children in one centered column, flush left, with two cells of padding; "none" leaves their layout to the page. */
+  layout: "none" | "center";
+  /** Motion rate multiplier, clamped from 0.2 to 2. At 1 every blade turns through one cycle in 24 s. */
   speed: number;
-  /** Printed mark opacity, clamped from 0.1 to 0.65. */
+  /** Opacity of the blades, clamped from 0.1 to 0.65, and 0.35 of it in a full field. The rail draws at twice this, up to 1. */
   opacity: number;
-  /** Mechanical detail scale, clamped from 0.6 to 1.8. */
+  /** Glyph size as a multiple of the host's font size, clamped from 0.6 to 1.8. */
   scale: number;
 }
 
-export const defaults: PixelLouverProps = { speed: 1, opacity: 0.34, scale: 1, paused: false, time: null, seed: 1 };
+export const defaults: PixelLouverProps = {
+  area: "margins",
+  columns: 6,
+  axis: "x",
+  quiet: 2,
+  layout: "none",
+  speed: 1,
+  opacity: 0.34,
+  scale: 1,
+  paused: false,
+  time: null,
+  seed: 1,
+};
 
-/** A bounded grid of mechanical louvers changes projected width in a slow traveling phase. */
+/** One blade cycle at speed 1, in milliseconds. The frame at this time is the frame at 0, so the loop has no seam. */
+const LOUVER_PERIOD = 24000;
+
+/** The rail's runs and corners. In the glyph atlas they are tiles 16 to 21, after the eight upright blade
+ *  levels and the eight slat levels. */
+const LOUVER_RAIL = "│─┌┐└┘";
+
+function louverClamp(v: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(hi, v));
+}
+
+/** Eighth-block louver blades turn in whole cells beside the content, or in every cell around it, and never
+ *  draw under it. The canvas sits behind the children, which keep their own layout, type, and events. */
 export const mount: Mount<PixelLouverProps> = (host, initial = {}) => {
-  let props = { ...defaults, ...initial };
-  let localPaused = props.paused;
-  const motion: { loop?: Loop } = {};
+  let props: PixelLouverProps = { ...defaults, ...initial };
   let destroyed = false;
+  let ready = false;
+  let dirty = true;
+  let shown = "";
+  let padding = "";
+  let undoLayout = (): void => undefined;
+  let loop: Loop | null = null;
+  // Cells are in device pixels. Each blade keeps x, y, and its first atlas tile, with a phase; each rail cell
+  // keeps x, y, and its tile.
+  let cw = 1;
+  let ch = 1;
+  let cells = new Int32Array(0);
+  let phases = new Float64Array(0);
+  let levels = new Uint8Array(0);
+  let rails: number[] = [];
   const attrs = hostAttributes(host);
-  const restore = styleHost(host, { isolation: "isolate" });
-  const id = nextId("material");
-  attrs.set("data-pica-material", id);
-  const sheet = document.createElement("style");
-  sheet.setAttribute("data-pica", "");
-  host.append(sheet);
-  const rules = {
-    selector: `[data-pica-material="${id}"]`,
-    setRules(css: string): void { sheet.textContent = css; },
-    destroy(): void { sheet.remove(); },
-  };
-  rules.setRules(`
-    ${rules.selector} > [data-pica-pause] { position:absolute;right:16px;bottom:16px;min-height:44px;padding:8px 12px;border:1px solid ${cssVar("fg")};background:${cssVar("bg")};color:${cssVar("fg")};font:inherit;cursor:pointer;z-index:2; }
-    ${rules.selector} > [data-pica-pause]:focus-visible { outline:2px solid ${cssVar("fg")};outline-offset:3px; }
-    ${rules.selector} > [data-demo-copy] { position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(540px,60%); }
-    ${rules.selector} > [data-demo-copy] h2 { font-size:clamp(26px,4vw,52px);line-height:1.08;font-weight:500;margin:14px 0 20px; }
-    ${rules.selector} > [data-demo-copy] p { line-height:1.6;max-width:42ch; }
-    ${rules.selector} > [data-demo-copy] a { color:inherit;text-underline-offset:5px; }
-  `);
-  const surface = createCanvas(host, { maxDpr: 1.5, maxPixels: 1100000, css: "z-index:-1", onResize: () => motion.loop?.redraw() });
+  const restoreHost = styleHost(host, { isolation: "isolate" });
+  const surface = createCanvas(host, { maxDpr: 2, maxPixels: 4200000, css: "z-index:-1", onResize: () => relayout(true) });
   const ctx = surface.canvas.getContext("2d");
-  const palette = watchPalette(host, () => motion.loop?.redraw());
-  const pause = document.createElement("button");
-  pause.type = "button";
-  pause.setAttribute("data-pica", "");
-  pause.setAttribute("data-pica-pause", "");
-  host.append(pause);
-  function syncButton(): void {
-    pause.textContent = localPaused ? "Resume motion" : "Pause motion";
-    pause.setAttribute("aria-label", `${localPaused ? "Resume" : "Pause"} pixel louver motion`);
-    pause.setAttribute("aria-pressed", String(localPaused));
-  }
-  const toggle = (): void => { localPaused = !localPaused; syncButton(); motion.loop?.update({ paused: localPaused }); };
-  pause.addEventListener("click", toggle);
-  syncButton();
+  // Every glyph is drawn once into a cell-sized tile, then copied whole, so no glyph spills into a neighbor.
+  const atlas = document.createElement("canvas");
+  atlas.setAttribute("data-pica", "");
+  const tiles = atlas.getContext("2d");
+  const palette = watchPalette(host, () => relayout(true));
+  const range = document.createRange();
 
-  function draw(ms: number): void {
-    if (!ctx || destroyed) return;
-    const w = surface.cssWidth, h = surface.cssHeight;
-    ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-    const scale = Math.max(.6, Math.min(1.8, props.scale));
-    const opacity = Math.max(.1, Math.min(.65, props.opacity));
-    const m = Math.min(248, Math.max(28, w < 600 ? w * .115 : w * .2));
-    const phase = hashSeed(props.seed, 17) / 4294967295 * Math.PI * 2;
-    for (let side = 0; side < 2; side++) {
-      ctx.save();
-      ctx.translate(side ? w : 0, 0); ctx.scale(side ? -1 : 1, 1);
-      ctx.beginPath(); ctx.rect(0, 0, m, h); ctx.clip();
-      ctx.lineWidth = 1;
-      const t = ms * .00035 * Math.max(.2, Math.min(2, props.speed)) + phase + side * .9;
-      function line(x: number, y: number, x2: number, y2: number): void { ctx!.beginPath(); ctx!.moveTo(x, y); ctx!.lineTo(x2, y2); ctx!.stroke(); }
-    const cell = 32 * scale;
-    const cols = Math.min(10, Math.ceil(m / cell)), rows = Math.min(42, Math.ceil(h / cell));
-    ctx.fillStyle = palette.colors.fg; ctx.strokeStyle = palette.colors.fg;
-    for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
-      const x = col * cell + cell * .5, y = row * cell + cell * .5;
-      const projected = (.28 + .68 * (.5 + .5 * Math.sin(t * .65 + row * .18 + col * .5))) * cell * .65;
-      ctx.globalAlpha = opacity * .28; ctx.strokeRect(x - cell * .4, y - cell * .36, cell * .8, cell * .72);
-      ctx.globalAlpha = opacity * .8; ctx.fillRect(x - projected * .5, y - cell * .24, projected, cell * .48);
-      ctx.globalAlpha = opacity; line(x - cell * .3, y, x + cell * .3, y);
-    }
-      ctx.restore();
-    }
-    attrs.set("data-pica-ready", "true");
+  /** "center" sets the children in one centered column, flush left, with two cells of padding, all restored on destroy. */
+  function applyLayout(): void {
+    const s = louverClamp(props.scale, 0.6, 1.8);
+    const next = props.layout === "center" ? `${(2.4 * s).toFixed(2)}em ${(1.2 * s).toFixed(2)}em` : "";
+    if (next === padding) return;
+    undoLayout();
+    padding = next;
+    undoLayout = next
+      ? styleHost(host, { display: "grid", "place-content": "center", "justify-items": "start", "box-sizing": "border-box", padding: next })
+      : () => undefined;
   }
-  motion.loop = createLoop({ el: host, paused: localPaused, time: props.time, fps: 18, still: 1200, frame: draw });
+
+  /** Measures the cell and the content, then decides which cells hold blades, which way each blade turns, and
+   *  which cells hold the rail. */
+  function relayout(force: boolean): void {
+    if (destroyed || !ctx || !tiles) return;
+    const dpr = surface.dpr;
+    const px = louverClamp((parseFloat(getComputedStyle(host).fontSize) || 16) * louverClamp(props.scale, 0.6, 1.8), 8, 48) * dpr;
+    const font = `${px}px ${GRID_FONT}`;
+    tiles.font = font;
+    const block = tiles.measureText("█");
+    const rail = tiles.measureText("│");
+    const tall = (m: TextMetrics): number => m.actualBoundingBoxAscent + m.actualBoundingBoxDescent || px * 1.2;
+    // A row is as tall as the measured ink of a full block and of the rail, within 1 to 1.2 em, so the rail
+    // runs unbroken from row to row.
+    cw = Math.max(1, Math.floor(measureCell(GRID_FONT, px, 1.2).w));
+    ch = Math.max(1, Math.floor(louverClamp(Math.min(tall(block), tall(rail)), px, px * 1.2)));
+    const W = surface.width;
+    const H = surface.height;
+    const cols = Math.floor(W / cw);
+    const rows = Math.floor(H / ch);
+    const ox = (W - cols * cw) >> 1;
+    const oy = (H - rows * ch) >> 1;
+
+    // The content is the union of the boxes of every child the core did not create, text runs included.
+    const box = host.getBoundingClientRect();
+    const k = box.width / (host.offsetWidth || 1) || 1;
+    let x0 = Infinity;
+    let y0 = Infinity;
+    let x1 = -Infinity;
+    let y1 = -Infinity;
+    for (const node of host.childNodes) {
+      let r: DOMRect | null = null;
+      if (node instanceof Element) {
+        if (!node.hasAttribute("data-pica")) r = node.getBoundingClientRect();
+      } else if (node.nodeType === 3 && node.textContent?.trim()) {
+        range.selectNodeContents(node);
+        r = range.getBoundingClientRect();
+      }
+      if (r && r.width > 0 && r.height > 0) {
+        x0 = Math.min(x0, r.left);
+        y0 = Math.min(y0, r.top);
+        x1 = Math.max(x1, r.right);
+        y1 = Math.max(y1, r.bottom);
+      }
+    }
+    const found = x1 > x0;
+    const gx = (v: number): number => (((v - box.left) / k - host.clientLeft) * dpr - ox) / cw;
+    const gy = (v: number): number => (((v - box.top) / k - host.clientTop) * dpr - oy) / ch;
+    const c0 = found ? louverClamp(Math.floor(gx(x0)), 0, cols) : cols >> 1;
+    const c1 = found ? louverClamp(Math.ceil(gx(x1)), c0, cols) : c0;
+    const r0 = found ? louverClamp(Math.floor(gy(y0)), 0, rows) : rows >> 1;
+    const r1 = found ? louverClamp(Math.ceil(gy(y1)), r0, rows) : r0;
+
+    // q is the open rectangle in cells, [left, top, right, bottom). The rail runs round its outside edge.
+    const full = props.area === "full";
+    const quiet = Math.round(louverClamp(props.quiet, 0, 6));
+    let q: [number, number, number, number] = [-9, -9, -9, -9];
+    if (full) {
+      if (found) q = [Math.max(0, c0 - quiet), Math.max(0, r0 - quiet), Math.min(cols, c1 + quiet), Math.min(rows, r1 + quiet)];
+    } else {
+      // A bank is its blades plus the rail on its inner edge, kept `quiet` cells from the content. A side with
+      // room for fewer than two blades sends its bank above and below the content instead.
+      const columns = Math.round(louverClamp(props.columns, 2, 16));
+      const depth = (free: number): number => {
+        const n = Math.min(columns, free - quiet - 1);
+        return n < 2 ? 0 : n + 1;
+      };
+      const left = depth(c0);
+      const right = depth(cols - c1);
+      const sides = left > 0 && right > 0;
+      q = [left, sides ? 0 : depth(r0), cols - right, rows - (sides ? 0 : depth(rows - r1))];
+    }
+    const [a, b, e, f] = q;
+    // Blades follow their bank: a bank above or below the content turns the other way from one beside it.
+    const swap = !full && (b > 0 || f < rows);
+    const key = `${font}|${W}|${H}|${cw}|${ch}|${props.axis}|${props.area}|${q}|${swap}`;
+    if (!force && key === shown) return;
+    shown = key;
+
+    // Tiles 0 to 7 are upright blades and 8 to 15 are slats. Each blade keeps about an eighth of a cell clear
+    // below it, and beside it when it stands upright, so every cell reads as its own blade, even closed. A
+    // full field draws them lighter. The rail fills its whole cell and runs unbroken.
+    const alpha = louverClamp(props.opacity, 0.1, 0.65);
+    const gapX = Math.max(1, Math.round(cw / 9));
+    const gapY = Math.max(1, Math.round(ch / 8));
+    atlas.width = 22 * cw;
+    atlas.height = ch;
+    tiles.font = font;
+    for (let i = 0; i < 22; i++) {
+      const blade = i < 16;
+      const slat = blade && i >= 8;
+      const m = blade ? block : rail;
+      tiles.save();
+      tiles.beginPath();
+      if (!blade) tiles.rect(i * cw, 0, cw, ch);
+      else if (slat) tiles.rect(i * cw, gapY, cw, ch - gapY);
+      else tiles.rect(i * cw, gapY >> 1, cw - gapX, ch - gapY);
+      tiles.clip();
+      tiles.globalAlpha = blade ? alpha * (full ? 0.35 : 1) : Math.min(1, alpha * 2);
+      tiles.fillStyle = blade ? palette.colors.fg : palette.colors.muted;
+      // Upright blades and the rail center their ink in the cell; slats stand on the cell's floor.
+      tiles.fillText(
+        !blade ? LOUVER_RAIL.charAt(i - 16) : slat ? lowerEighth(i - 7) : leftEighth(i + 1),
+        i * cw,
+        slat ? ch - m.actualBoundingBoxDescent : (ch - tall(m)) / 2 + m.actualBoundingBoxAscent,
+      );
+      tiles.restore();
+    }
+
+    // The phase steps half a radian from blade to blade, and slowly along each blade. A full field takes a
+    // broader wave, so the whole host turns in a few wide bands rather than many narrow ones.
+    const wide = full ? 0.4 : 1;
+    const xy: number[] = [];
+    const ph: number[] = [];
+    rails = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = ox + c * cw;
+        const y = oy + r * ch;
+        if (c >= a && c < e && r >= b && r < f) continue;
+        if (c >= a - 1 && c <= e && r >= b - 1 && r <= f) {
+          const v = r < b || r >= f;
+          const h = c < a || c >= e;
+          rails.push(x, y, v && h ? 18 + (r < b ? 0 : 2) + (c < a ? 0 : 1) : v ? 17 : 16);
+          continue;
+        }
+        const slat = (props.axis === "y") !== (swap && (r < b || r >= f));
+        const kx = (slat ? 0.11 : 0.5) * wide;
+        const ky = (slat ? 0.5 : 0.22) * wide;
+        xy.push(x, y, slat ? 8 : 0);
+        ph.push(kx * c + ky * r);
+      }
+    }
+    cells = Int32Array.from(xy);
+    phases = Float64Array.from(ph);
+    levels = new Uint8Array(ph.length);
+    dirty = true;
+    loop?.redraw();
+  }
+
+  /** Each blade shows n = round(8 (0.5 + 0.5 sin θ)) eighths, kept from 1 to 8, so it turns but never vanishes.
+   *  A full field maps the same sine to 1 to 5 eighths, so none of its blades ever closes. Only the cells whose
+   *  level changed are copied again. */
+  function frame(t: number): void {
+    if (destroyed) return;
+    if (ctx) {
+      if (dirty) {
+        dirty = false;
+        levels.fill(0);
+        ctx.clearRect(0, 0, surface.width, surface.height);
+        for (let i = 0; i < rails.length; i += 3) ctx.drawImage(atlas, rails[i + 2]! * cw, 0, cw, ch, rails[i]!, rails[i + 1]!, cw, ch);
+      }
+      const full = props.area === "full";
+      const turn = (2 * Math.PI * louverClamp(props.speed, 0.2, 2) * t) / LOUVER_PERIOD + (hashSeed(props.seed, 41) / 4294967296) * 2 * Math.PI;
+      for (let i = 0; i < levels.length; i++) {
+        const s = Math.sin(turn + phases[i]!);
+        const n = full ? Math.round(3 + 2 * s) : Math.max(1, Math.round(4 + 4 * s));
+        if (n === levels[i]) continue;
+        levels[i] = n;
+        const x = cells[3 * i]!;
+        const y = cells[3 * i + 1]!;
+        ctx.clearRect(x, y, cw, ch);
+        ctx.drawImage(atlas, (cells[3 * i + 2]! + n - 1) * cw, 0, cw, ch, x, y, cw, ch);
+      }
+    }
+    if (!ready) {
+      ready = true;
+      attrs.set("data-pica-ready", "true");
+    }
+  }
+
+  // The clear zone follows the children: their sizes, their arrival and removal, their text, and font loads.
+  // Both observers only read.
+  const watch = typeof ResizeObserver === "function" ? new ResizeObserver(() => relayout(false)) : null;
+  function follow(): void {
+    watch?.disconnect();
+    watch?.observe(host);
+    for (const child of host.children) if (!child.hasAttribute("data-pica")) watch?.observe(child);
+  }
+  const mutations = typeof MutationObserver === "function"
+    ? new MutationObserver(() => {
+        follow();
+        relayout(false);
+      })
+    : null;
+  const onFonts = (): void => relayout(true);
+
+  applyLayout();
+  relayout(true);
+  loop = createLoop({ el: host, paused: props.paused, time: props.time, fps: 12, still: 1200, frame });
+  follow();
+  mutations?.observe(host, { childList: true, subtree: true, characterData: true });
+  document.fonts.addEventListener("loadingdone", onFonts);
+
   return {
     update(next) {
       props = { ...props, ...next };
-      if (next.paused !== undefined) localPaused = next.paused;
-      syncButton(); palette.refresh();
-      motion.loop?.update({ paused: localPaused, time: props.time, fps: 18 }); motion.loop?.redraw();
+      applyLayout();
+      palette.refresh();
+      relayout(true);
+      loop?.update({ paused: props.paused, time: props.time });
     },
     destroy() {
       if (destroyed) return;
-      destroyed = true; motion.loop?.destroy();
-      pause.removeEventListener("click", toggle); pause.remove();
-      palette.destroy(); surface.destroy(); rules.destroy(); attrs.restore(); restore();
+      destroyed = true;
+      loop?.destroy();
+      watch?.disconnect();
+      mutations?.disconnect();
+      document.fonts.removeEventListener("loadingdone", onFonts);
+      palette.destroy();
+      surface.destroy();
+      undoLayout();
+      restoreHost();
+      attrs.restore();
     },
   };
 };
@@ -779,7 +1326,7 @@ export const mount: Mount<PixelLouverProps> = (host, initial = {}) => {
 // registry/effects/pixel-louver/index.tsx
 export type PixelLouverComponentProps = Partial<PixelLouverProps> & WrapperProps & { children?: ReactNode };
 
-/** A bounded grid of mechanical louvers changes projected width in a slow traveling phase. */
+/** Eighth-block louver blades turn in whole cells beside the content, or in every cell around it, and never draw under it. */
 export function PixelLouver({ className, style, palette, children, ...props }: PixelLouverComponentProps) {
   const ref = usePica(mount, props);
   return <div ref={ref} className={className} style={{ width: "100%", height: "100%", ...paletteStyle(palette), ...style }}>{children}</div>;
@@ -813,7 +1360,7 @@ html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto;
 .pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
 </head>
 <body>
-<div id="pica"><article data-demo-copy><p>BUILDING STUDIES / SHADING</p><h2>Light, measured in sections.</h2><p>Compare screen spacing, projected shade and maintenance notes for the east facade study.</p><details><summary>Read the design record</summary><p>Facade study E02 uses equal blade spacing with alternating projected shade. Check the sight line from the reading area before choosing a maintenance interval.</p></details></article></div>
+<div id="pica"><p>Shade moves across the east elevation through the afternoon.</p><p>By evening the blades stand open to the street.</p></div>
 <script>
 "use strict";
 var PicaPixelLouver = (() => {
@@ -842,15 +1389,18 @@ var PicaPixelLouver = (() => {
     mount: () => mount
   });
 
+  // lib/blocks.ts
+  var LOWER_EIGHTHS = " ▁▂▃▄▅▆▇█";
+  var LEFT_EIGHTHS = " ▏▎▍▌▋▊▉█";
+  var clampEighths = (n) => Math.max(0, Math.min(8, Math.round(n)));
+  function lowerEighth(n) {
+    return LOWER_EIGHTHS[clampEighths(n)] ?? " ";
+  }
+  function leftEighth(n) {
+    return LEFT_EIGHTHS[clampEighths(n)] ?? " ";
+  }
+
   // lib/host.ts
-  function nextSerial() {
-    const g = globalThis;
-    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
-    return g.__picaSerial;
-  }
-  function nextId(prefix) {
-    return `${prefix}-${nextSerial()}`;
-  }
   var unstyled = /* @__PURE__ */ new WeakMap();
   function styleHost(host, styles) {
     if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
@@ -949,6 +1499,84 @@ var PicaPixelLouver = (() => {
     };
   }
 
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/glyph-grid.ts
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function measureCell(fontFamily, fontSize, lineHeight) {
+    return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
+  }
+
   // lib/loop.ts
   var MAX_STEP_MS = 100;
   function createLoop(options) {
@@ -1027,69 +1655,6 @@ var PicaPixelLouver = (() => {
     };
   }
 
-  // lib/palette.ts
-  var TOKENS = ["fg", "bg", "accent", "muted"];
-  var TOKEN_FALLBACK = {
-    fg: "currentColor",
-    bg: "transparent",
-    accent: "#13C4A3",
-    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
-  };
-  function cssVar(token) {
-    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
-  }
-  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
-  function createProbe(host) {
-    const probe = document.createElement("span");
-    probe.setAttribute("data-pica", "");
-    probe.setAttribute("aria-hidden", "true");
-    probe.style.cssText = [
-      "position:absolute",
-      "width:0",
-      "height:0",
-      "overflow:hidden",
-      "visibility:hidden",
-      "pointer-events:none",
-      `color:${cssVar("fg")}`,
-      `background-color:${cssVar("bg")}`,
-      `border-top:0 solid ${cssVar("accent")}`,
-      `outline:0 solid ${cssVar("muted")}`,
-      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
-      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
-    ].join(";");
-    host.appendChild(probe);
-    return probe;
-  }
-  function probeColors(probe) {
-    const style = getComputedStyle(probe);
-    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
-  }
-  function watchPalette(host, onChange) {
-    const probe = createProbe(host);
-    let colors = probeColors(probe);
-    function refresh() {
-      const next = probeColors(probe);
-      const differs = TOKENS.some((token) => next[token] !== colors[token]);
-      colors = next;
-      return differs;
-    }
-    const onEvent = (event) => {
-      event.stopPropagation();
-      if (event.type === "transitionend" && refresh()) onChange(colors);
-    };
-    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
-    return {
-      get colors() {
-        return colors;
-      },
-      refresh,
-      destroy() {
-        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
-        probe.remove();
-      }
-    };
-  }
-
   // lib/rng.ts
   function hashMix(h) {
     h = Math.imul(h ^ h >>> 16, 2146121005);
@@ -1101,120 +1666,239 @@ var PicaPixelLouver = (() => {
   }
 
   // registry/effects/pixel-louver/core.ts
-  var defaults = { speed: 1, opacity: 0.34, scale: 1, paused: false, time: null, seed: 1 };
+  var defaults = {
+    area: "margins",
+    columns: 6,
+    axis: "x",
+    quiet: 2,
+    layout: "none",
+    speed: 1,
+    opacity: 0.34,
+    scale: 1,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var LOUVER_PERIOD = 24e3;
+  var LOUVER_RAIL = "│─┌┐└┘";
+  function louverClamp(v, lo, hi) {
+    return Math.max(lo, Math.min(hi, v));
+  }
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
-    let localPaused = props.paused;
-    const motion = {};
     let destroyed = false;
+    let ready = false;
+    let dirty = true;
+    let shown = "";
+    let padding = "";
+    let undoLayout = () => void 0;
+    let loop = null;
+    let cw = 1;
+    let ch = 1;
+    let cells = new Int32Array(0);
+    let phases = new Float64Array(0);
+    let levels = new Uint8Array(0);
+    let rails = [];
     const attrs = hostAttributes(host);
-    const restore = styleHost(host, { isolation: "isolate" });
-    const id = nextId("material");
-    attrs.set("data-pica-material", id);
-    const sheet = document.createElement("style");
-    sheet.setAttribute("data-pica", "");
-    host.append(sheet);
-    const rules = {
-      selector: `[data-pica-material="${id}"]`,
-      setRules(css) {
-        sheet.textContent = css;
-      },
-      destroy() {
-        sheet.remove();
-      }
-    };
-    rules.setRules(`
-    ${rules.selector} > [data-pica-pause] { position:absolute;right:16px;bottom:16px;min-height:44px;padding:8px 12px;border:1px solid ${cssVar("fg")};background:${cssVar("bg")};color:${cssVar("fg")};font:inherit;cursor:pointer;z-index:2; }
-    ${rules.selector} > [data-pica-pause]:focus-visible { outline:2px solid ${cssVar("fg")};outline-offset:3px; }
-    ${rules.selector} > [data-demo-copy] { position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(540px,60%); }
-    ${rules.selector} > [data-demo-copy] h2 { font-size:clamp(26px,4vw,52px);line-height:1.08;font-weight:500;margin:14px 0 20px; }
-    ${rules.selector} > [data-demo-copy] p { line-height:1.6;max-width:42ch; }
-    ${rules.selector} > [data-demo-copy] a { color:inherit;text-underline-offset:5px; }
-  `);
-    const surface = createCanvas(host, { maxDpr: 1.5, maxPixels: 11e5, css: "z-index:-1", onResize: () => motion.loop?.redraw() });
+    const restoreHost = styleHost(host, { isolation: "isolate" });
+    const surface = createCanvas(host, { maxDpr: 2, maxPixels: 42e5, css: "z-index:-1", onResize: () => relayout(true) });
     const ctx = surface.canvas.getContext("2d");
-    const palette = watchPalette(host, () => motion.loop?.redraw());
-    const pause = document.createElement("button");
-    pause.type = "button";
-    pause.setAttribute("data-pica", "");
-    pause.setAttribute("data-pica-pause", "");
-    host.append(pause);
-    function syncButton() {
-      pause.textContent = localPaused ? "Resume motion" : "Pause motion";
-      pause.setAttribute("aria-label", `${localPaused ? "Resume" : "Pause"} pixel louver motion`);
-      pause.setAttribute("aria-pressed", String(localPaused));
+    const atlas = document.createElement("canvas");
+    atlas.setAttribute("data-pica", "");
+    const tiles = atlas.getContext("2d");
+    const palette = watchPalette(host, () => relayout(true));
+    const range = document.createRange();
+    function applyLayout() {
+      const s = louverClamp(props.scale, 0.6, 1.8);
+      const next = props.layout === "center" ? `${(2.4 * s).toFixed(2)}em ${(1.2 * s).toFixed(2)}em` : "";
+      if (next === padding) return;
+      undoLayout();
+      padding = next;
+      undoLayout = next ? styleHost(host, { display: "grid", "place-content": "center", "justify-items": "start", "box-sizing": "border-box", padding: next }) : () => void 0;
     }
-    const toggle = () => {
-      localPaused = !localPaused;
-      syncButton();
-      motion.loop?.update({ paused: localPaused });
-    };
-    pause.addEventListener("click", toggle);
-    syncButton();
-    function draw(ms) {
-      if (!ctx || destroyed) return;
-      const w = surface.cssWidth, h = surface.cssHeight;
-      ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
-      ctx.clearRect(0, 0, w, h);
-      const scale = Math.max(0.6, Math.min(1.8, props.scale));
-      const opacity = Math.max(0.1, Math.min(0.65, props.opacity));
-      const m = Math.min(248, Math.max(28, w < 600 ? w * 0.115 : w * 0.2));
-      const phase = hashSeed(props.seed, 17) / 4294967295 * Math.PI * 2;
-      for (let side = 0; side < 2; side++) {
-        let line2 = function(x, y, x2, y2) {
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
-        };
-        var line = line2;
-        ctx.save();
-        ctx.translate(side ? w : 0, 0);
-        ctx.scale(side ? -1 : 1, 1);
-        ctx.beginPath();
-        ctx.rect(0, 0, m, h);
-        ctx.clip();
-        ctx.lineWidth = 1;
-        const t = ms * 35e-5 * Math.max(0.2, Math.min(2, props.speed)) + phase + side * 0.9;
-        const cell = 32 * scale;
-        const cols = Math.min(10, Math.ceil(m / cell)), rows = Math.min(42, Math.ceil(h / cell));
-        ctx.fillStyle = palette.colors.fg;
-        ctx.strokeStyle = palette.colors.fg;
-        for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
-          const x = col * cell + cell * 0.5, y = row * cell + cell * 0.5;
-          const projected = (0.28 + 0.68 * (0.5 + 0.5 * Math.sin(t * 0.65 + row * 0.18 + col * 0.5))) * cell * 0.65;
-          ctx.globalAlpha = opacity * 0.28;
-          ctx.strokeRect(x - cell * 0.4, y - cell * 0.36, cell * 0.8, cell * 0.72);
-          ctx.globalAlpha = opacity * 0.8;
-          ctx.fillRect(x - projected * 0.5, y - cell * 0.24, projected, cell * 0.48);
-          ctx.globalAlpha = opacity;
-          line2(x - cell * 0.3, y, x + cell * 0.3, y);
+    function relayout(force) {
+      if (destroyed || !ctx || !tiles) return;
+      const dpr = surface.dpr;
+      const px = louverClamp((parseFloat(getComputedStyle(host).fontSize) || 16) * louverClamp(props.scale, 0.6, 1.8), 8, 48) * dpr;
+      const font = `${px}px ${GRID_FONT}`;
+      tiles.font = font;
+      const block = tiles.measureText("█");
+      const rail = tiles.measureText("│");
+      const tall = (m) => m.actualBoundingBoxAscent + m.actualBoundingBoxDescent || px * 1.2;
+      cw = Math.max(1, Math.floor(measureCell(GRID_FONT, px, 1.2).w));
+      ch = Math.max(1, Math.floor(louverClamp(Math.min(tall(block), tall(rail)), px, px * 1.2)));
+      const W = surface.width;
+      const H = surface.height;
+      const cols = Math.floor(W / cw);
+      const rows = Math.floor(H / ch);
+      const ox = W - cols * cw >> 1;
+      const oy = H - rows * ch >> 1;
+      const box = host.getBoundingClientRect();
+      const k = box.width / (host.offsetWidth || 1) || 1;
+      let x0 = Infinity;
+      let y0 = Infinity;
+      let x1 = -Infinity;
+      let y1 = -Infinity;
+      for (const node of host.childNodes) {
+        let r = null;
+        if (node instanceof Element) {
+          if (!node.hasAttribute("data-pica")) r = node.getBoundingClientRect();
+        } else if (node.nodeType === 3 && node.textContent?.trim()) {
+          range.selectNodeContents(node);
+          r = range.getBoundingClientRect();
         }
-        ctx.restore();
+        if (r && r.width > 0 && r.height > 0) {
+          x0 = Math.min(x0, r.left);
+          y0 = Math.min(y0, r.top);
+          x1 = Math.max(x1, r.right);
+          y1 = Math.max(y1, r.bottom);
+        }
       }
-      attrs.set("data-pica-ready", "true");
+      const found = x1 > x0;
+      const gx = (v) => (((v - box.left) / k - host.clientLeft) * dpr - ox) / cw;
+      const gy = (v) => (((v - box.top) / k - host.clientTop) * dpr - oy) / ch;
+      const c0 = found ? louverClamp(Math.floor(gx(x0)), 0, cols) : cols >> 1;
+      const c1 = found ? louverClamp(Math.ceil(gx(x1)), c0, cols) : c0;
+      const r0 = found ? louverClamp(Math.floor(gy(y0)), 0, rows) : rows >> 1;
+      const r1 = found ? louverClamp(Math.ceil(gy(y1)), r0, rows) : r0;
+      const full = props.area === "full";
+      const quiet = Math.round(louverClamp(props.quiet, 0, 6));
+      let q = [-9, -9, -9, -9];
+      if (full) {
+        if (found) q = [Math.max(0, c0 - quiet), Math.max(0, r0 - quiet), Math.min(cols, c1 + quiet), Math.min(rows, r1 + quiet)];
+      } else {
+        const columns = Math.round(louverClamp(props.columns, 2, 16));
+        const depth = (free) => {
+          const n = Math.min(columns, free - quiet - 1);
+          return n < 2 ? 0 : n + 1;
+        };
+        const left = depth(c0);
+        const right = depth(cols - c1);
+        const sides = left > 0 && right > 0;
+        q = [left, sides ? 0 : depth(r0), cols - right, rows - (sides ? 0 : depth(rows - r1))];
+      }
+      const [a, b, e, f] = q;
+      const swap = !full && (b > 0 || f < rows);
+      const key = `${font}|${W}|${H}|${cw}|${ch}|${props.axis}|${props.area}|${q}|${swap}`;
+      if (!force && key === shown) return;
+      shown = key;
+      const alpha = louverClamp(props.opacity, 0.1, 0.65);
+      const gapX = Math.max(1, Math.round(cw / 9));
+      const gapY = Math.max(1, Math.round(ch / 8));
+      atlas.width = 22 * cw;
+      atlas.height = ch;
+      tiles.font = font;
+      for (let i = 0; i < 22; i++) {
+        const blade = i < 16;
+        const slat = blade && i >= 8;
+        const m = blade ? block : rail;
+        tiles.save();
+        tiles.beginPath();
+        if (!blade) tiles.rect(i * cw, 0, cw, ch);
+        else if (slat) tiles.rect(i * cw, gapY, cw, ch - gapY);
+        else tiles.rect(i * cw, gapY >> 1, cw - gapX, ch - gapY);
+        tiles.clip();
+        tiles.globalAlpha = blade ? alpha * (full ? 0.35 : 1) : Math.min(1, alpha * 2);
+        tiles.fillStyle = blade ? palette.colors.fg : palette.colors.muted;
+        tiles.fillText(
+          !blade ? LOUVER_RAIL.charAt(i - 16) : slat ? lowerEighth(i - 7) : leftEighth(i + 1),
+          i * cw,
+          slat ? ch - m.actualBoundingBoxDescent : (ch - tall(m)) / 2 + m.actualBoundingBoxAscent
+        );
+        tiles.restore();
+      }
+      const wide = full ? 0.4 : 1;
+      const xy = [];
+      const ph = [];
+      rails = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = ox + c * cw;
+          const y = oy + r * ch;
+          if (c >= a && c < e && r >= b && r < f) continue;
+          if (c >= a - 1 && c <= e && r >= b - 1 && r <= f) {
+            const v = r < b || r >= f;
+            const h = c < a || c >= e;
+            rails.push(x, y, v && h ? 18 + (r < b ? 0 : 2) + (c < a ? 0 : 1) : v ? 17 : 16);
+            continue;
+          }
+          const slat = props.axis === "y" !== (swap && (r < b || r >= f));
+          const kx = (slat ? 0.11 : 0.5) * wide;
+          const ky = (slat ? 0.5 : 0.22) * wide;
+          xy.push(x, y, slat ? 8 : 0);
+          ph.push(kx * c + ky * r);
+        }
+      }
+      cells = Int32Array.from(xy);
+      phases = Float64Array.from(ph);
+      levels = new Uint8Array(ph.length);
+      dirty = true;
+      loop?.redraw();
     }
-    motion.loop = createLoop({ el: host, paused: localPaused, time: props.time, fps: 18, still: 1200, frame: draw });
+    function frame(t) {
+      if (destroyed) return;
+      if (ctx) {
+        if (dirty) {
+          dirty = false;
+          levels.fill(0);
+          ctx.clearRect(0, 0, surface.width, surface.height);
+          for (let i = 0; i < rails.length; i += 3) ctx.drawImage(atlas, rails[i + 2] * cw, 0, cw, ch, rails[i], rails[i + 1], cw, ch);
+        }
+        const full = props.area === "full";
+        const turn = 2 * Math.PI * louverClamp(props.speed, 0.2, 2) * t / LOUVER_PERIOD + hashSeed(props.seed, 41) / 4294967296 * 2 * Math.PI;
+        for (let i = 0; i < levels.length; i++) {
+          const s = Math.sin(turn + phases[i]);
+          const n = full ? Math.round(3 + 2 * s) : Math.max(1, Math.round(4 + 4 * s));
+          if (n === levels[i]) continue;
+          levels[i] = n;
+          const x = cells[3 * i];
+          const y = cells[3 * i + 1];
+          ctx.clearRect(x, y, cw, ch);
+          ctx.drawImage(atlas, (cells[3 * i + 2] + n - 1) * cw, 0, cw, ch, x, y, cw, ch);
+        }
+      }
+      if (!ready) {
+        ready = true;
+        attrs.set("data-pica-ready", "true");
+      }
+    }
+    const watch = typeof ResizeObserver === "function" ? new ResizeObserver(() => relayout(false)) : null;
+    function follow() {
+      watch?.disconnect();
+      watch?.observe(host);
+      for (const child of host.children) if (!child.hasAttribute("data-pica")) watch?.observe(child);
+    }
+    const mutations = typeof MutationObserver === "function" ? new MutationObserver(() => {
+      follow();
+      relayout(false);
+    }) : null;
+    const onFonts = () => relayout(true);
+    applyLayout();
+    relayout(true);
+    loop = createLoop({ el: host, paused: props.paused, time: props.time, fps: 12, still: 1200, frame });
+    follow();
+    mutations?.observe(host, { childList: true, subtree: true, characterData: true });
+    document.fonts.addEventListener("loadingdone", onFonts);
     return {
       update(next) {
         props = { ...props, ...next };
-        if (next.paused !== void 0) localPaused = next.paused;
-        syncButton();
+        applyLayout();
         palette.refresh();
-        motion.loop?.update({ paused: localPaused, time: props.time, fps: 18 });
-        motion.loop?.redraw();
+        relayout(true);
+        loop?.update({ paused: props.paused, time: props.time });
       },
       destroy() {
         if (destroyed) return;
         destroyed = true;
-        motion.loop?.destroy();
-        pause.removeEventListener("click", toggle);
-        pause.remove();
+        loop?.destroy();
+        watch?.disconnect();
+        mutations?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
         palette.destroy();
         surface.destroy();
-        rules.destroy();
+        undoLayout();
+        restoreHost();
         attrs.restore();
-        restore();
       }
     };
   };
@@ -1235,7 +1919,7 @@ var PicaPixelLouver = (() => {
     }
     return data;
   }
-  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var initial = Object.assign({}, {"layout":"center"}, window.PICA_PROPS || {});
   var instance = PicaPixelLouver.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;

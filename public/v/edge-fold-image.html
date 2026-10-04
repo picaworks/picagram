@@ -1,0 +1,627 @@
+<!doctype html>
+<!--
+  Pica · Edge Fold Image · edge-fold-image
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Edge Fold Image · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaEdgeFoldImage = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/effects/edge-fold-image/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function readPalette(host) {
+    const probe = createProbe(host);
+    const colors = probeColors(probe);
+    probe.remove();
+    return colors;
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+  function relativeLuminance(color) {
+    const [r, g, b] = parseColor(color);
+    const linear = (v) => {
+      const c = v / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+  }
+  function inkColor(host) {
+    return readPalette(host).fg;
+  }
+  function hostTone(host) {
+    const fg = relativeLuminance(inkColor(host));
+    let bg = 1;
+    for (let el = host; el; el = el.parentElement) {
+      const background = getComputedStyle(el).backgroundColor;
+      if (parseColor(background)[3] > 0) {
+        bg = relativeLuminance(background);
+        break;
+      }
+    }
+    return fg > bg ? "light-on-dark" : "dark-on-light";
+  }
+
+  // lib/pixels.ts
+  function inkPixels(values, width, height, color, out) {
+    const image = out ?? new ImageData(width, height);
+    const [r, g, b, a] = color;
+    const data = image.data;
+    for (let i = 0; i < width * height; i++) {
+      const j = i * 4;
+      const v = values[i] ?? 0;
+      data[j] = r;
+      data[j + 1] = g;
+      data[j + 2] = b;
+      data[j + 3] = v <= 0 ? 0 : v >= 1 ? a : Math.round(a * v);
+    }
+    return image;
+  }
+  function createPlate() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    return {
+      canvas,
+      put(image) {
+        if (canvas.width !== image.width) canvas.width = image.width;
+        if (canvas.height !== image.height) canvas.height = image.height;
+        ctx?.putImageData(image, 0, 0);
+      }
+    };
+  }
+
+  // lib/sample.ts
+  function fitRect(sourceW, sourceH, boxW, boxH, fit, alignX = 0.5, alignY = 0.5) {
+    const scale = fit === "cover" ? Math.max(boxW / sourceW, boxH / sourceH) : Math.min(boxW / sourceW, boxH / sourceH);
+    const w = sourceW * scale;
+    const h = sourceH * scale;
+    return { x: (boxW - w) * alignX, y: (boxH - h) * alignY, w, h };
+  }
+  function createSampler() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    let ink = new Float32Array(0);
+    return {
+      sample(source, sourceW, sourceH, host, o) {
+        const ny = o.ny ?? o.n;
+        const sw = o.cols * o.n;
+        const sh = o.rows * ny;
+        if (ink.length !== sw * sh) ink = new Float32Array(sw * sh);
+        if (!ctx || sourceW <= 0 || sourceH <= 0) return ink.fill(0);
+        if (canvas.width !== sw) canvas.width = sw;
+        if (canvas.height !== sh) canvas.height = sh;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, sw, sh);
+        if (o.mirror) ctx.setTransform(-1, 0, 0, 1, sw, 0);
+        const box = fitRect(sourceW, sourceH, o.cols * o.aspect, o.rows, o.fit, o.alignX, o.alignY);
+        const toX = o.n / o.aspect;
+        ctx.drawImage(source, box.x * toX, box.y * ny, box.w * toX, box.h * ny);
+        const data = ctx.getImageData(0, 0, sw, sh).data;
+        const lightOnDark = (o.tone === "auto" ? hostTone(host) : o.tone) === "light-on-dark";
+        for (let p = 0; p < sw * sh; p++) {
+          const i = p * 4;
+          const alpha = (data[i + 3] ?? 0) / 255;
+          const luma = (0.2126 * (data[i] ?? 0) + 0.7152 * (data[i + 1] ?? 0) + 0.0722 * (data[i + 2] ?? 0)) / 255;
+          const linear = Math.min(1, Math.max(0, (luma - 0.5) * o.contrast + 0.5)) ** 2.2;
+          ink[p] = alpha * (lightOnDark ? linear : 1 - linear);
+        }
+        return ink;
+      }
+    };
+  }
+
+  // lib/subject.ts
+  function litSphere(size = 256, lightX = 0.36, lightY = 0.34) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const light = ctx.createRadialGradient(size * lightX, size * lightY, size * 0.02, size * 0.5, size * 0.5, size * 0.46);
+      light.addColorStop(0, "#ffffff");
+      light.addColorStop(0.55, "#8a8a8a");
+      light.addColorStop(1, "#141414");
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return canvas;
+  }
+
+  // lib/source.ts
+  function loadSource(src, ready, fail) {
+    if (!src) {
+      const sphere = litSphere();
+      ready({ image: sphere, width: sphere.width, height: sphere.height, builtIn: true });
+      return () => void 0;
+    }
+    let live = true;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "async";
+    img.onload = () => {
+      if (live) ready({ image: img, width: img.naturalWidth, height: img.naturalHeight, builtIn: false });
+    };
+    img.onerror = () => {
+      if (live) fail();
+    };
+    img.src = src;
+    return () => {
+      live = false;
+    };
+  }
+  function fitFor(source, fit) {
+    return source.builtIn ? "contain" : fit;
+  }
+  function fitHostAspect(host, width, height) {
+    if (host.clientHeight >= 2 || width <= 0 || height <= 0) return () => void 0;
+    return styleHost(host, { "aspect-ratio": `${width} / ${height}` });
+  }
+  function showNote(host, text) {
+    const note = document.createElement("span");
+    note.setAttribute("data-pica", "");
+    note.setAttribute("aria-hidden", "true");
+    note.textContent = text;
+    note.style.cssText = [
+      "position:absolute",
+      "inset:0",
+      "display:flex",
+      "align-items:center",
+      "justify-content:center",
+      "pointer-events:none",
+      `color:${cssVar("muted")}`
+    ].join(";");
+    const restore = styleHost(host, getComputedStyle(host).position === "static" ? { position: "relative" } : {});
+    host.appendChild(note);
+    return () => {
+      note.remove();
+      restore();
+    };
+  }
+
+  // registry/effects/edge-fold-image/core.ts
+  var defaults = {
+    src: "",
+    edge: "right",
+    fold: 0.68,
+    crease: 0.32
+  };
+  var EDGE_FOLD_MAX = 560;
+  function edgeFoldNumber(value, fallback, min, max) {
+    return Math.max(min, Math.min(max, Number.isFinite(value) ? value : fallback));
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let alive = true;
+    let source = null;
+    let failed = false;
+    let initialized = false;
+    let workW = 0;
+    let workH = 0;
+    let values = new Float32Array(0);
+    let coverage = new Float32Array(0);
+    let cancel = () => void 0;
+    let restoreAspect = () => void 0;
+    let removeNote = null;
+    const attributes = hostAttributes(host);
+    attributes.set("role", null);
+    attributes.set("aria-label", null);
+    attributes.set("aria-hidden", "true");
+    labelHost(host, "");
+    const sampler = createSampler();
+    const plate = createPlate();
+    const surface = createCanvas(host, { maxPixels: 24e5, onResize: () => {
+      if (!initialized || !alive) return;
+      prepare();
+      draw();
+    } });
+    const ctx = surface.canvas.getContext("2d");
+    const palette = watchPalette(host, () => draw());
+    function note() {
+      if (failed && !removeNote) removeNote = showNote(host, "image unavailable");
+      if (!failed && removeNote) {
+        removeNote();
+        removeNote = null;
+      }
+    }
+    function prepare() {
+      if (!alive || !source) return;
+      const width = Math.max(1, surface.cssWidth);
+      const height = Math.max(1, surface.cssHeight);
+      const scale = Math.min(1, EDGE_FOLD_MAX / Math.max(width, height));
+      workW = Math.max(1, Math.round(width * scale));
+      workH = Math.max(1, Math.round(height * scale));
+      try {
+        values = sampler.sample(source.image, source.width, source.height, host, {
+          cols: workW,
+          rows: workH,
+          aspect: 1,
+          n: 1,
+          fit: fitFor(source, "cover"),
+          tone: "light-on-dark",
+          contrast: 1,
+          mirror: false
+        }).slice();
+        coverage = new Float32Array(workW * workH);
+      } catch {
+        source = null;
+        values = new Float32Array(0);
+        failed = true;
+      }
+    }
+    function sample(x, y) {
+      const left = Math.max(0, Math.min(workW - 1, Math.floor(x)));
+      const top = Math.max(0, Math.min(workH - 1, Math.floor(y)));
+      const right = Math.min(workW - 1, left + 1);
+      const bottom = Math.min(workH - 1, top + 1);
+      const fx = Math.max(0, Math.min(1, x - left));
+      const fy = Math.max(0, Math.min(1, y - top));
+      const a = (values[top * workW + left] ?? 0) * (1 - fx) + (values[top * workW + right] ?? 0) * fx;
+      const b = (values[bottom * workW + left] ?? 0) * (1 - fx) + (values[bottom * workW + right] ?? 0) * fx;
+      return a * (1 - fy) + b * fy;
+    }
+    function draw() {
+      if (!initialized || !alive) return;
+      note();
+      const width = Math.max(1, surface.cssWidth);
+      const height = Math.max(1, surface.cssHeight);
+      if (ctx) {
+        ctx.setTransform(surface.dpr, 0, 0, surface.dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = palette.colors.bg;
+        ctx.fillRect(0, 0, width, height);
+        if (source && values.length) {
+          const edge = ["left", "right", "top", "bottom"].includes(props.edge) ? props.edge : "right";
+          const vertical = edge === "left" || edge === "right";
+          const axis = vertical ? workW : workH;
+          const cross = vertical ? workH : workW;
+          const hinge = axis * edgeFoldNumber(props.crease, defaults.crease, 0.04, 0.46);
+          const amount = edgeFoldNumber(props.fold, defaults.fold, 0, 1);
+          const angle = amount * 76 * Math.PI / 180;
+          const cosine = Math.cos(angle);
+          const sine = Math.sin(angle);
+          const camera = Math.max(axis, cross) * 2.8;
+          const freeEdge = hinge - hinge * cosine * camera / (camera - hinge * sine);
+          const shade = 0.46 + cosine * 0.54;
+          coverage.fill(0);
+          for (let y = 0; y < workH; y++) {
+            for (let x = 0; x < workW; x++) {
+              const u = edge === "left" ? x + 0.5 : edge === "right" ? workW - x - 0.5 : edge === "top" ? y + 0.5 : workH - y - 0.5;
+              const v = vertical ? y + 0.5 : x + 0.5;
+              let sourceU = u;
+              let sourceV = v;
+              let lighting = 1;
+              if (u < hinge) {
+                if (u < freeEdge) continue;
+                const p = hinge - u;
+                const t = p * camera / (camera * cosine + p * sine);
+                const perspective = camera / (camera - t * sine);
+                sourceU = hinge - t;
+                sourceV = cross / 2 + (v - cross / 2) / perspective;
+                if (sourceU < 0 || sourceV < 0 || sourceV >= cross) continue;
+                lighting = shade;
+              }
+              const sx = edge === "left" ? sourceU - 0.5 : edge === "right" ? workW - sourceU - 0.5 : sourceV - 0.5;
+              const sy = edge === "top" ? sourceU - 0.5 : edge === "bottom" ? workH - sourceU - 0.5 : sourceV - 0.5;
+              const imageInk = sample(sx, sy);
+              let value = (0.065 + imageInk * 0.9) * lighting;
+              const seam = Math.max(0, 1 - Math.abs(u - hinge) / 1.25) * amount;
+              value = Math.min(1, value + seam * 0.21);
+              coverage[y * workW + x] = value;
+            }
+          }
+          plate.put(inkPixels(coverage, workW, workH, parseColor(palette.colors.fg)));
+          ctx.imageSmoothingEnabled = true;
+          ctx.drawImage(plate.canvas, 0, 0, width, height);
+        }
+      }
+      if (source || failed) attributes.set("data-pica-ready", "true");
+    }
+    function load() {
+      cancel();
+      failed = false;
+      source = null;
+      values = new Float32Array(0);
+      attributes.set("data-pica-ready", null);
+      restoreAspect();
+      restoreAspect = () => void 0;
+      cancel = loadSource(props.src, (next) => {
+        if (!alive) return;
+        source = next;
+        restoreAspect = fitHostAspect(host, next.width, next.height);
+        prepare();
+        draw();
+      }, () => {
+        if (!alive) return;
+        failed = true;
+        draw();
+      });
+      draw();
+    }
+    initialized = true;
+    load();
+    return {
+      update(next) {
+        if (!alive) return;
+        const before = props;
+        props = { ...props, ...next };
+        const paletteChanged = palette.refresh();
+        if (before.src !== props.src) load();
+        else if (before.edge !== props.edge || before.fold !== props.fold || before.crease !== props.crease || paletteChanged) draw();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        cancel();
+        removeNote?.();
+        removeNote = null;
+        palette.destroy();
+        surface.destroy();
+        restoreAspect();
+        attributes.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaEdgeFoldImage.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

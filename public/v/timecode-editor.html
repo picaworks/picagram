@@ -1,0 +1,390 @@
+<!doctype html>
+<!--
+  Pica · Timecode Editor · timecode-editor
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Timecode Editor · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaTimecodeEditor = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/timecode-editor/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/timecode-editor/core.ts
+  var defaults = {
+    fps: 24,
+    value: null,
+    defaultValue: 2009,
+    label: "Timecode",
+    disabled: false
+  };
+  var TIMECODE_NAMES = ["hours", "minutes", "seconds", "frames"];
+  var TIMECODE_CAPTIONS = ["HH", "MM", "SS", "FF"];
+  function timecodeRate(value) {
+    return Math.min(120, Math.max(1, Math.round(Number.isFinite(value) ? value : 24)));
+  }
+  function timecodeClamp(value, rate) {
+    return Math.min(100 * 3600 * rate - 1, Math.max(0, Math.round(Number.isFinite(value) ? value : 0)));
+  }
+  function timecodeParts(value, rate) {
+    const frames = timecodeClamp(value, rate);
+    const seconds = Math.floor(frames / rate);
+    return [Math.floor(seconds / 3600), Math.floor(seconds / 60) % 60, seconds % 60, frames % rate];
+  }
+  function timecodePart(tag, name) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute("data-part", name);
+    return node;
+  }
+  function timecodeRules(selector) {
+    const part = (name) => `${selector} [data-part="${name}"]`;
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const input = `${selector} input`;
+    return [
+      `${selector}{display:inline-block;max-width:100%;vertical-align:middle;color:${fg}}`,
+      `${part("root")}{display:grid;gap:0.55em;max-width:100%;line-height:1.2}`,
+      `${part("heading")}{display:flex;align-items:baseline;justify-content:space-between;gap:1em}`,
+      `${part("label")}{font:inherit;font-size:0.8em}`,
+      `${part("rate")}{font-family:${GRID_FONT};font-size:0.65em;color:${muted};white-space:nowrap}`,
+      `${part("segments")}{display:flex;align-items:center;gap:0.22em;box-sizing:border-box;max-width:100%;padding:0.65em 0.7em;border:1px solid color-mix(in srgb,${fg} 30%,transparent);background:${cssVar("bg")}}`,
+      `${part("field")}{display:grid;justify-items:center;gap:0.4em;min-width:0}`,
+      `${part("caption")}{font-family:${GRID_FONT};font-size:0.6em;letter-spacing:0.08em;color:${muted}}`,
+      `${part("separator")}{font-family:${GRID_FONT};font-size:1.35em;padding-top:0.65em;color:${muted};user-select:none}`,
+      `${input}{box-sizing:content-box;width:2ch;min-width:0;margin:0;padding:0.22em 0.3em;font-family:${GRID_FONT};font-size:1.4em;font-variant-numeric:tabular-nums;font-weight:500;line-height:1.2;text-align:center;color:${fg};background:transparent;border:0;border-bottom:2px solid color-mix(in srgb,${fg} 25%,transparent);border-radius:0;appearance:textfield;-moz-appearance:textfield;caret-color:${fg}}`,
+      `${part("frames")}{border-bottom-color:${accent}}`,
+      `${input}::-webkit-inner-spin-button,${input}::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}`,
+      `${input}:hover:not(:disabled){background:color-mix(in srgb,${fg} 7%,transparent)}`,
+      `${input}:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${input}:invalid{box-shadow:none}`,
+      `${input}:disabled{cursor:not-allowed;color:${muted}}`,
+      `${part("help")}{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let current = timecodeClamp(props.defaultValue, timecodeRate(props.fps));
+    let alive = true;
+    let draft = null;
+    const emit = emitter(host);
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    sheet.setRules(timecodeRules(sheet.selector));
+    const abort = new AbortController();
+    const on = { signal: abort.signal };
+    const root = timecodePart("div", "root");
+    const heading = timecodePart("div", "heading");
+    const label = timecodePart("span", "label");
+    const rateLabel = timecodePart("span", "rate");
+    const segments = timecodePart("div", "segments");
+    const help = timecodePart("span", "help");
+    help.id = nextId("timecode-help");
+    help.textContent = "Non-drop timecode, hours through frames. Up and Down step the focused segment with carrying; Shift or Page keys step ten. Left and Right move between segments. Enter commits, Escape cancels, and pasting HH:MM:SS:FF sets the whole timecode. Range: zero through 99 hours, 59 minutes, 59 seconds and the last frame.";
+    const inputs = TIMECODE_NAMES.map((name, index) => {
+      const field = timecodePart("label", "field");
+      const caption = timecodePart("span", "caption");
+      caption.textContent = TIMECODE_CAPTIONS[index] ?? name;
+      const input = timecodePart("input", name);
+      input.type = "number";
+      input.inputMode = "numeric";
+      input.autocomplete = "off";
+      input.step = "1";
+      input.min = "0";
+      field.append(caption, input);
+      if (index > 0) {
+        const separator = timecodePart("span", "separator");
+        separator.textContent = ":";
+        separator.setAttribute("aria-hidden", "true");
+        segments.append(separator);
+      }
+      segments.append(field);
+      return input;
+    });
+    heading.append(label, rateLabel);
+    root.append(heading, segments, help);
+    host.append(root);
+    function rate() {
+      return timecodeRate(props.fps);
+    }
+    function shown() {
+      return timecodeClamp(props.value === null ? current : props.value, rate());
+    }
+    function weights() {
+      return [3600 * rate(), 60 * rate(), rate(), 1];
+    }
+    function limits() {
+      return [99, 59, 59, rate() - 1];
+    }
+    function configure() {
+      const title = props.label.trim();
+      label.textContent = props.label;
+      label.hidden = !title;
+      rateLabel.textContent = `${rate()} FPS`;
+      attrs.set("role", title ? "group" : null);
+      attrs.set("aria-label", title || null);
+      attrs.set("aria-hidden", title ? null : "true");
+      attrs.set("aria-describedby", title ? help.id : null);
+      inputs.forEach((input, index) => {
+        input.max = String(limits()[index] ?? 0);
+        input.disabled = props.disabled;
+        input.setAttribute("aria-label", `${title || "Timecode"} ${TIMECODE_NAMES[index]}`);
+        input.setAttribute("aria-describedby", help.id);
+        input.style.width = index === 3 && rate() > 100 ? "3ch" : "2ch";
+      });
+    }
+    function paint() {
+      const parts = timecodeParts(shown(), rate());
+      inputs.forEach((input, index) => {
+        if (input === draft) return;
+        const width = index === 3 && rate() > 100 ? 3 : 2;
+        const text = String(parts[index] ?? 0).padStart(width, "0");
+        if (input.value !== text) input.value = text;
+      });
+      attrs.set("data-pica-ready", "true");
+    }
+    function choose(raw) {
+      const next = timecodeClamp(raw, rate());
+      const moved = next !== shown();
+      if (moved && props.value === null) current = next;
+      draft = null;
+      paint();
+      if (moved) emit("valueChange", next);
+    }
+    function edited(input, index) {
+      const displayed = input.valueAsNumber;
+      if (!Number.isFinite(displayed)) return shown();
+      const parts = timecodeParts(shown(), rate());
+      return shown() + (Math.round(displayed) - (parts[index] ?? 0)) * (weights()[index] ?? 1);
+    }
+    function commit(input) {
+      const index = inputs.indexOf(input);
+      if (index < 0) return;
+      choose(edited(input, index));
+    }
+    const onInput = (event) => {
+      const input = event.target;
+      if (inputs.includes(input)) draft = input;
+    };
+    const onChange = (event) => {
+      const input = event.target;
+      if (!props.disabled && inputs.includes(input)) commit(input);
+    };
+    const onBlur = (event) => {
+      const input = event.target;
+      if (draft === input && !props.disabled) commit(input);
+    };
+    const onKey = (event) => {
+      const input = event.target;
+      const index = inputs.indexOf(input);
+      if (index < 0 || props.disabled || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.key === "Enter") {
+        event.preventDefault();
+        commit(input);
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        draft = null;
+        paint();
+        return;
+      }
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        if (draft === input) commit(input);
+        inputs[Math.max(0, Math.min(3, index + (event.key === "ArrowRight" ? 1 : -1)))]?.focus();
+        return;
+      }
+      if (event.key === "Home" || event.key === "End") {
+        event.preventDefault();
+        const parts = timecodeParts(shown(), rate());
+        choose(shown() + ((event.key === "Home" ? 0 : limits()[index] ?? 0) - (parts[index] ?? 0)) * (weights()[index] ?? 1));
+        return;
+      }
+      const sign = event.key === "ArrowUp" || event.key === "PageUp" ? 1 : event.key === "ArrowDown" || event.key === "PageDown" ? -1 : 0;
+      if (!sign) return;
+      event.preventDefault();
+      const jump = event.shiftKey || event.key.startsWith("Page") ? 10 : 1;
+      choose((draft === input ? edited(input, index) : shown()) + sign * jump * (weights()[index] ?? 1));
+    };
+    const onPaste = (event) => {
+      if (props.disabled || !inputs.includes(event.target)) return;
+      const text = event.clipboardData?.getData("text") ?? "";
+      const match = /^\s*(\d{1,2}):(\d{1,2}):(\d{1,2}):(\d{1,3})\s*$/.exec(text);
+      if (!match) return;
+      event.preventDefault();
+      choose(((Number(match[1]) * 60 + Number(match[2])) * 60 + Number(match[3])) * rate() + Number(match[4]));
+    };
+    segments.addEventListener("input", onInput, on);
+    segments.addEventListener("change", onChange, on);
+    segments.addEventListener("focusout", onBlur, on);
+    segments.addEventListener("keydown", onKey, on);
+    segments.addEventListener("paste", onPaste, on);
+    configure();
+    paint();
+    return {
+      update(partial) {
+        if (!alive) return;
+        const before = props;
+        props = { ...props, ...partial };
+        if (before.fps !== props.fps) current = timecodeClamp(current, rate());
+        if (before.value !== props.value || before.fps !== props.fps || before.disabled !== props.disabled) draft = null;
+        if (before.fps !== props.fps || before.label !== props.label || before.disabled !== props.disabled) configure();
+        paint();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        abort.abort();
+        root.remove();
+        sheet.destroy();
+        attrs.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaTimecodeEditor.mount(host, take(initial));
+  ["valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

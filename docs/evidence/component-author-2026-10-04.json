@@ -1,0 +1,741 @@
+{
+  "model": "gpt-6.1-sol",
+  "reasoningEffort": "high",
+  "capacity": 6,
+  "ownerMaximum": 8,
+  "entries": [
+    {
+      "slug": "ascii-lissajous-scope",
+      "dispatchUTC": "2026-10-04T20:42:54Z",
+      "firstSourceWriteUTC": "2026-10-04T20:46:45.663Z",
+      "secondsToFirstSourceWrite": 231.663,
+      "packetBytes": 24859,
+      "readCallsReported": 2,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/ascii/ascii-lissajous-scope/core.ts",
+        "registry/ascii/ascii-lissajous-scope/index.tsx",
+        "registry/ascii/ascii-lissajous-scope/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:47:14.897Z",
+      "secondsToFirstSavedCapture": 260.8973298339844,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:47:23.108Z"
+    },
+    {
+      "slug": "ascii-piano-roll",
+      "dispatchUTC": "2026-10-04T20:48:00Z",
+      "firstSourceWriteUTC": "2026-10-04T20:54:23Z",
+      "secondsToFirstSourceWrite": 383,
+      "packetBytes": 24823,
+      "readCallsReported": 9,
+      "writeCallsReported": 3,
+      "sourceFiles": [
+        "registry/ascii/ascii-piano-roll/core.ts",
+        "registry/ascii/ascii-piano-roll/index.tsx",
+        "registry/ascii/ascii-piano-roll/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:55:50.418Z",
+      "secondsToFirstSavedCapture": 470.417900390625,
+      "coordinatorRevisedFiles": [
+        "registry/ascii/ascii-piano-roll/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:55:57.870Z"
+    },
+    {
+      "slug": "ascii-fretboard",
+      "dispatchUTC": "2026-10-04T20:48:05Z",
+      "firstSourceWriteUTC": "2026-10-04T20:50:51.604Z",
+      "secondsToFirstSourceWrite": 166.604,
+      "packetBytes": 24820,
+      "readCallsReported": 5,
+      "writeCallsReported": 2,
+      "sourceFiles": [
+        "registry/ascii/ascii-fretboard/core.ts",
+        "registry/ascii/ascii-fretboard/index.tsx",
+        "registry/ascii/ascii-fretboard/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:52:08.989Z",
+      "secondsToFirstSavedCapture": 243.98901904296875,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:52:13.618Z"
+    },
+    {
+      "slug": "ascii-tree-rings",
+      "dispatchUTC": "2026-10-04T20:48:10Z",
+      "firstSourceWriteUTC": "2026-10-04T20:51:18.198Z",
+      "secondsToFirstSourceWrite": 188.198,
+      "packetBytes": 24840,
+      "readCallsReported": 3,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/ascii/ascii-tree-rings/core.ts",
+        "registry/ascii/ascii-tree-rings/index.tsx",
+        "registry/ascii/ascii-tree-rings/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:51:50.952Z",
+      "secondsToFirstSavedCapture": 220.95179345703124,
+      "coordinatorRevisedFiles": [
+        "registry/ascii/ascii-tree-rings/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:51:55.359Z"
+    },
+    {
+      "slug": "ascii-wave-tank",
+      "dispatchUTC": "2026-10-04T20:48:15Z",
+      "firstSourceWriteUTC": "2026-10-04T20:52:06.131Z",
+      "secondsToFirstSourceWrite": 231.131,
+      "packetBytes": 24852,
+      "readCallsReported": 3,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/ascii/ascii-wave-tank/core.ts",
+        "registry/ascii/ascii-wave-tank/index.tsx",
+        "registry/ascii/ascii-wave-tank/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:53:27.442Z",
+      "secondsToFirstSavedCapture": 312.44220556640624,
+      "coordinatorRevisedFiles": [
+        "registry/ascii/ascii-wave-tank/core.ts",
+        "registry/ascii/ascii-wave-tank/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:53:36.781Z"
+    },
+    {
+      "slug": "lenticular-image",
+      "dispatchUTC": "2026-10-04T20:48:20Z",
+      "firstSourceWriteUTC": "2026-10-04T20:51:30.216Z",
+      "secondsToFirstSourceWrite": 190.216,
+      "packetBytes": 27501,
+      "readCallsReported": 6,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/effects/lenticular-image/core.ts",
+        "registry/effects/lenticular-image/index.tsx",
+        "registry/effects/lenticular-image/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:52:13.978Z",
+      "secondsToFirstSavedCapture": 233.97828637695312,
+      "coordinatorRevisedFiles": [
+        "registry/effects/lenticular-image/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:52:18.985Z"
+    },
+    {
+      "slug": "contour-wipe-image",
+      "dispatchUTC": "2026-10-04T20:47:46Z",
+      "firstSourceWriteUTC": "2026-10-04T20:51:15.555Z",
+      "secondsToFirstSourceWrite": 209.555,
+      "packetBytes": 27506,
+      "readCallsReported": 4,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/effects/contour-wipe-image/core.ts",
+        "registry/effects/contour-wipe-image/index.tsx",
+        "registry/effects/contour-wipe-image/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:51:56.104Z",
+      "secondsToFirstSavedCapture": 250.10377490234376,
+      "coordinatorRevisedFiles": [
+        "registry/effects/contour-wipe-image/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:52:00.510Z"
+    },
+    {
+      "slug": "pressure-print-image",
+      "dispatchUTC": "2026-10-04T20:52:15Z",
+      "firstSourceWriteUTC": "2026-10-04T20:54:44.744Z",
+      "secondsToFirstSourceWrite": 149.744,
+      "packetBytes": 27512,
+      "readCallsReported": 1,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/effects/pressure-print-image/core.ts",
+        "registry/effects/pressure-print-image/index.tsx",
+        "registry/effects/pressure-print-image/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:56:02.940Z",
+      "secondsToFirstSavedCapture": 227.9404990234375,
+      "coordinatorRevisedFiles": [
+        "registry/effects/pressure-print-image/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:56:06.826Z"
+    },
+    {
+      "slug": "pixel-weft-image",
+      "dispatchUTC": "2026-10-04T20:52:20Z",
+      "firstSourceWriteUTC": "2026-10-04T20:54:58.634Z",
+      "secondsToFirstSourceWrite": 158.634,
+      "packetBytes": 27516,
+      "readCallsReported": 4,
+      "writeCallsReported": 2,
+      "sourceFiles": [
+        "registry/effects/pixel-weft-image/core.ts",
+        "registry/effects/pixel-weft-image/index.tsx",
+        "registry/effects/pixel-weft-image/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:56:40.230Z",
+      "secondsToFirstSavedCapture": 260.2295500488281,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:56:49.761Z"
+    },
+    {
+      "slug": "edge-fold-image",
+      "dispatchUTC": "2026-10-04T20:52:25Z",
+      "firstSourceWriteUTC": "2026-10-04T20:55:09.832Z",
+      "secondsToFirstSourceWrite": 164.832,
+      "packetBytes": 27498,
+      "readCallsReported": 2,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/effects/edge-fold-image/core.ts",
+        "registry/effects/edge-fold-image/index.tsx",
+        "registry/effects/edge-fold-image/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:55:58.532Z",
+      "secondsToFirstSavedCapture": 213.53189379882812,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:56:02.648Z"
+    },
+    {
+      "slug": "chord-diagram",
+      "dispatchUTC": "2026-10-04T20:52:30Z",
+      "firstSourceWriteUTC": "2026-10-04T20:57:08.313Z",
+      "secondsToFirstSourceWrite": 278.313,
+      "packetBytes": 34133,
+      "readCallsReported": 6,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/data/chord-diagram/core.ts",
+        "registry/data/chord-diagram/index.tsx",
+        "registry/data/chord-diagram/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:57:35.999Z",
+      "secondsToFirstSavedCapture": 305.99901586914064,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:57:44.080Z"
+    },
+    {
+      "slug": "parallel-coordinate-plot",
+      "dispatchUTC": "2026-10-04T20:52:49Z",
+      "firstSourceWriteUTC": "2026-10-04T20:57:20.726Z",
+      "secondsToFirstSourceWrite": 271.726,
+      "packetBytes": 34153,
+      "readCallsReported": 1,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/data/parallel-coordinate-plot/core.ts",
+        "registry/data/parallel-coordinate-plot/index.tsx",
+        "registry/data/parallel-coordinate-plot/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T20:58:53.304Z",
+      "secondsToFirstSavedCapture": 364.3040981445312,
+      "coordinatorRevisedFiles": [
+        "registry/data/parallel-coordinate-plot/core.ts",
+        "registry/data/parallel-coordinate-plot/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T20:59:01.097Z"
+    },
+    {
+      "slug": "horizon-chart",
+      "dispatchUTC": "2026-10-04T20:56:00Z",
+      "firstSourceWriteUTC": "2026-10-04T21:00:09.586Z",
+      "secondsToFirstSourceWrite": 249.586,
+      "packetBytes": 34146,
+      "readCallsReported": 1,
+      "writeCallsReported": 2,
+      "sourceFiles": [
+        "registry/data/horizon-chart/core.ts",
+        "registry/data/horizon-chart/index.tsx",
+        "registry/data/horizon-chart/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:00:46.876Z",
+      "secondsToFirstSavedCapture": 286.87618579101564,
+      "coordinatorRevisedFiles": [
+        "registry/data/horizon-chart/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:02:41.786Z"
+    },
+    {
+      "slug": "fan-chart",
+      "dispatchUTC": "2026-10-04T20:56:05Z",
+      "firstSourceWriteUTC": "2026-10-04T20:59:46Z",
+      "secondsToFirstSourceWrite": 221,
+      "packetBytes": 34123,
+      "readCallsReported": 6,
+      "writeCallsReported": 3,
+      "sourceFiles": [
+        "registry/data/fan-chart/core.ts",
+        "registry/data/fan-chart/index.tsx",
+        "registry/data/fan-chart/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:01:22.567Z",
+      "secondsToFirstSavedCapture": 317.5672939453125,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:01:27.953Z"
+    },
+    {
+      "slug": "dendrogram",
+      "dispatchUTC": "2026-10-04T20:56:10Z",
+      "firstSourceWriteUTC": "2026-10-04T21:00:21.681Z",
+      "secondsToFirstSourceWrite": 251.681,
+      "packetBytes": 34142,
+      "readCallsReported": 3,
+      "writeCallsReported": 3,
+      "sourceFiles": [
+        "registry/data/dendrogram/core.ts",
+        "registry/data/dendrogram/index.tsx",
+        "registry/data/dendrogram/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:02:29.237Z",
+      "secondsToFirstSavedCapture": 379.23680249023437,
+      "coordinatorRevisedFiles": [
+        "registry/data/dendrogram/core.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:02:36.778Z"
+    },
+    {
+      "slug": "crop-window",
+      "dispatchUTC": "2026-10-04T20:56:15Z",
+      "firstSourceWriteUTC": "2026-10-04T21:00:39.781Z",
+      "secondsToFirstSourceWrite": 264.781,
+      "packetBytes": 32958,
+      "readCallsReported": 2,
+      "writeCallsReported": 2,
+      "sourceFiles": [
+        "registry/ui/crop-window/core.ts",
+        "registry/ui/crop-window/index.tsx",
+        "registry/ui/crop-window/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:01:34.071Z",
+      "secondsToFirstSavedCapture": 319.0706633300781,
+      "coordinatorRevisedFiles": [
+        "registry/ui/crop-window/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:01:41.499Z"
+    },
+    {
+      "slug": "timecode-editor",
+      "dispatchUTC": "2026-10-04T20:58:15Z",
+      "firstSourceWriteUTC": "2026-10-04T21:01:34.750Z",
+      "secondsToFirstSourceWrite": 199.75,
+      "packetBytes": 32929,
+      "readCallsReported": 1,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/ui/timecode-editor/core.ts",
+        "registry/ui/timecode-editor/index.tsx",
+        "registry/ui/timecode-editor/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:02:42.075Z",
+      "secondsToFirstSavedCapture": 267.07468701171877,
+      "coordinatorRevisedFiles": [
+        "registry/ui/timecode-editor/core.ts",
+        "registry/ui/timecode-editor/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:02:49.342Z"
+    },
+    {
+      "slug": "penrose-tiles",
+      "dispatchUTC": "2026-10-04T20:57:40Z",
+      "firstSourceWriteUTC": "2026-10-04T21:00:41.309Z",
+      "secondsToFirstSourceWrite": 181.309,
+      "packetBytes": 23162,
+      "readCallsReported": 2,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/patterns/penrose-tiles/core.ts",
+        "registry/patterns/penrose-tiles/index.tsx",
+        "registry/patterns/penrose-tiles/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:01:28.624Z",
+      "secondsToFirstSavedCapture": 228.62399780273438,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:01:33.779Z"
+    },
+    {
+      "slug": "cairo-pentagons",
+      "dispatchUTC": "2026-10-04T21:01:45Z",
+      "firstSourceWriteUTC": "2026-10-04T21:06:19.534Z",
+      "secondsToFirstSourceWrite": 274.534,
+      "packetBytes": 23163,
+      "readCallsReported": 2,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/patterns/cairo-pentagons/core.ts",
+        "registry/patterns/cairo-pentagons/index.tsx",
+        "registry/patterns/cairo-pentagons/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:07:44.559Z",
+      "secondsToFirstSavedCapture": 359.55850122070314,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:07:48.506Z"
+    },
+    {
+      "slug": "dragon-fold",
+      "dispatchUTC": "2026-10-04T21:01:50Z",
+      "firstSourceWriteUTC": "2026-10-04T21:03:25Z",
+      "secondsToFirstSourceWrite": 95,
+      "packetBytes": 23151,
+      "readCallsReported": 1,
+      "writeCallsReported": 3,
+      "sourceFiles": [
+        "registry/patterns/dragon-fold/core.ts",
+        "registry/patterns/dragon-fold/index.tsx",
+        "registry/patterns/dragon-fold/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:04:34.228Z",
+      "secondsToFirstSavedCapture": 164.22781860351563,
+      "coordinatorRevisedFiles": [
+        "registry/patterns/dragon-fold/core.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:07:33.118Z"
+    },
+    {
+      "slug": "shadow-lattice",
+      "dispatchUTC": "2026-10-04T21:01:55Z",
+      "firstSourceWriteUTC": "2026-10-04T21:05:40.764Z",
+      "secondsToFirstSourceWrite": 225.764,
+      "packetBytes": 23526,
+      "readCallsReported": 2,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/shaders/shadow-lattice/core.ts",
+        "registry/shaders/shadow-lattice/index.tsx",
+        "registry/shaders/shadow-lattice/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:07:23.473Z",
+      "secondsToFirstSavedCapture": 328.4733723144531,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:07:33.092Z"
+    },
+    {
+      "slug": "scroll-ruler",
+      "dispatchUTC": "2026-10-04T21:02:00Z",
+      "firstSourceWriteUTC": "2026-10-04T21:05:22.652Z",
+      "secondsToFirstSourceWrite": 202.652,
+      "packetBytes": 24958,
+      "readCallsReported": 1,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/motion/scroll-ruler/core.ts",
+        "registry/motion/scroll-ruler/index.tsx",
+        "registry/motion/scroll-ruler/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:07:17.891Z",
+      "secondsToFirstSavedCapture": 317.89066455078125,
+      "coordinatorRevisedFiles": [
+        "registry/motion/scroll-ruler/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:09:54.046Z"
+    },
+    {
+      "slug": "spring-trace",
+      "dispatchUTC": "2026-10-04T21:02:30Z",
+      "firstSourceWriteUTC": "2026-10-04T21:05:45.121Z",
+      "secondsToFirstSourceWrite": 195.121,
+      "packetBytes": 24940,
+      "readCallsReported": 2,
+      "writeCallsReported": 2,
+      "sourceFiles": [
+        "registry/motion/spring-trace/core.ts",
+        "registry/motion/spring-trace/index.tsx",
+        "registry/motion/spring-trace/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:07:19.573Z",
+      "secondsToFirstSavedCapture": 289.57302807617185,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:07:28.263Z"
+    },
+    {
+      "slug": "perspective-maze",
+      "dispatchUTC": "2026-10-04T21:02:35Z",
+      "firstSourceWriteUTC": "2026-10-04T21:07:06.787Z",
+      "secondsToFirstSourceWrite": 271.787,
+      "packetBytes": 27562,
+      "readCallsReported": 1,
+      "writeCallsReported": 2,
+      "sourceFiles": [
+        "registry/immersive/perspective-maze/core.ts",
+        "registry/immersive/perspective-maze/index.tsx",
+        "registry/immersive/perspective-maze/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:09:01.521Z",
+      "secondsToFirstSavedCapture": 386.52103686523435,
+      "coordinatorRevisedFiles": [
+        "registry/immersive/perspective-maze/core.ts",
+        "registry/immersive/perspective-maze/meta.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:14:26.986Z"
+    },
+    {
+      "slug": "geodesic-shell",
+      "dispatchUTC": "2026-10-04T21:04:35Z",
+      "firstSourceWriteUTC": "2026-10-04T21:08:43Z",
+      "secondsToFirstSourceWrite": 248,
+      "packetBytes": 27551,
+      "readCallsReported": 2,
+      "writeCallsReported": 3,
+      "sourceFiles": [
+        "registry/immersive/geodesic-shell/core.ts",
+        "registry/immersive/geodesic-shell/index.tsx",
+        "registry/immersive/geodesic-shell/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:10:34.632Z",
+      "secondsToFirstSavedCapture": 359.63163159179686,
+      "coordinatorRevisedFiles": [],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:10:42.305Z"
+    },
+    {
+      "slug": "strata-stack",
+      "dispatchUTC": "2026-10-04T21:06:30Z",
+      "firstSourceWriteUTC": "2026-10-04T21:11:22.964Z",
+      "secondsToFirstSourceWrite": 292.964,
+      "packetBytes": 27545,
+      "readCallsReported": 1,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/immersive/strata-stack/core.ts",
+        "registry/immersive/strata-stack/index.tsx",
+        "registry/immersive/strata-stack/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:13:07.118Z",
+      "secondsToFirstSavedCapture": 397.11813134765623,
+      "coordinatorRevisedFiles": [
+        "registry/immersive/strata-stack/core.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:13:13.939Z",
+      "postCIRevision": {
+        "reason": "Retain the latest controlled layer request while a previous parent echo is pending.",
+        "fullNativeVerification": true,
+        "delayedParentBefore": {
+          "verifiedUTC": "2026-10-04T22:20:56.695Z",
+          "ok": false,
+          "expected": {
+            "requests": [
+              "shale",
+              "limestone"
+            ],
+            "selected": "limestone"
+          },
+          "actual": {
+            "requests": [
+              "shale"
+            ],
+            "selected": "shale"
+          }
+        },
+        "delayedParentAfter": {
+          "verifiedUTC": "2026-10-04T22:24:16.684Z",
+          "ok": true,
+          "expected": {
+            "requests": [
+              "shale",
+              "limestone"
+            ],
+            "selected": "limestone"
+          },
+          "actual": {
+            "requests": [
+              "shale",
+              "limestone"
+            ],
+            "selected": "limestone"
+          }
+        }
+      }
+    },
+    {
+      "slug": "folded-atlas",
+      "dispatchUTC": "2026-10-04T21:06:00Z",
+      "firstSourceWriteUTC": "2026-10-04T21:10:38.001Z",
+      "secondsToFirstSourceWrite": 278.001,
+      "packetBytes": 27533,
+      "readCallsReported": 1,
+      "writeCallsReported": 1,
+      "sourceFiles": [
+        "registry/immersive/folded-atlas/core.ts",
+        "registry/immersive/folded-atlas/index.tsx",
+        "registry/immersive/folded-atlas/meta.ts"
+      ],
+      "firstSavedDesktopCaptureUTC": "2026-10-04T21:12:48.361Z",
+      "secondsToFirstSavedCapture": 408.36145947265624,
+      "coordinatorRevisedFiles": [
+        "core.ts"
+      ],
+      "fullNativeVerification": true,
+      "verificationCompletedUTC": "2026-10-04T21:12:55.701Z",
+      "postCIRevision": {
+        "reason": "Retain the latest controlled selection request while a previous parent echo is pending.",
+        "fullNativeVerification": true,
+        "delayedParentBefore": {
+          "verifiedUTC": "2026-10-04T22:03:36.117Z",
+          "ok": false,
+          "expected": {
+            "requests": [
+              "coast",
+              "estuary"
+            ],
+            "selected": "estuary"
+          },
+          "actual": {
+            "requests": [
+              "coast"
+            ],
+            "selected": "coast"
+          }
+        },
+        "delayedParentAfter": {
+          "verifiedUTC": "2026-10-04T22:05:04.109Z",
+          "ok": true,
+          "expected": {
+            "requests": [
+              "coast",
+              "estuary"
+            ],
+            "selected": "estuary"
+          },
+          "actual": {
+            "requests": [
+              "coast",
+              "estuary"
+            ],
+            "selected": "estuary"
+          }
+        }
+      }
+    }
+  ],
+  "summary": {
+    "components": 27,
+    "sourceFiles": 81,
+    "allFullNativeChecksPassed": true,
+    "firstWriteSeconds": {
+      "min": 95,
+      "median": 225.764,
+      "max": 383
+    },
+    "totalReadCallsReported": 74,
+    "totalWriteCallsReported": 43,
+    "componentsNeedingCoordinatorSourceRevision": 16,
+    "preservedSources": 741,
+    "preservationMismatches": [],
+    "existing256TrackedRegistryChanges": ""
+  },
+  "limitations": [
+    "Dispatch times are coordinator task-message timestamps, some recorded to whole seconds; first-write times are author-reported.",
+    "Packet bytes measure supplied contract and reference, not total model input context.",
+    "Capture birthtimes measure first saved ready/parity capture, not completion of every verifier check.",
+    "Reported call counts use each author's command/tool-operation convention; one rejected patch-format attempt made no source mutation.",
+    "Earlier native dispatch timestamps were missing; no controlled causal comparison with the prior workflow is claimed."
+  ],
+  "coordinatorVerifierFollowup": {
+    "controlledEchoAcknowledgement": {
+      "preservedComponent": "archive-aisle",
+      "slowParentBefore": {
+        "verifiedUTC": "2026-10-04T22:20:41.940Z",
+        "parentEchoDelayMs": 200,
+        "ok": false,
+        "controlled": {
+          "name": "controlled value",
+          "ok": false,
+          "detail": "echoed 11.194% of pixels off uncontrolled; ignored moved 0.000% of pixels"
+        },
+        "checks": [
+          {
+            "name": "interaction 1",
+            "ok": true,
+            "detail": "8 steps and 2 events, the same in both shapes"
+          },
+          {
+            "name": "interaction 2",
+            "ok": true,
+            "detail": "11 steps and 3 events, the same in both shapes"
+          },
+          {
+            "name": "interaction 3",
+            "ok": true,
+            "detail": "6 steps and 1 events, the same in both shapes"
+          },
+          {
+            "name": "hover changes the picture",
+            "ok": true,
+            "detail": "2 hovers, the smallest 95.030% of pixels of its box"
+          },
+          {
+            "name": "controlled value",
+            "ok": false,
+            "detail": "echoed 11.194% of pixels off uncontrolled; ignored moved 0.000% of pixels"
+          }
+        ],
+        "errors": []
+      },
+      "slowParentAfter": {
+        "verifiedUTC": "2026-10-04T22:21:55.715Z",
+        "parentEchoDelayMs": 200,
+        "ok": true,
+        "controlled": {
+          "name": "controlled value",
+          "ok": true,
+          "detail": "echoed ends like uncontrolled; ignored stays put"
+        },
+        "checks": [
+          {
+            "name": "interaction 1",
+            "ok": true,
+            "detail": "8 steps and 2 events, the same in both shapes"
+          },
+          {
+            "name": "interaction 2",
+            "ok": true,
+            "detail": "11 steps and 3 events, the same in both shapes"
+          },
+          {
+            "name": "interaction 3",
+            "ok": true,
+            "detail": "6 steps and 1 events, the same in both shapes"
+          },
+          {
+            "name": "hover changes the picture",
+            "ok": true,
+            "detail": "2 hovers, the smallest 95.030% of pixels of its box"
+          },
+          {
+            "name": "controlled value",
+            "ok": true,
+            "detail": "echoed ends like uncontrolled; ignored stays put"
+          }
+        ],
+        "errors": []
+      },
+      "assertionsPreserved": true,
+      "componentSourceUnchanged": true
+    }
+  }
+}

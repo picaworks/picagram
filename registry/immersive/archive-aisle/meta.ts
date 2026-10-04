@@ -1,155 +1,120 @@
 import type { Meta } from "../../../lib/meta";
 
-export const meta: Meta = {
-  "slug": "archive-aisle",
-  "title": "Archive aisle",
-  "category": "immersive",
-  "description": "A perspective archive aisle with collection records, access notes and a readable finding aid.",
-  "tags": [
-    "navigation",
-    "collection",
-    "scene",
-    "original"
-  ],
-  "facets": [
-    "animated",
-    "interactive",
-    "canvas"
-  ],
-  "wave": 14,
-  "release": "ascii-motion-2026-10-04",
-  "animated": true,
-  "decorative": false,
-  "stage": "flow",
-  "original": true,
-  "credits": [],
-  "palette": [
-    "fg",
-    "bg",
-    "accent",
-    "muted"
-  ],
-  "controls": {
-    "title": {
-      "type": "string"
-    },
-    "introduction": {
-      "type": "textarea",
-      "rows": 3
-    },
-    "collections": {
-      "type": "json"
-    },
-    "fps": {
-      "type": "number",
-      "min": 1,
-      "max": 30,
-      "step": 1
-    },
-    "paused": {
-      "type": "boolean"
-    }
+/** Six collections for the catalog, two more than the defaults, so the aisle shows three bays a side in use. */
+const collections = [
+  {
+    name: "Town plans",
+    reference: "CA 61/09",
+    title: "The unbuilt crossing",
+    description: "Nine folded drawings trace a footbridge proposed in 1961. Pencil revisions move its landing away from the market, and the final envelope carries no approval stamp.",
+    facts: "9 drawings · 1961–1968",
+    note: "Open. Unfolding needs a support board from the desk.",
+    chapters: ["Scope and content", "Arrangement", "Access"],
   },
-  "interactions": [
+  {
+    name: "Oral histories",
+    reference: "OH 84/24",
+    title: "Voices from the night shift",
+    description: "Transcripts of 24 interviews document the mill after dark, from the sound of each machine to the signals passed across the floor.",
+    facts: "24 transcripts · 1984",
+    note: "Edited transcripts are open. Personal addresses remain closed.",
+    chapters: ["Scope and content", "Names and places", "Access"],
+  },
+  {
+    name: "Correspondence",
+    reference: "CO 72/76",
+    title: "Letters from the allotments",
+    description: "A bundle of 76 letters follows the making of a shared garden, with seed requests, minutes and a map drawn on an envelope.",
+    facts: "76 letters · 1972–1975",
+    note: "Open. Keep the bundle in its original order when asking for scans.",
+    chapters: ["Scope and content", "Original order", "Access"],
+  },
+  {
+    name: "Workshop ledgers",
+    reference: "WL 49/04",
+    title: "A repair for every season",
+    description: "Four ledgers from a bicycle repair shop show how regular maintenance tied a street together through tools, parts and trust.",
+    facts: "4 volumes · 1949–1963",
+    note: "Open. The fourth volume is served as a copy.",
+    chapters: ["Scope and content", "Related records", "Access"],
+  },
+  {
+    name: "Street photographs",
+    reference: "PH 90/31",
+    title: "One street, one morning",
+    description: "Thirty-one prints record every shopfront on the high street on the morning before it was widened.",
+    facts: "31 prints · 1990",
+    note: "Open. Prints are served in sleeves.",
+    chapters: ["Scope and content", "Sequence", "Access"],
+  },
+  {
+    name: "Lamp committee",
+    reference: "MN 55/18",
+    title: "Minutes of the lamp committee",
+    description: "Eighteen years of minutes argue over where the first electric street lamps should stand, with a pencilled count of every post.",
+    facts: "3 volumes · 1955–1973",
+    note: "Open. The 1961 volume is fragile and served by appointment.",
+    chapters: ["Scope and content", "Arrangement", "Related records", "Access"],
+  },
+];
+
+export const meta: Meta = {
+  slug: "archive-aisle",
+  title: "Archive aisle",
+  category: "immersive",
+  description: "A one-point archive aisle on canvas whose camera walks to each collection's bay, with numbered markers, a register and a readable detail.",
+  tags: ["navigation", "collection", "perspective", "camera", "original"],
+  facets: ["animated", "interactive", "canvas"],
+  wave: 14,
+  release: "ascii-motion-2026-10-04",
+  animated: true,
+  decorative: false,
+  stage: "flow",
+  original: true,
+  credits: [],
+  palette: ["fg", "bg", "muted"],
+  controlled: { value: "valueChange" },
+  capture: 4000,
+  controls: {
+    label: { type: "string" },
+    collections: { type: "json" },
+    defaultValue: { type: "number", min: -1, max: 11, step: 1 },
+    headingLevel: { type: "number", min: 2, max: 6, step: 1 },
+    fps: { type: "number", min: 1, max: 30, step: 1 },
+    paused: { type: "boolean" },
+  },
+  demo: { props: { collections } },
+  interactions: [
     [
-      {
-        "step": "click",
-        "selector": "[data-action=\"enter\"]"
-      },
-      {
-        "step": "expectAttr",
-        "selector": "[data-part=\"page\"]",
-        "name": "data-view",
-        "value": "overview"
-      },
-      {
-        "step": "expectFocus",
-        "selector": "[data-part=\"markers\"] [data-index=\"0\"]"
-      },
-      {
-        "step": "press",
-        "key": "Enter"
-      },
-      {
-        "step": "expectAttr",
-        "selector": "[data-part=\"page\"]",
-        "name": "data-view",
-        "value": "detail"
-      },
-      {
-        "step": "expectFocus",
-        "selector": "[data-part=\"detail-title\"]"
-      },
-      {
-        "step": "click",
-        "selector": "[data-action=\"next\"]"
-      },
-      {
-        "step": "expectAttr",
-        "selector": "[data-part=\"markers\"] [data-index=\"1\"]",
-        "name": "aria-pressed",
-        "value": "true"
-      },
-      {
-        "step": "press",
-        "key": "Escape"
-      },
-      {
-        "step": "expectAttr",
-        "selector": "[data-part=\"page\"]",
-        "name": "data-view",
-        "value": "overview"
-      },
-      {
-        "step": "press",
-        "key": "Escape"
-      },
-      {
-        "step": "expectFocus",
-        "selector": "[data-action=\"enter\"]"
-      }
+      { step: "click", selector: '[data-part="markers"] [data-index="1"]' },
+      { step: "expectEvent", name: "valueChange", detail: 1 },
+      { step: "expectAttr", selector: '[data-part="aisle"]', name: "data-view", value: "detail" },
+      { step: "expectFocus", selector: '[data-part="heading"]' },
+      { step: "press", key: "Escape" },
+      { step: "expectEvent", name: "valueChange", detail: -1 },
+      { step: "expectAttr", selector: '[data-part="aisle"]', name: "data-view", value: "overview" },
+      { step: "expectFocus", selector: '[data-part="markers"] [data-index="1"]' },
     ],
     [
-      {
-        "step": "click",
-        "selector": "[data-part=\"register\"] [data-index=\"2\"]"
-      },
-      {
-        "step": "expectAttr",
-        "selector": "[data-part=\"page\"]",
-        "name": "data-view",
-        "value": "detail"
-      },
-      {
-        "step": "click",
-        "selector": "[data-action=\"back\"]"
-      },
-      {
-        "step": "expectFocus",
-        "selector": "[data-part=\"markers\"] [data-index=\"2\"]"
-      }
+      { step: "click", selector: '[data-part="register"] [data-index="2"]' },
+      { step: "expectEvent", name: "valueChange", detail: 2 },
+      { step: "click", selector: '[data-action="next"]' },
+      { step: "expectEvent", name: "valueChange", detail: 3 },
+      { step: "expectAttr", selector: '[data-part="markers"] [data-index="3"]', name: "aria-pressed", value: "true" },
+      { step: "expectFocus", selector: '[data-action="next"]' },
+      { step: "click", selector: '[data-action="back"]' },
+      { step: "expectEvent", name: "valueChange", detail: -1 },
+      { step: "expectAttr", selector: '[data-part="aisle"]', name: "data-view", value: "overview" },
+      { step: "expectFocus", selector: '[data-part="markers"] [data-index="3"]' },
+      { step: "hover", selector: '[data-part="register"] [data-index="4"]' },
     ],
     [
-      {
-        "step": "click",
-        "selector": "[data-action=\"pause\"]"
-      },
-      {
-        "step": "expectAttr",
-        "selector": "[data-action=\"pause\"]",
-        "name": "aria-pressed",
-        "value": "true"
-      },
-      {
-        "step": "click",
-        "selector": "[data-action=\"pause\"]"
-      },
-      {
-        "step": "expectAttr",
-        "selector": "[data-action=\"pause\"]",
-        "name": "aria-pressed",
-        "value": "false"
-      }
-    ]
-  ]
+      { step: "press", key: "Tab" },
+      { step: "expectFocus", selector: '[data-part="markers"] [data-index="0"]' },
+      { step: "press", key: "Enter" },
+      { step: "expectEvent", name: "valueChange", detail: 0 },
+      { step: "expectAttr", selector: '[data-part="aisle"]', name: "data-view", value: "detail" },
+      { step: "expectFocus", selector: '[data-part="heading"]' },
+    ],
+  ],
 };

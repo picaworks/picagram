@@ -50,6 +50,7 @@ If a change needs an exception to any row, stop and say so.
 | Look for references for a wave | `docs/decisions/0009-metadata-shortlists.md`, then `sources/shortlists/` |
 | Build a shader, a control, a chart, or a section | the matching sections of `docs/architecture/contract.md`, then its reference in `docs/adding-a-component.md` |
 | Brief a wave of builder agents | `sources/BUILDER.md`, then `.claude/skills/design-intake/SKILL.md` for the pipeline around it |
+| Author one assigned component with native preparation and integration checks | `.claude/skills/component-author/SKILL.md` |
 | Touch what the build emits | `docs/architecture/outputs.md` |
 | Change the site, its hosting, or its brand | `docs/architecture/site.md` |
 | Write or change a test | `docs/testing/README.md` and `docs/testing/invariants.md` |
