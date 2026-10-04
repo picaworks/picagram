@@ -19,3 +19,7 @@ Metadata must match default kinds. A nullable controlled value does not fit a JS
 For independent controlled fields, provide isolated `controlledInteractions` probes as well as a complete event/parity interaction. A held field should not fail because the full sequence changes another uncontrolled field. Keep the full navigation sequence checked in both shapes. Demonstrations for content decorators should supply meaningful child content so the local behavior is visible.
 
 The timing and per-component receipts are in `docs/evidence/component-author-2026-10-04.json`. Publication is complete only after the protected PR build, normal merge, Pages deployment and direct live catalog verification succeed.
+
+## Remote verification follow-up
+
+The first remote run passed seven shards and reported a controlled-value capture mismatch for Folded Atlas. Unchanged focused quick and full local checks passed, and Folded Atlas passed on the failed-jobs retry. That retry reported no React motion for the preserved Terrain Field. The motion verifier started its three-second comparison window before its first screenshot. An initial capture slower than the window could therefore skip every comparison. Starting the window after that baseline fixes the empty sample window without changing component sources, the pixel-change requirement or the three-second observation budget. A focused regression reproduces the false failure with a four-second baseline capture and confirms unchanged frames still fail.
