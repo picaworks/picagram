@@ -108,6 +108,7 @@ interface CanvasProps {
   frameWidth: FrameWidth;
   onFrameWidth: (width: FrameWidth) => void;
   liveDefaults: Props | null;
+  liveFont: import("@/lib/fonts").PreviewFont;
   liveOverrides: Props;
   livePalette: PaletteProp;
   /** While the inspector is collapsed, the bar carries the button that brings it back. */
@@ -474,6 +475,7 @@ export function Canvas(p: CanvasProps) {
                   selected && p.liveDefaults
                     ? {
                         ground: p.ground,
+                        font: p.liveFont,
                         width: p.frameWidth,
                         defaults: p.liveDefaults,
                         overrides: p.liveOverrides,

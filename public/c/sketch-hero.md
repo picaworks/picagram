@@ -2941,7 +2941,8 @@ var PicaSketchHero = (() => {
     }
     return data;
   }
-  var instance = PicaSketchHero.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {"headline":"","subhead":"","actions":[{"label":"See the method","href":"#method"},{"label":"All components","href":"#components"}]}, window.PICA_PROPS || {});
+  var instance = PicaSketchHero.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
     if (event.data.type === "pica:props") instance.update(take(event.data.props));

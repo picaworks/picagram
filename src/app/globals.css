@@ -592,3 +592,7 @@ input[type="color"]::-moz-color-swatch { border: 0; }
   /* The footer wraps here rather than scrolling sideways, so nothing hides off the right edge. */
   .status { flex-wrap: wrap; gap: 8px 16px; height: auto; min-height: var(--bar); padding: 8px var(--gutter); overflow-x: visible; }
 }
+
+.layers-batch{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.layers-batch label,.layers-batch select{width:100%}
+.layers-new{margin-left:6px;font-size:9px;line-height:15px;padding:0 4px;border:1px solid var(--line);color:var(--fg);letter-spacing:.04em}

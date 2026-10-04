@@ -828,7 +828,8 @@ var PicaMinimalHero = (() => {
     }
     return data;
   }
-  var instance = PicaMinimalHero.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {"headline":"","subhead":"Everything on this page earns its place.","actions":[{"label":"Read the manual","href":"#docs"}]}, window.PICA_PROPS || {});
+  var instance = PicaMinimalHero.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
     if (event.data.type === "pica:props") instance.update(take(event.data.props));

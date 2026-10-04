@@ -2813,7 +2813,8 @@ var PicaScrapbookHero = (() => {
     }
     return data;
   }
-  var instance = PicaScrapbookHero.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {"headline":"Assembled by hand.","subhead":"Torn slips, taped corners, and a photocopied study, all placed by one seed that remembers where everything landed.","actions":[{"label":"Browse components","href":"#components"},{"label":"Read the docs","href":"#docs"},{"label":"See the source","href":"#source"}]}, window.PICA_PROPS || {});
+  var instance = PicaScrapbookHero.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
     if (event.data.type === "pica:props") instance.update(take(event.data.props));

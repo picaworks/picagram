@@ -1017,7 +1017,8 @@ var PicaPopoverTooltip = (() => {
     }
     return data;
   }
-  var instance = PicaPopoverTooltip.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {"defaultOpen":true}, window.PICA_PROPS || {});
+  var instance = PicaPopoverTooltip.mount(host, take(initial));
   ["openChange"].forEach(function (name) {
     host.addEventListener("pica:" + name.toLowerCase(), function (event) {
       if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");

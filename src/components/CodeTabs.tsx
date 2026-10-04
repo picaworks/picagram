@@ -1,6 +1,6 @@
 "use client";
 import { useState, type KeyboardEvent } from "react";
-import type { CatalogItem, PaletteProp, Props } from "@/lib/catalog";
+import { isNew, type CatalogItem, type PaletteProp, type Props } from "@/lib/catalog";
 import { useFileText, type FileState } from "@/lib/files";
 import { installCommand, reactSnippet, withPicaProps } from "@/lib/props";
 import { CopyButton } from "./CopyButton";
@@ -29,7 +29,9 @@ export function CodeTabs({ item, overrides, palette }: CodeTabsProps) {
   const snippet = reactSnippet(item.exportName, overrides, palette, item.demo?.children);
   const baked = html.text === null ? null : withPicaProps(html.text, overrides, palette);
   const paletteSet = Object.values(palette).some(Boolean);
-  const install = installCommand(item.slug);
+  // The unshipped batch's registry lives beside its local preview.
+  const registryBase = typeof window !== "undefined" && isNew(item) ? new URL("r/", window.location.href).href : undefined;
+  const install = installCommand(item.slug, registryBase);
   const twin = `c/${item.slug}.md`;
   const twinUrl = typeof window === "undefined" ? twin : new URL(twin, window.location.href).href;
 

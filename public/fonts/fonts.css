@@ -1,0 +1,7 @@
+@font-face{font-family:"Fraunces";src:url("fraunces.woff2") format("woff2");font-style:normal;font-weight:100 900;font-display:swap;}
+@font-face{font-family:"Newsreader";src:url("newsreader.woff2") format("woff2");font-style:normal;font-weight:200 800;font-display:swap;}
+@font-face{font-family:"Cormorant Garamond";src:url("cormorantgaramond.woff2") format("woff2");font-style:normal;font-weight:300 700;font-display:swap;}
+@font-face{font-family:"Public Sans";src:url("publicsans.woff2") format("woff2");font-style:normal;font-weight:100 900;font-display:swap;}
+@font-face{font-family:"Space Grotesk";src:url("spacegrotesk.woff2") format("woff2");font-style:normal;font-weight:300 700;font-display:swap;}
+@font-face{font-family:"Anybody";src:url("anybody.woff2") format("woff2");font-style:normal;font-weight:100 900;font-stretch:50% 150%;font-display:swap;}
+:root{--pica-font-serif:"Fraunces",Georgia,serif;--pica-font-reading:"Newsreader",Georgia,serif;--pica-font-classical:"Cormorant Garamond",Georgia,serif;--pica-font-sans:"Public Sans",system-ui,sans-serif;--pica-font-grotesk:"Space Grotesk",system-ui,sans-serif;--pica-font-display:"Anybody",system-ui,sans-serif;--pica-font-wide:"Anybody",system-ui,sans-serif;}

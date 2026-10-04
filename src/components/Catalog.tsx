@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { matches, type CatalogItem, type Facet, type PaletteProp, type PropValue, type Props, type Token } from "@/lib/catalog";
+import { CURRENT_RELEASE, isNew, matches, type Category, type CatalogItem, type Facet, type PaletteProp, type PropValue, type Props, type Token } from "@/lib/catalog";
+import { PREVIEW_FONTS, type PreviewFont } from "@/lib/fonts";
 import type { Ground } from "@/lib/ground";
 import { useHashSlug } from "@/lib/hash";
 import { diffProps } from "@/lib/props";
@@ -27,7 +28,22 @@ function isEventMessage(data: unknown): data is { name: string; detail: unknown 
 export function Catalog({ items }: { items: readonly CatalogItem[] }) {
   const slugs = useMemo(() => new Set(items.map((item) => item.slug)), [items]);
   const [selected, setSelected, external] = useHashSlug(slugs);
+  const [font, setFont] = useState<PreviewFont>("Collection");
   const [query, setQuery] = useState("");
+  const [newOnly, setNewOnly] = useState(false);
+  const [category, setCategory] = useState<Category | "all">("all");
+  useEffect(() => {
+    const read = () => setNewOnly(new URLSearchParams(window.location.search).get("new") === CURRENT_RELEASE);
+    read(); window.addEventListener("popstate", read);
+    return () => window.removeEventListener("popstate", read);
+  }, []);
+  const changeNew = useCallback((value: boolean) => {
+    setNewOnly(value);
+    const url = new URL(window.location.href);
+    if (value) url.searchParams.set("new", CURRENT_RELEASE); else url.searchParams.delete("new");
+    window.history.replaceState(null, "", url);
+  }, []);
+  const resetFilters = useCallback(() => { setQuery(""); setActiveFacets([]); setCategory("all"); changeNew(false); }, [changeNew]);
   const [activeFacets, setActiveFacets] = useState<readonly Facet[]>([]);
   /** Per slug, the props the user changed from the demo state, so switching frames and back keeps the tuning. */
   const [overrides, setOverrides] = useState<Readonly<Record<string, Props>>>({});
@@ -63,8 +79,8 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
    *  code tabs, so both always match what the controls show, however that state was reached. */
   const codeOverrides = useMemo(() => (item ? diffProps(item.defaults, values) : NONE), [item, values]);
   const visible = useMemo(
-    () => new Set(items.filter((i) => matches(i, query, activeFacets)).map((i) => i.slug)),
-    [items, query, activeFacets],
+    () => new Set(items.filter((i) => matches(i, query, activeFacets, newOnly, category)).map((i) => i.slug)),
+    [items, query, activeFacets, newOnly, category],
   );
 
   // The theme, settled before the first paint. The head script has already set the attribute; reading it here
@@ -209,9 +225,17 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
         theme={theme}
         onTheme={chooseTheme}
         searchRef={searchRef}
+        newOnly={newOnly}
+        onNewOnly={changeNew}
+        category={category}
+        onCategory={setCategory}
+        onResetFilters={resetFilters}
+        font={font}
+        fonts={PREVIEW_FONTS}
+        onFont={setFont}
       />
       <Canvas
-        items={items}
+        items={newOnly ? items.filter((i) => isNew(i) && visible.has(i.slug)) : items}
         visible={visible}
         selected={selected}
         onSelect={selectOnCanvas}
@@ -220,6 +244,7 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
         onGround={setGround}
         frameWidth={frameWidth}
         onFrameWidth={setFrameWidth}
+        liveFont={font}
         liveDefaults={item?.defaults ?? null}
         liveOverrides={codeOverrides}
         livePalette={itemPalette}

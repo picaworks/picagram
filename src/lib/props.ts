@@ -95,8 +95,8 @@ export function withPicaProps(html: string, overrides: Props, palette: PalettePr
   return at < 0 ? html + tag : html.slice(0, at) + tag + html.slice(at);
 }
 
-export function installCommand(slug: string): string {
-  return `npx shadcn@latest add ${REGISTRY_BASE}/${slug}.json`;
+export function installCommand(slug: string, registryBase = REGISTRY_BASE): string {
+  return `npx shadcn@latest add ${registryBase.replace(/\/$/, "")}/${slug}.json`;
 }
 
 /** "1, 2, 3" to [1, 2, 3]. Anything that is not a number is dropped. */

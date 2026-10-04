@@ -5,6 +5,9 @@ import type { Json } from "../../lib/types";
 import type { PaletteProp } from "../../lib/use-pica";
 import generated from "../../public/catalog.json";
 
+export const CURRENT_RELEASE = "microsites-2026-10-04";
+export function isNew(item: Pick<Meta, "release">): boolean { return item.release === CURRENT_RELEASE; }
+
 export type { Category, Control, Facet, PaletteProp, Token };
 export { CATEGORIES, CATEGORY_TITLES, FACETS, TOKENS };
 
@@ -122,7 +125,9 @@ export function searchText(item: {
 
 /** Whether an item survives the search box and the active facet chips. Every active facet must be present, and
  *  the search reads an item's tags and facets as well as its words. */
-export function matches(item: CatalogItem, query: string, facets: readonly Facet[]): boolean {
+export function matches(item: CatalogItem, query: string, facets: readonly Facet[], newOnly = false, category: Category | "all" = "all"): boolean {
+  if (newOnly && !isNew(item)) return false;
+  if (category !== "all" && item.category !== category) return false;
   if (!facets.every((facet) => item.facets.includes(facet))) return false;
   const q = query.trim().toLowerCase();
   if (!q) return true;

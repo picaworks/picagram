@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent, type KeyboardEvent } from "react";
-import { TOKENS, type CatalogItem, type PaletteProp, type Props } from "@/lib/catalog";
+import { setPreviewFont, type PreviewFont } from "@/lib/fonts";
+import { isNew, TOKENS, type CatalogItem, type PaletteProp, type Props } from "@/lib/catalog";
 import { setFrameGround, type Ground } from "@/lib/ground";
 
 /** Board units are CSS pixels at 100%. A frame is the 1280 by 800 capture, so frames are 16:10. */
@@ -11,6 +12,7 @@ export type FrameWidth = 390 | 768 | 1280;
 export const FRAME_WIDTHS: readonly FrameWidth[] = [390, 768, 1280];
 
 export interface LiveState {
+  font: PreviewFont;
   ground: Ground;
   width: FrameWidth;
   defaults: Props;
@@ -136,8 +138,8 @@ function Live({ item, live }: { item: CatalogItem; live: LiveState }) {
 
   const paint = useCallback(() => {
     const doc = frameRef.current?.contentDocument;
-    if (doc?.body) setFrameGround(doc, ground);
-  }, [ground]);
+    if (doc?.body) { setFrameGround(doc, ground); setPreviewFont(doc, live.font, isNew(item), item.slug); }
+  }, [ground, live.font, item]);
 
   // The ground first, then the props, so a component that reads its host's colors draws with the new ones.
   useEffect(() => {

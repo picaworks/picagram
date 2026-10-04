@@ -595,7 +595,8 @@ var PicaVictorianHero = (() => {
     }
     return data;
   }
-  var instance = PicaVictorianHero.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {"kicker":"Picagram, by special arrangement","headline":"A Grand Exhibition of Drawn Type","subhead":"being a library of components rendered in text, for one night and every night","actions":[{"label":"Take a seat","href":"#seats"},{"label":"Read the programme","href":"#programme"}]}, window.PICA_PROPS || {});
+  var instance = PicaVictorianHero.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
     if (event.data.type === "pica:props") instance.update(take(event.data.props));

@@ -108,11 +108,11 @@ interface FormSpec {
 }
 
 const FORM_SPECS: readonly FormSpec[] = [
-  { x: 0.72, y: 0.46, r: 0.34, accent: false },
-  { x: 0.24, y: 0.8, r: 0.14, accent: true },
+  { x: 0.83, y: 0.46, r: 0.25, accent: false },
+  { x: 0.77, y: 0.83, r: 0.11, accent: true },
   { x: 0.91, y: 0.18, r: 0.16, accent: false },
-  { x: 0.08, y: 0.2, r: 0.1, accent: false },
-  { x: 0.46, y: 0.09, r: 0.08, accent: false },
+  { x: 0.7, y: 0.16, r: 0.08, accent: false },
+  { x: 0.89, y: 0.07, r: 0.06, accent: false },
   { x: 0.94, y: 0.74, r: 0.12, accent: false },
 ];
 
@@ -261,10 +261,10 @@ export const mount: Mount<ClayHeroProps> = (host, initial = {}) => {
     return [
       `:where(${s}){min-height:${vh(props.minHeight)}vh}`,
       `${s}{box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:${edge};gap:0.9em;padding:clamp(1.5rem,6vw,5rem);color:${fg};text-align:${textAlign}}`,
-      `${s} > :not([data-pica]){margin-block:0;max-width:44rem;text-align:${textAlign}}`,
-      `${s} > :is(h1,h2,h3){margin-block:0;max-width:14em;font-size:clamp(2.5rem,6.5vw,4.75rem);line-height:1.04;font-weight:600;letter-spacing:-0.02em;color:${fg};text-wrap:balance;overflow-wrap:break-word}`,
+      `${s} > :not([data-pica]){margin-block:0;max-width:55%;text-align:${textAlign}}`,
+      `${s} > :is(h1,h2,h3){margin-block:0;max-width:55%;font-size:clamp(2.5rem,6.5vw,4.75rem);line-height:1.04;font-weight:600;letter-spacing:-0.02em;color:${fg};text-wrap:balance;overflow-wrap:break-word}`,
       `${s} > p:not([data-pica]){color:${muted}}`,
-      `${s} > [data-pica-subhead]{margin-block:0;max-width:52ch;font-size:clamp(1.02rem,1.35vw,1.18rem);line-height:1.5;color:${muted};overflow-wrap:break-word}`,
+      `${s} > [data-pica-subhead]{margin-block:0;max-width:min(52ch,55%);font-size:clamp(1.02rem,1.35vw,1.18rem);line-height:1.5;color:${muted};overflow-wrap:break-word}`,
       `${s} > :is(h1,h2,h3):empty,${s} > [data-pica-subhead]:empty{display:none}`,
       `${s} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;margin-top:0.7em;max-width:44rem;justify-content:${edge}}`,
       `${s} > [data-pica-actions]:empty{display:none}`,
@@ -274,6 +274,7 @@ export const mount: Mount<ClayHeroProps> = (host, initial = {}) => {
       `${s} > [data-pica-actions] a[data-variant="solid"]:hover{background:color-mix(in srgb, ${accent} 85%, ${fg})}`,
       `${s} > [data-pica-actions] a[data-variant="outline"]:hover{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
       `${s} > [data-pica-actions] a:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `@media(max-width:719px){${s}{padding-top:220px;justify-content:flex-start}${s} > :not([data-pica]),${s} > :is(h1,h2,h3),${s} > [data-pica-subhead]{max-width:100%}}`,
     ].join("\n");
   }
 
@@ -344,9 +345,15 @@ export const mount: Mount<ClayHeroProps> = (host, initial = {}) => {
       return;
     }
     const n = cols * rows;
+    const narrow = host.clientWidth < 720;
+    const hostBox = host.getBoundingClientRect();
+    const protectedBoxes = Array.from(host.children).filter((el) => el !== under.el && el instanceof HTMLElement && el.offsetHeight > 0).map((el) => {
+      const b = el.getBoundingClientRect();
+      return { l: (b.left - hostBox.left - 12) / props.pixel, r: (b.right - hostBox.left + 12) / props.pixel, t: (b.top - hostBox.top - 12) / props.pixel, b: (b.bottom - hostBox.top + 12) / props.pixel };
+    });
     owner.fill(-1);
     values.fill(0);
-    const span = Math.min(cols, rows);
+    const span = narrow ? Math.min(cols, 190 / Math.max(1, props.pixel)) : Math.min(cols, rows);
     const speed = Math.max(0, props.speed);
     const gain = 0.25 + 0.95 * clamp01(props.depth);
     for (let fi = 0; fi < liveForms.length; fi++) {
@@ -355,8 +362,8 @@ export const mount: Mount<ClayHeroProps> = (host, initial = {}) => {
       const r0 =
         f.spec.r * span * Math.max(0.05, props.scale) * (1 + f.breathe * Math.sin(f.breathePhase + f.breatheRate * speed * t));
       if (r0 < 1) continue;
-      const cx = f.spec.x * cols + f.driftX * span * Math.sin(f.phaseX + f.rateX * speed * t);
-      const cy = f.spec.y * rows + f.driftY * span * Math.cos(f.phaseY + f.rateY * speed * t);
+      const cx = (narrow ? 0.18 + (f.spec.x - 0.65) * 2.5 : f.spec.x) * cols + f.driftX * span * Math.sin(f.phaseX + f.rateX * speed * t);
+      const cy = f.spec.y * (narrow ? 190 / Math.max(1, props.pixel) : rows) + f.driftY * span * Math.cos(f.phaseY + f.rateY * speed * t);
       const w0 = f.phase[0] + f.rate[0] * speed * t;
       const w1 = f.phase[1] + f.rate[1] * speed * t;
       const w2 = f.phase[2] + f.rate[2] * speed * t;
@@ -396,7 +403,9 @@ export const mount: Mount<ClayHeroProps> = (host, initial = {}) => {
     const data = imageData.data;
     for (let i = 0; i < n; i++) {
       const o = owner[i] ?? -1;
-      const c = o < 0 ? ground : (ramps[o]?.[bands[i] ?? 0] ?? ground);
+      const x = i % cols, y = Math.floor(i / cols);
+      const reserved = protectedBoxes.some((b) => x >= b.l && x <= b.r && y >= b.t && y <= b.b);
+      const c = o < 0 || reserved ? ground : (ramps[o]?.[bands[i] ?? 0] ?? ground);
       const j = i * 4;
       data[j] = c[0];
       data[j + 1] = c[1];

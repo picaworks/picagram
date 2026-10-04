@@ -40,6 +40,7 @@ export const BUDGETS: Readonly<Record<Category, number>> = {
 export const VIEWPORTS = [
   { width: 1280, height: 800 },
   { width: 390, height: 844 },
+  { width: 768, height: 1024 },
 ] as const;
 
 /** Share of pixels allowed to differ between the React and vanilla captures, for antialiasing. */

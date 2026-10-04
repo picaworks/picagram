@@ -1,12 +1,21 @@
 "use client";
 import { useState, type RefObject } from "react";
-import { FACETS, facetCounts, groupByCategory, type CatalogItem, type Category, type Facet } from "@/lib/catalog";
+import { isNew, CATEGORIES, CATEGORY_TITLES, FACETS, facetCounts, groupByCategory, type CatalogItem, type Category, type Facet } from "@/lib/catalog";
+import type { PreviewFont } from "@/lib/fonts";
 import { useMetaKey } from "@/lib/platform";
 import { THEMES, type Theme } from "@/lib/theme";
 import { Logo } from "./Logo";
 
 interface LayersProps {
   items: readonly CatalogItem[];
+  font: PreviewFont;
+  fonts: readonly PreviewFont[];
+  onFont: (font: PreviewFont) => void;
+  newOnly: boolean;
+  onNewOnly: (value: boolean) => void;
+  category: Category | "all";
+  onCategory: (value: Category | "all") => void;
+  onResetFilters: () => void;
   /** Slugs that survive the search box and the facet chips. */
   visible: ReadonlySet<string>;
   selected: string | null;
@@ -37,7 +46,7 @@ export function Layers(p: LayersProps) {
       <div className="layers-brand">
         <Logo />
         <div className="layers-brand-row">
-          <span className="label">
+          <span className="label" role="status" aria-live="polite">
             {p.visible.size} of {p.items.length}
           </span>
           <div className="seg" role="group" aria-label="Theme">
@@ -77,6 +86,17 @@ export function Layers(p: LayersProps) {
         />
         <kbd aria-hidden="true">{meta} K</kbd>
       </div>
+      <div className="layers-batch">
+        <button type="button" className="chip" aria-pressed={p.newOnly} onClick={() => p.onNewOnly(!p.newOnly)}>NEW only <span className="chip-count">{p.items.filter(isNew).length}</span></button>
+        <button type="button" className="chip" onClick={p.onResetFilters}>Reset filters</button>
+        <label className="label" htmlFor="catalog-category">Category</label>
+        <select id="catalog-category" className="field" value={p.category} onChange={(e) => p.onCategory(e.target.value as Category | "all")}>
+          <option value="all">All categories</option>
+          {CATEGORIES.map((c) => <option key={c} value={c}>{CATEGORY_TITLES[c]}</option>)}
+        </select>
+        <label className="label" htmlFor="preview-font">Preview typography</label>
+        <select id="preview-font" className="field" value={p.font} onChange={(e) => p.onFont(e.target.value as PreviewFont)}>{p.fonts.map((f) => <option key={f}>{f}</option>)}</select>
+      </div>
       <div className="layers-facets" role="group" aria-label="Filter by facet">
         {FACETS.map((facet) => (
           <button
@@ -104,7 +124,7 @@ export function Layers(p: LayersProps) {
                 <span className="layers-twist" aria-hidden="true">
                   {open ? "−" : "+"}
                 </span>
-                <span className="label">{group.title}</span>
+                <span className="label" role="status" aria-live="polite">{group.title}</span>
                 <span className="layers-count">{group.items.length}</span>
               </button>
               {open && (
@@ -121,6 +141,7 @@ export function Layers(p: LayersProps) {
                         >
                           <span className="layers-marker" aria-hidden="true" />
                           <span className="layers-title">{item.title}</span>
+                          {isNew(item) && <span className="layers-new">NEW</span>}
                           {item.animated && <span className="layers-note">anim</span>}
                         </button>
                       </li>
@@ -131,7 +152,7 @@ export function Layers(p: LayersProps) {
             </section>
           );
         })}
-        {p.visible.size === 0 && <p className="layers-empty">No component matches. Clear the search or a facet.</p>}
+        {p.visible.size === 0 && <div className="layers-empty"><p>No designs match these filters.</p><button type="button" className="chip" onClick={p.onResetFilters}>Reset filters</button></div>}
       </nav>
     </aside>
   );

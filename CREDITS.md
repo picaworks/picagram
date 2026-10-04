@@ -326,6 +326,14 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Architect dossier (`architect-dossier`)
+
+Original to Picagram.
+
+## Archive Finding Aid (`archive-finding-aid`)
+
+Original to Picagram.
+
 ## Article Lead (`article-lead`)
 
 Original to Picagram.
@@ -342,7 +350,31 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Botanical atelier (`botanical-atelier`)
+
+Original to Picagram.
+
 ## Brutalist Hero (`brutalist-hero`)
+
+Original to Picagram.
+
+## Cartographic Story (`cartographic-story`)
+
+Original to Picagram.
+
+## Ceramic studio (`ceramic-studio`)
+
+Original to Picagram.
+
+## Choreographic score (`choreographic-score`)
+
+Original to Picagram.
+
+## Cinemateque Program (`cinemateque-program`)
+
+Original to Picagram.
+
+## City Atlas (`city-atlas`)
 
 Original to Picagram.
 
@@ -350,11 +382,23 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Conservation Report (`conservation-report`)
+
+Original to Picagram.
+
 ## Contact Panel (`contact-panel`)
 
 Original to Picagram.
 
+## Culinary notebook (`culinary-notebook`)
+
+Original to Picagram.
+
 ## Cyberpunk Hero (`cyberpunk-hero`)
+
+Original to Picagram.
+
+## Desert Transmission (`desert-transmission`)
 
 Original to Picagram.
 
@@ -370,11 +414,47 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Exhibition Labels (`exhibition-labels`)
+
+Original to Picagram.
+
+## Fashion lookbook (`fashion-lookbook`)
+
+Original to Picagram.
+
+## Festival Route (`festival-route`)
+
+Original to Picagram.
+
+## Field Dispatch (`field-dispatch`)
+
+Original to Picagram.
+
+## Folio index (`folio-index`)
+
+Original to Picagram.
+
+## Forum Rome (`forum-rome`)
+
+Original to Picagram.
+
 ## Glass Hero (`glass-hero`)
 
 Original to Picagram.
 
 ## Hero (`hero`)
+
+Original to Picagram.
+
+## Homeward Voyage (`homeward-voyage`)
+
+Original to Picagram.
+
+## Landscape study (`landscape-study`)
+
+Original to Picagram.
+
+## Letterpress Broadside (`letterpress-broadside`)
 
 Original to Picagram.
 
@@ -386,6 +466,14 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Margin Journal (`margin-journal`)
+
+Original to Picagram.
+
+## Material library (`material-library`)
+
+Original to Picagram.
+
 ## Maximalist Hero (`maximalist-hero`)
 
 Original to Picagram.
@@ -394,7 +482,35 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Monograph Spread (`monograph-spread`)
+
+Original to Picagram.
+
+## Museum Acquisition (`museum-acquisition`)
+
+Original to Picagram.
+
 ## Neumorphic Hero (`neumorphic-hero`)
+
+Original to Picagram.
+
+## Nocturne Film (`nocturne-film`)
+
+Original to Picagram.
+
+## Observatory Bulletin (`observatory-bulletin`)
+
+Original to Picagram.
+
+## Oral History (`oral-history`)
+
+Original to Picagram.
+
+## Orbital Log (`orbital-log`)
+
+Original to Picagram.
+
+## Photo contact sheet (`photo-contact-sheet`)
 
 Original to Picagram.
 
@@ -402,11 +518,27 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Polar Expedition (`polar-expedition`)
+
+Original to Picagram.
+
 ## Pricing (`pricing`)
 
 - Technique from [Radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 
+## Public Lecture (`public-lecture`)
+
+Original to Picagram.
+
 ## Quote Band (`quote-band`)
+
+Original to Picagram.
+
+## Reading Room (`reading-room`)
+
+Original to Picagram.
+
+## Repertory Playbill (`repertory-playbill`)
 
 Original to Picagram.
 
@@ -415,6 +547,14 @@ Original to Picagram.
 Original to Picagram.
 
 ## Sketch Hero (`sketch-hero`)
+
+Original to Picagram.
+
+## Sound practice (`sound-practice`)
+
+Original to Picagram.
+
+## Specimen Review (`specimen-review`)
 
 Original to Picagram.
 
@@ -433,6 +573,10 @@ Original to Picagram.
 ## Testimonials (`testimonials`)
 
 - Technique from [Carousel pattern](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Type foundry (`type-foundry`)
+
+Original to Picagram.
 
 ## Victorian Hero (`victorian-hero`)
 

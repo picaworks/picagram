@@ -977,22 +977,23 @@ var PicaMaximalistHero = (() => {
     const textAlign = p.align === "center" ? "center" : "start";
     const hang = origin(p);
     const corner = `linear-gradient(${fg}, ${fg})`;
-    const tint = `color-mix(in srgb, ${bg} 74%, transparent)`;
+    const ground = `color-mix(in srgb, ${cssOn("fg")} 96%, ${bg})`;
+    const tint = ground;
     const hairline = `color-mix(in srgb, ${fg} 38%, transparent)`;
     return [
       `:where(${selector}){min-height:${vh(p.minHeight)}vh}`,
       `${selector}{position:relative;isolation:isolate;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;align-items:${edge};--maxh-pad:clamp(1.25rem,4vw,3.25rem);--maxh-board:min(37%,23rem);padding:var(--maxh-pad) calc(var(--maxh-pad) + var(--maxh-board)) var(--maxh-pad) var(--maxh-pad)}`,
       `${selector}[data-pica-fit="min"],${selector}[data-pica-plain]{--maxh-board:0rem}`,
-      `${selector} > [data-pica-veil]{background:color-mix(in srgb, ${bg} 55%, transparent)}`,
+      `${selector} > [data-pica-veil]{background:color-mix(in srgb, ${cssOn("fg")} 82%, transparent)}`,
       `${selector} > [data-pica-corners]{position:absolute;inset:0;pointer-events:none;background-image:${corner},${corner},${corner},${corner},${corner},${corner},${corner},${corner};background-repeat:no-repeat;background-size:18px 1px,1px 18px,18px 1px,1px 18px,18px 1px,1px 18px,18px 1px,1px 18px;background-position:10px 10px,10px 10px,right 10px top 10px,right 10px top 10px,left 10px bottom 10px,left 10px bottom 10px,right 10px bottom 10px,right 10px bottom 10px}`,
       `${selector} > [data-pica-rail]{position:absolute;top:50%;left:0.55em;transform:translateY(-50%);writing-mode:vertical-rl;white-space:nowrap;pointer-events:none;font-family:${GRID_FONT};font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:${muted}}`,
-      `${selector} > [data-pica-band]{flex:none;align-self:stretch;margin-left:calc(-1 * var(--maxh-pad));margin-right:calc(0px - var(--maxh-pad) - var(--maxh-board));border-top:1px solid ${fg};border-bottom:1px solid ${fg};background:${bg};padding:0.55em 0;font-family:${GRID_FONT};font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:${fg}}`,
+      `${selector} > [data-pica-band]{flex:none;align-self:stretch;margin-left:calc(-1 * var(--maxh-pad));margin-right:calc(0px - var(--maxh-pad) - var(--maxh-board));border-top:1px solid ${fg};border-bottom:1px solid ${fg};background:${ground};padding:0.55em 0;font-family:${GRID_FONT};font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:${fg}}`,
       `${selector} > [data-pica-band="top"]{margin-top:calc(-1 * var(--maxh-pad));border-top:0}`,
       `${selector} > [data-pica-band="bottom"]{margin-top:auto;margin-bottom:calc(-1 * var(--maxh-pad));border-bottom:0}`,
       `${selector} > [data-pica-band] > span{white-space:nowrap}`,
       `${selector} > [data-pica-band] > span > em{font-style:normal;color:${muted}}`,
       `${selector} > [data-pica-stack]{display:flex;flex-direction:column;align-items:${edge};gap:0.9em;margin-top:auto;padding:2em 0 1.1em}`,
-      `${selector} [data-pica-kicker]{display:flex;flex-wrap:wrap;align-items:center;gap:0.35em 0.7em;width:100%;max-width:56ch;font-family:${GRID_FONT};font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:${muted};transform:rotate(-1deg);transform-origin:${hang} center}`,
+      `${selector} [data-pica-kicker]{display:flex;flex-wrap:wrap;align-items:center;gap:0.35em 0.7em;width:100%;max-width:56ch;font-family:${GRID_FONT};font-size:0.74rem;letter-spacing:0.08em;text-transform:uppercase;color:${fg};background:${ground};padding:.35em .5em;transform:rotate(-1deg);transform-origin:${hang} center}`,
       `${selector} [data-pica-kicker] > b{flex:none;width:0.6em;height:0.6em;background:${accent}}`,
       `${selector} [data-pica-kicker] > i{flex:1 1 2em;height:1px;background:${muted}}`,
       `${selector} [data-pica-kicker] > span{white-space:nowrap}`,
@@ -1003,8 +1004,8 @@ var PicaMaximalistHero = (() => {
       `${selector} [data-pica-headline]{margin:0.12em 0 0.24em;font-size:clamp(2.5rem,9.5vw,5.75rem);font-weight:800;line-height:0.98;letter-spacing:-0.02em;text-align:${textAlign};max-width:15ch;transform:rotate(1.2deg);transform-origin:${hang} center}`,
       `${selector} [data-pica-headline] > span{background:${fg};padding:0.05em 0.2em 0.11em;-webkit-box-decoration-break:clone;box-decoration-break:clone}`,
       `${selector} [data-pica-headline] > span > i{font-style:normal;color:${cssOn("fg")}}`,
-      `${selector} [data-pica-subhead]{margin:0;font-size:clamp(1.05rem,2.3vw,1.4rem);line-height:1.45;color:${muted};max-width:46ch;text-align:${textAlign};transform:rotate(-0.6deg);transform-origin:${hang} top}`,
-      `${selector} > :not([data-pica]){max-width:52ch;text-align:${textAlign}}`,
+      `${selector} [data-pica-subhead]{background:${ground};padding:.3em .45em;margin:0;font-size:clamp(1.05rem,2.3vw,1.4rem);line-height:1.45;color:${muted};max-width:46ch;text-align:${textAlign};transform:rotate(-0.6deg);transform-origin:${hang} top}`,
+      `${selector} > :not([data-pica]){background:${ground};padding:.45em;max-width:52ch;text-align:${textAlign}}`,
       `${selector} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;justify-content:${edge};gap:0.7em;max-width:52ch;margin-top:1.2em;margin-bottom:auto;transform:rotate(-0.7deg);transform-origin:${hang} center}`,
       `${selector} > [data-pica-actions]:empty{display:none}`,
       `${selector} > [data-pica-actions] a{appearance:none;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.62em 1.3em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
@@ -1016,7 +1017,7 @@ var PicaMaximalistHero = (() => {
       // The board owns the right edge from the top pad to the bottom one. Absolute, so it can always reach
       // band to band; the host's right padding keeps every in-flow child clear of it.
       `${selector} > [data-pica-board]{position:absolute;top:var(--maxh-pad);right:var(--maxh-pad);bottom:var(--maxh-pad);width:var(--maxh-board);display:flex;flex-direction:column;justify-content:center;gap:clamp(0.9em,2.5vh,1.6em)}`,
-      `${selector}[data-pica-fit="min"] > [data-pica-board]{position:static;width:auto;align-self:stretch;margin-top:1.4em;justify-content:flex-start}`,
+      `${selector}[data-pica-fit="min"] > [data-pica-board]{position:static;width:auto;align-self:stretch;margin-top:1.4em;justify-content:flex-start;margin-bottom:1.4em}`,
       `${selector} [data-pica-index]{flex:none;border:1px solid ${fg};background:${tint};transform:rotate(0.9deg);transform-origin:right top;font-family:${GRID_FONT};font-size:0.68rem;letter-spacing:0.07em;text-transform:uppercase}`,
       `${selector} [data-pica-index] > div{display:flex;align-items:center;gap:0.7em;padding:0.6em 0.85em;color:${muted}}`,
       `${selector} [data-pica-index] > div > b{flex:none;width:0.55em;height:0.55em;background:${accent}}`,
@@ -1024,9 +1025,9 @@ var PicaMaximalistHero = (() => {
       `${selector} [data-pica-index] ul{list-style:none;margin:0;padding:0}`,
       `${selector} [data-pica-index] li{display:flex;gap:0.8em;padding:0.5em 0.85em;border-top:1px solid ${hairline};color:${fg}}`,
       `${selector} [data-pica-index] li > b{flex:none;font-weight:400;color:${muted}}`,
-      `${selector} [data-pica-figure]{position:relative;flex:1;min-height:7.5em;display:flex;flex-direction:column;justify-content:flex-end;gap:0.3em;padding:0.75em 0.85em;border:1px solid ${fg};background:${tint};transform:rotate(-1.1deg);transform-origin:left bottom}`,
+      `${selector} [data-pica-figure]{position:relative;flex:1;min-height:7.5em;display:flex;flex-direction:column;justify-content:center;gap:0.3em;padding:0.75em 0.85em;border:1px solid ${fg};background:${tint};transform:rotate(-1.1deg);transform-origin:left bottom}`,
       `${selector} [data-pica-figure] > b{position:absolute;top:-0.5em;right:-0.5em;width:1em;height:1em;background:${accent}}`,
-      `${selector} [data-pica-figure] > strong{display:block;font-size:clamp(2.6rem,6.5vw,5.25rem);font-weight:800;line-height:0.95;letter-spacing:-0.02em;color:${fg}}`,
+      `${selector} [data-pica-figure] > strong{display:block;font-size:clamp(4rem,9vw,8rem);font-weight:800;line-height:0.95;letter-spacing:-0.02em;color:${fg}}`,
       `${selector} [data-pica-figure] > span{font-family:${GRID_FONT};font-size:0.66rem;letter-spacing:0.08em;text-transform:uppercase;color:${muted}}`,
       `${selector} [data-pica-tones]{display:flex;height:0.55em;margin-top:0.55em}`,
       `${selector} [data-pica-tones] > i{flex:1}`,
@@ -1163,8 +1164,7 @@ var PicaMaximalistHero = (() => {
     const bandBottom = mountBand(host, "bottom", props);
     host.prepend(stack);
     host.prepend(bandTop.el);
-    stack.after(board);
-    host.append(actions, bandBottom.el, corners, rail);
+    host.append(actions, board, bandBottom.el, corners, rail);
     function renderIndex() {
       indexTitleEl.textContent = props.indexTitle;
       const rows = props.index.slice(0, MAX_INDEX);
@@ -1290,7 +1290,8 @@ var PicaMaximalistHero = (() => {
     }
     return data;
   }
-  var instance = PicaMaximalistHero.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaMaximalistHero.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
     if (event.data.type === "pica:props") instance.update(take(event.data.props));

@@ -1858,7 +1858,8 @@ var PicaStatsKpi = (() => {
     }
     return data;
   }
-  var instance = PicaStatsKpi.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaStatsKpi.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
     if (event.data.type === "pica:props") instance.update(take(event.data.props));

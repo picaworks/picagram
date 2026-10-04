@@ -9881,6 +9881,305 @@
     "gzipBytes": 1684
   },
   {
+    "slug": "architect-dossier",
+    "title": "Architect dossier",
+    "category": "sections",
+    "description": "An architectural project dossier with original plan drawings, marginal specifications, and design notes.",
+    "tags": [
+      "portfolio",
+      "one-page",
+      "architect-dossier"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "studio": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "subtitle": {
+        "type": "string"
+      },
+      "concept": {
+        "type": "textarea",
+        "rows": 4
+      },
+      "facts": {
+        "type": "json"
+      },
+      "materials": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "environment": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "contact": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": null
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "ArchitectDossier",
+    "defaults": {
+      "label": "Architecture project dossier",
+      "studio": "Office for Common Ground",
+      "title": "Courtyard House",
+      "subtitle": "Residential study / Aarhus, Denmark / 2026",
+      "concept": "A small house arranged around an open room. The courtyard brings daylight into the depth of the plan, while a continuous timber threshold connects everyday life to the garden.",
+      "facts": [
+        {
+          "label": "Project number",
+          "value": "CG–026 / Revision B"
+        },
+        {
+          "label": "Site area",
+          "value": "480 m²"
+        },
+        {
+          "label": "Floor area",
+          "value": "126 m²"
+        },
+        {
+          "label": "Structure",
+          "value": "Timber frame"
+        },
+        {
+          "label": "Orientation",
+          "value": "Courtyard faces south"
+        },
+        {
+          "label": "Stage",
+          "value": "Design development"
+        }
+      ],
+      "materials": "A low brick plinth anchors a lightweight timber frame. Untreated larch cladding records the seasons, while lime plaster and oak joinery bring warmth to the interior.",
+      "environment": "Deep eaves provide summer shade. Openings across the courtyard allow natural ventilation. A compact envelope and insulated slab reduce the heating demand before systems are introduced.",
+      "contact": "For commissions and collaborations: studio@commonground.example. We welcome conversations about thoughtful buildings, modest budgets, and lasting places."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "Accessible name for the dossier.",
+      "studio": "Architecture practice.",
+      "title": "Project title.",
+      "subtitle": "Project location and stage.",
+      "concept": "Project concept.",
+      "facts": "Marginal specifications.",
+      "materials": "Material strategy.",
+      "environment": "Environmental strategy.",
+      "contact": "Contact text."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "studio": "string",
+      "title": "string",
+      "subtitle": "string",
+      "concept": "string",
+      "facts": "readonly ArchitectFact[]",
+      "materials": "string",
+      "environment": "string",
+      "contact": "string"
+    },
+    "events": {},
+    "gzipBytes": 4299
+  },
+  {
+    "slug": "archive-finding-aid",
+    "title": "Archive Finding Aid",
+    "category": "sections",
+    "description": "An institutional finding aid with a collection identifier, arrangement tree, and expandable series descriptions.",
+    "tags": [
+      "culture",
+      "editorial",
+      "archive-finding-aid"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "string"
+      },
+      "identifier": {
+        "type": "string"
+      },
+      "repository": {
+        "type": "string"
+      },
+      "summary": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "series": {
+        "type": "json"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "details:not([open]) summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": null
+        },
+        {
+          "step": "expectFocus",
+          "selector": "summary"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "ArchiveFindingAid",
+    "defaults": {
+      "title": "Morrow Print Workshop records",
+      "identifier": "MPW / 017",
+      "repository": "City Archive / Special Collections",
+      "summary": "The working papers of a community print studio, documenting forty years of posters, teaching, and collective publishing. The collection preserves the everyday decisions behind a public visual culture.",
+      "series": [
+        {
+          "title": "Administration & correspondence",
+          "dates": "1978–2016",
+          "extent": "4 boxes / 23 folders",
+          "description": "Meeting minutes, letters, lease agreements, and the notebooks used to coordinate the workshop. Original folder order has been retained.",
+          "folders": [
+            "Founding documents, 1978–1980",
+            "Committee minutes, 1981–2004",
+            "Correspondence with artists, 1983–2016"
+          ]
+        },
+        {
+          "title": "Posters & print editions",
+          "dates": "1979–2018",
+          "extent": "12 flat files / 186 items",
+          "description": "Proofs, finished editions, and annotated layouts for neighbourhood campaigns, exhibitions, and performances. Oversize items require advance notice.",
+          "folders": [
+            "Campaign posters, 1979–1992",
+            "Exhibition editions, 1985–2010",
+            "Uncatalogued proofs, undated"
+          ]
+        },
+        {
+          "title": "Teaching & public programs",
+          "dates": "1982–2018",
+          "extent": "3 boxes / 18 folders",
+          "description": "Course outlines, attendance books, sample exercises, and photographs of open studio days. Personal contact details are restricted.",
+          "folders": [
+            "Course outlines, 1982–2001",
+            "Open studio records, 1990–2018",
+            "Photographic documentation, 1982–2015"
+          ]
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The collection title.",
+      "identifier": "The institutional collection identifier.",
+      "repository": "The repository name.",
+      "summary": "The collection summary.",
+      "series": "The series arranged in the finding aid."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "identifier": "string",
+      "repository": "string",
+      "summary": "string",
+      "series": "readonly ArchiveSeries[]"
+    },
+    "events": {},
+    "gzipBytes": 4388
+  },
+  {
     "slug": "article-lead",
     "title": "Article Lead",
     "category": "sections",
@@ -10392,6 +10691,153 @@
     "gzipBytes": 5761
   },
   {
+    "slug": "botanical-atelier",
+    "title": "Botanical atelier",
+    "category": "sections",
+    "description": "A botanical portfolio arranged as an herbarium cabinet with original drawings, taxonomy, and field notes.",
+    "tags": [
+      "portfolio",
+      "one-page",
+      "botanical-atelier"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "studio": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "intro": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "specimens": {
+        "type": "json"
+      },
+      "method": {
+        "type": "textarea",
+        "rows": 4
+      },
+      "contact": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": null
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "BotanicalAtelier",
+    "defaults": {
+      "label": "Botanical atelier portfolio",
+      "studio": "Fieldwork / Botanical atelier",
+      "title": "A cabinet of quiet observations.",
+      "intro": "Drawing plants as they are found. An independent practice in botanical illustration, patient observation, and the stories carried by ordinary leaves.",
+      "specimens": [
+        {
+          "name": "Olive",
+          "latin": "Olea europaea",
+          "family": "Oleaceae",
+          "form": "branch",
+          "location": "Liguria / 18 May 2026",
+          "note": "Silver undersides catch the afternoon light. Leaves grow in opposite pairs along the new branch."
+        },
+        {
+          "name": "Wild chamomile",
+          "latin": "Matricaria chamomilla",
+          "family": "Asteraceae",
+          "form": "flower",
+          "location": "Meadow edge / 02 June 2026",
+          "note": "A hollow receptacle and fine divided foliage distinguish this small annual. Collected as a drawing, left growing."
+        },
+        {
+          "name": "Common fern",
+          "latin": "Polypodium vulgare",
+          "family": "Polypodiaceae",
+          "form": "frond",
+          "location": "North wall / 09 June 2026",
+          "note": "The frond uncurls toward a narrow patch of light. Rounded sori form in two rows on its underside."
+        }
+      ],
+      "method": "Every drawing begins outdoors with a pencil and a notebook. Measurements, growth habit, and small irregularities are recorded before the studio study. The finished line work keeps those observations visible rather than smoothing them away.",
+      "contact": "Illustration commissions for books, gardens, cultural institutions, and thoughtful brands. Write to hello@fieldwork.example with your subject, format, and timing."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "Accessible name for the atelier.",
+      "studio": "Atelier name.",
+      "title": "Page title.",
+      "intro": "Practice introduction.",
+      "specimens": "Specimen records.",
+      "method": "Observation methods.",
+      "contact": "Commission information."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "studio": "string",
+      "title": "string",
+      "intro": "string",
+      "specimens": "readonly BotanicalSpecimen[]",
+      "method": "string",
+      "contact": "string"
+    },
+    "events": {},
+    "gzipBytes": 4590
+  },
+  {
     "slug": "brutalist-hero",
     "title": "Brutalist Hero",
     "category": "sections",
@@ -10514,6 +10960,644 @@
     },
     "events": {},
     "gzipBytes": 2964
+  },
+  {
+    "slug": "cartographic-story",
+    "title": "Cartographic Story",
+    "category": "sections",
+    "description": "A narrative map essay with a traced walking route, numbered field captions, a journey essay, and route notes.",
+    "tags": [
+      "publication",
+      "one-page",
+      "cartographic-story"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "deck": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "byline": {
+        "type": "string"
+      },
+      "essay": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "nav a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "CartographicStory",
+    "defaults": {
+      "title": "Following the\nwaterline",
+      "deck": "A walk through the places where a river has changed its mind.",
+      "byline": "WORDS & DRAWINGS / ADA REED",
+      "essay": "The river is an unreliable historian. It carries a story forward, then leaves a bend behind. On this walk, the old channel appears first as a dip in a field and later as a line of gardens."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The story title.",
+      "deck": "The story introduction.",
+      "byline": "The essay byline.",
+      "essay": "The journey essay opening."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "deck": "string",
+      "byline": "string",
+      "essay": "string"
+    },
+    "events": {},
+    "gzipBytes": 4390
+  },
+  {
+    "slug": "ceramic-studio",
+    "title": "Ceramic studio",
+    "category": "sections",
+    "description": "A ceramic maker collection with original vessel drawings, process notes, and a kiln edition ledger.",
+    "tags": [
+      "portfolio",
+      "one-page",
+      "ceramic-studio"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "studio": {
+        "type": "string"
+      },
+      "collection": {
+        "type": "string"
+      },
+      "intro": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "pieces": {
+        "type": "json"
+      },
+      "process": {
+        "type": "json"
+      },
+      "care": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "contact": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": null
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "CeramicStudio",
+    "defaults": {
+      "label": "Ceramic studio collection",
+      "studio": "Ruth Vale / Clay works",
+      "collection": "Objects for daily rituals.",
+      "intro": "Small batches of useful things. Thrown slowly, glazed by hand, and made to gather the marks of a life well lived.",
+      "pieces": [
+        {
+          "name": "Low bowl",
+          "form": "bowl",
+          "material": "Stoneware / Ø 21 × 6 cm",
+          "edition": "Edition 03 / 18 pieces"
+        },
+        {
+          "name": "Stem vessel",
+          "form": "vase",
+          "material": "Stoneware / Ø 10 × 24 cm",
+          "edition": "Edition 03 / 12 pieces"
+        },
+        {
+          "name": "Morning cup",
+          "form": "cup",
+          "material": "Stoneware / Ø 8 × 9 cm",
+          "edition": "Edition 03 / 24 pieces"
+        }
+      ],
+      "process": [
+        {
+          "title": "The clay",
+          "text": "A local stoneware body is wedged by hand. Small mineral flecks remain visible in the fired surface."
+        },
+        {
+          "title": "The wheel",
+          "text": "Each form is thrown, rested, and trimmed. The foot carries a quiet record of the maker’s hand."
+        },
+        {
+          "title": "The kiln",
+          "text": "A thin ash glaze settles unevenly over the clay. The final firing reaches 1,240 °C and lasts two days, including cooling."
+        }
+      ],
+      "care": "These pieces are made for everyday use. Wash gently and allow to dry fully. Avoid sudden changes in temperature. Subtle differences in glaze and dimension are part of the work.",
+      "contact": "To reserve a piece, write to studio@ruthvale.example with the form and quantity. We confirm availability, packing, and delivery before taking payment. Studio visits by appointment."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "Accessible name for the collection.",
+      "studio": "Maker name.",
+      "collection": "Collection name.",
+      "intro": "Collection introduction.",
+      "pieces": "Collection pieces and silhouette forms.",
+      "process": "Maker process stages.",
+      "care": "Care notes.",
+      "contact": "Ordering instructions."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "studio": "string",
+      "collection": "string",
+      "intro": "string",
+      "pieces": "readonly CeramicPiece[]",
+      "process": "readonly CeramicStep[]",
+      "care": "string",
+      "contact": "string"
+    },
+    "events": {},
+    "gzipBytes": 4177
+  },
+  {
+    "slug": "choreographic-score",
+    "title": "Choreographic score",
+    "category": "sections",
+    "description": "A contemporary dance program with original movement notation, a timed instruction score, cast credits, and audience information.",
+    "tags": [
+      "dance",
+      "choreography",
+      "score",
+      "performance"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "controls": {
+      "company": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "performance": {
+        "type": "string"
+      },
+      "note": {
+        "type": "textarea",
+        "rows": 4
+      },
+      "phrases": {
+        "type": "json"
+      },
+      "credits": {
+        "type": "json"
+      },
+      "audience": {
+        "type": "textarea",
+        "rows": 4
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "ChoreographicScore",
+    "defaults": {
+      "company": "Common Weight / Contemporary dance",
+      "title": "The distance between",
+      "performance": "Studio theatre · 18—20 November 2026 · 42 minutes",
+      "note": "Four bodies negotiate one shared space. A gesture travels from dancer to dancer until its origin is lost. This score preserves the rules of the exchange, leaving its texture to the performers.",
+      "phrases": [
+        {
+          "title": "Find the orbit",
+          "time": "00:00",
+          "duration": "08 min",
+          "instruction": "Walk around a point that no one occupies. Keep one person in your peripheral vision. Let the circle change size without agreeing on a leader.",
+          "notation": "orbit"
+        },
+        {
+          "title": "Crossing paths",
+          "time": "08:00",
+          "duration": "12 min",
+          "instruction": "Cross the room on a diagonal. At each encounter, exchange one movement and carry it to the next person. No gesture returns unchanged.",
+          "notation": "cross"
+        },
+        {
+          "title": "Fold and return",
+          "time": "20:00",
+          "duration": "14 min",
+          "instruction": "Lower the centre of weight in four counts. Let the floor receive one point of contact at a time. Rise by reversing the order, not the speed.",
+          "notation": "fold"
+        },
+        {
+          "title": "Hold the interval",
+          "time": "34:00",
+          "duration": "08 min",
+          "instruction": "Leave the last movement unfinished. Stay with the space between two bodies until breathing becomes the only visible rhythm.",
+          "notation": "pause"
+        }
+      ],
+      "credits": [
+        {
+          "role": "Choreography",
+          "name": "Nina Vale"
+        },
+        {
+          "role": "Performers",
+          "name": "Ari Chen / Sol Lane / Noor Reed / Tess Gray"
+        },
+        {
+          "role": "Sound",
+          "name": "Milo Hart"
+        },
+        {
+          "role": "Lighting",
+          "name": "Eden Moss"
+        }
+      ],
+      "audience": "The performance begins in low light and includes periods of silence. Seating is unreserved. The studio opens twenty minutes before the start; a printed score is available at the entrance."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "company": "Company name.",
+      "title": "Performance title.",
+      "performance": "Performance information.",
+      "note": "Artistic program note.",
+      "phrases": "Movement phrases of the score.",
+      "credits": "Cast and production credits.",
+      "audience": "Audience information."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "company": "string",
+      "title": "string",
+      "performance": "string",
+      "note": "string",
+      "phrases": "readonly MovementPhrase[]",
+      "credits": "readonly DanceCredit[]",
+      "audience": "string"
+    },
+    "events": {},
+    "gzipBytes": 4453
+  },
+  {
+    "slug": "cinemateque-program",
+    "title": "Cinemateque Program",
+    "category": "sections",
+    "description": "A repertory cinema program with an oversized screening date, asymmetric schedule, and projection notes.",
+    "tags": [
+      "culture",
+      "editorial",
+      "cinemateque-program"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "string"
+      },
+      "cinema": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string"
+      },
+      "introduction": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "films": {
+        "type": "json"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "CinematequeProgram",
+    "defaults": {
+      "title": "The city after dark",
+      "cinema": "North Screen / Cinematheque",
+      "date": "NOV 06—09",
+      "introduction": "Four nights of streets, strangers, and the spaces in between. A repertory program about the city as both a stage and a state of mind.",
+      "films": [
+        {
+          "when": "THU 06 / 19:00",
+          "title": "Night on the tram",
+          "credit": "Mira Orlov · 1962 · 92 min · 35 mm",
+          "note": "A last tram crosses a sleeping city. Introduced by curator Ada Vale."
+        },
+        {
+          "when": "FRI 07 / 20:30",
+          "title": "Windows facing west",
+          "credit": "Lucien Morel · 1974 · 108 min · 16 mm",
+          "note": "Three apartments, one summer evening. A newly restored print."
+        },
+        {
+          "when": "SAT 08 / 18:00",
+          "title": "Under the railway",
+          "credit": "Emi Tanaka · 1988 · 84 min · DCP",
+          "note": "A tender portrait of the people who keep the night running."
+        },
+        {
+          "when": "SUN 09 / 16:00",
+          "title": "The morning returns",
+          "credit": "Jonas Reed · 1997 · 101 min · 35 mm",
+          "note": "The closing screening is followed by a conversation in the foyer."
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The name of the film series.",
+      "cinema": "The cinema or presenting institution.",
+      "date": "A large issue date or month.",
+      "introduction": "The opening curatorial statement.",
+      "films": "The ordered screening program."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "cinema": "string",
+      "date": "string",
+      "introduction": "string",
+      "films": "readonly CinematequeFilm[]"
+    },
+    "events": {},
+    "gzipBytes": 3874
+  },
+  {
+    "slug": "city-atlas",
+    "title": "City Atlas",
+    "category": "sections",
+    "description": "An urban publication with an original block map, address index and district narratives.",
+    "tags": [
+      "editorial",
+      "city-atlas",
+      "publication",
+      "page"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "publication": {
+        "type": "string"
+      },
+      "district": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "introduction": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "addresses": {
+        "type": "json"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "exportName": "CityAtlas",
+    "defaults": {
+      "publication": "City Atlas / Local Studies",
+      "district": "The East\nQuarter",
+      "introduction": "A district measured in doorways, shared tables and the distance between a home and its favourite corner. An atlas of everyday public life.",
+      "addresses": [
+        {
+          "name": "The market hall",
+          "address": "01 / 18 Market Street",
+          "note": "At nine, the shutters rise in sequence. By noon, the central aisle becomes a meeting place. Stay near the north entrance to see the building change from market to neighbourhood room."
+        },
+        {
+          "name": "The pocket garden",
+          "address": "02 / 7 Foundry Lane",
+          "note": "A narrow gap between workshops became a garden through a decade of small decisions. Nothing here matches, but every seat has been placed with a reason."
+        },
+        {
+          "name": "The evening library",
+          "address": "03 / 42 Canal Walk",
+          "note": "The reading room stays open after the offices close. From its windows, the canal looks like a slow second street. A noticeboard carries more local news than any single publication."
+        },
+        {
+          "name": "The repair counter",
+          "address": "04 / 3 Bridge Passage",
+          "note": "People bring lamps, coats and questions. The counter is less a shop than a practical conversation about what can be kept in use."
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "publication": "The atlas masthead.",
+      "district": "The district name.",
+      "introduction": "The district introduction.",
+      "addresses": "The address index and accompanying narratives."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "publication": "string",
+      "district": "string",
+      "introduction": "string",
+      "addresses": "readonly { name: string; address: string; note: string }[]"
+    },
+    "events": {},
+    "gzipBytes": 3772
   },
   {
     "slug": "clay-hero",
@@ -10705,7 +11789,103 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 6744
+    "gzipBytes": 7019
+  },
+  {
+    "slug": "conservation-report",
+    "title": "Conservation Report",
+    "category": "sections",
+    "description": "A restoration case study with a condition elevation, paired intervention drawings, an evidence table, and a treatment timeline.",
+    "tags": [
+      "publication",
+      "one-page",
+      "conservation-report"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "site": {
+        "type": "string"
+      },
+      "reference": {
+        "type": "string"
+      },
+      "statement": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "nav a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "ConservationReport",
+    "defaults": {
+      "title": "Keeping the\nmarks of time",
+      "site": "EAST GATE READING ROOM",
+      "reference": "CASE FILE 026 / COMPLETED 2026",
+      "statement": "Repair should recover use without erasing the evidence of a building’s life. The work at East Gate began with a drawing of what had survived."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The report headline.",
+      "site": "The heritage project name.",
+      "reference": "The case reference.",
+      "statement": "The conservation statement."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "site": "string",
+      "reference": "string",
+      "statement": "string"
+    },
+    "events": {},
+    "gzipBytes": 4871
   },
   {
     "slug": "contact-panel",
@@ -10900,6 +12080,172 @@
     "gzipBytes": 3242
   },
   {
+    "slug": "culinary-notebook",
+    "title": "Culinary notebook",
+    "category": "sections",
+    "description": "A cookbook recipe spread with an original still-life drawing, ingredient weights, timed methods, and practical kitchen notes.",
+    "tags": [
+      "cooking",
+      "recipe",
+      "notebook",
+      "food"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "controls": {
+      "author": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "edition": {
+        "type": "string"
+      },
+      "introduction": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "yield": {
+        "type": "string"
+      },
+      "ingredients": {
+        "type": "json"
+      },
+      "method": {
+        "type": "json"
+      },
+      "note": {
+        "type": "textarea",
+        "rows": 4
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "CulinaryNotebook",
+    "defaults": {
+      "author": "The small table / Kitchen notebook",
+      "title": "Roasted squash, white beans & sage",
+      "edition": "Recipe 014 · Early autumn",
+      "yield": "Serves 4 / 20 min preparation / 40 min cooking",
+      "introduction": "A tray of squash becomes a meal with warm beans and a sharp cider dressing. Keep the roasting juices: they are the beginning of the sauce.",
+      "ingredients": [
+        {
+          "quantity": "900 g",
+          "name": "Winter squash",
+          "preparation": "Seeds removed, cut into 3 cm wedges"
+        },
+        {
+          "quantity": "500 g",
+          "name": "Cooked white beans",
+          "preparation": "Drained, cooking liquid reserved"
+        },
+        {
+          "quantity": "3 tbsp",
+          "name": "Olive oil",
+          "preparation": "Divided between tray and dressing"
+        },
+        {
+          "quantity": "12",
+          "name": "Sage leaves",
+          "preparation": "Whole, stems removed"
+        },
+        {
+          "quantity": "2 tbsp",
+          "name": "Cider vinegar",
+          "preparation": "Plus more to taste"
+        },
+        {
+          "quantity": "1 tsp",
+          "name": "Wholegrain mustard",
+          "preparation": "For the dressing"
+        },
+        {
+          "quantity": "40 g",
+          "name": "Toasted hazelnuts",
+          "preparation": "Roughly crushed"
+        }
+      ],
+      "method": [
+        {
+          "title": "Give the squash some room",
+          "time": "35—40 min",
+          "instruction": "Heat the oven to 210°C. Toss the wedges with two tablespoons of oil and a generous pinch of salt. Spread in one layer, cut sides down. Roast until the edges brown and a knife meets no resistance."
+        },
+        {
+          "title": "Warm, without boiling",
+          "time": "8 min",
+          "instruction": "Put the beans in a shallow pan with four tablespoons of their cooking liquid. Add the sage and warm gently. Stir once or twice, keeping the beans whole. Add a spoon of water if the pan begins to dry."
+        },
+        {
+          "title": "Make the tray dressing",
+          "time": "3 min",
+          "instruction": "Lift the squash onto a warm plate. Pour the vinegar onto the roasting tray and scrape up the browned juices. Whisk in the mustard and remaining oil. Taste before adding salt."
+        },
+        {
+          "title": "Bring everything to the table",
+          "time": "2 min",
+          "instruction": "Spoon the beans around the squash and dress while warm. Scatter over the hazelnuts. Serve in the middle of the table with bread to collect the last of the sauce."
+        }
+      ],
+      "note": "Butter beans work equally well. For a nut-free version, use toasted pumpkin seeds. Leftovers keep for two days in a covered container in the refrigerator; warm gently with a splash of water before serving."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "author": "Notebook author.",
+      "title": "Recipe title.",
+      "edition": "Recipe number and season.",
+      "introduction": "Recipe introduction.",
+      "yield": "Yield and timing summary.",
+      "ingredients": "Ingredient ledger.",
+      "method": "Cooking method.",
+      "note": "Serving and substitution note."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "author": "string",
+      "title": "string",
+      "edition": "string",
+      "introduction": "string",
+      "yield": "string",
+      "ingredients": "readonly RecipeIngredient[]",
+      "method": "readonly RecipeMethod[]",
+      "note": "string"
+    },
+    "events": {},
+    "gzipBytes": 4723
+  },
+  {
     "slug": "cyberpunk-hero",
     "title": "Cyberpunk Hero",
     "category": "sections",
@@ -11038,6 +12384,109 @@
     },
     "events": {},
     "gzipBytes": 6317
+  },
+  {
+    "slug": "desert-transmission",
+    "title": "Desert Transmission",
+    "category": "sections",
+    "description": "A fictional desert expedition archive with a horizon drawing, transcript bands, and field inventory.",
+    "tags": [
+      "editorial",
+      "microsite",
+      "cinematic",
+      "desert"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "description": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "edition": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "true"
+        },
+        {
+          "step": "expectEvent",
+          "name": "reveal",
+          "detail": {
+            "expanded": true
+          }
+        },
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "false"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "DesertTransmission",
+    "defaults": {
+      "title": "Nothing here\nis silent.",
+      "description": "Field recordings and radio dispatches from a twelve day crossing of the fictional Aster Basin.",
+      "edition": "ASTER BASIN / RADIO ARCHIVE 03"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The page headline. Line breaks preserve the editorial composition.",
+      "description": "Introductory copy beneath the headline.",
+      "edition": "The archive or programme label in the masthead."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "description": "string",
+      "edition": "string"
+    },
+    "events": {
+      "reveal": {
+        "doc": "Reports the reader opening or closing the supplementary note.",
+        "detail": "{ expanded: boolean }"
+      }
+    },
+    "gzipBytes": 4278
   },
   {
     "slug": "editorial-hero",
@@ -11513,6 +12962,706 @@
     "gzipBytes": 3674
   },
   {
+    "slug": "exhibition-labels",
+    "title": "Exhibition Labels",
+    "category": "sections",
+    "description": "A gallery catalogue pairing numbered original abstract studies with varied art proportions and curatorial labels.",
+    "tags": [
+      "culture",
+      "editorial",
+      "exhibition-labels"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "string"
+      },
+      "gallery": {
+        "type": "string"
+      },
+      "dates": {
+        "type": "string"
+      },
+      "introduction": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "works": {
+        "type": "json"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "ExhibitionLabels",
+    "defaults": {
+      "title": "A measure of silence",
+      "gallery": "Field Gallery / Room 02",
+      "dates": "12 SEPTEMBER—18 JANUARY",
+      "introduction": "An exhibition of pauses, intervals, and the marks that remain. Three artists make space visible by attending to what is almost there.",
+      "works": [
+        {
+          "title": "Interval, no. 7",
+          "artist": "Ari Kato, 2025",
+          "medium": "Graphite on paper · 72 × 110 cm",
+          "label": "Parallel lines accumulate into a field. A single break makes the surface legible as a record of time, measured by the hand rather than the clock."
+        },
+        {
+          "title": "Holding an edge",
+          "artist": "Nora Bell, 2024",
+          "medium": "Ink and linen · 160 × 80 cm",
+          "label": "A dark form presses against a pale boundary. Neither a landscape nor an object, it asks how little information a shape needs to feel present."
+        },
+        {
+          "title": "Two distances",
+          "artist": "Idris Fenn, 2025",
+          "medium": "Etched aluminium · 48 × 48 cm",
+          "label": "Two circles share the same surface without sharing a centre. Their quiet misalignment changes as the viewer moves through the room."
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The exhibition title.",
+      "gallery": "The gallery name.",
+      "dates": "The exhibition dates.",
+      "introduction": "The curatorial introduction.",
+      "works": "Works paired with original abstract studies."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "gallery": "string",
+      "dates": "string",
+      "introduction": "string",
+      "works": "readonly ExhibitionWork[]"
+    },
+    "events": {},
+    "gzipBytes": 3949
+  },
+  {
+    "slug": "fashion-lookbook",
+    "title": "Fashion lookbook",
+    "category": "sections",
+    "description": "An atelier collection presented through asymmetric folio spreads, original garment silhouettes, and technical drawings.",
+    "tags": [
+      "fashion",
+      "lookbook",
+      "editorial",
+      "garment"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "controls": {
+      "label": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "season": {
+        "type": "string"
+      },
+      "statement": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "looks": {
+        "type": "json"
+      },
+      "construction": {
+        "type": "textarea",
+        "rows": 4
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "FashionLookbook",
+    "defaults": {
+      "label": "STILL FORM / Atelier 04",
+      "title": "Between seasons",
+      "season": "Collection 08 · Autumn / Winter 2026",
+      "statement": "Clothes for the space between arrival and departure. Quiet volume, useful pockets, and cloth that remembers a gesture.",
+      "looks": [
+        {
+          "name": "The travelling coat",
+          "description": "A full-length layer with a generous shoulder and a removable collar.",
+          "details": "Look 01 / Undyed wool twill / 620 g/m² / Hand-finished seams",
+          "silhouette": "coat"
+        },
+        {
+          "name": "An afternoon dress",
+          "description": "A single panel folds into a low waist. The side opening follows the fall of the fabric.",
+          "details": "Look 02 / Washed linen / 240 g/m² / French seams",
+          "silhouette": "dress"
+        },
+        {
+          "name": "Room to move",
+          "description": "Wide trousers shaped by two deep pleats, cut to sit on the natural waist.",
+          "details": "Look 03 / Cotton canvas / 310 g/m² / Bound pocket bags",
+          "silhouette": "trouser"
+        }
+      ],
+      "construction": "Every piece begins with a full-scale paper pattern. We test the balance in unbleached calico, adjust the ease on a moving body, then cut in cloth. The collection uses three fabrics and one consistent set of finishing methods."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "Label name.",
+      "title": "Collection name.",
+      "season": "Collection season.",
+      "statement": "Short collection statement.",
+      "looks": "Garments presented as folio spreads.",
+      "construction": "Construction notes."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "title": "string",
+      "season": "string",
+      "statement": "string",
+      "looks": "readonly FashionLook[]",
+      "construction": "string"
+    },
+    "events": {},
+    "gzipBytes": 4245
+  },
+  {
+    "slug": "festival-route",
+    "title": "Festival Route",
+    "category": "sections",
+    "description": "A neighbourhood arts walk with an original schematic route, ordered venues, and accessible event information.",
+    "tags": [
+      "culture",
+      "editorial",
+      "festival-route"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "string"
+      },
+      "neighbourhood": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string"
+      },
+      "introduction": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "venues": {
+        "type": "json"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "FestivalRoute",
+    "defaults": {
+      "title": "Take the long way.",
+      "neighbourhood": "Eastbank / Open Arts Walk",
+      "date": "SATURDAY 17 MAY / 11:00—18:00",
+      "introduction": "Follow the river, turn into a workshop, linger in a courtyard. Five places open their doors for a day of making, listening, and unexpected encounters.",
+      "venues": [
+        {
+          "name": "The Print Room",
+          "event": "Make a two-colour edition",
+          "address": "8 Foundry Street",
+          "time": "11:00–13:00",
+          "access": "Step-free entrance; seated worktables."
+        },
+        {
+          "name": "Canal Yard",
+          "event": "Sound in the open air",
+          "address": "21 Canal Walk",
+          "time": "12:00–15:00",
+          "access": "Level outdoor route; accessible toilet."
+        },
+        {
+          "name": "Former Post Office",
+          "event": "Artists at work",
+          "address": "3 Bridge Road",
+          "time": "13:00–16:00",
+          "access": "Ramp entrance on Bridge Road."
+        },
+        {
+          "name": "Glasshouse",
+          "event": "Objects, stories, and tea",
+          "address": "16 Garden Lane",
+          "time": "14:00–17:00",
+          "access": "Wide doors; quiet room available."
+        },
+        {
+          "name": "River Steps",
+          "event": "A closing performance",
+          "address": "South Quay",
+          "time": "17:00–18:00",
+          "access": "Level viewing space above the steps."
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The arts walk title.",
+      "neighbourhood": "The neighbourhood name.",
+      "date": "The festival date.",
+      "introduction": "The welcome statement.",
+      "venues": "The ordered stops on the route."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "neighbourhood": "string",
+      "date": "string",
+      "introduction": "string",
+      "venues": "readonly FestivalVenue[]"
+    },
+    "events": {},
+    "gzipBytes": 4452
+  },
+  {
+    "slug": "field-dispatch",
+    "title": "Field Dispatch",
+    "category": "sections",
+    "description": "A travel dispatch with an original route diagram, dated telegrams and a field notebook.",
+    "tags": [
+      "editorial",
+      "field-dispatch",
+      "publication",
+      "page"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "publication": {
+        "type": "string"
+      },
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "location": {
+        "type": "string"
+      },
+      "introduction": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "stops": {
+        "type": "json"
+      },
+      "packing": {
+        "type": "json"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "exportName": "FieldDispatch",
+    "defaults": {
+      "publication": "Field Dispatch / No. 024",
+      "title": "A road follows\nthe water",
+      "location": "North Coast / 54° N",
+      "introduction": "Four days along a coastal road, collecting the things that a timetable cannot tell you. Filed from the last working harbour before the headland.",
+      "stops": [
+        {
+          "place": "Old ferry landing",
+          "date": "08 Oct / 06:40",
+          "report": "The ferry leaves before the town wakes. On the quay, crates are arranged by destination rather than weight. We follow the coast east, keeping the water on our left."
+        },
+        {
+          "place": "Salt meadow",
+          "date": "09 Oct / 12:15",
+          "report": "The road narrows to a track beside the reeds. A retired surveyor shows us where the winter sea reaches. Every fence post carries a different high-water mark."
+        },
+        {
+          "place": "Keeper’s house",
+          "date": "10 Oct / 17:20",
+          "report": "At the headland, the light comes on while there is still daylight. The keeper describes fog by its sound: first the bell, then the engine, then nothing at all."
+        }
+      ],
+      "packing": [
+        "A paper map with the ferry times written in the margin.",
+        "Waterproof notebook, pencil, and a spare pair of dry socks.",
+        "Ask at the harbour office before entering a working quay."
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "publication": "The dispatch masthead.",
+      "title": "The route story headline.",
+      "location": "The journey location.",
+      "introduction": "The opening report.",
+      "stops": "The dated journey stops.",
+      "packing": "The practical field kit notes."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "publication": "string",
+      "title": "string",
+      "location": "string",
+      "introduction": "string",
+      "stops": "readonly { place: string; date: string; report: string }[]",
+      "packing": "readonly string[]"
+    },
+    "events": {},
+    "gzipBytes": 3753
+  },
+  {
+    "slug": "folio-index",
+    "title": "Folio index",
+    "category": "sections",
+    "description": "A designer portfolio with a numbered project index, project dossiers, and a practice statement.",
+    "tags": [
+      "portfolio",
+      "one-page",
+      "folio-index"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "name": {
+        "type": "string"
+      },
+      "intro": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "status": {
+        "type": "string"
+      },
+      "projects": {
+        "type": "json"
+      },
+      "practice": {
+        "type": "textarea",
+        "rows": 4
+      },
+      "contact": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "FolioIndex",
+    "defaults": {
+      "label": "Designer portfolio",
+      "name": "Mara Ellis",
+      "intro": "Independent designer working between identity, digital products, and the printed page.",
+      "status": "Based in Copenhagen / Available for selected collaborations",
+      "projects": [
+        {
+          "title": "Public Assembly",
+          "category": "Identity / 2026",
+          "summary": "A civic identity built around the simple act of coming together.",
+          "outcome": "A flexible typographic system, wayfinding toolkit, and accessible website for a network of neighborhood spaces. The open framework lets each place keep its own voice."
+        },
+        {
+          "title": "Interval",
+          "category": "Digital product / 2025",
+          "summary": "Making room for reflection in a fast-moving planning tool.",
+          "outcome": "Research, product strategy, and interface design for an independent calendar. A quieter weekly view reduced scheduling friction and gave the team a clear product language."
+        },
+        {
+          "title": "Soft Matter",
+          "category": "Publication / 2025",
+          "summary": "An annual journal about materials and the people who make them.",
+          "outcome": "Art direction and a modular editorial grid for 176 pages of essays, photography, and field notes. A tactile cover and restrained type hierarchy unite varied voices."
+        }
+      ],
+      "practice": "I work closely with small teams to turn complex ideas into clear systems. My practice connects research, thoughtful typography, and careful execution. Every project begins with listening.",
+      "contact": "For a new project, write to hello@mara.example. Include a little about your team, timing, and the question you are trying to answer."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "Accessible name for the portfolio.",
+      "name": "Designer name.",
+      "intro": "Introduction above the project index.",
+      "status": "Studio location and availability.",
+      "projects": "Selected projects in index order.",
+      "practice": "Studio approach.",
+      "contact": "Contact text."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "name": "string",
+      "intro": "string",
+      "status": "string",
+      "projects": "readonly FolioProject[]",
+      "practice": "string",
+      "contact": "string"
+    },
+    "events": {},
+    "gzipBytes": 3725
+  },
+  {
+    "slug": "forum-rome",
+    "title": "Forum Rome",
+    "category": "sections",
+    "description": "A Roman civic exhibition with an architectural arch, excavation ledger, and visitor notes.",
+    "tags": [
+      "editorial",
+      "microsite",
+      "cinematic",
+      "forum"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "description": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "edition": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "true"
+        },
+        {
+          "step": "expectEvent",
+          "name": "reveal",
+          "detail": {
+            "expanded": true
+          }
+        },
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "false"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "ForumRome",
+    "defaults": {
+      "title": "THE CITY\nIN COMMON",
+      "description": "Two thousand years of public life, read through the stones of the Roman Forum.",
+      "edition": "CIVIC ATLAS / EXHIBITION 04"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The page headline. Line breaks preserve the editorial composition.",
+      "description": "Introductory copy beneath the headline.",
+      "edition": "The archive or programme label in the masthead."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "description": "string",
+      "edition": "string"
+    },
+    "events": {
+      "reveal": {
+        "doc": "Reports the reader opening or closing the supplementary note.",
+        "detail": "{ expanded: boolean }"
+      }
+    },
+    "gzipBytes": 4377
+  },
+  {
     "slug": "glass-hero",
     "title": "Glass Hero",
     "category": "sections",
@@ -11800,6 +13949,321 @@
     },
     "events": {},
     "gzipBytes": 9219
+  },
+  {
+    "slug": "homeward-voyage",
+    "title": "Homeward Voyage",
+    "category": "sections",
+    "description": "A five chapter coastal return narrative with an illustrated route, an intimate reading column, and voyage notes.",
+    "tags": [
+      "editorial",
+      "microsite",
+      "cinematic",
+      "homeward"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "description": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "edition": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "true"
+        },
+        {
+          "step": "expectEvent",
+          "name": "reveal",
+          "detail": {
+            "expanded": true
+          }
+        },
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "false"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "HomewardVoyage",
+    "defaults": {
+      "title": "The long way\nhome.",
+      "description": "A voyage in five crossings. An account of leaving, losing the route, and learning to return.",
+      "edition": "THE HOMEWARD PAPERS / VOLUME I"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The page headline. Line breaks preserve the editorial composition.",
+      "description": "Introductory copy beneath the headline.",
+      "edition": "The archive or programme label in the masthead."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "description": "string",
+      "edition": "string"
+    },
+    "events": {
+      "reveal": {
+        "doc": "Reports the reader opening or closing the supplementary note.",
+        "detail": "{ expanded: boolean }"
+      }
+    },
+    "gzipBytes": 5712
+  },
+  {
+    "slug": "landscape-study",
+    "title": "Landscape study",
+    "category": "sections",
+    "description": "A landscape research page with original contour and transect diagrams, seasonal field measurements, and a reversible land trial.",
+    "tags": [
+      "landscape",
+      "research",
+      "survey",
+      "field"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "controls": {
+      "practice": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "site": {
+        "type": "string"
+      },
+      "hypothesis": {
+        "type": "textarea",
+        "rows": 4
+      },
+      "observations": {
+        "type": "json"
+      },
+      "intervention": {
+        "type": "textarea",
+        "rows": 4
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "LandscapeStudy",
+    "defaults": {
+      "practice": "Groundwork / Landscape studies",
+      "title": "A field learns to hold water",
+      "site": "Bracken reach · Plot 06 · Survey datum 42.0 m",
+      "hypothesis": "A former grazing field lies between a dry ridge and a seasonal stream. We are studying how small changes in the ground can slow runoff and make room for a more varied meadow.",
+      "observations": [
+        {
+          "season": "Early spring",
+          "waterTable": "0.18 m",
+          "vegetation": "Rush / wet grass",
+          "note": "Standing water persists at the lower gate for eleven days after rain."
+        },
+        {
+          "season": "High summer",
+          "waterTable": "0.72 m",
+          "vegetation": "Yarrow / fescue",
+          "note": "The ridge dries first. Seed heads remain intact where mowing is delayed."
+        },
+        {
+          "season": "Late autumn",
+          "waterTable": "0.31 m",
+          "vegetation": "Sedge / reed",
+          "note": "A shallow channel reconnects to the stream after two consecutive wet days."
+        }
+      ],
+      "intervention": "Cut three shallow swales along the contour. Reuse the excavated soil to raise dry walking edges, keep the lower meadow unmown until August, and record infiltration after each significant rainfall. The first year is a reversible trial across one hectare."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "practice": "Research practice.",
+      "title": "Project title.",
+      "site": "Site location and survey reference.",
+      "hypothesis": "Project hypothesis.",
+      "observations": "Seasonal field records.",
+      "intervention": "Land intervention proposal."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "practice": "string",
+      "title": "string",
+      "site": "string",
+      "hypothesis": "string",
+      "observations": "readonly LandscapeObservation[]",
+      "intervention": "string"
+    },
+    "events": {},
+    "gzipBytes": 4497
+  },
+  {
+    "slug": "letterpress-broadside",
+    "title": "Letterpress Broadside",
+    "category": "sections",
+    "description": "A public announcement composed as a typographic broadside with meeting details, an agenda, and print marks.",
+    "tags": [
+      "publication",
+      "one-page",
+      "letterpress-broadside"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "deck": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "date": {
+        "type": "string"
+      },
+      "place": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "nav a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "LetterpressBroadside",
+    "defaults": {
+      "title": "The right to\ncommon ground",
+      "deck": "An open assembly on the spaces we share, the things we borrow, and the city we can make together.",
+      "date": "24 OCTOBER / SATURDAY",
+      "place": "THE OLD PRINT WORKS / HALL 02"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The announcement headline.",
+      "deck": "The opening statement.",
+      "date": "The meeting date.",
+      "place": "The meeting location."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "deck": "string",
+      "date": "string",
+      "place": "string"
+    },
+    "events": {},
+    "gzipBytes": 3496
   },
   {
     "slug": "liquid-glass-hero",
@@ -12122,6 +14586,261 @@
     "gzipBytes": 1932
   },
   {
+    "slug": "margin-journal",
+    "title": "Margin Journal",
+    "category": "sections",
+    "description": "An essay publication with a narrow marginalia column, a large initial and linked endnotes.",
+    "tags": [
+      "editorial",
+      "margin-journal",
+      "publication",
+      "page"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "publication": {
+        "type": "string"
+      },
+      "issue": {
+        "type": "string"
+      },
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "deck": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "author": {
+        "type": "string"
+      },
+      "paragraphs": {
+        "type": "json"
+      },
+      "notes": {
+        "type": "json"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "exportName": "MarginJournal",
+    "defaults": {
+      "publication": "Margin Journal",
+      "issue": "Volume 03 / Autumn 2026",
+      "title": "The useful\nart of noticing",
+      "deck": "On keeping a record of ordinary places before they become extraordinary memories.",
+      "author": "Elena March",
+      "paragraphs": [
+        "A city gives itself away in the small things. The worn edge of a public bench. A window left open above a bakery. The route a person chooses when there is no reason to hurry. These are not landmarks, yet they hold a place together.",
+        "I began keeping a notebook because photographs were too certain. They showed me what had been there, but rarely what I had failed to see. A sentence leaves room for a question. A drawing admits that a wall might have leaned another way.",
+        "At the corner shop, the owner puts a chair outside each morning. Nobody remembers when this began. The chair is an invitation, an improvised information desk, and a measure of the weather. To describe it accurately requires returning.",
+        "Attention is a practice of revision. The second visit complicates the first; the third offers a different kind of evidence. What seemed empty becomes a waiting place. What seemed quiet becomes a conversation held at a lower volume.",
+        "The notebook is not an archive of everything. It is a record of what mattered enough to slow down for. Its value lies in the gaps, where another observer might begin."
+      ],
+      "notes": [
+        "A field note begins with a time and a location. Interpretation comes afterwards.",
+        "Return to the same place at a different hour. Compare the details, not your conclusions.",
+        "Leave space for the person who knows the place better than you do."
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "publication": "The name of the journal.",
+      "issue": "The issue label and season.",
+      "title": "The essay headline.",
+      "deck": "The introduction beneath the headline.",
+      "author": "The essay author.",
+      "paragraphs": "The essay paragraphs, rendered as plain text.",
+      "notes": "The marginal notes and linked endnotes."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "publication": "string",
+      "issue": "string",
+      "title": "string",
+      "deck": "string",
+      "author": "string",
+      "paragraphs": "readonly string[]",
+      "notes": "readonly string[]"
+    },
+    "events": {},
+    "gzipBytes": 3660
+  },
+  {
+    "slug": "material-library",
+    "title": "Material library",
+    "category": "sections",
+    "description": "An architectural sample register with original surface patterns, a specification ledger, and repair-minded selection criteria.",
+    "tags": [
+      "architecture",
+      "materials",
+      "sample",
+      "index"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "controls": {
+      "practice": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "edition": {
+        "type": "string"
+      },
+      "description": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "samples": {
+        "type": "json"
+      },
+      "selection": {
+        "type": "textarea",
+        "rows": 4
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "MaterialLibrary",
+    "defaults": {
+      "practice": "FORM / Architectural research",
+      "title": "Material register",
+      "edition": "Reference library / Issue 02 / 2026",
+      "description": "A working index of surfaces selected for repairability, honest ageing, and the way they meet the hand.",
+      "samples": [
+        {
+          "name": "Quarter-sawn ash",
+          "family": "Timber / AS-01",
+          "pattern": "grain",
+          "thickness": "22 mm",
+          "use": "Joinery fronts",
+          "care": "Oil annually. Retain spare lengths for local repair."
+        },
+        {
+          "name": "Recast terrazzo",
+          "family": "Mineral / TZ-04",
+          "pattern": "aggregate",
+          "thickness": "30 mm",
+          "use": "Work surfaces",
+          "care": "Seal after installation. Avoid acidic cleaners."
+        },
+        {
+          "name": "Wool felt",
+          "family": "Textile / WF-02",
+          "pattern": "weave",
+          "thickness": "8 mm",
+          "use": "Acoustic lining",
+          "care": "Dry brush. Mechanically fix for replacement."
+        },
+        {
+          "name": "Ribbed clay",
+          "family": "Ceramic / CL-03",
+          "pattern": "rib",
+          "thickness": "18 mm",
+          "use": "Wall cladding",
+          "care": "Wash with neutral soap. Keep the joints accessible."
+        }
+      ],
+      "selection": "Compare assemblies as well as surfaces. A durable sample can still become waste when it is bonded into an irreversible detail. Our preferred specification uses exposed fixings, standard dimensions, and replaceable edges."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "practice": "Practice name.",
+      "title": "Index title.",
+      "edition": "Edition metadata.",
+      "description": "Library description.",
+      "samples": "Material samples and specifications.",
+      "selection": "Selection criteria and research note."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "practice": "string",
+      "title": "string",
+      "edition": "string",
+      "description": "string",
+      "samples": "readonly MaterialSample[]",
+      "selection": "string"
+    },
+    "events": {},
+    "gzipBytes": 4175
+  },
+  {
     "slug": "maximalist-hero",
     "title": "Maximalist Hero",
     "category": "sections",
@@ -12284,7 +15003,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 9343
+    "gzipBytes": 9363
   },
   {
     "slug": "minimal-hero",
@@ -12376,6 +15095,231 @@
     },
     "events": {},
     "gzipBytes": 1954
+  },
+  {
+    "slug": "monograph-spread",
+    "title": "Monograph Spread",
+    "category": "sections",
+    "description": "An artist monograph with facing pages, geometric studies, marginal captions, and an essay with chapter navigation.",
+    "tags": [
+      "publication",
+      "one-page",
+      "monograph-spread"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "artist": {
+        "type": "string"
+      },
+      "deck": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "essay": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "nav a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "MonographSpread",
+    "defaults": {
+      "title": "Making space\nfor silence",
+      "artist": "MARA VOSS",
+      "deck": "Selected works and working notes, 2018–2026.",
+      "essay": "A room is never empty. It holds the distance between a body and a wall, the time between a footstep and its echo. These works begin with that interval."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The book title.",
+      "artist": "The artist name.",
+      "deck": "The book subtitle.",
+      "essay": "The opening essay paragraph."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "artist": "string",
+      "deck": "string",
+      "essay": "string"
+    },
+    "events": {},
+    "gzipBytes": 3987
+  },
+  {
+    "slug": "museum-acquisition",
+    "title": "Museum Acquisition",
+    "category": "sections",
+    "description": "A museum accession record with original object drawings, a provenance timeline, and expandable conservation notes.",
+    "tags": [
+      "culture",
+      "editorial",
+      "museum-acquisition"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "string"
+      },
+      "museum": {
+        "type": "string"
+      },
+      "accession": {
+        "type": "string"
+      },
+      "maker": {
+        "type": "string"
+      },
+      "description": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "provenance": {
+        "type": "json"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "details:not([open]) summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": null
+        },
+        {
+          "step": "expectFocus",
+          "selector": "summary"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "MuseumAcquisition",
+    "defaults": {
+      "title": "Portable reading lamp",
+      "museum": "Museum of Everyday Design",
+      "accession": "2025.041.01",
+      "maker": "Atelier Brune / Lyon, France / c. 1932",
+      "description": "A compact lamp designed to travel between desk, bedside, and workshop. Its hinged stem and folded shade reveal a careful negotiation between utility, material, and movement.",
+      "provenance": [
+        {
+          "year": "c. 1932",
+          "account": "Made by Atelier Brune, Lyon. Maker’s stamp on the underside of the base."
+        },
+        {
+          "year": "1933–1987",
+          "account": "Used in the Lenoir family workshop. Recorded in a 1956 inventory."
+        },
+        {
+          "year": "1987–2024",
+          "account": "Private collection of Elise Lenoir. Stored with original packing label."
+        },
+        {
+          "year": "2025",
+          "account": "Gift of the Lenoir family to the Museum of Everyday Design."
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The object title.",
+      "museum": "The museum or collection name.",
+      "accession": "The accession identifier.",
+      "maker": "The object maker and place.",
+      "description": "The curatorial description.",
+      "provenance": "The documented provenance events."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "museum": "string",
+      "accession": "string",
+      "maker": "string",
+      "description": "string",
+      "provenance": "readonly AcquisitionEvent[]"
+    },
+    "events": {},
+    "gzipBytes": 4291
   },
   {
     "slug": "neumorphic-hero",
@@ -12510,6 +15454,576 @@
     },
     "events": {},
     "gzipBytes": 5881
+  },
+  {
+    "slug": "nocturne-film",
+    "title": "Nocturne Film",
+    "category": "sections",
+    "description": "A fictional noir screening page with a tall typographic poster, screening programme, and film credits.",
+    "tags": [
+      "editorial",
+      "microsite",
+      "cinematic",
+      "nocturne"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "description": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "edition": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "true"
+        },
+        {
+          "step": "expectEvent",
+          "name": "reveal",
+          "detail": {
+            "expanded": true
+          }
+        },
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "false"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "NocturneFilm",
+    "defaults": {
+      "title": "NOCTURNE",
+      "description": "A city. A missing voice. One last train before the morning.",
+      "edition": "AFTER HOURS CINEMA / PROGRAMME 07"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The page headline. Line breaks preserve the editorial composition.",
+      "description": "Introductory copy beneath the headline.",
+      "edition": "The archive or programme label in the masthead."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "description": "string",
+      "edition": "string"
+    },
+    "events": {
+      "reveal": {
+        "doc": "Reports the reader opening or closing the supplementary note.",
+        "detail": "{ expanded: boolean }"
+      }
+    },
+    "gzipBytes": 4353
+  },
+  {
+    "slug": "observatory-bulletin",
+    "title": "Observatory Bulletin",
+    "category": "sections",
+    "description": "An astronomical field bulletin with an original sky diagram, observing table, equipment notes, and a log disclosure.",
+    "tags": [
+      "publication",
+      "one-page",
+      "observatory-bulletin"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "station": {
+        "type": "string"
+      },
+      "issue": {
+        "type": "string"
+      },
+      "note": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "nav a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "ObservatoryBulletin",
+    "defaults": {
+      "title": "A night at the\nedge of winter",
+      "station": "NORTH RIDGE OBSERVATORY",
+      "issue": "BULLETIN 038 / NOVEMBER 2026",
+      "note": "Before dawn, the eastern sky opens a clear window between the roofline and the ridge. The observing plan favours bright targets and patient eyes."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The bulletin headline.",
+      "station": "The observing station.",
+      "issue": "The bulletin issue.",
+      "note": "The field note."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "station": "string",
+      "issue": "string",
+      "note": "string"
+    },
+    "events": {},
+    "gzipBytes": 4347
+  },
+  {
+    "slug": "oral-history",
+    "title": "Oral History",
+    "category": "sections",
+    "description": "An interview transcript with alternating speaker labels, a spanning pullquote and a chapter index.",
+    "tags": [
+      "editorial",
+      "oral-history",
+      "publication",
+      "page"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "publication": {
+        "type": "string"
+      },
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "subject": {
+        "type": "string"
+      },
+      "introduction": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "quote": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "chapters": {
+        "type": "json"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "exportName": "OralHistory",
+    "defaults": {
+      "publication": "Oral History / Working Lives",
+      "title": "“You learn a place\nby caring for it.”",
+      "subject": "Mara Ellis / Community gardener",
+      "introduction": "An afternoon conversation about borrowed ground, patient work and the knowledge passed from one pair of hands to another. Recorded in the garden shed, with the door open.",
+      "quote": "The garden was never empty. We just had to learn how to see what was already growing.",
+      "chapters": [
+        {
+          "title": "The first season",
+          "time": "00:00",
+          "question": "Do you remember the first day you came here?",
+          "answer": "I remember the gate. It would not open all the way because the grass had grown through the hinge. Someone had left a kettle inside the shed, and that made the place feel less abandoned. We made tea before we made a plan."
+        },
+        {
+          "title": "Learning the ground",
+          "time": "08:24",
+          "question": "How did you decide what to grow?",
+          "answer": "We asked what people missed. Not what would look impressive, but what they wanted to cook. Beans came first. Then herbs, because you can give someone a handful on their way home. The soil told us the rest over several seasons."
+        },
+        {
+          "title": "Passing it on",
+          "time": "19:10",
+          "question": "What do you hope the next group will keep?",
+          "answer": "The habit of asking. Nobody owns all the knowledge here. One person knows the compost, another knows when the frost comes, another knows which neighbour needs a chair. The work stays possible because it is shared."
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "publication": "The oral history series name.",
+      "title": "The interview headline.",
+      "subject": "The interview subject and role.",
+      "introduction": "The introduction to the conversation.",
+      "quote": "The highlighted excerpt.",
+      "chapters": "The chapter index and interview exchanges."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "publication": "string",
+      "title": "string",
+      "subject": "string",
+      "introduction": "string",
+      "quote": "string",
+      "chapters": "readonly { title: string; time: string; question: string; answer: string }[]"
+    },
+    "events": {},
+    "gzipBytes": 3532
+  },
+  {
+    "slug": "orbital-log",
+    "title": "Orbital Log",
+    "category": "sections",
+    "description": "A mission documentary with a circular orbital schematic, timestamped observation log, and mission notes.",
+    "tags": [
+      "editorial",
+      "microsite",
+      "cinematic",
+      "orbital"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "description": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "edition": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "true"
+        },
+        {
+          "step": "expectEvent",
+          "name": "reveal",
+          "detail": {
+            "expanded": true
+          }
+        },
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "false"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "OrbitalLog",
+    "defaults": {
+      "title": "THE VIEW\nFROM HERE",
+      "description": "An observer’s account of one complete revolution, aboard the fictional survey vessel Meridian.",
+      "edition": "MERIDIAN / MISSION DOCUMENTARY 01"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The page headline. Line breaks preserve the editorial composition.",
+      "description": "Introductory copy beneath the headline.",
+      "edition": "The archive or programme label in the masthead."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "description": "string",
+      "edition": "string"
+    },
+    "events": {
+      "reveal": {
+        "doc": "Reports the reader opening or closing the supplementary note.",
+        "detail": "{ expanded: boolean }"
+      }
+    },
+    "gzipBytes": 4192
+  },
+  {
+    "slug": "photo-contact-sheet",
+    "title": "Photo contact sheet",
+    "category": "sections",
+    "description": "A photography collection with original tonal plates, a numbered contact sheet, and selectable frame commentary.",
+    "tags": [
+      "photography",
+      "portfolio",
+      "contact sheet"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "[data-role=\"frames\"] figure:nth-child(2) button"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-role=\"frames\"] figure:nth-child(2) button",
+          "name": "aria-pressed",
+          "value": "true"
+        }
+      ]
+    ],
+    "controls": {
+      "photographer": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "edition": {
+        "type": "string"
+      },
+      "introduction": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "frames": {
+        "type": "json"
+      },
+      "commentary": {
+        "type": "textarea",
+        "rows": 5
+      }
+    },
+    "original": true,
+    "credits": [],
+    "exportName": "PhotoContactSheet",
+    "defaults": {
+      "photographer": "Mara Ellis / Photography",
+      "title": "The shape of quiet",
+      "edition": "Field studies · Volume 03 · 2026",
+      "introduction": "Six observations of ordinary structures, made during the hour when the city gives its surfaces back to the light.",
+      "frames": [
+        {
+          "title": "Stairwell, 07:12",
+          "note": "North elevation / 1⁄125 s",
+          "study": "stairs"
+        },
+        {
+          "title": "A room without a roof",
+          "note": "Canal district / 1⁄60 s",
+          "study": "arch"
+        },
+        {
+          "title": "Four panes",
+          "note": "Workshop interior / 1⁄250 s",
+          "study": "window"
+        },
+        {
+          "title": "Water against stone",
+          "note": "East quay / 1⁄500 s",
+          "study": "water"
+        },
+        {
+          "title": "Folded afternoon",
+          "note": "Studio study / 1⁄30 s",
+          "study": "fold"
+        },
+        {
+          "title": "Last wall standing",
+          "note": "Railway yard / 1⁄125 s",
+          "study": "tower"
+        }
+      ],
+      "commentary": "An edge can describe a whole room. In these studies, the object is less important than the interval around it: a gap, a shadow, a narrow strip of morning. Each frame is drawn here as a tonal plate, preserving the proportions of the observation rather than borrowing a photograph."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "photographer": "Photographer name.",
+      "title": "Collection title.",
+      "edition": "Edition and date.",
+      "introduction": "Introduction to the series.",
+      "frames": "Numbered studies in the contact sheet.",
+      "commentary": "Curatorial note accompanying the selected frame."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "photographer": "string",
+      "title": "string",
+      "edition": "string",
+      "introduction": "string",
+      "frames": "readonly PhotoFrame[]",
+      "commentary": "string"
+    },
+    "events": {},
+    "gzipBytes": 4175
   },
   {
     "slug": "pixel-art-hero",
@@ -12655,6 +16169,109 @@
     },
     "events": {},
     "gzipBytes": 7742
+  },
+  {
+    "slug": "polar-expedition",
+    "title": "Polar Expedition",
+    "category": "sections",
+    "description": "A polar field notebook with a route topology, specimen annotations, dispatches, and expedition details.",
+    "tags": [
+      "editorial",
+      "microsite",
+      "cinematic",
+      "polar"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "description": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "edition": {
+        "type": "string"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "true"
+        },
+        {
+          "step": "expectEvent",
+          "name": "reveal",
+          "detail": {
+            "expanded": true
+          }
+        },
+        {
+          "step": "click",
+          "selector": "[data-part=note-toggle]"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "[data-part=note-toggle]",
+          "name": "aria-expanded",
+          "value": "false"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "PolarExpedition",
+    "defaults": {
+      "title": "At the edge\nof the known.",
+      "description": "Route notes, collected specimens and four dispatches from the fictional White Reach expedition.",
+      "edition": "WHITE REACH / FIELD NOTEBOOK 09"
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The page headline. Line breaks preserve the editorial composition.",
+      "description": "Introductory copy beneath the headline.",
+      "edition": "The archive or programme label in the masthead."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "description": "string",
+      "edition": "string"
+    },
+    "events": {
+      "reveal": {
+        "doc": "Reports the reader opening or closing the supplementary note.",
+        "detail": "{ expanded: boolean }"
+      }
+    },
+    "gzipBytes": 4575
   },
   {
     "slug": "pricing",
@@ -12820,6 +16437,102 @@
     "gzipBytes": 3189
   },
   {
+    "slug": "public-lecture",
+    "title": "Public Lecture",
+    "category": "sections",
+    "description": "A public lecture page with an annotated argument diagram, a thesis, a timed programme, and reservation information.",
+    "tags": [
+      "publication",
+      "one-page",
+      "public-lecture"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "speaker": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string"
+      },
+      "thesis": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "nav a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "PublicLecture",
+    "defaults": {
+      "title": "Can a city\nlearn to listen?",
+      "speaker": "DR. ELIAN PARK",
+      "date": "THURSDAY 19 NOVEMBER 2026",
+      "thesis": "A city becomes more intelligent when it makes room for disagreement. Listening is not a passive act. It is a form of public infrastructure."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The lecture question.",
+      "speaker": "The speaker name.",
+      "date": "The event date.",
+      "thesis": "The lecture thesis."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "speaker": "string",
+      "date": "string",
+      "thesis": "string"
+    },
+    "events": {},
+    "gzipBytes": 3937
+  },
+  {
     "slug": "quote-band",
     "title": "Quote Band",
     "category": "sections",
@@ -12925,6 +16638,243 @@
     },
     "events": {},
     "gzipBytes": 3059
+  },
+  {
+    "slug": "reading-room",
+    "title": "Reading Room",
+    "category": "sections",
+    "description": "A quiet reading portal with a shelf index, long essay surface and annotated bibliography.",
+    "tags": [
+      "editorial",
+      "reading-room",
+      "publication",
+      "page"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "publication": {
+        "type": "string"
+      },
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "introduction": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "paragraphs": {
+        "type": "json"
+      },
+      "books": {
+        "type": "json"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "exportName": "ReadingRoom",
+    "defaults": {
+      "publication": "The Reading Room",
+      "title": "A room made\nby its readers",
+      "introduction": "A short essay on the spaces we create when we read together, and a shelf of books to continue the conversation.",
+      "paragraphs": [
+        "The first thing you notice is the silence. Not an absence of sound, but an agreement about which sounds belong: a page turning, a chair moving, the soft arrival of someone who has been here before.",
+        "A reading room is a peculiar kind of public space. Its occupants are together without having to perform being together. Each person follows a private line of thought, held within a shared frame of time and light.",
+        "The shelves make that frame visible. A book is placed beside another book, and an accidental conversation begins. A history of a river meets a manual for repairing a chair. A poem interrupts a catalogue. The room gains a geography that no floor plan can show.",
+        "Good libraries make room for unfinished questions. They offer a desk, a margin, a date stamped on a slip. They trust that a reader may leave with something that cannot yet be named."
+      ],
+      "books": [
+        {
+          "title": "A Pattern Language",
+          "author": "Christopher Alexander et al.",
+          "year": "1977",
+          "note": "A vocabulary for considering the relationship between rooms, streets and daily life."
+        },
+        {
+          "title": "The Poetics of Space",
+          "author": "Gaston Bachelard",
+          "year": "1958",
+          "note": "An inquiry into the rooms we carry in memory and imagination."
+        },
+        {
+          "title": "A Room of One’s Own",
+          "author": "Virginia Woolf",
+          "year": "1929",
+          "note": "An argument for the material conditions that allow thought and writing to flourish."
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "publication": "The reading room name.",
+      "title": "The featured essay title.",
+      "introduction": "The essay introduction.",
+      "paragraphs": "The essay paragraphs.",
+      "books": "The shelf index and annotated bibliography."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "publication": "string",
+      "title": "string",
+      "introduction": "string",
+      "paragraphs": "readonly string[]",
+      "books": "readonly { title: string; author: string; year: string; note: string }[]"
+    },
+    "events": {},
+    "gzipBytes": 3667
+  },
+  {
+    "slug": "repertory-playbill",
+    "title": "Repertory Playbill",
+    "category": "sections",
+    "description": "A folded theatre playbill with cast billing, an original stage plan, and audience information.",
+    "tags": [
+      "culture",
+      "editorial",
+      "repertory-playbill"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "title": {
+        "type": "string"
+      },
+      "theatre": {
+        "type": "string"
+      },
+      "season": {
+        "type": "string"
+      },
+      "synopsis": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "cast": {
+        "type": "json"
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "RepertoryPlaybill",
+    "defaults": {
+      "title": "A room for the sea",
+      "theatre": "The Common Stage",
+      "season": "AUTUMN REPERTORY / 14 OCT—08 NOV",
+      "synopsis": "An island house. A storm approaching. Three siblings return to decide what to keep, and discover that a room can hold more than its walls.",
+      "cast": [
+        {
+          "role": "Mara",
+          "name": "Nina Ellis"
+        },
+        {
+          "role": "Ivo",
+          "name": "Samir Dey"
+        },
+        {
+          "role": "June",
+          "name": "Frances Lake"
+        },
+        {
+          "role": "The visitor",
+          "name": "Theo Moss"
+        },
+        {
+          "role": "Live sound",
+          "name": "Ruth Amari"
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "title": "The title of the production.",
+      "theatre": "The presenting theatre.",
+      "season": "The performance season.",
+      "synopsis": "The premise of the production.",
+      "cast": "Cast members in billing order."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "title": "string",
+      "theatre": "string",
+      "season": "string",
+      "synopsis": "string",
+      "cast": "readonly RepertoryCast[]"
+    },
+    "events": {},
+    "gzipBytes": 3784
   },
   {
     "slug": "scrapbook-hero",
@@ -13252,6 +17202,295 @@
     },
     "events": {},
     "gzipBytes": 8052
+  },
+  {
+    "slug": "sound-practice",
+    "title": "Sound practice",
+    "category": "sections",
+    "description": "A sound designer portfolio with original waveform scores, project timelines, and listening annotations.",
+    "tags": [
+      "portfolio",
+      "one-page",
+      "sound-practice"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "artist": {
+        "type": "string"
+      },
+      "intro": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "projects": {
+        "type": "json"
+      },
+      "approach": {
+        "type": "textarea",
+        "rows": 4
+      },
+      "services": {
+        "type": "json"
+      },
+      "contact": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": null
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "SoundPractice",
+    "defaults": {
+      "label": "Sound design portfolio",
+      "artist": "Noah Sato",
+      "intro": "Sound for spaces, stories, and the moments in between. An independent practice in composition, field recording, and careful listening.",
+      "projects": [
+        {
+          "title": "Room Tone",
+          "medium": "Spatial installation / 2026",
+          "duration": "08:24",
+          "description": "A four-channel composition built from the everyday acoustics of an empty house. Footsteps, pipes, and window resonance become an evolving portrait of a place.",
+          "note": "Begin with the room itself. A low pulse enters at 00:40. At 03:10 the close microphone gives way to the distant courtyard. The final minute leaves only air."
+        },
+        {
+          "title": "Tidal Memory",
+          "medium": "Short film / 2025",
+          "duration": "12:08",
+          "description": "Original score and location sound for a film about a coastline in transition. Bowed textures follow the shoreline; recurring fragments mark the return of the tide.",
+          "note": "Listen for the dry percussion against the slow strings. The recurring three-note motif is deliberately incomplete until the last shot."
+        },
+        {
+          "title": "Between Stations",
+          "medium": "Radio piece / 2025",
+          "duration": "06:36",
+          "description": "An audio essay assembled from railway announcements, night trains, and conversations recorded at the edges of travel.",
+          "note": "The voice stays close and unprocessed. Environmental recordings shift the listener’s sense of distance without overwhelming the words."
+        }
+      ],
+      "approach": "I begin by listening to the material already present: a room, a voice, a rhythm, a story. The work develops through recordings, sketches, and conversations. Silence is part of the arrangement, not a gap to fill.",
+      "services": [
+        "Original composition",
+        "Sound design and editorial",
+        "Field and location recording",
+        "Spatial audio and installations"
+      ],
+      "contact": "For a film, installation, or listening project, write to sound@noahsato.example. Include a short brief, the expected format, and your production schedule."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "Accessible name for the portfolio.",
+      "artist": "Artist name.",
+      "intro": "Portfolio introduction.",
+      "projects": "Project score records.",
+      "approach": "Studio approach.",
+      "services": "Studio capabilities.",
+      "contact": "Contact information."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "artist": "string",
+      "intro": "string",
+      "projects": "readonly SoundProject[]",
+      "approach": "string",
+      "services": "readonly string[]",
+      "contact": "string"
+    },
+    "events": {},
+    "gzipBytes": 4308
+  },
+  {
+    "slug": "specimen-review",
+    "title": "Specimen Review",
+    "category": "sections",
+    "description": "A science and culture review with an original specimen drawing, comparison table and numbered annotations.",
+    "tags": [
+      "editorial",
+      "specimen-review",
+      "publication",
+      "page"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "publication": {
+        "type": "string"
+      },
+      "title": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "subtitle": {
+        "type": "string"
+      },
+      "specimen": {
+        "type": "string"
+      },
+      "observations": {
+        "type": "json"
+      },
+      "comparisons": {
+        "type": "json"
+      }
+    },
+    "original": true,
+    "credits": [],
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        }
+      ]
+    ],
+    "exportName": "SpecimenReview",
+    "defaults": {
+      "publication": "Specimen / Quarterly Review 06",
+      "title": "An object,\nclosely read.",
+      "subtitle": "What a seed pod can teach us about designing for a second life.",
+      "specimen": "Plate 014 / Dry seed capsule",
+      "observations": [
+        {
+          "label": "Structure",
+          "text": "A light shell is reinforced only where force gathers. The ribs do not repeat for decoration; they follow the work."
+        },
+        {
+          "label": "Opening",
+          "text": "The seam acts as a release. A change in moisture turns a closed container into a distribution system."
+        },
+        {
+          "label": "Afterlife",
+          "text": "Once emptied, the object remains legible. Its wear is evidence of a task completed rather than a surface spoiled."
+        }
+      ],
+      "comparisons": [
+        {
+          "material": "Seed capsule",
+          "mass": 0.8,
+          "span": 34,
+          "response": "Opens along a prepared seam"
+        },
+        {
+          "material": "Folded paper",
+          "mass": 1.2,
+          "span": 30,
+          "response": "Bends with the fold"
+        },
+        {
+          "material": "Fired clay",
+          "mass": 16.4,
+          "span": 30,
+          "response": "Keeps its shape under load"
+        }
+      ]
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "publication": "The review masthead.",
+      "title": "The review headline.",
+      "subtitle": "The question framing the review.",
+      "specimen": "The specimen label.",
+      "observations": "The numbered observational annotations.",
+      "comparisons": "The illustrative measurements and material response rows."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "publication": "string",
+      "title": "string",
+      "subtitle": "string",
+      "specimen": "string",
+      "observations": "readonly { label: string; text: string }[]",
+      "comparisons": "readonly { material: string; mass: number; span: number; response: string }[]"
+    },
+    "events": {},
+    "gzipBytes": 3998
   },
   {
     "slug": "stats-kpi",
@@ -13857,6 +18096,158 @@
     },
     "events": {},
     "gzipBytes": 5002
+  },
+  {
+    "slug": "type-foundry",
+    "title": "Type foundry",
+    "category": "sections",
+    "description": "A type specimen page with a giant glyph, alphabet and size studies, and specimen licensing notes.",
+    "tags": [
+      "portfolio",
+      "one-page",
+      "type-foundry"
+    ],
+    "facets": [
+      "static",
+      "text",
+      "interactive"
+    ],
+    "wave": 13,
+    "release": "microsites-2026-10-04",
+    "animated": false,
+    "decorative": false,
+    "stage": "flow",
+    "palette": [
+      "fg",
+      "bg",
+      "accent",
+      "muted"
+    ],
+    "controls": {
+      "foundry": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "glyph": {
+        "type": "string"
+      },
+      "intro": {
+        "type": "textarea",
+        "rows": 3
+      },
+      "alphabet": {
+        "type": "textarea",
+        "rows": 2
+      },
+      "numerals": {
+        "type": "string"
+      },
+      "phrase": {
+        "type": "string"
+      },
+      "features": {
+        "type": "json"
+      },
+      "license": {
+        "type": "textarea",
+        "rows": 4
+      },
+      "contact": {
+        "type": "textarea",
+        "rows": 3
+      }
+    },
+    "interactions": [
+      [
+        {
+          "step": "press",
+          "key": "Tab"
+        },
+        {
+          "step": "expectFocus",
+          "selector": "a"
+        }
+      ],
+      [
+        {
+          "step": "click",
+          "selector": "summary"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": ""
+        },
+        {
+          "step": "press",
+          "key": "Enter"
+        },
+        {
+          "step": "expectAttr",
+          "selector": "details",
+          "name": "open",
+          "value": null
+        }
+      ]
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "TypeFoundry",
+    "defaults": {
+      "label": "Typeface specimen",
+      "foundry": "Counterform / Independent type",
+      "name": "Aperture",
+      "glyph": "Ag",
+      "intro": "A study in open forms. Aperture brings a generous rhythm to long reading and an unmistakable voice to large words.",
+      "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz",
+      "numerals": "0123456789 & @ ! ? ( ) [ ] / + =",
+      "phrase": "Form follows feeling.",
+      "features": [
+        "Open counters preserve clarity at small sizes.",
+        "A generous x-height gives short words a quiet presence.",
+        "Rhythmic spacing makes long passages feel unhurried.",
+        "Figures and punctuation share the alphabet’s deliberate texture."
+      ],
+      "license": "This page is a visual specimen of the host font. It does not contain a font file. For the finished typeface, request a desktop, web, or editorial license from the foundry. License scope is agreed per project.",
+      "contact": "Write to type@counterform.example with the family, number of users, and intended media. We will help you choose the right license."
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "label": "Accessible name for the specimen.",
+      "foundry": "Foundry name.",
+      "name": "Typeface name.",
+      "glyph": "Large specimen character.",
+      "intro": "Introduction to the typeface.",
+      "alphabet": "Alphabet specimen.",
+      "numerals": "Numeral and punctuation specimen.",
+      "phrase": "Phrase used in the size studies.",
+      "features": "Typeface feature descriptions.",
+      "license": "License notes.",
+      "contact": "Contact and purchase instructions."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "label": "string",
+      "foundry": "string",
+      "name": "string",
+      "glyph": "string",
+      "intro": "string",
+      "alphabet": "string",
+      "numerals": "string",
+      "phrase": "string",
+      "features": "readonly string[]",
+      "license": "string",
+      "contact": "string"
+    },
+    "events": {},
+    "gzipBytes": 4005
   },
   {
     "slug": "victorian-hero",

@@ -2104,6 +2104,46 @@
       }
     },
     {
+      "name": "architect-dossier",
+      "type": "registry:component",
+      "title": "Architect dossier",
+      "description": "An architectural project dossier with original plan drawings, marginal specifications, and design notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/architect-dossier.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "archive-finding-aid",
+      "type": "registry:component",
+      "title": "Archive Finding Aid",
+      "description": "An institutional finding aid with a collection identifier, arrangement tree, and expandable series descriptions.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/archive-finding-aid.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "article-lead",
       "type": "registry:component",
       "title": "Article Lead",
@@ -2184,6 +2224,26 @@
       }
     },
     {
+      "name": "botanical-atelier",
+      "type": "registry:component",
+      "title": "Botanical atelier",
+      "description": "A botanical portfolio arranged as an herbarium cabinet with original drawings, taxonomy, and field notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/botanical-atelier.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "brutalist-hero",
       "type": "registry:component",
       "title": "Brutalist Hero",
@@ -2194,6 +2254,106 @@
       "files": [
         {
           "path": "public/react/brutalist-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "cartographic-story",
+      "type": "registry:component",
+      "title": "Cartographic Story",
+      "description": "A narrative map essay with a traced walking route, numbered field captions, a journey essay, and route notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/cartographic-story.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ceramic-studio",
+      "type": "registry:component",
+      "title": "Ceramic studio",
+      "description": "A ceramic maker collection with original vessel drawings, process notes, and a kiln edition ledger.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/ceramic-studio.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "choreographic-score",
+      "type": "registry:component",
+      "title": "Choreographic score",
+      "description": "A contemporary dance program with original movement notation, a timed instruction score, cast credits, and audience information.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/choreographic-score.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "cinemateque-program",
+      "type": "registry:component",
+      "title": "Cinemateque Program",
+      "description": "A repertory cinema program with an oversized screening date, asymmetric schedule, and projection notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/cinemateque-program.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "city-atlas",
+      "type": "registry:component",
+      "title": "City Atlas",
+      "description": "An urban publication with an original block map, address index and district narratives.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/city-atlas.tsx",
           "type": "registry:component"
         }
       ],
@@ -2224,6 +2384,26 @@
       }
     },
     {
+      "name": "conservation-report",
+      "type": "registry:component",
+      "title": "Conservation Report",
+      "description": "A restoration case study with a condition elevation, paired intervention drawings, an evidence table, and a treatment timeline.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/conservation-report.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "contact-panel",
       "type": "registry:component",
       "title": "Contact Panel",
@@ -2244,6 +2424,26 @@
       }
     },
     {
+      "name": "culinary-notebook",
+      "type": "registry:component",
+      "title": "Culinary notebook",
+      "description": "A cookbook recipe spread with an original still-life drawing, ingredient weights, timed methods, and practical kitchen notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/culinary-notebook.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "cyberpunk-hero",
       "type": "registry:component",
       "title": "Cyberpunk Hero",
@@ -2254,6 +2454,26 @@
       "files": [
         {
           "path": "public/react/cyberpunk-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "desert-transmission",
+      "type": "registry:component",
+      "title": "Desert Transmission",
+      "description": "A fictional desert expedition archive with a horizon drawing, transcript bands, and field inventory.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/desert-transmission.tsx",
           "type": "registry:component"
         }
       ],
@@ -2324,6 +2544,126 @@
       }
     },
     {
+      "name": "exhibition-labels",
+      "type": "registry:component",
+      "title": "Exhibition Labels",
+      "description": "A gallery catalogue pairing numbered original abstract studies with varied art proportions and curatorial labels.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/exhibition-labels.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "fashion-lookbook",
+      "type": "registry:component",
+      "title": "Fashion lookbook",
+      "description": "An atelier collection presented through asymmetric folio spreads, original garment silhouettes, and technical drawings.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/fashion-lookbook.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "festival-route",
+      "type": "registry:component",
+      "title": "Festival Route",
+      "description": "A neighbourhood arts walk with an original schematic route, ordered venues, and accessible event information.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/festival-route.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "field-dispatch",
+      "type": "registry:component",
+      "title": "Field Dispatch",
+      "description": "A travel dispatch with an original route diagram, dated telegrams and a field notebook.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/field-dispatch.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "folio-index",
+      "type": "registry:component",
+      "title": "Folio index",
+      "description": "A designer portfolio with a numbered project index, project dossiers, and a practice statement.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/folio-index.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "forum-rome",
+      "type": "registry:component",
+      "title": "Forum Rome",
+      "description": "A Roman civic exhibition with an architectural arch, excavation ledger, and visitor notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/forum-rome.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "glass-hero",
       "type": "registry:component",
       "title": "Glass Hero",
@@ -2354,6 +2694,66 @@
       "files": [
         {
           "path": "public/react/hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "homeward-voyage",
+      "type": "registry:component",
+      "title": "Homeward Voyage",
+      "description": "A five chapter coastal return narrative with an illustrated route, an intimate reading column, and voyage notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/homeward-voyage.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "landscape-study",
+      "type": "registry:component",
+      "title": "Landscape study",
+      "description": "A landscape research page with original contour and transect diagrams, seasonal field measurements, and a reversible land trial.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/landscape-study.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "letterpress-broadside",
+      "type": "registry:component",
+      "title": "Letterpress Broadside",
+      "description": "A public announcement composed as a typographic broadside with meeting details, an agenda, and print marks.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/letterpress-broadside.tsx",
           "type": "registry:component"
         }
       ],
@@ -2404,6 +2804,46 @@
       }
     },
     {
+      "name": "margin-journal",
+      "type": "registry:component",
+      "title": "Margin Journal",
+      "description": "An essay publication with a narrow marginalia column, a large initial and linked endnotes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/margin-journal.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "material-library",
+      "type": "registry:component",
+      "title": "Material library",
+      "description": "An architectural sample register with original surface patterns, a specification ledger, and repair-minded selection criteria.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/material-library.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "maximalist-hero",
       "type": "registry:component",
       "title": "Maximalist Hero",
@@ -2444,6 +2884,46 @@
       }
     },
     {
+      "name": "monograph-spread",
+      "type": "registry:component",
+      "title": "Monograph Spread",
+      "description": "An artist monograph with facing pages, geometric studies, marginal captions, and an essay with chapter navigation.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/monograph-spread.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "museum-acquisition",
+      "type": "registry:component",
+      "title": "Museum Acquisition",
+      "description": "A museum accession record with original object drawings, a provenance timeline, and expandable conservation notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/museum-acquisition.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "neumorphic-hero",
       "type": "registry:component",
       "title": "Neumorphic Hero",
@@ -2464,6 +2944,106 @@
       }
     },
     {
+      "name": "nocturne-film",
+      "type": "registry:component",
+      "title": "Nocturne Film",
+      "description": "A fictional noir screening page with a tall typographic poster, screening programme, and film credits.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/nocturne-film.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "observatory-bulletin",
+      "type": "registry:component",
+      "title": "Observatory Bulletin",
+      "description": "An astronomical field bulletin with an original sky diagram, observing table, equipment notes, and a log disclosure.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/observatory-bulletin.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "oral-history",
+      "type": "registry:component",
+      "title": "Oral History",
+      "description": "An interview transcript with alternating speaker labels, a spanning pullquote and a chapter index.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/oral-history.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "orbital-log",
+      "type": "registry:component",
+      "title": "Orbital Log",
+      "description": "A mission documentary with a circular orbital schematic, timestamped observation log, and mission notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/orbital-log.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "photo-contact-sheet",
+      "type": "registry:component",
+      "title": "Photo contact sheet",
+      "description": "A photography collection with original tonal plates, a numbered contact sheet, and selectable frame commentary.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/photo-contact-sheet.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "pixel-art-hero",
       "type": "registry:component",
       "title": "Pixel Art Hero",
@@ -2474,6 +3054,26 @@
       "files": [
         {
           "path": "public/react/pixel-art-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "polar-expedition",
+      "type": "registry:component",
+      "title": "Polar Expedition",
+      "description": "A polar field notebook with a route topology, specimen annotations, dispatches, and expedition details.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/polar-expedition.tsx",
           "type": "registry:component"
         }
       ],
@@ -2512,6 +3112,26 @@
       }
     },
     {
+      "name": "public-lecture",
+      "type": "registry:component",
+      "title": "Public Lecture",
+      "description": "A public lecture page with an annotated argument diagram, a thesis, a timed programme, and reservation information.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/public-lecture.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "quote-band",
       "type": "registry:component",
       "title": "Quote Band",
@@ -2522,6 +3142,46 @@
       "files": [
         {
           "path": "public/react/quote-band.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "reading-room",
+      "type": "registry:component",
+      "title": "Reading Room",
+      "description": "A quiet reading portal with a shelf index, long essay surface and annotated bibliography.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/reading-room.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "repertory-playbill",
+      "type": "registry:component",
+      "title": "Repertory Playbill",
+      "description": "A folded theatre playbill with cast billing, an original stage plan, and audience information.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/repertory-playbill.tsx",
           "type": "registry:component"
         }
       ],
@@ -2562,6 +3222,46 @@
       "files": [
         {
           "path": "public/react/sketch-hero.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "sound-practice",
+      "type": "registry:component",
+      "title": "Sound practice",
+      "description": "A sound designer portfolio with original waveform scores, project timelines, and listening annotations.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/sound-practice.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "specimen-review",
+      "type": "registry:component",
+      "title": "Specimen Review",
+      "description": "A science and culture review with an original specimen drawing, comparison table and numbered annotations.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/specimen-review.tsx",
           "type": "registry:component"
         }
       ],
@@ -2657,6 +3357,26 @@
             "license": "W3C document"
           }
         ]
+      }
+    },
+    {
+      "name": "type-foundry",
+      "type": "registry:component",
+      "title": "Type foundry",
+      "description": "A type specimen page with a giant glyph, alphabet and size studies, and specimen licensing notes.",
+      "categories": [
+        "sections"
+      ],
+      "files": [
+        {
+          "path": "public/react/type-foundry.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {

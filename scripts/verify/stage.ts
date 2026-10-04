@@ -1,10 +1,11 @@
 /** Writes the pages verify opens for one component, under .pica/<slug>/: the vanilla file exactly as users
  *  get it, a React harness around the single React file, and, for a component that wraps children, a
  *  vanilla page holding probe children. */
-import { mkdir, writeFile } from "node:fs/promises";
+import { cp, mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { build } from "esbuild";
 import { ROOT, type Entry } from "../catalog";
+import { fontProfileCss } from "../fonts";
 import { DEMO_PAGE_CSS } from "../config";
 import { reactSingleFile, vanillaBundle, vanillaHtml, type VanillaBundle } from "../single-file";
 
@@ -75,7 +76,7 @@ function toReact(node: ChildNode, key: number): ReactNode {
 }
 
 function App() {
-  const initial = w.PICA_PROPS ?? {};
+  const initial = { ...${JSON.stringify(entry.meta.demo?.props ?? {}).replace(/</g, "\\u003c")}, ...(w.PICA_PROPS ?? {}) };
   const echo = w.PICA_ECHO;
   const [held, setHeld] = useState<unknown>(echo ? initial[echo.prop] : undefined);
   const handlers: Record<string, (detail: unknown) => void> = {};
@@ -102,12 +103,15 @@ export async function stage(entry: Entry): Promise<Staged> {
   const dir = join(WORK, slug);
   await mkdir(dir, { recursive: true });
   const bundle = await vanillaBundle(entry);
-  await writeFile(join(dir, "vanilla.html"), vanillaHtml(entry, bundle));
+  const fontHead = entry.meta.wave === 13 ? `<link rel="stylesheet" href="../fonts/fonts.css"><style>${fontProfileCss(slug)}</style>` : "";
+  if (fontHead) await cp(join(ROOT, "public", "fonts"), join(WORK, "fonts"), { recursive: true });
+  const demoHtml = (e: Entry) => vanillaHtml(e, bundle).replace("</head>", `${fontHead}</head>`);
+  await writeFile(join(dir, "vanilla.html"), demoHtml(entry));
   let vanillaProbe: string | null = null;
   if (entry.meta.wraps) {
     const children = probeFor(entry.meta).markup;
     const probed: Entry = { ...entry, meta: { ...entry.meta, demo: { ...entry.meta.demo, children } } };
-    await writeFile(join(dir, "vanilla-probe.html"), vanillaHtml(probed, bundle));
+    await writeFile(join(dir, "vanilla-probe.html"), demoHtml(probed));
     vanillaProbe = `${slug}/vanilla-probe.html`;
   }
   await writeFile(join(dir, "react.tsx"), await reactSingleFile(entry));
@@ -127,7 +131,7 @@ export async function stage(entry: Entry): Promise<Staged> {
   const js = built.outputFiles?.[0]?.text ?? "";
   await writeFile(
     join(dir, "react.html"),
-    `<!doctype html><html lang="en"${entry.meta.stage === "flow" ? ' data-stage="flow"' : ""}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark light"><title>${entry.meta.title} · React</title><style>${DEMO_PAGE_CSS}\n#root { width: 100%; height: 100%; }</style></head><body><div id="root"></div><script>${js}</script></body></html>`,
+    `<!doctype html><html lang="en"${entry.meta.stage === "flow" ? ' data-stage="flow"' : ""}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark light"><title>${entry.meta.title} · React</title><style>${DEMO_PAGE_CSS}\n#root { width: 100%; height: 100%; }</style>${fontHead}</head><body><div id="root"></div><script>${js}</script></body></html>`,
   );
   await writeFile(
     join(dir, "meta.json"),
