@@ -1,0 +1,31 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "ascii-binary-tide",
+  title: "ASCII Binary Tide",
+  category: "ascii",
+  description: "Slow analytic waves gather binary glyphs into broad density bands, with an optional clear center for reading content.",
+  tags: ["binary", "waves", "density", "reading-zone", "animated"],
+  facets: ["animated", "background"],
+  wave: 15,
+  release: "components-2026-10-04",
+  animated: true,
+  decorative: false,
+  wraps: "content",
+  palette: ["fg", "bg"],
+  controls: {
+    chars: { type: "string" },
+    density: { type: "number", min: 0, max: 1, step: 0.02 },
+    wavelength: { type: "number", min: 8, max: 160, step: 2 },
+    speed: { type: "number", min: -3, max: 3, step: 0.05 },
+    readingZone: { type: "boolean" },
+    label: { type: "string" },
+    fontSize: { type: "number", min: 6, max: 32, step: 1 },
+    lineHeight: { type: "number", min: 0.8, max: 2, step: 0.05 },
+    fps: { type: "number", min: 1, max: 30, step: 1 },
+    paused: { type: "boolean" },
+    seed: { type: "number", min: 1, max: 999, step: 1 },
+  },
+  credits: [],
+  original: true,
+};
