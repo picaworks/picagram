@@ -1,0 +1,361 @@
+<!doctype html>
+<!--
+  Pica · Accordion · accordion
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Accordion · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><section><p>Picagram draws text mode effects, patterns, controls, charts, and page sections.</p></section><section><p>A framework free core holds the behavior, while a thin wrapper connects it to React.</p></section><section><p>One source generates matching React and HTML files for the catalog.</p></section></div>
+<script>
+"use strict";
+var PicaAccordion = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/accordion/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/accordion/core.ts
+  var defaults = {
+    items: [
+      { id: "what", label: "What Picagram draws", disabled: false },
+      { id: "runtime", label: "Where the runtime lives", disabled: false },
+      { id: "catalog", label: "How the catalog builds", disabled: false }
+    ],
+    open: null,
+    defaultOpen: ["what"],
+    multiple: false
+  };
+  var ACCORDION_PANEL_ATTRIBUTES = ["role", "id", "aria-labelledby", "hidden"];
+  function accordionRules(selector) {
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    return [
+      `:where(${selector}){display:block;width:100%;max-width:52rem;margin-inline:auto;color:${fg};border-bottom:1px solid color-mix(in srgb, ${fg} 32%, transparent)}`,
+      `${selector}>[data-pica-accordion-heading]{margin:0;border-top:1px solid color-mix(in srgb, ${fg} 32%, transparent)}`,
+      `${selector}>[data-pica-accordion-heading]>button{appearance:none;width:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:0;padding:1rem 0.125rem;border:0;border-radius:0;background:transparent;color:${fg};font:inherit;line-height:1.35;text-align:left;cursor:pointer}`,
+      `${selector}>[data-pica-accordion-heading]>button:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${selector}>[data-pica-accordion-heading]>button:disabled{opacity:0.45;cursor:not-allowed}`,
+      `${selector}>[data-pica-accordion-heading]>button>[data-pica-accordion-marker]{flex:none;color:${fg};font-family:${GRID_FONT};font-size:1.25em;line-height:1}`,
+      `${selector}>[data-pica-accordion-heading]>button[aria-expanded="true"]>[data-pica-accordion-marker]{color:${accent}}`,
+      `${selector}>:not([data-pica]){padding:0.875rem 2.75rem 1.25rem 0.125rem;color:${fg};line-height:1.6}`,
+      `${selector}>:not([data-pica])[hidden]{display:none}`,
+      `${selector}>:not([data-pica])>:first-child{margin-top:0}`,
+      `${selector}>:not([data-pica])>:last-child{margin-bottom:0}`
+    ].join("\n");
+  }
+  function accordionPanels(host) {
+    return Array.from(host.children).filter(
+      (child) => child instanceof HTMLElement && !child.hasAttribute("data-pica")
+    );
+  }
+  function accordionOpenIds(values, items, multiple) {
+    const available = new Set(items.map((item) => item.id));
+    const result = [];
+    for (const value of values) {
+      if (available.has(value) && !result.includes(value)) result.push(value);
+      if (!multiple && result.length === 1) break;
+    }
+    return result;
+  }
+  function accordionSnapshot(panel) {
+    return {
+      role: panel.getAttribute("role"),
+      id: panel.getAttribute("id"),
+      "aria-labelledby": panel.getAttribute("aria-labelledby"),
+      hidden: panel.getAttribute("hidden")
+    };
+  }
+  function accordionRestorePanel(panel, snapshot) {
+    for (const name of ACCORDION_PANEL_ATTRIBUTES) {
+      const value = snapshot[name];
+      if (value === null) panel.removeAttribute(name);
+      else panel.setAttribute(name, value);
+    }
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let internalOpen = accordionOpenIds(props.defaultOpen, props.items, props.multiple);
+    let headers = [];
+    let destroyed = false;
+    const emit = emitter(host);
+    const sheet = scope(host);
+    const rootId = nextId("pica-accordion");
+    const snapshots = /* @__PURE__ */ new Map();
+    sheet.setRules(accordionRules(sheet.selector));
+    function restorePanel(panel) {
+      const snapshot = snapshots.get(panel);
+      if (!snapshot) return;
+      accordionRestorePanel(panel, snapshot);
+      snapshots.delete(panel);
+    }
+    function removeHeaders() {
+      for (const header of headers) header.heading.remove();
+      headers = [];
+    }
+    function syncStructure(force = false) {
+      const panels = accordionPanels(host).slice(0, props.items.length);
+      const active = new Set(panels);
+      for (const panel of snapshots.keys()) {
+        if (!active.has(panel)) restorePanel(panel);
+      }
+      const matches = !force && headers.length === panels.length && headers.every(
+        (header, index) => header.panel === panels[index] && header.heading.parentElement === host && header.heading.nextElementSibling === panels[index]
+      );
+      if (matches) return;
+      removeHeaders();
+      headers = panels.map((panel) => {
+        if (!snapshots.has(panel)) snapshots.set(panel, accordionSnapshot(panel));
+        const heading = document.createElement("h3");
+        const button = document.createElement("button");
+        const label = document.createElement("span");
+        const marker = document.createElement("span");
+        heading.setAttribute("data-pica", "");
+        heading.setAttribute("data-pica-accordion-heading", "");
+        button.setAttribute("data-pica", "");
+        button.setAttribute("data-pica-accordion-button", "");
+        button.type = "button";
+        label.setAttribute("data-pica", "");
+        marker.setAttribute("data-pica", "");
+        marker.setAttribute("data-pica-accordion-marker", "");
+        marker.setAttribute("aria-hidden", "true");
+        button.append(label, marker);
+        heading.append(button);
+        host.insertBefore(heading, panel);
+        return { heading, button, marker, panel };
+      });
+    }
+    function applyState() {
+      const open = accordionOpenIds(props.open ?? internalOpen, props.items, props.multiple);
+      headers.forEach((header, index) => {
+        const item = props.items[index];
+        if (!item) return;
+        const panelId = `${rootId}-panel-${index + 1}`;
+        const buttonId = `${rootId}-header-${index + 1}`;
+        const expanded = open.includes(item.id);
+        const label = header.button.firstElementChild;
+        if (label) label.textContent = item.label;
+        header.button.id = buttonId;
+        header.button.disabled = item.disabled;
+        header.button.setAttribute("aria-expanded", String(expanded));
+        header.button.setAttribute("aria-controls", panelId);
+        header.marker.textContent = expanded ? "−" : "+";
+        header.panel.setAttribute("role", "region");
+        header.panel.id = panelId;
+        header.panel.setAttribute("aria-labelledby", buttonId);
+        header.panel.toggleAttribute("hidden", !expanded);
+      });
+    }
+    function refreshStructure(force = false) {
+      syncStructure(force);
+      applyState();
+    }
+    function activate(index) {
+      const item = props.items[index];
+      if (!item || item.disabled) return;
+      const current = accordionOpenIds(props.open ?? internalOpen, props.items, props.multiple);
+      const next = current.includes(item.id) ? current.filter((id) => id !== item.id) : props.multiple ? [...current, item.id] : [item.id];
+      if (props.open === null) {
+        internalOpen = next;
+        applyState();
+      }
+      emit("openChange", next);
+    }
+    function eventHeader(event) {
+      const target = event.target;
+      if (!(target instanceof Element)) return void 0;
+      const button = target.closest("button[data-pica-accordion-button]");
+      return headers.find((header) => header.button === button);
+    }
+    const onClick = (event) => {
+      const header = eventHeader(event);
+      if (header) activate(headers.indexOf(header));
+    };
+    const onKeydown = (event) => {
+      const header = eventHeader(event);
+      if (!header || !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+      const enabled = headers.filter((candidate, index) => !props.items[index]?.disabled);
+      if (enabled.length === 0) return;
+      const current = enabled.indexOf(header);
+      let target;
+      if (event.key === "Home") target = enabled[0] ?? header;
+      else if (event.key === "End") target = enabled[enabled.length - 1] ?? header;
+      else {
+        const direction = event.key === "ArrowDown" ? 1 : -1;
+        target = enabled[(current + direction + enabled.length) % enabled.length] ?? header;
+      }
+      event.preventDefault();
+      target.button.focus();
+    };
+    refreshStructure();
+    host.addEventListener("click", onClick);
+    host.addEventListener("keydown", onKeydown);
+    const observer = new MutationObserver(() => {
+      if (!destroyed) refreshStructure();
+    });
+    observer.observe(host, { childList: true });
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const previousItems = props.items;
+        props = { ...props, ...next };
+        internalOpen = accordionOpenIds(internalOpen, props.items, props.multiple);
+        refreshStructure(!sameJson(previousItems, props.items));
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        observer.disconnect();
+        host.removeEventListener("click", onClick);
+        host.removeEventListener("keydown", onKeydown);
+        removeHeaders();
+        for (const [panel, snapshot] of snapshots) accordionRestorePanel(panel, snapshot);
+        snapshots.clear();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaAccordion.mount(host, take(window.PICA_PROPS || {}));
+  ["openChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

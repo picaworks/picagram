@@ -1,0 +1,417 @@
+<!doctype html>
+<!--
+  Pica · Context Menu · context-menu
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Context Menu · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><p>Review this draft and choose an action when you are ready.</p></div>
+<script>
+"use strict";
+var PicaContextMenu = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/context-menu/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/context-menu/core.ts
+  var defaults = {
+    items: [
+      { id: "duplicate", label: "Duplicate", shortcut: "⌘D", disabled: false },
+      { id: "rename", label: "Rename", shortcut: "", disabled: false },
+      { id: "archive", label: "Archive", shortcut: "⌘E", disabled: false },
+      { id: "delete", label: "Delete", shortcut: "⌫", disabled: false }
+    ],
+    hint: "Right-click for actions",
+    label: "Context actions"
+  };
+  var LONG_PRESS_MS = 500;
+  var VIEWPORT_GAP = 8;
+  function contextMenuRules(s) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    return [
+      `:where(${s}){box-sizing:border-box;position:relative;width:100%;height:fit-content!important;min-height:8rem!important;padding:1.25rem;border:1px solid ${muted};color:${fg};background:transparent}`,
+      `${s}:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${s} [data-pica-context-hint]{display:block;margin-top:1.5rem;padding-top:0.7rem;border-top:1px solid ${muted};color:${muted};font-family:${GRID_FONT};font-size:0.75em;line-height:1.4;letter-spacing:0.04em;text-transform:uppercase}`,
+      `${s} [data-pica-context-hint][hidden]{display:none}`,
+      `${s} [data-pica-context-menu]{box-sizing:border-box;position:fixed;inset:auto;margin:0;min-width:min(15rem,calc(100vw - 16px));max-width:calc(100vw - 16px);padding:0.35rem;border:1px solid ${muted};border-radius:0;background:color-mix(in srgb, ${fg} 10%, transparent);color:${fg};font:inherit}`,
+      `${s} [data-pica-context-menu]::backdrop{background:transparent}`,
+      `${s} [data-pica-context-item]{box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;width:100%;min-height:2.2rem;padding:0.45rem 0.6rem;cursor:default;outline:none}`,
+      `${s} [data-pica-context-item][data-active]{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${s} [data-pica-context-item]:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${s} [data-pica-context-item][aria-disabled="true"]{opacity:0.45}`,
+      `${s} [data-pica-context-shortcut]{margin-left:auto;color:${muted};font-family:${GRID_FONT};font-size:0.8em;white-space:nowrap}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let active = -1;
+    let pressTimer = null;
+    let pressX = 0;
+    let pressY = 0;
+    let destroyed = false;
+    const emit = emitter(host);
+    const attrs = hostAttributes(host);
+    const sheet = scope(host);
+    const menuId = nextId("pica-context-menu");
+    const hintId = nextId("pica-context-hint");
+    const menu = document.createElement("div");
+    const hint = document.createElement("span");
+    menu.id = menuId;
+    menu.setAttribute("data-pica", "");
+    menu.setAttribute("data-pica-context-menu", "");
+    menu.setAttribute("popover", "manual");
+    menu.setAttribute("role", "menu");
+    hint.id = hintId;
+    hint.setAttribute("data-pica", "");
+    hint.setAttribute("data-pica-context-hint", "");
+    host.append(hint, menu);
+    function rows() {
+      return Array.from(menu.querySelectorAll("[data-pica-context-item]"));
+    }
+    function enabled(index) {
+      return props.items[index]?.disabled === false;
+    }
+    function setActive(index, focus) {
+      const all = rows();
+      active = enabled(index) ? index : -1;
+      for (let i = 0; i < all.length; i++) all[i]?.toggleAttribute("data-active", i === active);
+      if (focus && active >= 0) all[active]?.focus({ preventScroll: true });
+    }
+    function findEnabled(from, direction) {
+      const count = props.items.length;
+      for (let step = 1; step <= count; step++) {
+        const index = (from + direction * step + count) % count;
+        if (enabled(index)) return index;
+      }
+      return -1;
+    }
+    function close(returnFocus) {
+      if (menu.matches(":popover-open")) menu.hidePopover();
+      active = -1;
+      if (returnFocus) host.focus({ preventScroll: true });
+    }
+    function openAt(x, y) {
+      if (!props.items.some((item) => !item.disabled)) return;
+      if (!menu.matches(":popover-open")) menu.showPopover();
+      const box = menu.getBoundingClientRect();
+      const viewportWidth = document.documentElement.clientWidth;
+      const viewportHeight = document.documentElement.clientHeight;
+      menu.style.left = `${Math.max(VIEWPORT_GAP, Math.min(x, viewportWidth - box.width - VIEWPORT_GAP))}px`;
+      menu.style.top = `${Math.max(VIEWPORT_GAP, Math.min(y, viewportHeight - box.height - VIEWPORT_GAP))}px`;
+      setActive(findEnabled(-1, 1), true);
+    }
+    function choose(index) {
+      const item = props.items[index];
+      if (!item || item.disabled) return;
+      close(true);
+      emit("select", item.id);
+    }
+    function rebuild() {
+      menu.replaceChildren();
+      props.items.forEach((item, index) => {
+        const row = document.createElement("div");
+        const text = document.createElement("span");
+        row.setAttribute("data-pica", "");
+        row.setAttribute("data-pica-context-item", "");
+        row.setAttribute("data-index", String(index));
+        row.setAttribute("role", "menuitem");
+        row.setAttribute("tabindex", "-1");
+        if (item.disabled) row.setAttribute("aria-disabled", "true");
+        text.setAttribute("data-pica", "");
+        text.textContent = item.label;
+        row.append(text);
+        if (item.shortcut) {
+          const shortcut = document.createElement("kbd");
+          shortcut.setAttribute("data-pica", "");
+          shortcut.setAttribute("data-pica-context-shortcut", "");
+          shortcut.textContent = item.shortcut;
+          row.append(shortcut);
+        }
+        menu.append(row);
+      });
+    }
+    function stopPress() {
+      if (pressTimer !== null) clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+    const onContextMenu = (event) => {
+      event.preventDefault();
+      openAt(event.clientX, event.clientY);
+    };
+    const onHostKey = (event) => {
+      if (event.target !== host) return;
+      if (event.key === "F10" && event.shiftKey || event.key === "ContextMenu") {
+        event.preventDefault();
+        const box = host.getBoundingClientRect();
+        openAt(box.left + VIEWPORT_GAP, box.top + VIEWPORT_GAP);
+      }
+    };
+    const onMenuKey = (event) => {
+      if (!menu.matches(":popover-open")) return;
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        setActive(findEnabled(active, event.key === "ArrowDown" ? 1 : -1), true);
+      } else if (event.key === "Home" || event.key === "End") {
+        event.preventDefault();
+        setActive(findEnabled(event.key === "Home" ? -1 : 0, event.key === "Home" ? 1 : -1), true);
+      } else if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        choose(active);
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        close(true);
+      } else if (event.key === "Tab") {
+        close(false);
+      } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        const match = props.items.findIndex((item) => !item.disabled && item.label.toLocaleLowerCase().startsWith(event.key.toLocaleLowerCase()));
+        if (match >= 0) {
+          event.preventDefault();
+          setActive(match, true);
+        }
+      }
+    };
+    const onMenuPointer = (event) => {
+      const row = event.target.closest("[data-pica-context-item]");
+      if (!row || !menu.contains(row)) return;
+      const index = Number(row.dataset.index);
+      if (enabled(index)) setActive(index, true);
+    };
+    const onMenuClick = (event) => {
+      const row = event.target.closest("[data-pica-context-item]");
+      if (row && menu.contains(row)) choose(Number(row.dataset.index));
+    };
+    const onDocumentPointer = (event) => {
+      if (menu.matches(":popover-open") && !menu.contains(event.target)) close(false);
+    };
+    const onPointerDown = (event) => {
+      if (event.pointerType !== "touch") return;
+      pressX = event.clientX;
+      pressY = event.clientY;
+      stopPress();
+      pressTimer = setTimeout(() => {
+        pressTimer = null;
+        openAt(pressX, pressY);
+      }, LONG_PRESS_MS);
+    };
+    const onPointerMove = (event) => {
+      if (Math.hypot(event.clientX - pressX, event.clientY - pressY) > 10) stopPress();
+    };
+    host.addEventListener("contextmenu", onContextMenu);
+    host.addEventListener("keydown", onHostKey);
+    host.addEventListener("pointerdown", onPointerDown);
+    host.addEventListener("pointermove", onPointerMove);
+    host.addEventListener("pointerup", stopPress);
+    host.addEventListener("pointercancel", stopPress);
+    menu.addEventListener("keydown", onMenuKey);
+    menu.addEventListener("pointermove", onMenuPointer);
+    menu.addEventListener("click", onMenuClick);
+    document.addEventListener("pointerdown", onDocumentPointer, true);
+    function apply(rebuildItems) {
+      attrs.set("tabindex", "0");
+      attrs.set("aria-haspopup", "menu");
+      attrs.set("aria-controls", menuId);
+      attrs.set("aria-describedby", props.hint ? hintId : null);
+      menu.setAttribute("aria-label", props.label);
+      hint.textContent = props.hint;
+      hint.hidden = !props.hint;
+      sheet.setRules(contextMenuRules(sheet.selector));
+      if (rebuildItems) rebuild();
+    }
+    apply(true);
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        apply(changed(before, props, ["items"]));
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        stopPress();
+        close(false);
+        host.removeEventListener("contextmenu", onContextMenu);
+        host.removeEventListener("keydown", onHostKey);
+        host.removeEventListener("pointerdown", onPointerDown);
+        host.removeEventListener("pointermove", onPointerMove);
+        host.removeEventListener("pointerup", stopPress);
+        host.removeEventListener("pointercancel", stopPress);
+        menu.removeEventListener("keydown", onMenuKey);
+        menu.removeEventListener("pointermove", onMenuPointer);
+        menu.removeEventListener("click", onMenuClick);
+        document.removeEventListener("pointerdown", onDocumentPointer, true);
+        menu.remove();
+        hint.remove();
+        sheet.destroy();
+        attrs.restore();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaContextMenu.mount(host, take(window.PICA_PROPS || {}));
+  ["select"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

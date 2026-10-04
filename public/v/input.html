@@ -1,0 +1,221 @@
+<!doctype html>
+<!--
+  Pica · Input · input
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Input · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaInput = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/input/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/input/core.ts
+  var defaults = {
+    value: null,
+    defaultValue: "",
+    type: "text",
+    placeholder: "Search components",
+    label: "Search",
+    disabled: false
+  };
+  function inputRules(selector) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    const field = `${selector}>input[data-pica]`;
+    return [
+      `${selector}{max-width:calc(100vw - 2em)}`,
+      `${field}{appearance:none;box-sizing:border-box;width:22em;max-width:100%;margin:0;padding:0.55em 0.75em;border:1px solid ${fg};border-radius:0;outline:none;box-shadow:none;background:transparent;color:${fg};caret-color:${fg};font-family:${GRID_FONT};font-size:1em;line-height:1.2}`,
+      `${field}::placeholder{color:${muted};opacity:1}`,
+      `${field}:hover:not(:disabled){background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${field}:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${field}:disabled{opacity:0.45;cursor:not-allowed}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const emit = emitter(host);
+    const sheet = scope(host);
+    const input = document.createElement("input");
+    input.setAttribute("data-pica", "");
+    input.value = props.value ?? props.defaultValue;
+    const onInput = () => {
+      const value = input.value;
+      emit("valueChange", value);
+      if (props.value !== null) input.value = props.value;
+    };
+    const onKeyDown = (event) => {
+      if (event.key === "Enter") emit("enter", input.value);
+    };
+    input.addEventListener("input", onInput);
+    input.addEventListener("keydown", onKeyDown);
+    host.append(input);
+    function apply() {
+      labelHost(host, props.label, "group");
+      input.type = props.type;
+      input.placeholder = props.placeholder;
+      input.disabled = props.disabled;
+      input.setAttribute("aria-label", props.label);
+      if (props.value !== null && input.value !== props.value) input.value = props.value;
+    }
+    sheet.setRules(inputRules(sheet.selector));
+    apply();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        apply();
+      },
+      destroy() {
+        input.removeEventListener("input", onInput);
+        input.removeEventListener("keydown", onKeyDown);
+        input.remove();
+        sheet.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaInput.mount(host, take(window.PICA_PROPS || {}));
+  ["valueChange","enter"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

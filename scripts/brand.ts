@@ -20,7 +20,7 @@ const card = `<!doctype html>
   main { position: absolute; left: 96px; top: 148px; display: flex; flex-direction: column; gap: 36px; }
   p { margin: 0; font-size: 30px; line-height: 40px; }
   .muted { color: #8d8d8a; font-size: 24px; line-height: 32px; }
-  .accent { color: #e8a020; }
+  .accent { color: #13C4A3; }
 </style></head><body><main>
   <svg width="${CELL * LOGO_COLS}" height="${CELL * LOGO_ROWS}" viewBox="${LOGO_VIEWBOX}" fill="currentColor" shape-rendering="crispEdges"><path d="${LOGO_PATH}"/></svg>
   <p>ASCII-first components for React and plain HTML<span class="accent">_</span></p>

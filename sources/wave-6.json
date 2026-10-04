@@ -1,0 +1,854 @@
+{
+  "wave": 6,
+  "path": "Thirty eight interface primitives and twelve patterns. The primitives follow the WAI-ARIA Authoring Practices, which is a published standard rather than anyone's work, so each carries a technique credit to its pattern and nothing is built from a capture. The patterns populate a category that was declared and empty, and each is generated geometry seeded through lib/rng.ts rather than a copied output. Nothing fetches from the network, nothing adds a dependency, every random number comes from the seed, and every default already looks finished on the dark ground and the light one.",
+  "components": [
+    {
+      "slug": "accordion",
+      "category": "ui",
+      "title": "Accordion",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A set of panels that open and close under their own headers, after the accordion pattern of the WAI-ARIA Authoring Practices. The headers come from JSON, [{ id, label, disabled }], and the host's direct children are the panels in the same order: set meta.wraps to \"panels\". For each item the core builds a heading, a real h3, holding a full-width button, and it gives each panel role region, an id, aria-labelledby pointing at its header button, and hidden while closed, restoring all of it on destroy and reapplying it when React replaces a child. Each header button carries aria-expanded and aria-controls naming its panel. With `multiple` off, opening one panel closes the others; with it on, each header toggles on its own. It emits `openChange` with the array of open ids and is controlled through `open` (null means uncontrolled) with `defaultOpen`; set meta.controlled to { open: \"openChange\" }. Keyboard, which the pattern spells out: Enter and Space toggle the focused header, Down and Up move focus between header buttons, Home and End jump to the first and last header, and a disabled header is skipped but stays visible at 45% opacity. Pointer: a click anywhere on the header row toggles it. Look, from the UI grammar: one-pixel hairlines between the header rows, square corners, no shadow, no transitions; the label in the page's font; a mono + on each closed header that becomes − on the open one, drawn in the accent only while its panel is open; a two-pixel accent outline offset two pixels on :focus-visible only. Set meta.stage to \"flow\", and give meta.demo children of three <section> panels with a short paragraph each. The default frame shows three items with the first open: a ruled stack of headers with one panel of body text. It is wrong if a closed panel still takes space or stays in the accessibility tree, because hidden must carry both; if the hairlines double where two rows meet; or if a header is a bare div instead of a real button in the tab order. Declare the facets static and interactive, and let meta.palette list fg and accent. meta.interactions: Tab, ArrowDown, Enter, then expect openChange with the second item's id and aria-expanded true on the second header. UI primitives have 8192 bytes and this one is expected near 4.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "items (json, default three items, \"What Picagram draws\" id what, \"Where the runtime lives\" id runtime, \"How the catalog builds\" id catalog, none disabled), open (json array of ids or null, default null), defaultOpen (json array, default [\"what\"]), multiple (default false). The inspector exposes items, defaultOpen, and multiple.",
+      "events": "openChange: the array of open item ids.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Accordion pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/accordion/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "alert",
+      "category": "ui",
+      "title": "Alert",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A callout for a status the page must announce, after the alert pattern of the WAI-ARIA Authoring Practices: the host carries role alert, so assistive technology announces its content when the component appears and whenever `title` or `message` changes. It takes no focus, no keyboard, and no pointer behavior, because the pattern is a live region, not a widget. The core builds the layout through a scoped stylesheet: a one-pixel hairline rule above and below the callout, a small mono tag in uppercase tracked text, the title in the page's font, and the message in muted. `tone` chooses how the tag is drawn: \"neutral\" is a hairline tag box in fg, \"muted\" sets the tag in muted, \"accent\" fills the tag's chip with the accent and sets its letters through cssOn so they stay readable on the light ground, and \"filled\" fills the whole callout with the accent and sets everything in cssOn. Square corners, no shadow, no icon font: where a mark is needed it is a small filled block element, never a text glyph in the accent. Set meta.stage to \"flow\". The default frame is an accent callout: two hairlines, a filled NOTE tag, a title, and one muted line of message. It is wrong if it carries a tabindex, a role button, or a close control of any kind; if the accent sets running text on the light ground; or if it animates in, because an alert must already be present to be announced. Declare the facets static and text, and let meta.palette list fg, accent, and muted. UI primitives have 8192 bytes and this one is expected near 3 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "tag (default \"note\"), title (default \"Build finished\"), message (default \"All 24 components verified on both grounds.\"), tone (\"neutral\", \"muted\", \"accent\", or \"filled\", default \"accent\"). The inspector exposes every prop.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Alert pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "avatar",
+      "category": "ui",
+      "title": "Avatar",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A person or project mark in a square frame: a photo while `src` gives one, the initials of `name` whenever it does not. The frame is a one-pixel hairline with square corners, never a circle. The initials are mono, taken from the first letters of the first two words of `name`, centered in the frame in fg. While the image loads, and forever if it errors or `src` is empty, the initials hold the frame, so the component never shows a broken image. With `dither` on, a loaded image is screened to two tones of the palette through lib/dither.ts on a canvas the core owns, prepared once at load and again when the host resizes; with it off, the image is drawn plain inside the same frame. The host is role img named by `name` through labelHost; an empty name hides it. Set meta.stage to \"inline\". The default frame is a 48 px hairline square holding two centered mono initials. It is wrong if the frame is round, if a failed image leaves an empty or torn square because the initials were not already there, or if the initials sit off center in their box. Declare the facets static, image, canvas, and dither, and let meta.palette list fg. UI primitives have 8192 bytes and this one is expected near 4 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "src (an image URL or data URI, default empty, so it renders with no network), name (default \"Ada Lin\"), size (24 to 128 px, default 48), dither (default true). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "badge",
+      "category": "ui",
+      "title": "Badge",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A small status label in the grammar's mono, uppercase and tracked: STABLE, BETA, a version. `variant` chooses the frame: \"outline\" is a one-pixel hairline box drawn in the tone, \"solid\" fills the box with the tone and sets the text through cssOn, and \"brackets\" drops the box and wraps the text in drawn [ ] glyphs. `tone` picks the palette token the frame draws with: fg, muted, or accent, while the text itself stays fg or cssOn and is never set in the accent on the light ground. It is not a kbd: a badge is one continuous label about a status, while a kbd is a run of separate key caps, one per physical key; if the label reads as a keyboard chord it is the wrong component. Square corners, no shadow, small enough to sit beside a heading, and no focus or pointer cursor, because it is not an action. The host is a span: set meta.host to \"span\" and meta.stage to \"inline\". The default frame is an accent hairline box around the word STABLE. It is wrong if the box is rounded, if the letters are set in the accent on paper, or if it reads as a button by taking focus or growing on hover. Declare the facets static and text, and let meta.palette list fg and accent. UI primitives have 8192 bytes and this one is expected near 2.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "text (default \"STABLE\"), variant (\"outline\", \"solid\", or \"brackets\", default \"outline\"), tone (\"fg\", \"muted\", or \"accent\", default \"accent\"). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "breadcrumb",
+      "category": "ui",
+      "title": "Breadcrumb",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A trail of links back up the hierarchy, after the breadcrumb pattern of the WAI-ARIA Authoring Practices: a navigation landmark named by `label`, holding an ordered list of items from JSON, [{ label, href }], where the last item is the current page, rendered as plain text with aria-current \"page\" and never as a link. The core builds real <a> elements so keyboard and pointer behavior come from the platform, and it draws a muted mono / separator between items, aria-hidden so assistive technology never reads it. When the trail is longer than `maxItems`, the middle items collapse behind a \"…\" button the core builds in their place; the button carries aria-expanded, and activating it reveals the hidden items around it rather than dropping them. Links sit in the page's font in fg, hover is a fg tint of about 10% or accent text, and the current page is plain fg. The host keeps role navigation through labelHost with `label`; an empty label hides the whole component. Set meta.stage to \"flow\". The default frame shows five items with the middle two collapsed: Home / … / UI / Breadcrumb. It is wrong if the current page is a link or lacks aria-current, if the collapsed items are lost instead of revealed by the ellipsis button, or if the separator reaches assistive technology as text. Declare the facets static and interactive, and let meta.palette list fg and muted. meta.interactions: click the ellipsis button, marked with its own data-pica attribute, then expect aria-expanded true on it. UI primitives have 8192 bytes and this one is expected near 3.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "items (json, default Home to #, Catalog to #, Wave 6 to #, UI to #, and Breadcrumb as the current page), maxItems (3 to 8, default 4), label (default \"Breadcrumb\"). The inspector exposes every prop.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Breadcrumb pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "calendar",
+      "category": "ui",
+      "title": "Calendar",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A month grid for choosing one date: the calendar half of the date picker dialog in the WAI-ARIA Authoring Practices, with no input and no popover. The core builds a header row with previous and next month buttons as bare mono glyphs, a month and year heading in a live region so month changes are announced, a row of mono two-letter weekday names in muted with the full names given to assistive technology, and a grid of days, role grid with roving tabindex so exactly one day button is in the tab order. Keyboard, per the pattern: Left and Right move a day, Up and Down move a week, Home and End move to the start and end of the week, PageUp and PageDown move a month, Shift+PageUp and Shift+PageDown move a year, and Enter or Space chooses the focused day. Pointer: click a day to choose it, click the header buttons to change the month. Days outside the month are empty cells, today is underlined in the accent, and the selected day is a filled accent square with its figure set through cssOn. It emits `valueChange` with the chosen date as an ISO string and is controlled through `value` (null means uncontrolled) with `defaultValue`; set meta.controlled to { value: \"valueChange\" }. The visible month starts from `month`, then the value, then today. The host is a group named by `label`. Look, from the UI grammar: mono tabular day figures, a hairline under the weekday header, and a two-pixel accent outline offset two pixels on :focus-visible only. Set meta.stage to \"inline\", and meta.demo props to { defaultValue: \"2026-09-15\" } so every capture shows the same month with a chosen day. The default frame is the current month, today underlined, nothing chosen. It is wrong if every day sits in the tab order, if the selection is drawn as accent text instead of a filled cell, or if the month can change only from the header buttons, because PageUp must work from the grid. Declare the facets static and interactive, and let meta.palette list fg, accent, and muted. meta.interactions: Tab to the grid's day button, ArrowRight, Enter, then expect valueChange. UI primitives have 8192 bytes and this one is expected near 5.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "value (ISO date string or null, default null), defaultValue (ISO date string or empty, default \"\"), month (\"YYYY-MM\" or null, default null), weekStartsOn (0 or 1, default 1), label (default \"Calendar\"). The inspector exposes defaultValue, month, weekStartsOn, and label.",
+      "events": "valueChange: the chosen date as an ISO string.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Date picker dialog example",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "card",
+      "category": "ui",
+      "title": "Card",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A hairline container that gives a block of content a header and a footer. Its children are the body, and the core never touches them: set meta.wraps to \"content\". The core draws a one-pixel fg frame with square corners and no shadow, builds a header row when `kicker` or `title` is set, the kicker in mono uppercase tracked muted above a title in the page's font, and a footer row of links from `actions`, [{ label, href }], separated from the body by a hairline. The first action is a small solid chip filled with the accent and set in cssOn text; the rest are plain links in the page's font, and hover is a fg tint of about 10%. Generous padding, no tint, no rounding. Set meta.stage to \"flow\", and give meta.demo children of one short paragraph. The default frame holds a kicker, a title, the paragraph, and two footer links. It is wrong if a header or footer row renders when its props are empty and leaves stray rules behind, if the core styles or reorders the children, which belong to the page, or if it draws a shadow or a rounded corner. Declare the facets static, text, and interactive, and let meta.palette list fg, accent, and muted. meta.interactions: hover on the second footer link. UI primitives have 8192 bytes and this one is expected near 3.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "kicker (default \"WAVE 6\"), title (default \"Ship the draft\"), actions (json, default Review to # and History to #). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "checkbox",
+      "category": "ui",
+      "title": "Checkbox",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A checkbox with a mixed state, after the checkbox pattern of the WAI-ARIA Authoring Practices: role checkbox on the host, tabindex 0, and aria-checked true, false, or mixed. The pattern requires Space to toggle, and the whole host is the target, so a pointer click anywhere on the row toggles too, including the label text. From mixed, Space checks it; after that it alternates checked and unchecked. The core draws a one-pixel hairline square with square corners holding a drawn check glyph in the accent when checked and a drawn horizontal bar in the accent when mixed; the `label` sits beside the box in the page's font and also names the host, and an empty label leaves the box alone, named checkbox. Hover is a fg tint of about 10% inside the box, disabled is 45% opacity, and focus is the two-pixel accent outline offset two pixels on :focus-visible only. It emits `checkedChange` with the new state, \"checked\", \"unchecked\", or \"mixed\", and is controlled through `checked` (null means uncontrolled) with `defaultChecked`; set meta.controlled to { checked: \"checkedChange\" }. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame is a checked box beside its label. It is wrong if the mixed state can never be reached, because defaultChecked \"mixed\" must render the bar; if Space also scrolls the page; or if the marks are an image or an SVG rather than drawn glyphs. Declare the facets static and interactive, and let meta.palette list fg and accent. meta.interactions: Tab, Space, then expect checkedChange \"unchecked\" and aria-checked false on the host. UI primitives have 8192 bytes and this one is expected near 3.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "checked (true, false, \"mixed\", or null, default null), defaultChecked (true, false, or \"mixed\", default true), label (default \"Include archived builds\"), disabled (default false). The inspector exposes defaultChecked, label, and disabled.",
+      "events": "checkedChange: the new state, \"checked\", \"unchecked\", or \"mixed\".",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Checkbox pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "collapsible",
+      "category": "ui",
+      "title": "Collapsible",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A single disclosure, after the disclosure pattern of the WAI-ARIA Authoring Practices: a trigger button the core builds, carrying aria-expanded and aria-controls, that shows and hides one block of content. It is not an accordion: an accordion manages which of several sibling panels is open and owns a header for every one, while a collapsible hides one block behind one trigger and is meant to tuck a piece of content away inside a page. The host's direct children are the block: set meta.wraps to \"panels\", give each child an id the trigger's aria-controls names, set hidden on each while closed, and restore everything on destroy, reapplying when React replaces a child. The trigger is a real button holding a mono ▸ that becomes ▾ while open, drawn in the accent only then, beside the `label` text in the page's font; a hairline rule separates the trigger from the open block. Keyboard is the button's own: Enter and Space toggle. Pointer: click toggles. It emits `openChange` with the new state and is controlled through `open` (null means uncontrolled) with `defaultOpen`; set meta.controlled to { open: \"openChange\" }. Set meta.stage to \"flow\", and meta.demo to { props: { defaultOpen: true }, children: a short paragraph } so captures show the open block. The default frame is a closed trigger row, ▸ Details. It is wrong if the trigger is not a real button, if the closed block still reaches assistive technology, because hidden must carry it, or if opening slides or fades, because state changes are instant. Declare the facets static and interactive, and let meta.palette list fg and accent. meta.interactions: Tab, Enter, then expect openChange and the flipped aria-expanded on the trigger. UI primitives have 8192 bytes and this one is expected near 3.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "open (boolean or null, default null), defaultOpen (default false), label (default \"Details\"). The inspector exposes defaultOpen and label.",
+      "events": "openChange: the new open state.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Disclosure pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "combobox",
+      "category": "ui",
+      "title": "Combobox",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "An editable text field whose suggestions live in a listbox, after the combobox pattern of the WAI-ARIA Authoring Practices with list autocomplete, aria-autocomplete \"list\": the typed text is never rewritten while the user moves through the suggestions, which is what separates it from autocomplete both. The core builds a real input with role combobox, aria-expanded, aria-controls, and aria-activedescendant, a mono chevron button that stays out of the tab order, and a Popover API listbox of the options from JSON, [{ value, label, disabled }], placed under the field the way select's is, with CSS anchor positioning where supported and getBoundingClientRect otherwise. Typing filters the options by a case-insensitive match on the label and opens the listbox; when nothing matches, a muted row reads `emptyText` and is not an option. Keyboard: Down opens the listbox and activates the first option, Down and Up move the active option, Home and End move the caret, Enter chooses the active option, filling the field with its label and emitting `valueChange` with its value, Escape closes the listbox, Alt+Up closes it, and Tab leaves the field keeping the text. Pointer: click the field or the chevron to open, click an option to choose, hover moves the active option. It is controlled through `value` (null means uncontrolled) with `defaultValue`; set meta.controlled to { value: \"valueChange\" }. Look: the field is a hairline box with square corners, the input text in mono, the options in the page's font, the active one in a fg tint of about 10%, the chosen one with a drawn check in the accent, the chevron in the accent, and focus the two-pixel accent outline offset two pixels on :focus-visible only. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame is a closed field with its placeholder. It is wrong if arrowing through the listbox rewrites the field's text, if Escape leaves the listbox open, or if the check and the chevron are not the only accent on screen. Declare the facets static and interactive, and let meta.palette list fg, accent, and muted. meta.interactions: Tab, press \"d\", ArrowDown, Enter, then expect valueChange \"dither-field\". UI primitives have 8192 bytes and this one is expected near 6 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "options (json, default six entries, Dither Field, Mesh Gradient, Scanlines, Bar Chart, Tabs, Select, with values dither-field, mesh-gradient, scanlines, bar-chart, tabs, select, none disabled), value (string or null, default null), defaultValue (default \"\"), placeholder (default \"Search components\"), emptyText (default \"No matches\"), label (default \"Component\"), disabled (default false). The inspector exposes options, defaultValue, placeholder, emptyText, label, and disabled.",
+      "events": "valueChange: the chosen option's value.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Combobox pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/",
+          "license": "W3C document"
+        },
+        {
+          "relation": "technique",
+          "title": "Popover API",
+          "author": "MDN",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+          "license": "CC-BY-SA documentation"
+        }
+      ]
+    },
+    {
+      "slug": "command-palette",
+      "category": "ui",
+      "title": "Command Palette",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A modal palette that filters a flat command list, after the combobox pattern and the dialog (modal) pattern of the WAI-ARIA Authoring Practices together. The host is a real <dialog>: set meta.host to \"dialog\". The core calls showModal() while open, so focus containment, Escape, and the top layer come from the browser, and it builds inside a real input with role combobox, aria-expanded, aria-controls, and aria-activedescendant, plus a listbox of the commands from JSON, [{ id, label, hint, keywords }]. Typing filters the list by a case-insensitive match over label and keywords; `emptyText` fills a muted row when nothing matches, and the filter resets on close so a reopened palette shows the full list. The dialog anchors near the top of the viewport, about a fifth of the height down, not centered, and `width` sets its measure. Keyboard: the input is focused on open; Down and Up move the active command, wrapping at the ends; Home and End jump the list; Enter runs the active command, emitting `command` with its id and closing; Escape, and a backdrop click when `dismissOnBackdrop`, emit `openChange` false. Pointer: hover moves the active row, click runs it. It is controlled through `open` (null means uncontrolled) with `defaultOpen`; set meta.controlled to { open: \"openChange\" }. Look: a hairline frame, square corners, no shadow, a mono › prompt glyph in the accent beside the input, commands in the page's font with their hint in muted mono at the right edge, the active row in a fg tint of about 10%, and a backdrop of fg at a low alpha through color-mix. Set meta.demo props to { defaultOpen: true } so captures show the palette open. The default frame is that open palette with its full list below the input. It is wrong if the list keeps a stale filter after closing and reopening, if focus can leave the dialog, or if it sits vertically centered like a modal, because a palette hangs from the top. Declare the facets static and interactive, and let meta.palette list fg, accent, and muted. meta.interactions: ArrowDown, Enter, then expect command with the first command's id; a second list presses Escape and expects openChange false. UI primitives have 8192 bytes and this one is expected near 6.2 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "commands (json, default five: New component id new-component hint ⌘N keywords create, Open catalog id open-catalog hint ⌘O keywords browse, Toggle theme id toggle-theme hint ⌘T keywords dark light, Copy page URL id copy-url keywords link, Restart dev server id restart hint ⌘R keywords serve), open (boolean or null, default null), defaultOpen (default false), placeholder (default \"Type a command\"), emptyText (default \"No matching commands\"), label (default \"Command palette\"), width (20 to 48 rem, default 30), dismissOnBackdrop (default true). The inspector exposes commands, defaultOpen, placeholder, emptyText, label, width, and dismissOnBackdrop.",
+      "events": "command: the id of the command the user ran; openChange: the new open state.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Combobox pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/",
+          "license": "W3C document"
+        },
+        {
+          "relation": "technique",
+          "title": "Dialog (modal) pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "context-menu",
+      "category": "ui",
+      "title": "Context Menu",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A menu that opens at the pointer over a region, after the menu and menubar pattern of the WAI-ARIA Authoring Practices. The host is the region: its children are the content the menu acts on, so set meta.wraps to \"content\", give the host tabindex 0 so keyboard users can reach it, and draw a one-pixel hairline frame around it with a muted mono `hint` line at its foot, so the target reads as a zone rather than a bare patch. A contextmenu event on the host is cancelled and opens the menu at the pointer; Shift+F10 or the ContextMenu key while the host is focused opens it at the host's corner; a long press of about 500 ms opens it on touch. The menu is a Popover API popover the core builds, role menu holding role menuitem rows from JSON, [{ id, label, shortcut, disabled }], named by `label`, placed at the pointer and clamped inside the viewport. Focus lands on the first enabled item. Keyboard, per the pattern: Down and Up cycle, wrapping at the ends; Home and End jump; typeable characters run first-letter typeahead; Enter and Space activate; Escape closes and returns focus to the host; Tab closes without choosing. Pointer: hover activates a row, click chooses it, and a pointer down outside closes. Activation emits `select` with the item's id. Look: the region stays quiet, the menu is a hairline box with square corners and no shadow, items in the page's font, shortcut hints in muted mono at the right edge, the active row in a fg tint of about 10%, disabled at 45% opacity, and focus the two-pixel accent outline offset two pixels on :focus-visible only. Set meta.stage to \"flow\", and give meta.demo children of one short paragraph the menu belongs to. The default frame is the framed region with its hint. It is wrong if the menu opens somewhere the pointer is not, instead of clamping to the viewport around it; if keyboard users cannot open it at all; or if focus is dropped on close instead of returning to the host. Declare the facets static and interactive, and let meta.palette list fg and muted. meta.interactions: Tab to focus the host, Shift+F10, ArrowDown, Enter, then expect select with the second item's id. UI primitives have 8192 bytes and this one is expected near 5.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "items (json, default Duplicate ⌘D, Rename, Archive ⌘E, Delete ⌫, with kebab-case ids and none disabled), hint (default \"Right-click for actions\", empty hides it), label (default \"Context actions\"). The inspector exposes every prop.",
+      "events": "select: the id of the chosen menu item.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Menu and menubar pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/",
+          "license": "W3C document"
+        },
+        {
+          "relation": "technique",
+          "title": "Popover API",
+          "author": "MDN",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+          "license": "CC-BY-SA documentation"
+        }
+      ]
+    },
+    {
+      "slug": "drawer",
+      "category": "ui",
+      "title": "Drawer",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A modal panel pinned to one edge of the viewport, after the dialog (modal) pattern of the WAI-ARIA Authoring Practices on a real <dialog>: set meta.host to \"dialog\". The core calls showModal() while open and close() while closed, so focus containment, Escape, and the top layer come from the browser. `edge` chooses the side: left and right give a full-height panel `size` rem wide, bottom gives a full-width panel `size` rem tall; the panel sits flush with margin 0, its only border a one-pixel hairline on the side facing the page, square corners, no shadow. The core builds a header row holding `title`, linked to the dialog by aria-labelledby, and, when `closable`, a close button with a mono glyph and an accessible name. The host's children are the body: set meta.wraps to \"content\". Escape, the close button, and a backdrop click when `dismissOnBackdrop` each emit `openChange` with false; it is controlled through `open` (null means uncontrolled) with `defaultOpen`; set meta.controlled to { open: \"openChange\" }. Look: the panel is filled with bg and ruled in fg, the backdrop is fg at a low alpha through color-mix, and nothing slides or fades, because state changes are instant. Set meta.demo to { props: { defaultOpen: true }, children: a short paragraph } so captures show the panel. The default frame is a right-edge panel with its title and close glyph. It is wrong if the panel floats away from its edge or keeps a dialog's margins, if it animates in, or if the backdrop is an opaque black. Declare the facets static and interactive, and let meta.palette list fg and bg. meta.interactions: press Escape, then expect openChange false. UI primitives have 8192 bytes and this one is expected near 4.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "open (boolean or null, default null), defaultOpen (default false), edge (\"left\", \"right\", or \"bottom\", default \"right\"), size (16 to 40 rem, default 22), title (default \"Build settings\"), closable (default true), dismissOnBackdrop (default true). The inspector exposes defaultOpen, edge, size, title, closable, and dismissOnBackdrop.",
+      "events": "openChange: the new open state.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Dialog (modal) pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "empty-state",
+      "category": "ui",
+      "title": "Empty State",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A deliberate empty place, not a component that failed to load: a small drawn mark centered over a title, a line of muted copy, and one action. `mark` picks the figure the core draws in mono box-drawing characters, muted, three to five rows tall: \"tray\" is an open tray, \"magnifier\" a lens, \"orbit\" a small ringed body. The title sits in the page's font, the message in muted under it, and `action` is a { label, href } link rendered in the button grammar: a hairline box with square corners, its label in the page's font, and a two-pixel accent rule beneath the label; hover is a fg tint of about 10%. The composition is centered and measured so it reads as designed, never as a void. Set meta.stage to \"flow\". The default frame is the tray mark, a title, a muted line, and the one action. It is wrong if it reads as a load failure or an error, which means no spinnerless void, no apology copy, and nothing that looks like a crashed frame; if the mark is an emoji, an image, or an icon font instead of drawn glyphs; or if the action outshouts the title. Declare the facets static and text, and let meta.palette list fg, accent, and muted. UI primitives have 8192 bytes and this one is expected near 3 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "mark (\"tray\", \"magnifier\", or \"orbit\", default \"tray\"), title (default \"Nothing here yet\"), message (default \"Components you add will show up in this list.\"), action (json { label, href } or null, default Add a component to #). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "field",
+      "category": "ui",
+      "title": "Field",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A label, a description, and an error around one control. The host's direct children are the control: set meta.wraps to \"panels\" so the core may give each child an id and an aria-labelledby that chains the label element's id, then the description's or the error's id when present, so assistive technology hears them together; it restores those attributes on destroy and reapplies them when React replaces a child. The core builds the chrome as its own data-pica nodes: a label row above the children in the page's font, with a small filled accent block beside the label when `required`, a description line in muted below the children, and an error line in fg below that when `error` is set, plus an accent tick beside the label while an error shows, drawn as a small filled block element, not a text glyph. It never styles the child control, which owns its own chrome. Set meta.stage to \"flow\", and meta.demo to { props: { error: \"Branch main is protected.\" }, children: an input } so captures show all three rows. The default frame is a label over the control with its description. It is wrong if the label is visually adjacent but not named on the child, because the aria-labelledby chain is the contract; if the error replaces the description instead of sitting under it; or if the field draws its own box around the control. Declare the facets static and text, and let meta.palette list fg and muted. UI primitives have 8192 bytes and this one is expected near 3 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "label (default \"Deploy target\"), description (default \"Only production branches can deploy.\"), error (default empty), required (default false). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "input",
+      "category": "ui",
+      "title": "Input",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A single-line text field that is a real <input>, so the platform supplies the caret, selection, spellcheck, form behavior, and input method handling. The host is a div: set meta.host to \"div\" and meta.stage to \"inline\". The core builds the input inside the host as its own data-pica node, with `type`, `placeholder`, `disabled`, and an aria-label from `label`; the placeholder is never the accessible name. It emits `valueChange` with the whole string on every input event and `enter` with the current string when Enter is pressed; it is controlled through `value` (null means uncontrolled) with `defaultValue`; set meta.controlled to { value: \"valueChange\" }. Look, from the UI grammar: a one-pixel hairline box in fg, square corners, no shadow, the text in mono, the placeholder in muted, hover a fg tint of about 10% inside the box, disabled at 45% opacity, and focus the two-pixel accent outline offset two pixels on :focus-visible only. The default frame is an empty field with its placeholder. It is wrong if the field is a div with contenteditable or a drawn caret, because the point of the component is that the platform does the work; if the placeholder stands in for the accessible name; or if a focus ring appears on mouse clicks, which :focus-visible exists to prevent. Declare the facets static and interactive, and let meta.palette list fg and muted. meta.interactions: Tab, press \"m\", expect valueChange \"m\", press Enter, then expect enter \"m\". UI primitives have 8192 bytes and this one is expected near 3 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "value (string or null, default null), defaultValue (default \"\"), type (\"text\", \"email\", \"password\", \"search\", or \"url\", default \"text\"), placeholder (default \"Search components\"), label (default \"Search\"), disabled (default false). The inspector exposes defaultValue, type, placeholder, label, and disabled.",
+      "events": "valueChange: the field's whole string after each input; enter: the string when Enter is pressed.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "The text input element",
+          "author": "MDN",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text",
+          "license": "CC-BY-SA documentation"
+        }
+      ]
+    },
+    {
+      "slug": "input-otp",
+      "category": "ui",
+      "title": "Input OTP",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A one-time code field as `length` single-character cells. The core builds `length` real inputs inside a group named by `label`, each one cell wide, maxlength 1, with an aria-label of its position, digit 2 of 6, so a screen reader says where the caret sits. Roving tabindex makes the group a single tab stop: the cell holding focus, or the first empty cell, keeps tabindex 0 and the rest keep -1. Keyboard: typing an allowed character sets the cell and moves to the next; Backspace clears the cell, or moves back and clears it when it is already empty; Left and Right move between cells; Home and End jump to the ends. `pattern`, \"numeric\" or \"alphanumeric\", gates both typed and pasted characters, with inputmode numeric on the former. Paste on any cell spreads the pasted text across the cells from there, skipping characters the pattern rejects. It emits `valueChange` with the whole string on every change and `complete` once every cell is filled; it is controlled through `value` (null means uncontrolled) with `defaultValue`; set meta.controlled to { value: \"valueChange\" }. Look: a row of one-pixel hairline squares with square corners, each character centered in mono, the next empty cell carrying a two-pixel accent rule at its base, focus the two-pixel accent outline offset two pixels on :focus-visible only, disabled at 45% opacity. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame is six empty cells, the first marked for input. It is wrong if every cell is its own tab stop, if paste lands only in the focused cell, or if typing does not advance and Backspace does not retreat, because those three are the whole feel of the control. Declare the facets static and interactive, and let meta.palette list fg and accent. meta.interactions: Tab, press \"4\", press \"2\", then expect valueChange \"42\". UI primitives have 8192 bytes and this one is expected near 4 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "length (4 to 8, default 6), value (string or null, default null), defaultValue (default \"\"), pattern (\"numeric\" or \"alphanumeric\", default \"numeric\"), label (default \"One-time code\"), disabled (default false). The inspector exposes length, defaultValue, pattern, label, and disabled.",
+      "events": "valueChange: the whole code string after each change; complete: the code once every cell is filled.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "kbd",
+      "category": "ui",
+      "title": "Kbd",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A keyboard chord drawn as key caps. `keys` is a JSON array of key names, [\"⌘\", \"K\"], and the core renders each as a small cap: a one-pixel hairline box with square corners and a two-pixel bottom edge, so it reads as a physical key, holding the name in uppercase mono. A muted + sits between the caps. `variant` \"brackets\" drops the caps and sets the run as bracketed mono text. The host is a span: set meta.host to \"span\" and meta.stage to \"inline\", so it sits inside a sentence and reads inline. It is not a badge: a kbd names keys a finger presses, a badge names a status, and only the kbd draws caps. The default frame is two caps, ⌘ and K. It is wrong if the caps are rounded or shadowed, if the run renders as an image or an SVG instead of text, or if it forces a line break in the sentence around it. Declare the facets static and text, and let meta.palette list fg and muted. UI primitives have 8192 bytes and this one is expected near 2.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "keys (json array of key names, default [\"⌘\", \"K\"]), variant (\"caps\" or \"brackets\", default \"caps\"). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "menu",
+      "category": "ui",
+      "title": "Menu",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A dropdown of actions under a trigger button, after the menu and menubar pattern of the WAI-ARIA Authoring Practices. The host is a real <button>: set meta.host to \"button\", so the trigger's own activation comes from the platform, and set meta.stage to \"inline\". The trigger carries `label`, a mono chevron in the accent, aria-haspopup \"menu\", and aria-expanded. The core builds the menu as a Popover API popover, role menu holding role menuitem rows from JSON, [{ id, label, shortcut, disabled }], placed under the trigger the way select's listbox is, with CSS anchor positioning where supported and getBoundingClientRect otherwise. Keyboard, per the menu-button pattern: Enter, Space, or Down on the trigger opens the menu and focuses the first item, Up opens it and focuses the last; in the menu, Down and Up cycle, wrapping at the ends, Home and End jump, typeable characters run first-letter typeahead, Enter and Space activate the item, Escape closes and returns focus to the trigger, and Tab closes without choosing. Pointer: click the trigger to toggle, hover moves the active row, click a row to choose, and a pointer down outside closes. Activation emits `select` with the item's id and closes. Look: the trigger is a hairline box in the button grammar, the menu a hairline box with square corners and no shadow, items in the page's font, shortcut hints in muted mono at the right edge, the active row in a fg tint of about 10%, disabled at 45% opacity, and focus the two-pixel accent outline offset two pixels on :focus-visible only. The default frame is the closed trigger, Actions ▾. It is wrong if the arrow keys move but Enter stays silent, if the list does not wrap at the last row, or if focus is dropped on close instead of returning to the trigger. Declare the facets static and interactive, and let meta.palette list fg, accent, and muted. meta.interactions: Tab, ArrowDown, ArrowDown, Enter, then expect select with the second item's id and aria-expanded false on the host. UI primitives have 8192 bytes and this one is expected near 5.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both the dark ground and the light one.",
+      "props": "items (json, default Duplicate ⌘D, Rename, Archive ⌘E, Delete ⌫, with kebab-case ids and none disabled), label (default \"Actions\"), disabled (default false). The inspector exposes every prop.",
+      "events": "select: the id of the chosen menu item.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Menu and menubar pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/",
+          "license": "W3C document"
+        },
+        {
+          "relation": "technique",
+          "title": "Popover API",
+          "author": "MDN",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
+          "license": "CC-BY-SA documentation"
+        }
+      ]
+    },
+    {
+      "slug": "meter",
+      "category": "ui",
+      "title": "Meter",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A scalar readout inside a defined range, after the meter pattern of the WAI-ARIA Authoring Practices. The element that carries it has role meter with aria-valuemin, aria-valuemax, and aria-valuenow always set from the props, aria-valuetext when valueText is given, and its name from label through aria-label; it is a readout, so it never takes focus and has no keyboard interaction at all. The core builds a label line in the page's font with the value right-aligned in mono tabular figures through GRID_FONT from lib/font.ts, and under it a track width cells wide in the same font: filled cells are full blocks, the last filled cell resolves the value to an eighth through leftEighth from lib/blocks.ts, and empty cells hold light shade glyphs in muted. A marker threshold draws a one-cell accent tick at that point on the track; null hides it. The host gets role and label through labelHost and hostAttributes from lib/host.ts and lib/a11y.ts, and an empty label hides the component. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame: a labelled meter about two thirds full, the track even and quiet, one accent tick near the end. It is wrong if the bar is a smooth CSS rectangle instead of cells, if the element is focusable or answers input, or if any text is set in the accent. Declare the facet static and let meta.palette list fg, muted, and accent. UI components have 8192 bytes and this one is expected near 2.8 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "value (default 64), min (default 0), max (default 100), label (default \"Storage used\"), marker (number or null, default 80, a threshold tick on the track), valueText (string, default \"\", read aloud instead of the raw value), width (8 to 60 cells, default 24). The inspector exposes every prop.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Meter pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/meter/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "number-field",
+      "category": "ui",
+      "title": "Number Field",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A numeric input after the spinbutton pattern of the WAI-ARIA Authoring Practices: a field that takes typed numbers and also steps them. The core builds a real input with inputmode decimal and role spinbutton, carrying aria-valuemin, aria-valuemax, and aria-valuenow kept in sync, named by a visible label it builds from label, and flanked by a decrement and an increment button it draws with mono minus and plus glyphs. Keyboard on the field: ArrowUp adds step, ArrowDown subtracts step, Page Up and Page Down move by largeStep, Home sets min, End sets max, and typed text commits on Enter or on blur, clamped to the range and snapped to step. Pointer: the stepper buttons change the value once per click, with no press-and-hold repeat. It emits valueChange with the committed number and is controlled through value (null means uncontrolled) with defaultValue; set meta.controlled to { value: \"valueChange\" }. Look: one hairline box holds the field and the two steppers as square cells joined to it, digits in mono tabular figures right-aligned, hover a 10% fg tint on the steppers, the accent only as the 2px focus-visible outline offset 2px, disabled at 45% opacity. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame: a labelled field showing 8 between a minus and a plus cell. meta.interactions: Tab to the field, ArrowUp, then expect valueChange with defaultValue plus step and aria-valuenow matching; a second list clicks the increment button and expects the same. It is wrong if the arrow keys move the text caret instead of stepping (preventDefault on the keys it handles), if typing a number is impossible, or if it emits on mount or on update rather than on input. Declare the facets static and interactive, and let meta.palette list fg. UI components have 8192 bytes and this one is expected near 4.2 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "value (number or null, default null), defaultValue (default 8), min (default 0), max (default 64), step (default 1), largeStep (default 10, the Page Up and Page Down amount), label (default \"Columns\"), disabled (default false). The inspector exposes every prop except value.",
+      "events": "valueChange: the committed number.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Spinbutton pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "pagination",
+      "category": "ui",
+      "title": "Pagination",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A row of page links inside a nav element the core builds, named by label through aria-label. It is original work; no WAI-ARIA pattern covers it beyond navigation semantics. The row is a previous link, numbered links, a next link, and a muted ellipsis glyph at each fold. When pages exceed what siblings allows it keeps the first page, the last page, and a window of siblings on each side of the current page, folding the rest into single non-link ellipses. The current page carries aria-current \"page\" and a 2px accent rule under its figure; every other entry is a real anchor whose href is base joined to the page number, so with base set it is an ordinary navigation list. Activating an entry emits pageChange with the page; when base is empty the core prevents the default and updates the shown page in place. It is controlled through page (null means uncontrolled) with defaultPage; set meta.controlled to { page: \"pageChange\" }. Previous and next never vanish: at the ends they render disabled at 45% opacity with aria-disabled true and out of the tab order. Keyboard is the platform's own, Tab between links and Enter to follow. Look: mono figures with no enclosing box, hover a 10% fg tint, focus the 2px accent outline offset 2px. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame: nine pages, page four current, an ellipsis before the last page. meta.interactions: click the next link, then expect pageChange with the following page and aria-current moved to it; a second list clicks a numbered link and expects pageChange. It is wrong if an ellipsis is focusable or styled like a link, if the current page lacks aria-current, or if previous and next disappear at the ends instead of disabling. Declare the facets static and interactive, and let meta.palette list fg, muted, and accent. UI components have 8192 bytes and this one is expected near 3.8 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "page (number or null, default null), defaultPage (default 4), pages (2 to 99, default 9), siblings (0 to 3, default 1, the window on each side of the current page), base (string, default \"\", a URL prefix joined to the page number for real links), label (default \"Pages\"). The inspector exposes every prop except page.",
+      "events": "pageChange: the page that was activated.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "preview-card",
+      "category": "ui",
+      "title": "Preview Card",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A card that opens beside a trigger after a short hover, for link and reference previews. It is original work; the WAI-ARIA Authoring Practices has no pattern for it. The trigger is a real anchor the core builds from triggerLabel and href, and the card is a manual Popover API panel it builds, placed on the placement side with CSS anchor positioning where supported and getBoundingClientRect otherwise, the way registry/ui/popover-tooltip does it. The card holds title in the page's font, description as a short paragraph, and meta as one mono line in muted. It opens after delay ms of unbroken hover on the trigger and at once on focus, and it closes on Escape, on blur, and after the pointer has left both the trigger and the card for a short grace delay, since the pointer may travel onto the card and read it; Escape returns focus to the trigger. The card never enters the tab order and never takes focus, and the trigger refers to it with aria-details. It emits openChange and is controlled through open (null means uncontrolled) with defaultOpen; set meta.controlled to { open: \"openChange\" }. It differs from popover-tooltip in kind, not degree: a tooltip is one mono line that describes its trigger and vanishes on leave, while this is a small document the pointer can enter, and it never opens on click, which follows the link instead. Look: a hairline card with square corners and no shadow, a 2px accent rule along its leading edge. Set meta.host to \"div\", meta.stage to \"inline\", and meta.demo props to { defaultOpen: true } so captures show the card. meta.interactions: Tab to the trigger, press Escape, then expect openChange false; a second list hovers the trigger and expects the card open. It is wrong if the card demands or steals focus, if it closes before the pointer can reach it, or if it opens on click like a popover. Declare the facets static and interactive, and let meta.palette list fg, muted, and accent. UI components have 8192 bytes and this one is expected near 4.4 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "triggerLabel (default \"Component source\"), href (default \"#\"), title (default \"registry/ui/button\"), description (default \"A button in four looks with a braille spinner while it loads.\"), meta (default \"picagram.dev/components/button\"), placement (\"top\", \"bottom\", \"start\", or \"end\", default \"top\"), delay (0 to 1500 ms, default 300), open (boolean or null, default null), defaultOpen (default false). The inspector exposes every prop except open.",
+      "events": "openChange: the card's new open state.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "progress",
+      "category": "ui",
+      "title": "Progress",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A determinate progress bar governed by the WAI-ARIA progressbar role: the bar element carries role progressbar with aria-valuemin, aria-valuemax, and aria-valuenow set from the props and its name from label through aria-label, or aria-labelledby when it builds a visible label. Work that cannot measure progress is spinner's job, so this component always has a value and never animates on its own. The core builds a label line in the page's font with the percentage right-aligned in mono tabular figures when showValue, and a track width cells wide in GRID_FONT: cells inside the fill are full blocks in the accent, the final filled cell resolves the fraction through leftEighth from lib/blocks.ts, and the rest are light shade glyphs in muted. It is not focusable, emits nothing, and moves only when value changes, instantly, with no tween between frames. The default stage fills the frame, which suits a full-width bar. The default frame: a labelled bar about two thirds full, the percentage at the right end, both ends square. It is wrong if the fill is a gradient, a glow, or a rounded bar rather than flat cells, if aria-valuenow is missing or outside the range, or if the bar creeps toward a new value over several frames instead of jumping to it. Declare the facet static and let meta.palette list fg, accent, and muted. UI components have 8192 bytes and this one is expected near 2.7 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "value (default 62), min (default 0), max (default 100), label (default \"Upload\"), showValue (default true), width (8 to 80 cells, default 40). The inspector exposes every prop.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "progressbar role",
+          "author": "W3C",
+          "url": "https://www.w3.org/TR/wai-aria-1.2/#progressbar",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "radio-group",
+      "category": "ui",
+      "title": "Radio Group",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A single-choice set after the radio group pattern of the WAI-ARIA Authoring Practices. The options come from JSON, [{ value, label, disabled }]. The core builds a container with role radiogroup named by label through aria-label, and each option as a row holding an element with role radio and aria-checked; the whole group is one tab stop through roving tabindex, the checked radio at tabindex 0 and the rest at -1, or the first radio at 0 while nothing is checked. Keyboard: ArrowRight and ArrowDown move to the next radio and check it, ArrowLeft and ArrowUp move to the previous and check it, both wrapping at the ends, and Space checks the focused radio. Pointer: click an option to check it. It emits valueChange with the checked value and is controlled through value (null means uncontrolled) with defaultValue; set meta.controlled to { value: \"valueChange\" }. Look: each row holds a box-drawn mark, a 1px hairline square containing a filled block in the accent when checked and empty when not, the label in the page's font beside it, hover a 10% fg tint on the row, focus the 2px accent outline offset 2px on the focused option, disabled options at 45% opacity. Set meta.host to \"div\" and meta.stage to \"flow\", since the list takes its own height. The default frame: three options, the first checked. meta.interactions: Tab to the group, ArrowDown, then expect valueChange with the second option's value and aria-checked true on it; a second list clicks the third option and expects valueChange. It is wrong if every radio is a tab stop (the group is exactly one stop), if arrows move focus without checking (selection follows focus in a radio group), or if the mark is a round radio dot instead of the square mark the style draws. Declare the facets static and interactive, and let meta.palette list fg and accent. UI components have 8192 bytes and this one is expected near 3.9 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "options (json, default three options, \"Paper on ink\", \"Ink on paper\", and \"System\", with values paper, ink, system), value (string or null, default null), defaultValue (default \"paper\"), label (default \"Theme\"), disabled (default false). The inspector exposes options, defaultValue, label, and disabled.",
+      "events": "valueChange: the checked option's value.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Radio group pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "scroll-area",
+      "category": "ui",
+      "title": "Scroll Area",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A container that scrolls its children and draws its own hairline indicators in place of the platform scrollbar. It is original work; no WAI-ARIA pattern covers it. The host becomes the scroll container: the core sets a height and overflow-y auto on it through styleHost, hides the native scrollbar through the scoped stylesheet with scrollbar-width none and the matching webkit pseudo-element, and adds two kinds of aria-hidden data-pica layers it owns: a hairline edge rule that shows at the top once content is scrolled past and at the bottom while more remains, and a slim thumb rail at the end edge whose position and length track scrollTop against scrollHeight. Scrolling itself is entirely the platform's: the wheel, touch, and pointer work natively, the indicators only report position and are never dragged, and the component must never trap the keyboard. The host takes tabindex 0 through hostAttributes only while its content overflows, so arrow keys, Page Up, Page Down, Home, and End scroll it by the platform's own behavior and Tab moves through any focusable children and out again; the core intercepts no key at all. A ResizeObserver and a scroll listener refresh the indicators, and both are removed on destroy. The thumb is fg at low strength and the edge rules are muted hairlines. It emits nothing and is controlled by nothing. Set meta.wraps to \"content\", meta.stage to \"flow\", and meta.demo children to a list of twenty short rows so the demo overflows. The default frame: a list with the bottom edge rule showing and the thumb at the top of its rail. It is wrong if keys or focus get stuck inside it, if the indicators are a fake scrollbar that drags instead of reporting position, or if the native scrollbar is merely restyled and leaks the platform look. Declare the facet static and let meta.palette list fg and muted. UI components have 8192 bytes and this one is expected near 3.6 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "height (4 to 40 rem, default 14), thumb (default true, the position rail), edges (default true, the top and bottom more-content rules), label (default \"Content\", the scrollable region's accessible name while it overflows). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "segmented-control",
+      "category": "ui",
+      "title": "Segmented Control",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "Related choices drawn as one ruled strip, after the radio group pattern of the WAI-ARIA Authoring Practices, so it is single-choice with selection following focus: role radiogroup on the strip named by label through aria-label, each cell role radio with aria-checked, and one tab stop through roving tabindex. Options come from JSON, [{ value, label, disabled }]. Keyboard: ArrowRight and ArrowDown move to the next cell and check it, ArrowLeft and ArrowUp move to the previous and check it, wrapping at the ends, and Space checks the focused cell. Pointer: click a cell. It emits valueChange and is controlled through value (null means uncontrolled) with defaultValue; set meta.controlled to { value: \"valueChange\" }. Look: one hairline box holds the cells side by side, divided by 1px rules, labels in the page's font, and the checked cell inverted, filled with the accent and its label set in cssOn(\"accent\") from lib/palette.ts. No pills, no gap between cells. Hover tints an unchecked cell with 10% fg, focus is the 2px accent outline offset 2px, disabled cells at 45% opacity. It differs from toggle-group in semantics and marking: this chooses exactly one of several options and inverts the chosen cell, while toggle-group presses any number of independent buttons that each keep their own state. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame: a three-cell strip, the first cell inverted. meta.interactions: Tab to the strip, ArrowRight, then expect valueChange with the second option's value and aria-checked true on it; a second list clicks the third cell and expects valueChange. It is wrong if the cells sit apart as separate buttons (the point is one ruled strip), if more than one cell reads as checked, or if arrows move focus without checking. Declare the facets static and interactive, and let meta.palette list fg and accent. UI components have 8192 bytes and this one is expected near 3.9 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "options (json, default three options, \"Grid\", \"List\", and \"Board\", with values grid, list, board), value (string or null, default null), defaultValue (default \"grid\"), label (default \"View\"), disabled (default false). The inspector exposes options, defaultValue, label, and disabled.",
+      "events": "valueChange: the checked option's value.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Radio group pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/radio/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "separator",
+      "category": "ui",
+      "title": "Separator",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A rule dividing two runs of content, after the separator role of WAI-ARIA: the host carries role separator and aria-orientation through hostAttributes, it is never focusable, and it announces nothing beyond the boundary itself. The core draws a 1px hairline in fg at a low color-mix strength through the middle of the host, across its width or down its height per orientation. With label set, a horizontal separator breaks the rule and sets the text in small mono caps, uppercase and tracked, in muted, with a cell of ground on each side; a vertical separator ignores label, since nothing the component draws may be rotated. It emits nothing and holds nothing. The default stage fills the frame, which shows a horizontal rule across it or a vertical rule down it. The default frame: one straight hairline, quiet and centered. Set meta.demo props to { label: \"Section\" } so captures also exercise the labelled look. It is wrong if the rule is heavier than a hairline or carries a shadow, gradient, or rounded ends, if it is focusable or behaves like a window splitter, or if the label is set in the accent or in a display face. Declare the facet static and let meta.palette list fg and muted. UI components have 8192 bytes and this one is expected near 2.4 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "orientation (\"horizontal\" or \"vertical\", default \"horizontal\"), label (string, default \"\"). The inspector exposes every prop.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "separator role",
+          "author": "W3C",
+          "url": "https://www.w3.org/TR/wai-aria-1.2/#separator",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "skeleton",
+      "category": "ui",
+      "title": "Skeleton",
+      "kind": "control",
+      "animated": true,
+      "decorative": false,
+      "brief": "Ghost blocks that stand where content will land while it loads. It is original work with no pattern to cite. The core builds the placeholder as cells on the mono grid in GRID_FONT: an optional avatar square, an optional heading band, then lines text lines with the last running short, all filled with shade glyphs in muted. The shimmer is slow and dithered, never a gradient sweep: each cell steps between the light and medium shades of SHADES from lib/blocks.ts on a Bayer threshold from bayerAt in lib/dither.ts, the phase advancing slowly with time, so cells at different positions step at different moments and the surface reads as grain breathing rather than a bar of light crossing. createLoop drives it with paused, time, and seed; it stops off screen and on a hidden tab, and under reduced motion it holds one even mid-shade frame. labelHost names the host with role img from label, and an empty label hides the component, since a skeleton is a stand-in and never content. Set meta.host to \"div\" and meta.stage to \"flow\", since it takes the height its lines need. The default frame at 1200 ms: an avatar square, a heading band, and three lines, the shade texture even with no clumps and no sweep. It is wrong if the shimmer is a moving gradient or a whole-block opacity pulse, if it runs fast, or if the placeholder announces as real content. Declare the facet animated and let meta.palette list muted. UI components have 8192 bytes and this one is expected near 3.4 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "avatar (default true, a square block before the lines), heading (default true, a wider first band), lines (0 to 8, default 3), speed (0.25 to 2, default 0.5), label (default \"Loading\"), fps (8), plus paused, time, and seed. The inspector exposes every prop except time.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "slider",
+      "category": "ui",
+      "title": "Slider",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A value chosen on a track, after the slider pattern of the WAI-ARIA Authoring Practices: one thumb with role slider and tabindex 0, carrying aria-valuemin, aria-valuemax, and aria-valuenow, aria-orientation when orientation is vertical, and an accessible name from a visible label the core builds. Keyboard on the thumb: ArrowRight and ArrowUp add step, ArrowLeft and ArrowDown subtract step, Page Up and Page Down move by largeStep, Home sets the minimum, and End sets the maximum. Pointer: a press or a drag anywhere on the track sets the value from the pointer's position, clamped to the range and snapped to step, and the drag continues while the pointer is held, tracked with pointer capture. It emits valueChange with the number and is controlled through value (null means uncontrolled) with defaultValue; set meta.controlled to { value: \"valueChange\" }. Look, in the UI grammar: a hairline track, the filled portion in the accent, a square thumb drawn as a hairline box that fills while hovered or dragged, the value in mono tabular figures right-aligned beside the label when showValue, and the 2px accent outline offset 2px on the thumb at focus-visible. Vertical turns the same grammar on its side inside a fixed height. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame: a labelled horizontal slider at 30, the fill a flat accent from the left end to the square thumb. meta.interactions: Tab to the thumb, ArrowRight, then expect valueChange with defaultValue plus step and aria-valuenow matching; a second list clicks the track and expects valueChange. It is wrong if the thumb is round, if pointer input ignores step or runs past the range ends, or if Page Up, Page Down, Home, and End are missing, since the pattern requires them. Declare the facets static and interactive, and let meta.palette list fg and accent. UI components have 8192 bytes and this one is expected near 4.6 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "value (number or null, default null), defaultValue (default 30), min (default 0), max (default 100), step (default 1), largeStep (default 10, the Page Up and Page Down amount), orientation (\"horizontal\" or \"vertical\", default \"horizontal\"), label (default \"Volume\"), showValue (default true), height (6 to 30 rem, default 10, used when vertical). The inspector exposes every prop except value.",
+      "events": "valueChange: the value after the change.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Slider pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/slider/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "spinner",
+      "category": "ui",
+      "title": "Spinner",
+      "kind": "control",
+      "animated": true,
+      "decorative": false,
+      "brief": "An indeterminate busy indicator for inline use beside a label or inside a control, for work whose progress is unknown. It is original work. A short run of lit cells travels the perimeter of a size-cell square clockwise, drawn on the mono grid in GRID_FONT with braille dots from lib/blocks.ts the way the loading glyph in registry/ui/button works: the leading cell in the accent, the tail stepping down through fg to muted. One revolution takes about two seconds at the default speed. createLoop drives it with paused, time, and seed, it stops off screen and on a hidden tab, and under reduced motion it holds one frame of the run. The host carries role status and the name from label through labelHost, so it announces busy politely and never takes focus, and an empty label hides it. It differs from progress, which is determinate, knows its value, and draws a bar that fills, and from ascii-loader, which is a text-mode display piece with glyph variants meant to be watched; this one is a small quiet indicator. It emits nothing and is controlled by nothing. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame at 1200 ms shows the run mid-edge rather than at a symmetric moment. It is wrong if it turns faster than the eye can follow or jumps a seam at a corner, if it reads as determinate by filling up, or if it is a smooth vector ring instead of cells on the grid. Declare the facet animated and let meta.palette list fg, muted, and accent. UI components have 8192 bytes and this one is expected near 2.9 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "size (3 to 9 cells per side, default 4), speed (0.25 to 3, default 1), label (default \"Loading\"), fps (15), plus paused, time, and seed. The inspector exposes size, speed, label, and fps.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "switch",
+      "category": "ui",
+      "title": "Switch",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "An on/off input after the switch pattern of the WAI-ARIA Authoring Practices: a real button element carrying role switch and aria-checked, activated by click, Enter, and Space, and named by a visible label the core builds from label beside it. It emits checkedChange with the new state and is controlled through checked (null means uncontrolled) with defaultChecked; set meta.controlled to { checked: \"checkedChange\" }. Look, in the UI grammar: a hairline track about two cells wide and one tall with square ends, holding a filled square thumb that sits left when off and right when on; off is an empty track with an fg thumb, on fills the track with the accent and sets the thumb in cssOn(\"accent\") from lib/palette.ts; a small mono state word, On or Off in muted, follows the label when showState. Hover gives the thumb a 10% fg tint, focus is the 2px accent outline offset 2px, disabled is 45% opacity, and the state change is instant, since nothing in the style slides. Set meta.host to \"div\" and meta.stage to \"inline\", and set meta.demo props to { defaultChecked: true } so captures exercise the on state. The default frame: a labelled switch, off. meta.interactions: Tab to the switch, Space, then expect checkedChange true and aria-checked true; a second list clicks it and expects checkedChange false. It is wrong if it is a styled checkbox without role switch, if the thumb slides through a transition, or if the track's ends round. Declare the facets static and interactive, and let meta.palette list fg, muted, and accent. UI components have 8192 bytes and this one is expected near 3.3 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "checked (boolean or null, default null), defaultChecked (default false), label (default \"Grid lines\"), showState (default true, a mono On or Off after the label), disabled (default false). The inspector exposes defaultChecked, label, showState, and disabled.",
+      "events": "checkedChange: the new state.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Switch pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/switch/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "table",
+      "category": "ui",
+      "title": "Table",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "Tabular data as a real table element, for rows of mixed text and numbers. It is original work on native semantics: the core builds table, caption, thead, tbody, tr, th, and td from columns, [{ key, label, align }], and rows, objects keyed by column, since no pattern is needed beyond what the elements already carry. Cells holding numbers render in mono tabular figures with GRID_FONT and tabular figures, text cells take the page's font, and a column's align right-aligns its figures. With sortable on, each header holds a button the core owns; activating one cycles that column through ascending, descending, and unsorted, the th carries aria-sort, and a drawn caret glyph in the accent marks the direction on the sorted column only. Sorting happens in the core and it emits sortChange with { key, direction }, where direction is \"asc\", \"desc\", or null. Look: hairline rules between rows and under the header in fg at low mix, no vertical rules, no fills, and the caption in small mono caps in muted above the table. Set meta.host to \"div\" and meta.stage to \"flow\", since the table takes its own height. The default frame: five rows of component stats with the size column sorted descending. meta.interactions: click the size header button, then expect sortChange with { key: \"size\", direction: \"asc\" } and aria-sort ascending on that th. It is wrong if the layout is divs instead of table elements, if numbers use proportional figures, or if every header shows a sort glyph rather than the sorted column alone. Declare the facets static and interactive, and let meta.palette list fg, muted, and accent. UI components have 8192 bytes and this one is expected near 4.4 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "columns (json, default four columns: name, family, size, checks, with size and checks right-aligned), rows (json, default five rows of made-up component stats), label (default \"Components\", the caption), sortable (default true), defaultSort (json { key, direction } or null, default { key: \"size\", direction: \"desc\" }, the sort at mount). The inspector exposes every prop.",
+      "events": "sortChange: { key, direction } for the column and direction after a header activation, direction null when unsorted.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "textarea",
+      "category": "ui",
+      "title": "Textarea",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A multi-line text field that grows with its content. It is original work on native semantics: the core builds a real textarea inside the host with a visible label from label in small mono caps, starts it at one line, and after every input sets its height from scrollHeight capped at maxRows lines, past which it scrolls; the platform owns every editing key. With max above zero, a character count in mono tabular figures sits at the end of a footer line the core adds, reading \"n / max\", in muted inside the limit and fg past it, linked to the field through aria-describedby rather than a live region, since a count that announces every keystroke is noise; maxlength is not set, so going over is possible and shown. It emits valueChange with the text on each input and is controlled through value (null means uncontrolled) with defaultValue; set meta.controlled to { value: \"valueChange\" }. Look: a hairline box with square corners, the text in the page's font, focus the 2px accent outline offset 2px on the field, disabled at 45% opacity, no resize handle. Set meta.host to \"div\" and meta.stage to \"flow\", since it takes its own height. The default frame: a labelled field holding two lines with the count under it. meta.interactions: click the field, press a key, then expect valueChange with the default text plus that character. It is wrong if the height is fixed and clips the next line, if the count announces keystrokes through a live region, or if the box rounds or shadows. Declare the facets static and interactive, and let meta.palette list fg and muted. UI components have 8192 bytes and this one is expected near 3.4 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "value (string or null, default null), defaultValue (default \"Shipped the palette work today.\\nTwo lines in already.\"), label (default \"Notes\"), placeholder (default \"Write it down\"), maxRows (2 to 16, default 8), max (0 for no count, default 280), disabled (default false). The inspector exposes every prop except value.",
+      "events": "valueChange: the field's text.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "toast",
+      "category": "ui",
+      "title": "Toast",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A stack of transient notices. It follows the alert pattern of the WAI-ARIA Authoring Practices for announcements and borrows the alert dialog pattern's rule that the region exists before content lands in it: the core builds one fixed container at mount with role log and an aria-label from label, which is a polite live region, so every toast added later is announced without moving focus. Toasts come from the toasts JSON prop, [{ id, title, message, tone }], stacked in the position corner with at most max visible. Each is a hairline box with square corners holding a 2px leading rule in the accent when tone is \"accent\" and in fg otherwise, an optional title in small mono caps, the message in the page's font, and a square close button with a mono glyph and an accessible name. A toast leaves after duration ms, or stays when duration is 0, and its timer pauses while the pointer is over it or focus is inside it; leaving emits dismiss with the id and the core removes the node it created. Focus is never moved to a toast, and the container intercepts no key. Set meta.host to \"div\"; the default stage is fine because the container is position fixed. Set meta.demo props to two sample toasts so captures show the stack. meta.interactions: click a close button, then expect dismiss with that toast's id. It is wrong if the live region is created holding the first toast (the announcement is missed, so the region is built empty at mount), if a toast takes or steals focus, or if a timer runs while the toast is hovered or focused. Declare the facets static and interactive, and let meta.palette list fg, muted, and accent. UI components have 8192 bytes and this one is expected near 4.8 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "toasts (json, default empty; meta.demo supplies two, \"Build finished\" with a short message and tone \"accent\", and \"3 warnings\" in the default tone), duration (0 to 20000 ms, default 6000, where 0 keeps a toast until dismissed), position (\"top-start\", \"top-end\", \"bottom-start\", or \"bottom-end\", default \"bottom-end\"), label (default \"Notifications\"), max (1 to 6, default 3). The inspector exposes every prop.",
+      "events": "dismiss: the id of the toast that left, by timeout or by its close button.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Alert pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alert/",
+          "license": "W3C document"
+        },
+        {
+          "relation": "technique",
+          "title": "Alert and message dialogs pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "toggle-group",
+      "category": "ui",
+      "title": "Toggle Group",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A row of independent on/off buttons. It takes its focus model from the toolbar pattern of the WAI-ARIA Authoring Practices: the strip has role toolbar named by label through aria-label with aria-orientation set, exactly one tab stop through roving tabindex, ArrowRight and ArrowLeft moving between buttons in a horizontal strip and ArrowDown and ArrowUp in a vertical one, Home and End jumping to the ends; arrows move focus only and never press a button, while Space and Enter toggle the focused button's aria-pressed. Options come from JSON, [{ value, label, disabled }], and any number may be pressed at once. Pointer: click a button. It emits valueChange with the pressed values in order and is controlled through value (a JSON array, null means uncontrolled) with defaultValue; set meta.controlled to { value: \"valueChange\" }. Look: one hairline box holds the cells side by side, divided by 1px rules, labels in the page's font, and each pressed cell carries a 2px accent rule under its label rather than a fill; several can show it at once. Hover tints a cell with 10% fg, focus is the 2px accent outline offset 2px, disabled cells at 45% opacity. It differs from segmented-control, which is a radio group: exactly one cell checked, arrows checking as they move, the chosen cell filled. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame: a three-cell strip with the first cell pressed. meta.interactions: Tab to the strip, ArrowRight, Space, then expect valueChange with [\"grid\", \"snap\"] and aria-pressed true on the second button. It is wrong if arrows press buttons instead of only moving focus, if pressing one cell lifts another (the states are independent), or if pressed cells get the segmented fill instead of the accent rule. Declare the facets static and interactive, and let meta.palette list fg and accent. UI components have 8192 bytes and this one is expected near 3.9 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "options (json, default three options, \"Grid\", \"Snap\", and \"Guides\", with values grid, snap, guides), value (json array or null, default null), defaultValue (json array, default [\"grid\"]), label (default \"View options\"), orientation (\"horizontal\" or \"vertical\", default \"horizontal\"). The inspector exposes options, defaultValue, label, and orientation.",
+      "events": "valueChange: the pressed values, in order.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Toolbar pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "toolbar",
+      "category": "ui",
+      "title": "Toolbar",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A band grouping related controls, after the toolbar pattern of the WAI-ARIA Authoring Practices: role toolbar named by label through aria-label, aria-orientation from orientation, and exactly one tab stop for the whole band through roving tabindex. The controls come from items, JSON entries of [{ id, label, glyph, disabled, toggle, pressed }]: a plain item is a button that emits press with its id on activation, an item with toggle true shows and tracks aria-pressed and emits toggle with { id, pressed }, and an item with separator true renders a wider hairline divide. Keyboard in a horizontal band: ArrowRight and ArrowLeft move between controls without wrapping, Home and End jump to the first and last, ArrowDown and ArrowUp do the moving in a vertical band, and Tab enters and leaves. Pointer: click. Look: one hairline box holding square cells divided by 1px rules, each cell a mono glyph or a short label in the page's font, pressed toggles carrying a 2px accent rule under their label, hover a 10% fg tint, focus the 2px accent outline offset 2px, disabled cells at 45% opacity. Set meta.host to \"div\" and meta.stage to \"inline\". The default frame: a six-item band with one toggle pressed and one separator divide. meta.interactions: Tab into the band, ArrowRight, Enter, then expect press with the second item's id; a second list presses Space on a toggle item and expects toggle. It is wrong if every cell is a tab stop (the band is exactly one), if arrows move past the ends and wrap, or if action items look pressed when they only fire. Declare the facets static and interactive, and let meta.palette list fg and accent. UI components have 8192 bytes and this one is expected near 3.8 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "items (json, default six items: Run, Format, and Lint as actions, a separator, then Docs as a pressed toggle and Settings as an action), label (default \"Editor\"), orientation (\"horizontal\" or \"vertical\", default \"horizontal\"). The inspector exposes every prop.",
+      "events": "press: the activated item's id; toggle: { id, pressed } for a toggle item's new state.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Toolbar pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "tree-view",
+      "category": "ui",
+      "title": "Tree View",
+      "kind": "control",
+      "animated": false,
+      "decorative": false,
+      "brief": "A hierarchical list after the tree view pattern of the WAI-ARIA Authoring Practices: a container with role tree named by label through aria-label, each item a role treeitem with aria-expanded on parents and aria-selected on the selected item, children nested in role group containers, and one tab stop through roving tabindex on the treeitems. The data is nodes, JSON of [{ id, label, children }]. Keyboard: ArrowRight opens a closed parent or moves into an open parent's first child and does nothing on a leaf, ArrowLeft closes an open parent or moves to the item's parent, ArrowDown and ArrowUp move between visible items, Home and End jump to the first and last visible item, a printable character jumps to the next visible item whose label starts with it, and Enter or Space selects the focused item. Pointer: clicking a parent's marker toggles it, clicking a label selects it. Expansion lives in the core, seeded by the expanded id list. It emits valueChange with the selected id and is controlled through value (null means uncontrolled) with defaultValue; set meta.controlled to { value: \"valueChange\" }. Look: rows indented one cell per depth, box-drawing guides in muted before each label, a mono plus or minus marker on parents, labels in the page's font, the selected row's label under a 2px accent rule, hover a 10% fg tint, focus the accent outline. Set meta.host to \"div\" and meta.stage to \"flow\". The default frame: a small tree two levels deep, one branch open, one item selected. meta.interactions: Tab to the tree, ArrowRight to open the focused parent, ArrowDown, Enter, then expect valueChange with the child's id and aria-selected true on it. It is wrong if the tree is a flat list of buttons without the tree roles, if ArrowRight selects rather than expands, or if the guides are missing so depth cannot be read. Declare the facets static and interactive, and let meta.palette list fg, muted, and accent. UI components have 8192 bytes and this one is expected near 5.4 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "nodes (json, default a two-level tree: components with children ascii, dither, and shaders, and docs with children guides and reference), value (string or null, default null), defaultValue (default \"dither\"), expanded (json array of ids open at mount, default [\"components\"]), label (default \"Contents\"). The inspector exposes nodes, expanded, label, and defaultValue.",
+      "events": "valueChange: the selected item's id.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Tree view pattern",
+          "author": "W3C WAI-ARIA Authoring Practices Guide",
+          "url": "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/",
+          "license": "W3C document"
+        }
+      ]
+    },
+    {
+      "slug": "grid-paper",
+      "category": "patterns",
+      "title": "Grid Paper",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "Engineering grid paper: a fine square mesh of minor rules crossed by a major rule every `major` cells. The core draws it with four repeating-linear-gradients in one scoped stylesheet on an under layer from lib/host.ts, two for the minor rules at `spacing` px and two for the majors at `spacing` times `major` px, so a major rule always lands exactly on a minor line. Minors draw in muted and majors in fg through cssVar; every rule is one pixel, and the majors read heavier through ink, never through width. `strength` is the layer's opacity and the only lever for loudness: at the default a headline set over the sheet stays comfortably readable on both grounds. It is a background, so the layer is pointer-events none and aria-hidden and the host's children render above it. The default frame is an 8 px mesh with a major every five, which already reads as a sheet of graph paper. It is wrong if a major rule falls between minor lines, which happens when the two periods are set independently instead of one being a multiple of the other; it is wrong if the majors are drawn wider rather than darker; and it is wrong at any strength a reviewer would call loud rather than quiet. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\", \"muted\"], and meta.demo children to a short heading over a line of copy so the capture is judged as a background. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 1.6 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "spacing (4 to 32 px per minor cell, default 8), major (2 to 10 minor cells between major rules, default 5), strength (0 to 1, the layer's opacity, default 0.4). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "dot-lattice",
+      "category": "patterns",
+      "title": "Dot Lattice",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "A field of small round dots on a regular lattice, the dots points rather than discs. The core draws the field with radial-gradient tiles in one scoped stylesheet on an under layer from lib/host.ts: one `spacing` px tile per dot, or two tiles offset by half a spacing when `offset` staggers alternate rows. `angle` rotates the lattice by rotating the layer itself, which the scoped rule sizes larger than the host's diagonal and the host clips through styleHost overflow hidden, so no angle ever uncovers a corner. `fade` spends on a mask-image radial gradient that lets the lattice go toward the edges, following the currentColor mask in registry/effects/halftone-css. `strength` is the layer's opacity; the default sits quiet enough that a headline set over the field stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is an even field of pinpoints at 24 px, upright, unfaded, calm on both grounds. It is wrong if the dots grow large enough to read as polka dots or a halftone of an image, because this is a lattice of points and `dot` stays small; it is wrong if rotation uncovers a corner, which means the layer was not oversized enough; and it is wrong if `offset` rows drift off the lattice, which means the two tiles' periods disagree. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 1.9 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "spacing (8 to 64 px between lattice points, default 24), angle (0 to 90 degrees of lattice rotation, default 0), offset (default false; stagger alternate rows by half a spacing), dot (0.5 to 2 px radius, default 1), fade (0 to 1, how far from the edges the lattice lets go, default 0), strength (0 to 1, the layer's opacity, default 0.35). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "diagonal-stripes",
+      "category": "patterns",
+      "title": "Diagonal Stripes",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "Angled rules across the ground, the drafting-table diagonal. One repeating-linear-gradient in a scoped stylesheet on an under layer from lib/host.ts: `angle` degrees, `thickness` px of fg through cssVar, then transparent for the rest of `spacing`. Thickness never exceeds half the spacing, so the pattern always reads as rules rather than bands. `strength` is the layer's opacity, spent entirely on loudness; at the default a headline set over the stripes stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is one-pixel rules at 45 degrees on a 14 px period, unmistakably a diagonal field and quiet about it. It is wrong if the stripes are wide enough to read as a barber pole or a candy stripe, which is a failure of the thickness cap rather than of taste; it is wrong if `angle` visibly changes nothing, because the rake is the component's one gesture; and it is wrong if the default fights the type over it. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 1.3 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "angle (-75 to 75 degrees, default 45), spacing (6 to 64 px between rules, default 14), thickness (1 to 6 px, never more than half the spacing, default 1), strength (0 to 1, the layer's opacity, default 0.35). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "checkerboard",
+      "category": "patterns",
+      "title": "Checkerboard",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "Alternating squares of ink and ground. Draw with a repeating-conic-gradient, or two crossed repeating-linear-gradients, producing `size` px cells of fg against transparent on an under layer from lib/host.ts. With `angle` above zero the layer is oversized past the host's diagonal, rotated, and clipped to the host through styleHost overflow hidden, so the cells tilt without uncovering a corner. Because half the frame is inked, `strength` stays low: it is the layer's opacity and its default is a whisper, quiet enough that a headline set over it stays readable on both grounds. It is a background: pointer-events none, aria-hidden, children above. The default frame is a 32 px board, upright, faint enough to sit under a hero. It is wrong if the default reads as a racing flag instead of a whispered texture, since a checkerboard carries more ink per pixel than any other pattern in this batch and its default strength is the lowest of the twelve; it is wrong if rotated cells leave an uncovered corner; and it is wrong if cells come out rectangular when `size` asks for squares. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 1.4 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "size (8 to 96 px per cell, default 32), angle (0 to 45 degrees, default 0), strength (0 to 1, the layer's opacity, default 0.08). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "hatch-lines",
+      "category": "patterns",
+      "title": "Hatch Lines",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "Cross-hatching in the manner of a pen drawing: `density` families of parallel hairlines, each one a repeating-linear-gradient stacked in a scoped stylesheet on an under layer from lib/host.ts. One family runs at `angle`, a second adds a family at `angle` plus 90, and a third adds one at `angle` plus 45. Every family shares `spacing` and draws in fg through cssVar. `strength` is the layer's opacity and buys loudness, while `density` buys coverage, so the two-family default reads as a quiet cross-hatch rather than a mesh and a headline set over it stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is two families crossing at 45 and 135 degrees on a 10 px pitch, the texture of an engraving's shading. It is wrong if a second family lands parallel to the first and changes nothing; it is wrong if three families at tight spacing fill the frame into a solid tone, because spacing and strength together must keep the ground dominant; and it is wrong if the drawn angle drifts from what `angle` sets. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 1.5 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "angle (0 to 90 degrees of the first family, default 45), density (1 to 3 line families, default 2), spacing (4 to 32 px between parallel lines, default 10), strength (0 to 1, the layer's opacity, default 0.3). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "truchet-tiles",
+      "category": "patterns",
+      "title": "Truchet Tiles",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "A seeded Truchet tiling after Smith and Boucher's account of Truchet's 1704 tiles. The host divides into `cell` px squares and each square carries one tile whose orientation comes from the seed. With `tile` set to \"arcs\", each cell holds two quarter-circle strokes, each joining the midpoints of two adjacent edges, and the seeded choice decides which way they pair; because every edge midpoint carries exactly one stroke end, arcs continue across cell borders and resolve into long wandering paths, which is the whole point of the construction. With `tile` set to \"diagonals\", each cell holds one corner-to-corner stroke, so the field reads as a maze of zigzags that still join at shared corners. Draw the field as one inline SVG inside an under layer from lib/host.ts, sized to the host's pixel box and rebuilt on resize through a ResizeObserver, strokes in fg through cssVar at `thickness`. Each cell's choice comes from createRng(hashSeed(seed, column, row)), so the same seed and the same host size always draw the same field and no short periodicity shows. `strength` is the strokes' opacity; at the default the paths wander quietly enough that a headline set over them stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is a 32 px field of arcs resolving into a handful of long paths. It is wrong if an arc endpoint misses an edge midpoint and paths break at cell borders, the classic Truchet failure; it is wrong if the same seed lays out differently between mounts or between the two shapes; and it is wrong if the tiling repeats visibly, which means the choices came from a small table rather than per-cell hashes. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 2.8 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "cell (16 to 64 px per tile, default 32), tile (\"arcs\" or \"diagonals\", default \"arcs\"), thickness (1 to 3 px stroke width, default 1.5), strength (0 to 1, the strokes' opacity, default 0.4), seed (any integer, default 1). The inspector exposes every prop.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "The Tiling Patterns of Sebastien Truchet and the Topology of Structural Hierarchy",
+          "author": "Cyril Stanley Smith and Pauline Boucher",
+          "url": "https://doi.org/10.2307/1578535",
+          "license": "Paper"
+        }
+      ]
+    },
+    {
+      "slug": "isometric-grid",
+      "category": "patterns",
+      "title": "Isometric Grid",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "A true isometric lattice: three families of parallel hairlines, vertical and at plus and minus 30 degrees from horizontal, with equal perpendicular spacing so every cell is an equilateral triangle. Draw it with three stacked repeating-linear-gradients in a scoped stylesheet on an under layer from lib/host.ts: gradient directions 0, 60, and 120 degrees produce stripes at 90, minus 30, and plus 30, and each takes the same `spacing` period, which repeats along the gradient axis and so sets the perpendicular gap directly. All rules are one pixel of fg through cssVar. With `dots` on, the rules give way to a point at each lattice vertex, the isometric dot paper used for sketching, drawn with a staggered two-tile background whose row pitch is the triangle height. `strength` is the layer's opacity; at the default a headline set over the lattice stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is a 24 px isometric mesh, verticals included, quiet on both grounds. It is wrong if the diagonals come out at 45 degrees, which reads as a rotated square grid rather than isometric; it is wrong if the three families' spacings disagree and the triangles are not equilateral; and it is wrong if `dots` places points anywhere but on the vertices. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 1.8 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "spacing (8 to 64 px between parallel rules, default 24), dots (default false; draw points at the lattice vertices instead of rules), strength (0 to 1, the layer's opacity, default 0.35). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "hex-lattice",
+      "category": "patterns",
+      "title": "Hex Lattice",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "A regular hexagonal lattice in hairlines: every edge shared by two hexagons, six equal sides, flat tops or pointy tops by `orientation`. Gradients cannot tile a hexagon, so the core generates the tiling's smallest rectangular repeat, which holds two hexagons, as an SVG data URI and sets it as the repeating background of an under layer from lib/host.ts, strokes one pixel in fg through cssVar. `size` is a hexagon's radius, centre to vertex, so the tile's aspect ratio is derived from it rather than guessed. `strength` is the layer's opacity; at the default the honeycomb sits quiet enough that a headline over it stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is a flat-top honeycomb at 20 px radius on both grounds. It is wrong if the hexagons stretch or shear, which means the tile's aspect ratio drifted from what a regular hexagon needs; it is wrong if a seam shows where tiles meet or if neighbouring hexagons leave gaps or doubled edges, since every edge is shared exactly once; and it is wrong if the default competes with type. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 2.2 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "size (12 to 64 px, the hexagon's centre-to-vertex radius, default 20), orientation (\"flat\" or \"pointy\" top, default \"flat\"), strength (0 to 1, the layer's opacity, default 0.35). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "circuit-traces",
+      "category": "patterns",
+      "title": "Circuit Traces",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "Seeded traces in the manner of a printed circuit board: orthogonal runs on a `pitch` px grid with a pad at each endpoint and, when `vias` is on, an open via ring at some bends. The whole board is one inline SVG inside an under layer from lib/host.ts, sized to the host's pixel box and rebuilt on resize through a ResizeObserver. Each of `traces` traces starts at a seeded grid point and runs to a seeded end by one or two right-angle jogs, and every choice comes from createRng(hashSeed(seed, n)), so the seed fully determines the layout for a given host size and the same seed always draws the same board. Traces cross freely; a crossing reads as passing wires and needs no bridge. Traces draw as one-pixel strokes in fg through cssVar, while the pads and vias draw in the accent, the one place it appears, marking the points of interest the way a chart marks a highlighted series. `strength` is the whole layer's opacity, marks included; at the default a headline set over the board stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is 28 traces on a 16 px grid with a scatter of accent pads and open ground between the runs. It is wrong if any segment is not horizontal or vertical, because a single diagonal turns it into generic line art; it is wrong if the same seed produces a different board between mounts or between the two shapes; and it is wrong if the traces pack the frame edge to edge like a mesh, since a board leaves open ground. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\", \"accent\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 3.0 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "pitch (8 to 48 px grid, default 16), traces (4 to 60, default 28), vias (default true; open rings at some bends), strength (0 to 1, the layer's opacity, default 0.4), seed (any integer, default 1). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "brick-lattice",
+      "category": "patterns",
+      "title": "Brick Lattice",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "Masonry courses: `width` by `course` rectangles with `mortar` px of ground between them. With `bond` set to \"running\", every other course offsets by exactly half a brick pitch; \"stack\" aligns the courses into a stack bond. The core draws the repeat as a generated SVG tile, two courses high and two bricks wide with the second course offset for running bond, set as the repeating background of an under layer from lib/host.ts, hairline brick outlines in fg through cssVar. `strength` is the layer's opacity; at the default the courses sit quiet enough that a headline over them stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is running bond at 48 by 16 px bricks with a 3 px joint, which reads as masonry and not as a grid because the bricks are three times wider than tall. It is wrong if the running offset drifts from exactly half a brick pitch, since the error accumulates visibly across the frame; it is wrong if the bricks approach square, which reads as graph paper rather than masonry; and it is wrong if the mortar gap varies within a course. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 1.9 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "bond (\"running\" or \"stack\", default \"running\"), width (24 to 120 px per brick, default 48), course (8 to 40 px per course, default 16), mortar (0 to 8 px of ground between bricks, default 3), strength (0 to 1, the layer's opacity, default 0.35). The inspector exposes every prop.",
+      "original": true,
+      "credits": []
+    },
+    {
+      "slug": "cell-mosaic",
+      "category": "patterns",
+      "title": "Cell Mosaic",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "A seeded cell mosaic in the manner of a Voronoi diagram. `cells` seed points land on a jittered grid, one per grid square, each displaced within its own square by createRng(hashSeed(seed, index)); each cell is the region nearer its point than to every other, found by clipping a generous starting polygon against the perpendicular bisector of each neighbouring pair. The jittered grid keeps cells convex, polygonal, and even in size, which is what the construction is for: no slivers and no giants. The mosaic is one inline SVG of stroked polygons inside an under layer from lib/host.ts, hairlines in fg through cssVar, sized to the host's pixel box and rebuilt on resize through a ResizeObserver; the same seed and the same host size always draw the same mosaic. `gap` insets every cell toward its centroid by that many pixels, turning shared walls into grout lines; at zero the walls meet edge to edge. `strength` is the strokes' opacity; at the default the cells sit quiet enough that a headline over them stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is 48 even cells meeting cleanly wall to wall. It is wrong if neighbouring cells overlap or leave ground between their walls when `gap` is zero, which means the bisector clip is off; it is wrong if the seed changes nothing or the same seed redraws differently; and it is wrong if the points are placed by Poisson scatter instead of a jittered grid, which throws exactly the slivers and giants this construction avoids. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 3.2 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "cells (8 to 160, default 48), gap (0 to 6 px of inset per cell, default 0), strength (0 to 1, the strokes' opacity, default 0.4), seed (any integer, default 1). The inspector exposes every prop.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "Nouvelles applications des paramètres continus à la théorie des formes quadratiques. Deuxième mémoire. Recherches sur les parallélloèdres primitifs",
+          "author": "Georges Voronoi",
+          "url": "https://doi.org/10.1515/crll.1908.134.198",
+          "license": "Paper"
+        }
+      ]
+    },
+    {
+      "slug": "moire-rings",
+      "category": "patterns",
+      "title": "Moire Rings",
+      "kind": "css",
+      "animated": false,
+      "decorative": true,
+      "brief": "A moire of two concentric ring fields slightly out of step, after Amidror's treatment of the moire phenomenon between periodic layers. Both fields are repeating-radial-gradient hairline rings centred on the host's centre, stacked in one scoped stylesheet on an under layer from lib/host.ts: the first at `spacing` px per ring and the second at `spacing` times `step`, so the families coincide at the centre and drift apart outward into the slow light-and-dark beat that is the moire itself. `step` is the second field's period as a fraction of the first: values near one give long gentle beats, larger values tighten the beat into rings of rings. `thickness` is the ring width and stays a hairline. Both fields draw in fg through cssVar; where two rings coincide the ink doubles and reads as the beat. `strength` is the layer's opacity; at the default the beat sits quiet enough that a headline over it stays readable. It is a background: pointer-events none, aria-hidden, children above. The default frame is a 7 px field against a field 1.07 times coarser, a beat sweeping out from the centre of the host. It is wrong if `step` can reach exactly 1, which superposes the fields into one darker set of rings with no beat; it is wrong if `step` runs so large the fields alias into noise rather than a readable beat; and it is wrong if the rings are bands rather than hairlines. Set meta.wraps to \"content\", meta.facets to [\"static\", \"background\"], meta.palette to [\"fg\"], and meta.demo children to a short heading over a line of copy. No meta.host, stage, controlled, or interactions. Patterns have 6144 bytes and this one is expected near 1.3 KB. It fetches nothing, adds no dependency, takes every random number from the seed, and looks finished and intentional on both grounds.",
+      "props": "spacing (4 to 16 px per ring, default 7), step (1.02 to 1.25, the second field's period as a fraction of the first, default 1.07), thickness (1 to 2 px, default 1), strength (0 to 1, the layer's opacity, default 0.3). The inspector exposes every prop.",
+      "credits": [
+        {
+          "relation": "technique",
+          "title": "The Theory of the Moiré Phenomenon, Volume I: Periodic Layers",
+          "author": "Isaac Amidror",
+          "url": "https://doi.org/10.1007/978-1-84882-181-1",
+          "license": "Book"
+        }
+      ]
+    }
+  ]
+}

@@ -15,7 +15,7 @@
   --line: #2c2c2c;
   --muted: #8d8d8a;
   --muted-2: #787874;
-  --accent: #e8a020;
+  --accent: #3F84E5;
   --font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --layers: 260px;
   --inspector: 340px;
@@ -31,7 +31,7 @@
   --fg: #0a0a0a;
   --line: #cfcfcb;
   --muted: #6a6a66;
-  --accent: #975c00;
+  --accent: #2C63B0;
   color-scheme: light;
 }
 

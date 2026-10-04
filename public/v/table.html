@@ -1,0 +1,281 @@
+<!doctype html>
+<!--
+  Pica · Table · table
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Table · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaTable = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/table/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/table/core.ts
+  var defaults = {
+    columns: [
+      { key: "name", label: "Name" },
+      { key: "family", label: "Family" },
+      { key: "size", label: "Size KB", align: "right" },
+      { key: "checks", label: "Checks", align: "right" }
+    ],
+    rows: [
+      { name: "Quiet Hero", family: "Section", size: 11.6, checks: 24 },
+      { name: "Orbit Plot", family: "Data", size: 6.4, checks: 22 },
+      { name: "Glyph Atlas", family: "ASCII", size: 5.8, checks: 18 },
+      { name: "Signal Button", family: "UI", size: 4.2, checks: 16 },
+      { name: "Grid Field", family: "Pattern", size: 3.7, checks: 12 }
+    ],
+    label: "Components",
+    sortable: true,
+    defaultSort: { key: "size", direction: "desc" }
+  };
+  function tableElement(tag) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    return node;
+  }
+  function tableCompare(left, right) {
+    if (typeof left === "number" && typeof right === "number") return left - right;
+    const a = String(left).toLowerCase();
+    const b = String(right).toLowerCase();
+    return a < b ? -1 : a > b ? 1 : 0;
+  }
+  function tableRules(selector) {
+    const fg = cssVar("fg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    return [
+      `:where(${selector}){display:block;width:100%;box-sizing:border-box;padding:clamp(1rem,3vw,2.5rem);color:${fg}}`,
+      `${selector} table{width:100%;border-collapse:collapse;border-spacing:0;font-size:clamp(.75rem,1.5vw,1rem);line-height:1.45}`,
+      `${selector} caption{text-align:left;padding:0 0 1.1rem;color:${muted};font-family:${GRID_FONT};font-size:.72em;font-weight:600;letter-spacing:.08em;text-transform:uppercase}`,
+      `${selector} th,${selector} td{box-sizing:border-box;text-align:left;vertical-align:middle;padding:.85em clamp(.55em,2vw,1.4em) .85em 0}`,
+      `${selector} th:last-child,${selector} td:last-child{padding-right:0}`,
+      `${selector} th{border-bottom:1px solid color-mix(in srgb,${fg} 34%,transparent);font-size:.82em;font-weight:600;letter-spacing:.025em}`,
+      `${selector} tbody tr:not(:last-child) td{border-bottom:1px solid color-mix(in srgb,${fg} 16%,transparent)}`,
+      `${selector} tbody tr{height:clamp(4.5rem,9vh,5rem)}`,
+      `${selector} [data-align="right"]{text-align:right}`,
+      `${selector} td[data-numeric]{font-family:${GRID_FONT};font-variant-numeric:tabular-nums lining-nums}`,
+      `${selector} button{appearance:none;display:inline-flex;align-items:center;gap:.55em;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer}`,
+      `${selector} th[data-align="right"] button{margin-left:auto}`,
+      `${selector} button:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${selector} [data-caret]{color:${accent};font-family:${GRID_FONT};font-size:.9em;line-height:1}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let activeSort = props.defaultSort ? { ...props.defaultSort } : null;
+    const emit = emitter(host);
+    const sheet = scope(host);
+    const table = tableElement("table");
+    host.append(table);
+    function orderedRows() {
+      if (!activeSort?.direction) return props.rows;
+      const { key, direction } = activeSort;
+      return props.rows.map((row, index) => ({ row, index })).sort((a, b) => {
+        const order = tableCompare(a.row[key] ?? "", b.row[key] ?? "");
+        return order === 0 ? a.index - b.index : direction === "asc" ? order : -order;
+      }).map(({ row }) => row);
+    }
+    function draw() {
+      if (activeSort && !props.columns.some((column) => column.key === activeSort?.key)) activeSort = null;
+      const caption = tableElement("caption");
+      caption.textContent = props.label;
+      caption.hidden = props.label.length === 0;
+      const head = tableElement("thead");
+      const headRow = tableElement("tr");
+      for (const column of props.columns) {
+        const cell = tableElement("th");
+        cell.scope = "col";
+        cell.dataset.column = column.key;
+        cell.dataset.align = column.align ?? "left";
+        if (activeSort?.key === column.key && activeSort.direction) {
+          cell.setAttribute("aria-sort", activeSort.direction === "asc" ? "ascending" : "descending");
+        }
+        if (props.sortable) {
+          const button = tableElement("button");
+          button.type = "button";
+          button.dataset.sortKey = column.key;
+          const text = tableElement("span");
+          text.textContent = column.label;
+          button.append(text);
+          if (activeSort?.key === column.key && activeSort.direction) {
+            const caret = tableElement("span");
+            caret.dataset.caret = "";
+            caret.setAttribute("aria-hidden", "true");
+            caret.textContent = activeSort.direction === "asc" ? "▴" : "▾";
+            button.append(caret);
+          }
+          cell.append(button);
+        } else {
+          cell.textContent = column.label;
+        }
+        headRow.append(cell);
+      }
+      head.append(headRow);
+      const body = tableElement("tbody");
+      for (const row of orderedRows()) {
+        const bodyRow = tableElement("tr");
+        for (const column of props.columns) {
+          const cell = tableElement("td");
+          const value = row[column.key] ?? "";
+          cell.dataset.align = column.align ?? "left";
+          if (typeof value === "number") cell.dataset.numeric = "";
+          cell.textContent = String(value);
+          bodyRow.append(cell);
+        }
+        body.append(bodyRow);
+      }
+      table.replaceChildren(caption, head, body);
+    }
+    const onClick = (event) => {
+      if (!props.sortable || !(event.target instanceof Element)) return;
+      const button = event.target.closest("button[data-sort-key]");
+      if (!button || !table.contains(button)) return;
+      const key = button.dataset.sortKey;
+      if (!key) return;
+      const direction = activeSort?.key !== key ? "asc" : activeSort.direction === "desc" ? "asc" : activeSort.direction === "asc" ? null : "desc";
+      activeSort = { key, direction };
+      draw();
+      emit("sortChange", { key, direction });
+    };
+    table.addEventListener("click", onClick);
+    sheet.setRules(tableRules(sheet.selector));
+    draw();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        draw();
+      },
+      destroy() {
+        table.removeEventListener("click", onClick);
+        table.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaTable.mount(host, take(window.PICA_PROPS || {}));
+  ["sortChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

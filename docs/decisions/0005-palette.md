@@ -14,7 +14,7 @@ Decision:
   |---|---|
   | `--pica-fg` | the inherited text color |
   | `--pica-bg` | transparent |
-  | `--pica-accent` | amber `#e8a020` |
+  | `--pica-accent` | mint `#13C4A3` |
   | `--pica-muted` | fg at 65% |
 
 - **`lib/palette.ts` is the only reader:**

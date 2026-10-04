@@ -1,0 +1,58 @@
+import type { Meta } from "../../../lib/meta";
+
+export const meta: Meta = {
+  slug: "contact-panel",
+  title: "Contact Panel",
+  category: "sections",
+  description: "A page section with a contact details list and a short message form that reports a send event.",
+  tags: ["contact", "form", "section", "details", "message"],
+  facets: ["static", "interactive", "text"],
+  wave: 11,
+  animated: false,
+  decorative: false,
+  host: "div",
+  wraps: "content",
+  stage: "flow",
+  palette: ["fg", "muted", "accent"],
+  demo: {
+    children: "<h2>Talk to the team.</h2><p>Questions about the sections, or a page you would like drawn this way.</p>",
+  },
+  interactions: [
+    [
+      { step: "press", key: "Tab" },
+      { step: "expectFocus", selector: "a[href^='mailto:']" },
+      { step: "press", key: "Tab" },
+      { step: "expectFocus", selector: "a[href^='tel:']" },
+      { step: "press", key: "Tab" },
+      { step: "expectFocus", selector: "input[name=name]" },
+      { step: "press", key: "Tab" },
+      { step: "expectFocus", selector: "input[name=email]" },
+      { step: "press", key: "Tab" },
+      { step: "expectFocus", selector: "textarea[name=message]" },
+      { step: "press", key: "Tab" },
+      { step: "expectFocus", selector: "button[type=submit]" },
+      { step: "press", key: "Enter" },
+      {
+        step: "expectEvent",
+        name: "send",
+        detail: {
+          name: "Ada Reader",
+          email: "reader@example.com",
+          message: "I would like to talk about using these sections in our docs.",
+        },
+      },
+    ],
+  ],
+  controls: {
+    channels: { type: "json" },
+    defaultValues: { type: "json" },
+    label: { type: "string" },
+    detailsLabel: { type: "string" },
+    buttonLabel: { type: "string" },
+    confirmation: { type: "string" },
+    note: { type: "string" },
+    disabled: { type: "boolean" },
+  },
+  original: true,
+  credits: [],
+};

@@ -1,0 +1,209 @@
+<!doctype html>
+<!--
+  Pica · Checkerboard · checkerboard
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Checkerboard · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"><div><h2>Quiet geometry</h2><p>A measured field leaves every word clear.</p></div></div>
+<script>
+"use strict";
+var PicaCheckerboard = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/patterns/checkerboard/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/patterns/checkerboard/core.ts
+  var defaults = {
+    size: 32,
+    angle: 0,
+    strength: 0.08
+  };
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let destroyed = false;
+    const board = layer(host, "under");
+    const restoreHost = styleHost(host, { overflow: "hidden", color: cssVar("fg") });
+    const sheet = scope(host);
+    board.el.style.inset = "auto";
+    board.el.style.left = "50%";
+    board.el.style.top = "50%";
+    function resize() {
+      if (destroyed) return;
+      const cell = Math.max(8, Math.min(96, props.size));
+      const span = Math.ceil(Math.hypot(host.clientWidth, host.clientHeight) + cell * 2);
+      board.el.style.width = `${span}px`;
+      board.el.style.height = `${span}px`;
+    }
+    function draw() {
+      const angle = Math.max(0, Math.min(45, props.angle));
+      const cell = Math.max(8, Math.min(96, props.size));
+      const strength = Math.max(0, Math.min(1, props.strength));
+      board.el.style.transform = `translate(-50%,-50%) rotate(${angle}deg)`;
+      sheet.setRules(rules(sheet.selector, cell, strength));
+      resize();
+      host.dataset.picaReady = "true";
+    }
+    const observer = new ResizeObserver(resize);
+    draw();
+    observer.observe(host);
+    return {
+      update(next) {
+        props = { ...props, ...next };
+        draw();
+      },
+      destroy() {
+        destroyed = true;
+        observer.disconnect();
+        sheet.destroy();
+        restoreHost();
+        board.remove();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  function rules(selector, cell, strength) {
+    const ink = cssVar("fg");
+    const tile = cell * 2;
+    return `${selector}>div[data-pica]{color:${ink};background-image:repeating-conic-gradient(currentColor 0 25%,transparent 0 50%);background-size:${tile}px ${tile}px;opacity:${strength}}`;
+  }
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaCheckerboard.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

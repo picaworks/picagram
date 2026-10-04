@@ -51,7 +51,7 @@ export const CAPTURE_MOTION = { time: 1200, seed: 1 } as const;
 /** Page styles shared by the vanilla file and the React harness, so their captures compare like with like.
  *  The ground follows the viewer's color scheme unless the parent frame sets data-ground, as the catalog does. */
 export const DEMO_PAGE_CSS = [
-  ":root { --pica-accent: #e8a020; }",
+  ":root { --pica-accent: #13C4A3; }",
   'html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }',
   "@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }",
   'html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }',

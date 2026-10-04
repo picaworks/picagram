@@ -54,6 +54,11 @@ Original to Picagram.
 
 - Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
 
+## Box Plot (`box-plot`)
+
+- Technique from [Graphical Methods for Data Analysis](https://doi.org/10.1201/9781351072304) by John M. Chambers, William S. Cleveland, Beat Kleiner and Paul A. Tukey (Book).
+- Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
+
 ## Bullet Chart (`bullet-chart`)
 
 - Technique from [Bullet Graph Design Specification](https://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf) by Stephen Few (Specification, no code).
@@ -83,6 +88,11 @@ Original to Picagram.
 
 - Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
 
+## Lollipop Chart (`lollipop-chart`)
+
+- Technique from [Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods](https://doi.org/10.1080/01621459.1984.10478080) by William S. Cleveland and Robert McGill (Paper).
+- Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
+
 ## Radar Chart (`radar-chart`)
 
 - Technique from [Graphical Methods for Data Analysis](https://doi.org/10.1201/9781351072304) by John M. Chambers, William S. Cleveland, Beat Kleiner and Paul A. Tukey (Book).
@@ -92,6 +102,16 @@ Original to Picagram.
 
 - Technique from [Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods](https://doi.org/10.1080/01621459.1984.10478080) by William S. Cleveland and Robert McGill (Paper).
 - Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert (Algorithm, no code).
+
+## Slope Chart (`slope-chart`)
+
+- Technique from [Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods](https://doi.org/10.1080/01621459.1984.10478080) by William S. Cleveland and Robert McGill (Paper).
+- Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
+
+## Streamgraph (`streamgraph`)
+
+- Technique from [Stacked Graphs: Geometry and Aesthetics](https://doi.org/10.1109/TVCG.2008.166) by Lee Byron and Martin Wattenberg (Paper).
+- Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
 
 ## Timeline Chart (`timeline-chart`)
 
@@ -242,6 +262,74 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Brick Lattice (`brick-lattice`)
+
+Original to Picagram.
+
+## Cell Mosaic (`cell-mosaic`)
+
+- Technique from [Nouvelles applications des paramètres continus à la théorie des formes quadratiques. Deuxième mémoire. Recherches sur les parallélloèdres primitifs](https://doi.org/10.1515/crll.1908.134.198) by Georges Voronoi (Paper).
+
+## Checkerboard (`checkerboard`)
+
+Original to Picagram.
+
+## Circuit Traces (`circuit-traces`)
+
+Original to Picagram.
+
+## Diagonal Stripes (`diagonal-stripes`)
+
+Original to Picagram.
+
+## Dot Lattice (`dot-lattice`)
+
+Original to Picagram.
+
+## Grid Paper (`grid-paper`)
+
+Original to Picagram.
+
+## Hatch Lines (`hatch-lines`)
+
+Original to Picagram.
+
+## Hex Lattice (`hex-lattice`)
+
+Original to Picagram.
+
+## Isometric Grid (`isometric-grid`)
+
+Original to Picagram.
+
+## Moire Rings (`moire-rings`)
+
+- Technique from [The Theory of the Moiré Phenomenon, Volume I: Periodic Layers](https://doi.org/10.1007/978-1-84882-181-1) by Isaac Amidror (Book).
+
+## Scallop Arches (`scallop-arches`)
+
+Original to Picagram.
+
+## Step Diagonals (`step-diagonals`)
+
+Original to Picagram.
+
+## Triangular Mesh (`triangular-mesh`)
+
+Original to Picagram.
+
+## Truchet Tiles (`truchet-tiles`)
+
+- Technique from [The Tiling Patterns of Sebastien Truchet and the Topology of Structural Hierarchy](https://doi.org/10.2307/1578535) by Cyril Stanley Smith and Pauline Boucher (Paper).
+
+## Weave Lines (`weave-lines`)
+
+Original to Picagram.
+
+## Article Lead (`article-lead`)
+
+Original to Picagram.
+
 ## Bento Grid (`bento-grid`)
 
 Original to Picagram.
@@ -262,6 +350,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Contact Panel (`contact-panel`)
+
+Original to Picagram.
+
 ## Cyberpunk Hero (`cyberpunk-hero`)
 
 Original to Picagram.
@@ -271,6 +363,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## Ethereal Hero (`ethereal-hero`)
+
+Original to Picagram.
+
+## Event Schedule (`event-schedule`)
 
 Original to Picagram.
 
@@ -309,6 +405,10 @@ Original to Picagram.
 ## Pricing (`pricing`)
 
 - Technique from [Radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Quote Band (`quote-band`)
+
+Original to Picagram.
 
 ## Scrapbook Hero (`scrapbook-hero`)
 
@@ -432,24 +532,178 @@ Original to Picagram.
 - Technique from [Braille Patterns, Unicode block U+2800](https://en.wikipedia.org/wiki/Braille_Patterns) by Wikipedia (Reference, no code).
 - Technique from [Ditherpunk](https://surma.dev/things/ditherpunk/) by Surma (Article).
 
+## Accordion (`accordion`)
+
+- Technique from [Accordion pattern](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Alert (`alert`)
+
+- Technique from [Alert pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alert/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Avatar (`avatar`)
+
+Original to Picagram.
+
+## Badge (`badge`)
+
+Original to Picagram.
+
+## Breadcrumb (`breadcrumb`)
+
+- Technique from [Breadcrumb pattern](https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
 ## Button (`button`)
 
 - Technique from [Button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 
+## Calendar (`calendar`)
+
+- Technique from [Date picker dialog example](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Card (`card`)
+
+Original to Picagram.
+
+## Checkbox (`checkbox`)
+
+- Technique from [Checkbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Collapsible (`collapsible`)
+
+- Technique from [Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Combobox (`combobox`)
+
+- Technique from [Combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+- Technique from [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) by MDN (CC-BY-SA documentation).
+
+## Command Palette (`command-palette`)
+
+- Technique from [Combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+- Technique from [Dialog (modal) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Context Menu (`context-menu`)
+
+- Technique from [Menu and menubar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+- Technique from [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) by MDN (CC-BY-SA documentation).
+
 ## Dialog (`dialog`)
 
 - Technique from [Dialog (modal) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Drawer (`drawer`)
+
+- Technique from [Dialog (modal) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Empty State (`empty-state`)
+
+Original to Picagram.
+
+## Field (`field`)
+
+- Technique from [Labeling Controls](https://www.w3.org/WAI/tutorials/forms/labels/) by W3C Web Accessibility Initiative (W3C document).
+- Technique from [Validating Input](https://www.w3.org/WAI/tutorials/forms/validation/) by W3C Web Accessibility Initiative (W3C document).
+
+## Input (`input`)
+
+- Technique from [The text input element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text) by MDN (CC-BY-SA documentation).
+
+## Input OTP (`input-otp`)
+
+Original to Picagram.
+
+## Kbd (`kbd`)
+
+Original to Picagram.
+
+## Menu (`menu`)
+
+- Technique from [Menu and menubar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+- Technique from [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) by MDN (CC-BY-SA documentation).
+
+## Meter (`meter`)
+
+- Technique from [Meter pattern](https://www.w3.org/WAI/ARIA/apg/patterns/meter/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Number Field (`number-field`)
+
+- Technique from [Spinbutton pattern](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Pagination (`pagination`)
+
+Original to Picagram.
 
 ## Popover Tooltip (`popover-tooltip`)
 
 - Technique from [Tooltip pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 - Technique from [Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 
+## Preview Card (`preview-card`)
+
+Original to Picagram.
+
+## Progress (`progress`)
+
+- Technique from [progressbar role](https://www.w3.org/TR/wai-aria-1.2/#progressbar) by W3C (W3C document).
+
+## Radio Group (`radio-group`)
+
+- Technique from [Radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Scroll Area (`scroll-area`)
+
+Original to Picagram.
+
+## Segmented Control (`segmented-control`)
+
+- Technique from [Radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
 ## Select (`select`)
 
 - Technique from [Select-only combobox example](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 - Technique from [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) by MDN (CC-BY-SA documentation).
 
+## Separator (`separator`)
+
+- Technique from [separator role](https://www.w3.org/TR/wai-aria-1.2/#separator) by W3C (W3C document).
+
+## Skeleton (`skeleton`)
+
+Original to Picagram.
+
+## Slider (`slider`)
+
+- Technique from [Slider pattern](https://www.w3.org/WAI/ARIA/apg/patterns/slider/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Spinner (`spinner`)
+
+Original to Picagram.
+
+## Table (`table`)
+
+Original to Picagram.
+
 ## Tabs (`tabs`)
 
 - Technique from [Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Textarea (`textarea`)
+
+Original to Picagram.
+
+## Toast (`toast`)
+
+- Technique from [Alert pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alert/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+- Technique from [Alert and message dialogs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Toggle Group (`toggle-group`)
+
+- Technique from [Toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Toolbar (`toolbar`)
+
+- Technique from [Toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Tree View (`tree-view`)
+
+- Technique from [Tree view pattern](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).

@@ -1,0 +1,896 @@
+<!doctype html>
+<!--
+  Pica · Slope Chart · slope-chart
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Slope Chart · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaSlopeChart = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/data/slope-chart/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function labelHost(host, label, role = "img") {
+    if (label) {
+      host.setAttribute("role", role);
+      host.setAttribute("aria-label", label);
+      host.removeAttribute("aria-hidden");
+    } else {
+      host.removeAttribute("role");
+      host.removeAttribute("aria-label");
+      host.setAttribute("aria-hidden", "true");
+    }
+  }
+  function unlabelHost(host) {
+    host.removeAttribute("role");
+    host.removeAttribute("aria-label");
+    host.removeAttribute("aria-hidden");
+  }
+
+  // lib/blocks.ts
+  var BRAILLE_BASE = 10240;
+  function brailleDot(row, col) {
+    if (row === 3) return col === 0 ? 64 : 128;
+    return 1 << (col === 0 ? row : row + 3);
+  }
+  function braille(bits) {
+    return String.fromCharCode(BRAILLE_BASE + (bits & 255));
+  }
+
+  // lib/braille-plot.ts
+  function createBraillePlot(cols, rows) {
+    const w = Math.max(1, Math.floor(cols));
+    const h = Math.max(1, Math.floor(rows));
+    const bits = new Uint8Array(w * h);
+    const plot = {
+      width: w * 2,
+      height: h * 4,
+      dot(x, y) {
+        const dx = Math.round(x);
+        const dy = Math.round(y);
+        if (dx < 0 || dy < 0 || dx >= w * 2 || dy >= h * 4) return;
+        const cell = (dy >> 2) * w + (dx >> 1);
+        bits[cell] = (bits[cell] ?? 0) | brailleDot(dy & 3, dx & 1);
+      },
+      line(x0, y0, x1, y1) {
+        let x = Math.round(x0);
+        let y = Math.round(y0);
+        const endX = Math.round(x1);
+        const endY = Math.round(y1);
+        const stepX = x < endX ? 1 : -1;
+        const stepY = y < endY ? 1 : -1;
+        const runX = Math.abs(endX - x);
+        const runY = -Math.abs(endY - y);
+        let error = runX + runY;
+        for (; ; ) {
+          plot.dot(x, y);
+          if (x === endX && y === endY) return;
+          const twice = error * 2;
+          if (twice >= runY) {
+            error += runY;
+            x += stepX;
+          }
+          if (twice <= runX) {
+            error += runX;
+            y += stepY;
+          }
+        }
+      },
+      clear() {
+        bits.fill(0);
+      },
+      paint(grid, col, row) {
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) grid.set(col + x, row + y, braille(bits[y * w + x] ?? 0));
+        }
+      }
+    };
+    return plot;
+  }
+
+  // lib/chart.ts
+  function linearScale(domain, range) {
+    const [d0, d1] = domain;
+    const [r0, r1] = range;
+    const k = d1 === d0 ? 0 : (r1 - r0) / (d1 - d0);
+    return Object.assign((value) => r0 + (value - d0) * k, { domain, range });
+  }
+  function extent(values) {
+    let min = Number.POSITIVE_INFINITY;
+    let max = Number.NEGATIVE_INFINITY;
+    for (const value of values) {
+      if (!Number.isFinite(value)) continue;
+      if (value < min) min = value;
+      if (value > max) max = value;
+    }
+    return min <= max ? [min, max] : [0, 0];
+  }
+  function niceNumber(x, round) {
+    const exponent = Math.floor(Math.log10(x));
+    const fraction = x / 10 ** exponent;
+    const nice = round ? fraction < 1.5 ? 1 : fraction < 3 ? 2 : fraction < 7 ? 5 : 10 : fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10;
+    return nice * 10 ** exponent;
+  }
+  function niceTicks(min, max, count = 5) {
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return [0, 1];
+    let lo = Math.min(min, max);
+    let hi = Math.max(min, max);
+    if (lo === hi) {
+      const pad = Math.abs(lo) * 0.1 || 1;
+      lo -= pad;
+      hi += pad;
+    }
+    const step = niceNumber(niceNumber(hi - lo, false) / Math.max(1, count - 1), true);
+    const start = Math.floor(lo / step) * step;
+    const end = Math.ceil(hi / step) * step;
+    const decimals = Math.max(0, -Math.floor(Math.log10(step)));
+    const ticks = [];
+    for (let i = 0; start + i * step <= end + step / 2; i++) {
+      ticks.push(Number((start + i * step).toFixed(decimals)) || 0);
+    }
+    return ticks;
+  }
+  var numberFormats = /* @__PURE__ */ new Map();
+  function formatNumber(value, options = {}) {
+    const { compact = true, decimals = 1, locale } = options;
+    const short = compact && Math.abs(value) >= 1e4;
+    const key = `${locale ?? ""}|${short ? "c" : "n"}|${decimals}`;
+    let format = numberFormats.get(key);
+    if (!format) {
+      format = new Intl.NumberFormat(locale, short ? { notation: "compact", maximumFractionDigits: decimals } : { maximumFractionDigits: decimals });
+      numberFormats.set(key, format);
+    }
+    return format.format(value);
+  }
+  var coord = (value) => String(Math.round(value * 100) / 100);
+  function linePath(points) {
+    return points.map(([x, y], i) => `${i === 0 ? "M" : "L"}${coord(x)} ${coord(y)}`).join("");
+  }
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, String(value));
+    return el;
+  }
+  function dataTable(caption, head, rows) {
+    const table = document.createElement("table");
+    table.setAttribute("data-pica", "");
+    table.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    table.createCaption().textContent = caption;
+    const headRow = table.createTHead().insertRow();
+    for (const label of head) {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = label;
+      headRow.appendChild(th);
+    }
+    const body = table.createTBody();
+    for (const row of rows) {
+      const tr = body.insertRow();
+      row.forEach((cell, i) => {
+        if (i === 0) {
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = String(cell);
+          tr.appendChild(th);
+        } else {
+          tr.insertCell().textContent = String(cell);
+        }
+      });
+    }
+    return table;
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/chart-marks.ts
+  function svgLabel(text, x, y, options = {}) {
+    const { anchor = "start", middle = false, size = 10, token = "muted", font = GRID_FONT } = options;
+    const node = svg("text", { x, y, "text-anchor": anchor, fill: cssVar(token), "font-family": font, "font-size": size });
+    if (middle) node.setAttribute("dominant-baseline", "middle");
+    node.style.fontVariantNumeric = "tabular-nums";
+    node.textContent = text;
+    return node;
+  }
+  function gridLines(values, options) {
+    const { side, plot, at, label, size = 10, gap = size * 0.6, rule = true } = options;
+    const across = side === "left" || side === "right";
+    const group = svg("g");
+    for (const value of values) {
+      const p = at(value);
+      if (rule) {
+        const ends = across ? { x1: plot.x, y1: p, x2: plot.x + plot.width, y2: p } : { x1: p, y1: plot.y, x2: p, y2: plot.y + plot.height };
+        group.appendChild(svg("line", { ...ends, stroke: cssVar("muted"), "stroke-width": 1 }));
+      }
+      const text = label?.(value) ?? "";
+      if (!text) continue;
+      const x = side === "left" ? plot.x - gap : side === "right" ? plot.x + plot.width + gap : p;
+      const y = across ? p : side === "top" ? plot.y - gap : plot.y + plot.height + gap + size;
+      const anchor = side === "left" ? "end" : side === "right" ? "start" : "middle";
+      group.appendChild(svgLabel(text, x, y, { anchor, middle: across, size }));
+    }
+    return group;
+  }
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function measureCell(fontFamily, fontSize, lineHeight) {
+    return { w: fontSize * advanceOf(fontFamily), h: Math.max(1, Math.round(fontSize * lineHeight)) };
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // registry/data/slope-chart/core.ts
+  var defaults = {
+    data: {
+      from: "2023",
+      to: "2025",
+      rows: [
+        { name: "React", a: 62, b: 58 },
+        { name: "Vue", a: 34, b: 31 },
+        { name: "jQuery", a: 38, b: 24 },
+        { name: "Angular", a: 27, b: 19 },
+        { name: "Next.js", a: 21, b: 33 },
+        { name: "Svelte", a: 8, b: 18 },
+        { name: "Astro", a: 4, b: 13 },
+        { name: "Vite", a: 17, b: 36 }
+      ]
+    },
+    label: "Share of projects by tool, 2023 and 2025",
+    highlight: -1,
+    values: true,
+    ticks: 5,
+    look: "svg",
+    fontFamily: GRID_FONT
+  };
+  var SIZE = 11;
+  var LINE = 15;
+  var GAP = 6;
+  var LEAD = 14;
+  var PAD = 14;
+  var num = (value) => typeof value === "number" && Number.isFinite(value) ? value : Number.NaN;
+  var longest = (list) => Math.max(0, ...list.map((text) => text.length));
+  var signed = (change) => (change > 0 ? "+" : change < 0 ? "−" : "") + formatNumber(Math.abs(change), { compact: false });
+  function relax(ys, gap, lo, hi) {
+    const order = ys.map((_, i) => i).sort((p, q) => (ys[p] ?? 0) - (ys[q] ?? 0) || p - q);
+    const step = Math.min(gap, ys.length > 1 ? (hi - lo) / (ys.length - 1) : gap);
+    const stack = [];
+    order.forEach((index, k) => {
+      const sum = ys[index] ?? 0;
+      let cur = { from: k, n: 1, sum, top: Math.min(hi, Math.max(lo, sum)) };
+      for (let prev = stack[stack.length - 1]; prev && prev.top + prev.n * step > cur.top + 1e-9; prev = stack[stack.length - 1]) {
+        stack.pop();
+        const n = prev.n + cur.n;
+        const total = prev.sum + cur.sum - prev.n * cur.n * step;
+        cur = { from: prev.from, n, sum: total, top: Math.min(hi - (n - 1) * step, Math.max(lo, total / n)) };
+      }
+      stack.push(cur);
+    });
+    const out = new Array(ys.length).fill(0);
+    for (const block of stack) for (let m = 0; m < block.n; m++) out[order[block.from + m] ?? 0] = block.top + m * step;
+    return out;
+  }
+  function span(room, tick, left, wide, narrow, fixed, min) {
+    const used = tick + left + fixed;
+    const roomy = room - used - wide >= min;
+    const plot = Math.max(1, Math.min(room - used - (roomy ? wide : narrow), Math.max(min, room * 0.6)));
+    return { x: Math.max(0, (room - used - (roomy ? wide : narrow) - plot) / 2), plot, roomy };
+  }
+  function parts(props) {
+    const data = props.data ?? {};
+    const rows = (data.rows ?? []).map((r, i) => ({ i, name: String(r.name ?? ""), a: num(r.a), b: num(r.b) }));
+    const finite = rows.flatMap((r) => [r.a, r.b]).filter(Number.isFinite);
+    const [lo, hi] = finite.length > 0 ? extent(finite) : [0, 1];
+    const ticks = niceTicks(lo, hi, Math.max(2, Math.min(10, Math.round(props.ticks))));
+    let best = props.highlight;
+    if (best === -1) {
+      let big = -1;
+      for (const r of rows) {
+        const change = Math.abs(r.b - r.a);
+        if (change > big) {
+          big = change;
+          best = r.i;
+        }
+      }
+    }
+    const fmt = (n) => formatNumber(n);
+    const shown = (r) => props.values || r.i === best;
+    const left = rows.map((r) => Number.isFinite(r.a) ? [r.name, shown(r) && fmt(r.a)].filter(Boolean).join(" ") : "");
+    const right = (named) => {
+      const width = longest(rows.filter((r) => shown(r) && Number.isFinite(r.b)).map((r) => fmt(r.b)));
+      return rows.map(
+        (r) => Number.isFinite(r.b) ? [
+          shown(r) && (named && r.name ? fmt(r.b).padEnd(width) : fmt(r.b)),
+          named && r.name,
+          r.i === best && Number.isFinite(r.a) && signed(r.b - r.a)
+        ].filter(Boolean).join(" ") : ""
+      );
+    };
+    const has = finite.length > 0;
+    return { data, rows, ticks, best, left, wide: right(true), narrow: right(false), has, yLo: ticks[0] ?? 0, yHi: ticks[ticks.length - 1] ?? 1 };
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let view = null;
+    let grid = null;
+    let resize = null;
+    let table = null;
+    const palette = watchPalette(host, () => draw());
+    function gridOptions() {
+      return { fontFamily: props.fontFamily, fontSize: 13, columns: 0, lineHeight: 1.3, renderer: "canvas", color: "" };
+    }
+    function buildTable() {
+      table?.remove();
+      const m = parts(props);
+      table = dataTable(
+        props.label || "Slope chart",
+        ["Item", String(m.data.from ?? ""), String(m.data.to ?? ""), "Change"],
+        m.rows.map((r) => [
+          r.name,
+          Number.isFinite(r.a) ? formatNumber(r.a, { compact: false }) : "",
+          Number.isFinite(r.b) ? formatNumber(r.b, { compact: false }) : "",
+          Number.isFinite(r.a) && Number.isFinite(r.b) ? signed(r.b - r.a) : ""
+        ])
+      );
+      host.appendChild(table);
+    }
+    function drawSvg() {
+      if (!view) return;
+      const v = view;
+      while (v.firstChild) v.firstChild.remove();
+      const w = Math.max(1, host.clientWidth);
+      const h = Math.max(1, host.clientHeight);
+      v.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      const { fg, accent } = palette.colors;
+      const m = parts(props);
+      const cw = measureCell(props.fontFamily, SIZE, 1).w;
+      const tickText = m.ticks.map((t) => formatNumber(t));
+      const tickW = longest(tickText) * cw;
+      const leftW = longest(m.left) * cw;
+      const s = span(w - PAD * 2, tickW, leftW, longest(m.wide) * cw, longest(m.narrow) * cw, GAP * 2 + LEAD * 2, 140);
+      const rightText = s.roomy ? m.wide : m.narrow;
+      const xT = PAD + s.x + tickW;
+      const xL = xT + GAP * 2 + leftW + LEAD;
+      const xR = xL + s.plot;
+      const headY = PAD + SIZE;
+      const y0 = headY + GAP * 2 + LINE / 2;
+      const y1 = Math.max(y0 + 1, h - PAD - LINE / 2);
+      const yAt = linearScale([m.yLo, m.yHi], [y1, y0]);
+      const opts = { size: SIZE, font: props.fontFamily };
+      v.appendChild(gridLines([xL, xR], { side: "top", plot: { x: xL, y: y0, width: xR - xL, height: y1 - y0 }, at: (x) => x }));
+      m.ticks.forEach((t, i) => v.appendChild(svgLabel(tickText[i] ?? "", xT, yAt(t), { ...opts, anchor: "end", middle: true })));
+      for (const [text, x] of [[m.data.from, xL], [m.data.to, xR]]) {
+        const head = svgLabel(String(text ?? ""), x, headY, { ...opts, anchor: "middle", token: "fg" });
+        head.style.fontWeight = "700";
+        v.appendChild(head);
+      }
+      if (!m.has) {
+        v.appendChild(svgLabel("no data", (xL + xR) / 2, (y0 + y1) / 2, { ...opts, anchor: "middle", middle: true }));
+        return;
+      }
+      const tone = (r) => r.i === m.best ? accent : fg;
+      const ordered = [...m.rows.filter((r) => r.i !== m.best), ...m.rows.filter((r) => r.i === m.best)];
+      for (const r of ordered) {
+        if (Number.isFinite(r.a) && Number.isFinite(r.b)) {
+          const d = linePath([[xL, yAt(r.a)], [xR, yAt(r.b)]]);
+          v.appendChild(svg("path", { d, fill: "none", stroke: tone(r), "stroke-width": r.i === m.best ? 2.5 : 1 }));
+        }
+      }
+      for (const r of ordered) {
+        for (const [value, x] of [[r.a, xL], [r.b, xR]]) {
+          if (Number.isFinite(value)) v.appendChild(svg("circle", { cx: x, cy: yAt(value), r: r.i === m.best ? 3.5 : 2.5, fill: tone(r) }));
+        }
+      }
+      for (const dir of [-1, 1]) {
+        const items = m.rows.filter((r) => Number.isFinite(dir < 0 ? r.a : r.b));
+        const ys = items.map((r) => yAt(dir < 0 ? r.a : r.b));
+        const at = relax(ys, LINE, y0, y1);
+        const x = (dir < 0 ? xL : xR) + dir * LEAD;
+        items.forEach((r, k) => {
+          const y = ys[k] ?? 0;
+          const to = at[k] ?? y;
+          const text = dir < 0 ? m.left[r.i] : rightText[r.i];
+          if (Math.abs(to - y) > 1) {
+            v.appendChild(svg("line", { x1: x - dir * (LEAD - 3), y1: y, x2: x - dir * 2, y2: to, stroke: palette.colors.muted, "stroke-width": 1 }));
+          }
+          if (!text) return;
+          const label = svgLabel(text, x, to, { ...opts, anchor: dir < 0 ? "end" : "start", middle: true, token: "fg" });
+          label.style.whiteSpace = "pre";
+          if (r.i === m.best) label.style.fontWeight = "700";
+          v.appendChild(label);
+        });
+      }
+    }
+    function drawGlyph() {
+      if (!grid) return;
+      const g = grid;
+      const { fg, accent, muted } = palette.colors;
+      const m = parts(props);
+      g.clear();
+      const padC = g.cols >= 24 ? 1 : 0;
+      const padR = g.rows >= 10 ? 1 : 0;
+      const tickText = m.ticks.map((t) => formatNumber(t));
+      const tickW = longest(tickText);
+      const leftW = longest(m.left);
+      const fit = span(g.cols - padC * 2, tickW, leftW, longest(m.wide), longest(m.narrow), 6, 14);
+      const s = { ...fit, x: Math.floor(fit.x), plot: Math.max(1, Math.floor(fit.plot)) };
+      const rightText = s.roomy ? m.wide : m.narrow;
+      const xT = padC + s.x;
+      const xL = xT + tickW + 1 + leftW + 2;
+      const xR = xL + s.plot + 1;
+      const top = padR + 1;
+      const bottom = Math.max(top, g.rows - 1 - padR);
+      const dots = (bottom - top + 1) * 4;
+      const span1 = m.yHi - m.yLo || 1;
+      const dotY = (value) => (m.yHi - value) / span1 * (dots - 1);
+      const rowOf = (value) => top + Math.floor(dotY(value) / 4);
+      for (let row = top; row <= bottom; row++) {
+        g.set(xL, row, "│", muted);
+        g.set(xR, row, "│", muted);
+      }
+      m.ticks.forEach((t, i) => g.write(xT, rowOf(t), (tickText[i] ?? "").padStart(tickW), muted));
+      for (const [text, x] of [[m.data.from, xL], [m.data.to, xR]]) {
+        const name = String(text ?? "");
+        g.write(Math.max(0, Math.min(g.cols - name.length, x - Math.floor(name.length / 2))), padR, name, fg);
+      }
+      if (!m.has) {
+        g.write(Math.floor((xL + xR) / 2 - 3), Math.floor((top + bottom) / 2), "no data", muted);
+        g.flush();
+        return;
+      }
+      const blank = braille(0);
+      const lines = [createBraillePlot(s.plot, bottom - top + 1), createBraillePlot(s.plot, bottom - top + 1)];
+      for (const r of m.rows) {
+        if (Number.isFinite(r.a) && Number.isFinite(r.b)) {
+          const plot = lines[r.i === m.best ? 1 : 0];
+          plot?.line(0, dotY(r.a), (plot?.width ?? 1) - 1, dotY(r.b));
+        }
+      }
+      lines.forEach((plot, k) => plot.paint({ set: (x, y, glyph) => glyph !== blank && g.set(x, y, glyph, k ? accent : fg) }, xL + 1, top));
+      const ordered = [...m.rows.filter((r) => r.i !== m.best), ...m.rows.filter((r) => r.i === m.best)];
+      for (const r of ordered) {
+        if (Number.isFinite(r.a)) g.set(xL, rowOf(r.a), "●", r.i === m.best ? accent : fg);
+        if (Number.isFinite(r.b)) g.set(xR, rowOf(r.b), "●", r.i === m.best ? accent : fg);
+      }
+      for (const dir of [-1, 1]) {
+        const items = m.rows.filter((r) => Number.isFinite(dir < 0 ? r.a : r.b));
+        const rows = items.map((r) => rowOf(dir < 0 ? r.a : r.b));
+        const at = relax(rows, 1, top, bottom);
+        items.forEach((r, k) => {
+          const row = rows[k] ?? top;
+          const to = Math.round(at[k] ?? row);
+          const text = (dir < 0 ? m.left[r.i] : rightText[r.i]) ?? "";
+          if (to !== row) g.set(dir < 0 ? xL - 1 : xR + 1, to, to < row === dir < 0 ? "╲" : "╱", muted);
+          g.write(dir < 0 ? xL - 1 - text.length : xR + 2, to, text, fg);
+        });
+      }
+      g.flush();
+    }
+    function draw() {
+      labelHost(host, props.label, "figure");
+      buildTable();
+      if (props.look === "glyph") {
+        if (view) {
+          resize?.disconnect();
+          resize = null;
+          view.remove();
+          view = null;
+        }
+        if (!grid) grid = createGrid(host, gridOptions(), draw);
+        drawGlyph();
+      } else {
+        if (grid) {
+          grid.destroy();
+          grid = null;
+        }
+        if (!view) {
+          view = svg("svg", { "aria-hidden": "true", "data-pica": "" });
+          view.style.cssText = "display:block;width:100%;height:100%;pointer-events:none";
+          host.appendChild(view);
+          resize = typeof ResizeObserver === "function" ? new ResizeObserver(() => draw()) : null;
+          resize?.observe(host);
+        }
+        drawSvg();
+      }
+      host.dataset.picaReady = "true";
+    }
+    draw();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        palette.refresh();
+        if (grid && props.fontFamily !== before.fontFamily) {
+          grid.update(gridOptions());
+          return;
+        }
+        draw();
+      },
+      destroy() {
+        resize?.disconnect();
+        resize = null;
+        view?.remove();
+        view = null;
+        grid?.destroy();
+        grid = null;
+        table?.remove();
+        table = null;
+        palette.destroy();
+        unlabelHost(host);
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var instance = PicaSlopeChart.mount(host, take(window.PICA_PROPS || {}));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

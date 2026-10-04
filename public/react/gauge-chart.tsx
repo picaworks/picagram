@@ -379,6 +379,210 @@ function dataTable(caption: string, head: readonly string[], rows: readonly (rea
   return table;
 }
 
+// lib/font.ts
+/** The monospace stack glyph components default to. It lives in its own module, so a text component that
+ *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
+const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+// lib/palette.ts
+/** The four colors every component draws with. They live in CSS custom properties, so they cascade: set
+ *  them once on a page or a section and every component follows, including on a theme switch. A wrapper's
+ *  palette prop writes the same properties onto one host. This is the only module that reads them.
+ *  See STYLE.md and docs/decisions/0005-palette.md. */
+
+type Token = "fg" | "bg" | "accent" | "muted";
+
+const TOKENS: readonly Token[] = ["fg", "bg", "accent", "muted"];
+
+/** What each token falls back to when neither the page nor a palette prop sets it. Muted is the ink at 65%,
+ *  which keeps 4.5:1 contrast on both the dark and the light ground. */
+const TOKEN_FALLBACK: Readonly<Record<Token, string>> = {
+  fg: "currentColor",
+  bg: "transparent",
+  accent: "#13C4A3",
+  muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)",
+};
+
+/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #13C4A3). */
+function cssVar(token: Token): string {
+  return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+}
+
+/** A readable ink for text set on a token's color: black on a light color, white on a dark one. Relative
+ *  color syntax does it in CSS alone, so it follows any palette without script. */
+function cssOn(token: Token): string {
+  return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
+}
+
+/** Each token's color as the browser computes it, usable as a canvas fill. */
+type Colors = Readonly<Record<Token, string>>;
+
+/** Event types the probe stops, so its transitions never reach the page's own listeners. */
+const PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"] as const;
+
+/** A zero-size probe inside the host whose color properties are the four tokens, so currentColor,
+ *  light-dark(), and color-mix() resolve exactly as they do on the page. */
+function createProbe(host: HTMLElement): HTMLElement {
+  const probe = document.createElement("span");
+  probe.setAttribute("data-pica", "");
+  probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText = [
+    "position:absolute",
+    "width:0",
+    "height:0",
+    "overflow:hidden",
+    "visibility:hidden",
+    "pointer-events:none",
+    `color:${cssVar("fg")}`,
+    `background-color:${cssVar("bg")}`,
+    `border-top:0 solid ${cssVar("accent")}`,
+    `outline:0 solid ${cssVar("muted")}`,
+    // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+    "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms",
+  ].join(";");
+  host.appendChild(probe);
+  return probe;
+}
+
+function probeColors(probe: HTMLElement): Colors {
+  const style = getComputedStyle(probe);
+  return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+}
+
+/** Reads the four colors once. A core that needs them every frame keeps a watchPalette handle instead. */
+function readPalette(host: HTMLElement): Colors {
+  const probe = createProbe(host);
+  const colors = probeColors(probe);
+  probe.remove();
+  return colors;
+}
+
+interface PaletteWatch {
+  /** The colors as of the last read. */
+  readonly colors: Colors;
+  /** Reads again now, for example in update() or after a resize. Returns true when any color changed. */
+  refresh(): boolean;
+  /** Removes the probe and its listeners. */
+  destroy(): void;
+}
+
+/** Keeps a probe in the host and calls `onChange` whenever a token's color changes, however it changed: a
+ *  theme class, a media query, a palette prop, or a React style. Canvas and WebGL components repaint there.
+ *  A page that turns every transition off hides these changes, so cores also call refresh() in update(). */
+function watchPalette(host: HTMLElement, onChange: (colors: Colors) => void): PaletteWatch {
+  const probe = createProbe(host);
+  let colors = probeColors(probe);
+
+  function refresh(): boolean {
+    const next = probeColors(probe);
+    const differs = TOKENS.some((token) => next[token] !== colors[token]);
+    colors = next;
+    return differs;
+  }
+
+  const onEvent = (event: Event): void => {
+    event.stopPropagation();
+    if (event.type === "transitionend" && refresh()) onChange(colors);
+  };
+  for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+
+  return {
+    get colors() {
+      return colors;
+    },
+    refresh,
+    destroy() {
+      for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+      probe.remove();
+    },
+  };
+}
+
+// lib/chart-marks.ts
+/** The marks every chart repeats: grid lines with their tick labels, a label on its own, and a point on a
+ *  circle. They live apart from lib/chart.ts so a chart that draws none of them carries none of them, and
+ *  together they keep eight charts drawing one axis rather than eight. Colors come from lib/palette.ts. */
+
+
+
+
+/** The side of the plot a set of grid lines is labelled on. A left or right side runs its lines across the
+ *  plot, a top or bottom side runs them down it. */
+type MarkSide = "left" | "right" | "top" | "bottom";
+
+interface MarkLabelOptions {
+  /** Which end of the text sits at x. */
+  anchor?: "start" | "middle" | "end";
+  /** Whether the text is centred on y, rather than sitting on it. */
+  middle?: boolean;
+  /** Glyph size in the SVG's own units. */
+  size?: number;
+  /** Palette token for the fill. A label is secondary, so muted by default. */
+  token?: Token;
+  /** CSS font-family stack. Must be monospace. */
+  font?: string;
+}
+
+/** A label in mono with tabular figures, so digits keep their columns as a value changes. Muted unless a
+ *  token says otherwise. */
+function svgLabel(text: string, x: number, y: number, options: MarkLabelOptions = {}): SVGTextElement {
+  const { anchor = "start", middle = false, size = 10, token = "muted", font = GRID_FONT } = options;
+  const node = svg("text", { x, y, "text-anchor": anchor, fill: cssVar(token), "font-family": font, "font-size": size });
+  if (middle) node.setAttribute("dominant-baseline", "middle");
+  node.style.fontVariantNumeric = "tabular-nums";
+  node.textContent = text;
+  return node;
+}
+
+interface GridLineOptions {
+  /** Which side carries the labels, and so which way the lines run. */
+  side: MarkSide;
+  /** The plot rectangle, in the SVG's own units. */
+  plot: { x: number; y: number; width: number; height: number };
+  /** Where a value sits along the axis, usually a scale from lib/chart.ts. */
+  at: (value: number) => number;
+  /** The label for a value. Leave it out, or return an empty string, for a line with no label. */
+  label?: (value: number) => string;
+  /** Label size in the SVG's own units. */
+  size?: number;
+  /** Distance from the plot's edge to its labels. */
+  gap?: number;
+  /** Draw the hairline across the plot. Off leaves the labels alone. */
+  rule?: boolean;
+}
+
+/** Hairlines in muted at the given values, each labelled on one side of the plot. Returns a single group, so
+ *  a redraw replaces the whole set with one call. */
+function gridLines(values: readonly number[], options: GridLineOptions): SVGGElement {
+  const { side, plot, at, label, size = 10, gap = size * 0.6, rule = true } = options;
+  const across = side === "left" || side === "right";
+  const group = svg("g");
+  for (const value of values) {
+    const p = at(value);
+    if (rule) {
+      const ends = across
+        ? { x1: plot.x, y1: p, x2: plot.x + plot.width, y2: p }
+        : { x1: p, y1: plot.y, x2: p, y2: plot.y + plot.height };
+      group.appendChild(svg("line", { ...ends, stroke: cssVar("muted"), "stroke-width": 1 }));
+    }
+    const text = label?.(value) ?? "";
+    if (!text) continue;
+    // A left or right label is centred on its line. A top or bottom one sits on its own baseline, clear of
+    // the plot: above the line for a top side, a full glyph below the edge for a bottom one.
+    const x = side === "left" ? plot.x - gap : side === "right" ? plot.x + plot.width + gap : p;
+    const y = across ? p : side === "top" ? plot.y - gap : plot.y + plot.height + gap + size;
+    const anchor = side === "left" ? "end" : side === "right" ? "start" : "middle";
+    group.appendChild(svgLabel(text, x, y, { anchor, middle: across, size }));
+  }
+  return group;
+}
+
+/** The point at radius `r` and `angle` in radians from (cx, cy), measured clockwise from twelve o'clock,
+ *  which is the convention arcPath in lib/chart.ts draws its rings on. */
+function polarPoint(cx: number, cy: number, r: number, angle: number): [number, number] {
+  return [cx + r * Math.sin(angle), cy - r * Math.cos(angle)];
+}
+
 // lib/blocks.ts
 /** Unicode block and braille glyphs for text-mode drawing. Every glyph here is one UTF-16 code unit, so a
  *  table can be indexed like an array. */
@@ -555,120 +759,6 @@ function scope(host: HTMLElement): Scope {
     destroy() {
       style.remove();
       host.removeAttribute("data-pica-id");
-    },
-  };
-}
-
-// lib/palette.ts
-/** The four colors every component draws with. They live in CSS custom properties, so they cascade: set
- *  them once on a page or a section and every component follows, including on a theme switch. A wrapper's
- *  palette prop writes the same properties onto one host. This is the only module that reads them.
- *  See STYLE.md and docs/decisions/0005-palette.md. */
-
-type Token = "fg" | "bg" | "accent" | "muted";
-
-const TOKENS: readonly Token[] = ["fg", "bg", "accent", "muted"];
-
-/** What each token falls back to when neither the page nor a palette prop sets it. Muted is the ink at 65%,
- *  which keeps 4.5:1 contrast on both the dark and the light ground. */
-const TOKEN_FALLBACK: Readonly<Record<Token, string>> = {
-  fg: "currentColor",
-  bg: "transparent",
-  accent: "#e8a020",
-  muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)",
-};
-
-/** The CSS value of a token, with its fallback, for use in a style: var(--pica-accent, #e8a020). */
-function cssVar(token: Token): string {
-  return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
-}
-
-/** A readable ink for text set on a token's color: black on a light color, white on a dark one. Relative
- *  color syntax does it in CSS alone, so it follows any palette without script. */
-function cssOn(token: Token): string {
-  return `oklch(from ${cssVar(token)} clamp(0, (0.62 - l) * 1000, 1) 0 0)`;
-}
-
-/** Each token's color as the browser computes it, usable as a canvas fill. */
-type Colors = Readonly<Record<Token, string>>;
-
-/** Event types the probe stops, so its transitions never reach the page's own listeners. */
-const PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"] as const;
-
-/** A zero-size probe inside the host whose color properties are the four tokens, so currentColor,
- *  light-dark(), and color-mix() resolve exactly as they do on the page. */
-function createProbe(host: HTMLElement): HTMLElement {
-  const probe = document.createElement("span");
-  probe.setAttribute("data-pica", "");
-  probe.setAttribute("aria-hidden", "true");
-  probe.style.cssText = [
-    "position:absolute",
-    "width:0",
-    "height:0",
-    "overflow:hidden",
-    "visibility:hidden",
-    "pointer-events:none",
-    `color:${cssVar("fg")}`,
-    `background-color:${cssVar("bg")}`,
-    `border-top:0 solid ${cssVar("accent")}`,
-    `outline:0 solid ${cssVar("muted")}`,
-    // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
-    "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms",
-  ].join(";");
-  host.appendChild(probe);
-  return probe;
-}
-
-function probeColors(probe: HTMLElement): Colors {
-  const style = getComputedStyle(probe);
-  return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
-}
-
-/** Reads the four colors once. A core that needs them every frame keeps a watchPalette handle instead. */
-function readPalette(host: HTMLElement): Colors {
-  const probe = createProbe(host);
-  const colors = probeColors(probe);
-  probe.remove();
-  return colors;
-}
-
-interface PaletteWatch {
-  /** The colors as of the last read. */
-  readonly colors: Colors;
-  /** Reads again now, for example in update() or after a resize. Returns true when any color changed. */
-  refresh(): boolean;
-  /** Removes the probe and its listeners. */
-  destroy(): void;
-}
-
-/** Keeps a probe in the host and calls `onChange` whenever a token's color changes, however it changed: a
- *  theme class, a media query, a palette prop, or a React style. Canvas and WebGL components repaint there.
- *  A page that turns every transition off hides these changes, so cores also call refresh() in update(). */
-function watchPalette(host: HTMLElement, onChange: (colors: Colors) => void): PaletteWatch {
-  const probe = createProbe(host);
-  let colors = probeColors(probe);
-
-  function refresh(): boolean {
-    const next = probeColors(probe);
-    const differs = TOKENS.some((token) => next[token] !== colors[token]);
-    colors = next;
-    return differs;
-  }
-
-  const onEvent = (event: Event): void => {
-    event.stopPropagation();
-    if (event.type === "transitionend" && refresh()) onChange(colors);
-  };
-  for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
-
-  return {
-    get colors() {
-      return colors;
-    },
-    refresh,
-    destroy() {
-      for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
-      probe.remove();
     },
   };
 }
@@ -1148,11 +1238,6 @@ function chartDots(area: ChartCells, cellAspect: number): ChartDots {
   };
 }
 
-// lib/font.ts
-/** The monospace stack glyph components default to. It lives in its own module, so a text component that
- *  never draws a grid does not carry lib/glyph-grid.ts into its single React file just for the font. */
-const GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
-
 // registry/data/gauge-chart/core.ts
 export interface GaugeChartProps {
   /** The current value to display. */
@@ -1161,13 +1246,13 @@ export interface GaugeChartProps {
   min: number;
   /** The maximum value of the range. */
   max: number;
-  /** Name for the gauge, read by assistive technology and used as the hidden data table's caption. */
+  /** Name for the gauge: drawn under the value, read by assistive technology, and used as the hidden data table's caption. */
   label: string;
   /** Unit to display after the value (e.g., "%", "°C"). */
   unit: string;
   /** Threshold values to mark on the arc as ticks. */
   thresholds: number[];
-  /** Thickness of the arc as a fraction of the radius (0.05 to 0.4). */
+  /** Ring thickness as a fraction of its radius (0.05 to 0.4). */
   thickness: number;
   /** "svg" draws an SVG arc with labels. "glyph" draws the same arc in a braille grid. */
   look: "svg" | "glyph";
@@ -1187,8 +1272,11 @@ export const defaults: GaugeChartProps = {
   fontFamily: GRID_FONT,
 };
 
-const ARC_DEGREES = 240;
-const ARC_START_ANGLE = 150; // Starting angle: 150 degrees (left side of 240 degree arc)
+/* Every angle here is in the one convention arcPath and polarPoint draw in: radians clockwise from
+ * twelve o'clock. The arc's ends sit sixty degrees either side of straight down, so the ring sweeps
+ * two hundred forty degrees over the top and the gap stays centred on six o'clock. */
+const ARC_START = (240 * Math.PI) / 180;
+const ARC_SWEEP = (240 * Math.PI) / 180;
 
 export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
   let props: GaugeChartProps = { ...defaults, ...initial };
@@ -1203,6 +1291,33 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
     host.appendChild(table);
   }
 
+  /** The dial has a range only when `max` sits past `min`; anything else has no angle for a value. */
+  function ranged(): boolean {
+    return Number.isFinite(props.min) && Number.isFinite(props.max) && props.max > props.min;
+  }
+
+  /** The dial angle for `v` clamped into the range: `min` at the left end, `max` at the right. */
+  function angleOf(v: number): number {
+    const share = Math.max(0, Math.min(1, (v - props.min) / (props.max - props.min)));
+    return ARC_START + ARC_SWEEP * share;
+  }
+
+  /** The band's edges and centerline for a given outer radius and `thickness` as a share of the centerline. */
+  function band(outer: number): { radius: number; inner: number; outer: number } {
+    const thickness = Math.max(0.05, Math.min(0.4, props.thickness));
+    const radius = outer / (1 + thickness / 2);
+    return { radius, inner: radius * (1 - thickness / 2), outer };
+  }
+
+  /** In-range values to mark on the arc: `min`, `max`, and each threshold inside the range. */
+  function tickValues(): number[] {
+    const span = props.max - props.min;
+    return Array.from(new Set([props.min, props.max, ...props.thresholds])).filter((t) => {
+      const share = (t - props.min) / span;
+      return share >= 0 && share <= 1;
+    });
+  }
+
   function drawSvg(): void {
     const view = root;
     if (!view) return;
@@ -1211,101 +1326,67 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
     const w = Math.max(1, host.clientWidth);
     const h = Math.max(1, host.clientHeight);
     const fontSize = 11;
+    const labelSize = Math.max(9, fontSize - 1);
     view.setAttribute("viewBox", `0 0 ${w} ${h}`);
     view.setAttribute("font-family", props.fontFamily);
     view.setAttribute("font-size", String(fontSize));
 
-    const radius = Math.min(w, h) * 0.35;
+    const margin = Math.max(16, parseFloat(getComputedStyle(host).fontSize) || 16);
+    const { radius, inner, outer } = band(Math.max(1, Math.min(Math.min(w, h) * 0.32, Math.min(w, h) / 2 - margin)));
     const centerX = w / 2;
-    const centerY = h * 0.6;
-    const arcRadius = radius * 0.8;
-    const valueText = `${formatNumber(props.value)}${props.unit}`;
-    const valueTextSize = Math.min(24, Math.max(14, Math.floor(h * 0.15)));
+    const centerY = h / 2;
+    const arcEnd = ARC_START + ARC_SWEEP;
+    const trackHalf = (outer - inner) * 0.1;
+    const valueSize = Math.min(34, Math.max(16, Math.floor(radius * 0.22)));
+    const blockGap = labelSize * 0.8;
+    const valueY = centerY - (props.label ? (labelSize + blockGap) / 2 : 0);
+    const labelY = centerY + (valueSize + blockGap) / 2;
 
-    // Calculate arc endpoints for 240-degree arc
-    const startAngleRad = (ARC_START_ANGLE * Math.PI) / 180;
-    const endAngleRad = ((ARC_START_ANGLE + ARC_DEGREES) * Math.PI) / 180;
+    // The full muted track is a narrow groove on the fill's centerline, with no transparency.
+    view.appendChild(
+      svg("path", { d: arcPath(centerX, centerY, radius - trackHalf, radius + trackHalf, ARC_START, arcEnd), fill: cssVar("muted") })
+    );
 
-    // Draw background arc (light, muted)
-    const bgArc = svg("path", {
-      d: arcPath(centerX, centerY, arcRadius, arcRadius, startAngleRad, endAngleRad),
-      fill: "none",
-      stroke: cssVar("muted"),
-      "stroke-width": Math.max(1, arcRadius * props.thickness * 0.3),
-      opacity: "0.3",
-    });
-    view.appendChild(bgArc);
-
-    // Draw filled arc based on value
-    const normalized = (props.value - props.min) / (props.max - props.min);
-    const clampedNorm = Math.max(0, Math.min(1, normalized));
-    const valueAngleRad = startAngleRad + (endAngleRad - startAngleRad) * clampedNorm;
-    const valueArc = svg("path", {
-      d: arcPath(centerX, centerY, arcRadius, arcRadius, startAngleRad, valueAngleRad),
-      fill: "none",
-      stroke: cssVar("accent"),
-      "stroke-width": arcRadius * props.thickness,
-      "stroke-linecap": "round",
-    });
-    view.appendChild(valueArc);
-
-    // Draw ticks at min, max, and threshold values
-    const allTicks = [props.min, props.max, ...props.thresholds];
-    const uniqueTicks = Array.from(new Set(allTicks)).sort((a, b) => a - b);
-
-    for (const tick of uniqueTicks) {
-      const tickNorm = (tick - props.min) / (props.max - props.min);
-      if (tickNorm < 0 || tickNorm > 1) continue;
-      const tickAngleRad = startAngleRad + (endAngleRad - startAngleRad) * tickNorm;
-      const tickInnerRadius = arcRadius * 0.85;
-      const tickOuterRadius = arcRadius * 1.1;
-      const tickX1 = centerX + tickInnerRadius * Math.cos(tickAngleRad);
-      const tickY1 = centerY + tickInnerRadius * Math.sin(tickAngleRad);
-      const tickX2 = centerX + tickOuterRadius * Math.cos(tickAngleRad);
-      const tickY2 = centerY + tickOuterRadius * Math.sin(tickAngleRad);
-
-      view.appendChild(
-        svg("line", {
-          x1: tickX1,
-          y1: tickY1,
-          x2: tickX2,
-          y2: tickY2,
-          stroke: cssVar("muted"),
-          "stroke-width": 1,
-        })
-      );
-
-      // Add labels for min and max
-      if (tick === props.min || tick === props.max) {
-        const labelRadius = arcRadius * 1.25;
-        const labelX = centerX + labelRadius * Math.cos(tickAngleRad);
-        const labelY = centerY + labelRadius * Math.sin(tickAngleRad);
-        const label = svg("text", {
-          x: labelX,
-          y: labelY,
-          "text-anchor": "middle",
-          "dominant-baseline": "middle",
-          fill: cssVar("muted"),
-          "font-size": Math.max(9, fontSize - 2),
-        });
-        label.textContent = formatNumber(tick);
-        view.appendChild(label);
+    if (!ranged()) {
+      view.appendChild(svgLabel("no range", centerX, valueY, { anchor: "middle", middle: true, size: fontSize, font: props.fontFamily }));
+    } else {
+      const valueAngle = angleOf(props.value);
+      if (valueAngle > ARC_START) {
+        view.appendChild(
+          svg("path", { d: arcPath(centerX, centerY, inner, outer, ARC_START, valueAngle), fill: cssVar("accent") })
+        );
       }
+
+      // Each tick is a short line across the band at its own value, so no mark floats off the ring.
+      for (const tick of tickValues()) {
+        const a = ARC_START + ARC_SWEEP * ((tick - props.min) / (props.max - props.min));
+        const [x1, y1] = polarPoint(centerX, centerY, Math.max(1, inner - 2), a);
+        const [x2, y2] = polarPoint(centerX, centerY, outer + 5, a);
+        view.appendChild(svg("line", { x1, y1, x2, y2, stroke: cssVar("muted"), "stroke-width": 1 }));
+
+        if (tick === props.min || tick === props.max) {
+          const [lx, ly] = polarPoint(centerX, centerY, outer + labelSize * 1.2, a);
+          view.appendChild(svgLabel(formatNumber(tick), lx, ly, { anchor: "middle", middle: true, size: labelSize, font: props.fontFamily }));
+        }
+      }
+
+      const valueText = `${formatNumber(props.value)}${props.unit}`;
+      const valueLabel = svgLabel(valueText, centerX, valueY, {
+        anchor: "middle",
+        middle: true,
+        size: valueSize,
+        token: "fg",
+        font: props.fontFamily,
+      });
+      valueLabel.style.fontWeight = "bold";
+      view.appendChild(valueLabel);
     }
 
-    // Draw center value text
-    const valueLabel = svg("text", {
-      x: centerX,
-      y: centerY - radius * 0.15,
-      "text-anchor": "middle",
-      "dominant-baseline": "middle",
-      fill: cssVar("fg"),
-      "font-size": valueTextSize,
-      "font-weight": "bold",
-      "font-family": props.fontFamily,
-    });
-    valueLabel.textContent = valueText;
-    view.appendChild(valueLabel);
+    if (props.label) {
+      view.appendChild(
+        svgLabel(props.label, centerX, labelY, { anchor: "middle", middle: true, size: labelSize, font: props.fontFamily })
+      );
+    }
 
     host.dataset.picaReady = "true";
   }
@@ -1317,66 +1398,87 @@ export const mount: Mount<GaugeChartProps> = (host, initial = {}) => {
     const { cols, rows } = g;
     const colors = readPalette(host);
 
-    const valueText = `${formatNumber(props.value)}${props.unit}`;
-    const normalized = (props.value - props.min) / (props.max - props.min);
-    const clampedNorm = Math.max(0, Math.min(1, normalized));
-
-    // The bottom row holds the min and max labels, so the dial itself sits above them.
-    const inset: ChartInset = { bottom: 1 };
+    // Keep at least one host em around the drawing, including the glyph cells at its edge.
+    const margin = Math.max(16, parseFloat(getComputedStyle(host).fontSize) || 16);
+    const inset: ChartInset = {
+      top: Math.ceil(margin / g.cellHeight), bottom: Math.ceil(margin / g.cellHeight),
+      left: Math.ceil(margin / g.cellWidth), right: Math.ceil(margin / g.cellWidth),
+    };
     const area = chartCells({ cols, rows }, inset);
     const track = chartDots(area, g.aspect);
     const fill = chartDots(area, g.aspect);
 
-    /* A point on the dial at `angleDeg`, in the convention drawSvg uses: 0 is right, 90 is down. The cosine
-     * term is scaled by the dot grid's physical width and the sine term by its physical height, rather than
-     * by one shared radius, which is what keeps the sweep round instead of squashed to the area's shape. */
     const physicalWidth = track.wide * track.aspect;
     const physicalHeight = track.tall;
-    // The same proportion drawSvg uses for its own arc radius, so the dial reads at the same size on
-    // both grounds: a modest fraction of the smaller physical dimension, with margin on every side.
-    const radius = Math.min(physicalWidth, physicalHeight) * 0.28;
+    const { radius, inner, outer } = band(Math.min(physicalWidth, physicalHeight) * 0.34);
+    const trackHalf = (outer - inner) * 0.1;
     const centerFx = 0.5;
-    // drawSvg centers its arc 60% of the way down from the top; read bottom-up that is 40% up from the floor.
-    const centerFy = 0.4;
+    const centerFy = 0.5;
+    const valueRow = area.rowAt(centerFy) - (props.label ? 1 : 0);
 
-    function pointAt(angleDeg: number): readonly [number, number] {
-      const angleRad = (angleDeg * Math.PI) / 180;
-      const fx = centerFx + (radius * Math.cos(angleRad)) / physicalWidth;
-      const fy = centerFy - (radius * Math.sin(angleRad)) / physicalHeight;
-      return [fx, fy];
+    /* A point on the dial at `angle` in the same convention drawSvg uses: radians clockwise from twelve
+     * o'clock. The sine term scales by the dot grid's physical width and the cosine by its physical height,
+     * which keeps the sweep round instead of squashed to the area's shape. */
+    function pointAt(angle: number, r: number): readonly [number, number] {
+      return [centerFx + (r * Math.sin(angle)) / physicalWidth, centerFy + (r * Math.cos(angle)) / physicalHeight];
     }
 
-    /* The track runs the whole sweep and the fill stops where the value sits. Drawing only the track would
-     * leave the glyph look showing an empty dial, the same picture for every value it is given. */
-    const arcSteps = 48;
-    let prev = pointAt(ARC_START_ANGLE);
-    for (let i = 1; i <= arcSteps; i++) {
-      const t = i / arcSteps;
-      const next = pointAt(ARC_START_ANGLE + ARC_DEGREES * t);
-      track.stroke(prev[0], prev[1], next[0], next[1]);
-      if (t <= clampedNorm) fill.stroke(prev[0], prev[1], next[0], next[1]);
-      prev = next;
+    /* The band is drawn as radial spokes, about one per dot around the sweep, so `thickness` sets a real
+     * width here rather than the single dot a lone centerline would give. The narrow track covers the
+     * whole sweep in muted; the fill stops where the value sits. */
+    const steps = Math.max(64, Math.ceil((outer * ARC_SWEEP) / 1.1));
+    const valueAngle = ranged() ? angleOf(props.value) : ARC_START;
+    for (let i = 0; i <= steps; i++) {
+      const a = ARC_START + ARC_SWEEP * (i / steps);
+      const [x0, y0] = pointAt(a, radius - trackHalf);
+      const [x1, y1] = pointAt(a, radius + trackHalf);
+      track.stroke(x0, y0, x1, y1);
+      if (valueAngle > ARC_START && a <= valueAngle) {
+        const [fx0, fy0] = pointAt(a, inner);
+        const [fx1, fy1] = pointAt(a, outer);
+        fill.stroke(fx0, fy0, fx1, fy1);
+      }
     }
 
-    // A blank dot from the fill would rub out the track underneath it, so `paint` leaves it alone.
+    if (ranged()) {
+      // Each tick is a short spoke out from the band's edge, on the arc at its own value.
+      for (const tick of tickValues()) {
+        const a = ARC_START + ARC_SWEEP * ((tick - props.min) / (props.max - props.min));
+        const [x0, y0] = pointAt(a, radius - trackHalf);
+        const [x1, y1] = pointAt(a, outer + 3);
+        track.stroke(x0, y0, x1, y1);
+      }
+    }
+
     track.paint(g, colors.muted);
     fill.paint(g, colors.accent);
 
-    // Min and max sit in the reserved row, under the dial's two ends.
-    const labelRow = rows - 1;
-    const minLabel = formatNumber(props.min);
-    const maxLabel = formatNumber(props.max);
-    const [minFx] = pointAt(ARC_START_ANGLE);
-    const [maxFx] = pointAt(ARC_START_ANGLE + ARC_DEGREES);
-    const minCol = Math.max(0, area.colAt(minFx) - Math.floor(minLabel.length / 2));
-    const maxCol = Math.min(cols - maxLabel.length, area.colAt(maxFx) - Math.floor(maxLabel.length / 2));
-    g.write(minCol, labelRow, minLabel, colors.muted);
-    if (maxCol > minCol + minLabel.length) g.write(maxCol, labelRow, maxLabel, colors.muted);
+    if (!ranged()) {
+      const note = "no range";
+      g.write(Math.max(0, area.colAt(0.5) - Math.floor(note.length / 2)), valueRow, note, colors.muted);
+    } else {
+      // Min and max sit on the row under the dial's two ends, each beneath the end it names.
+      const minLabel = formatNumber(props.min);
+      const maxLabel = formatNumber(props.max);
+      const [minFx] = pointAt(ARC_START, radius);
+      const [maxFx] = pointAt(ARC_START + ARC_SWEEP, radius);
+      const endFy = pointAt(ARC_START, outer)[1];
+      const labelRow = Math.min(rows - 1, area.rowAt(endFy) + 1);
+      const minCol = Math.max(0, area.colAt(minFx) - Math.floor(minLabel.length / 2));
+      const maxCol = Math.min(cols - maxLabel.length, area.colAt(maxFx) - Math.floor(maxLabel.length / 2));
+      g.write(minCol, labelRow, minLabel, colors.muted);
+      if (maxCol > minCol + minLabel.length) g.write(maxCol, labelRow, maxLabel, colors.muted);
 
-    // The value sits at the dial's own center, the one spot the ring never draws over.
-    const textRow = area.rowAt(centerFy);
-    const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
-    g.write(textCol, textRow, valueText, colors.fg);
+      // The value sits at the dial's own center, the one spot the ring never draws over.
+      const valueText = `${formatNumber(props.value)}${props.unit}`;
+      const textCol = Math.max(0, area.colAt(centerFx) - Math.floor(valueText.length / 2));
+      g.write(textCol, valueRow, valueText, colors.fg);
+    }
+
+    if (props.label) {
+      const name = props.label.slice(0, cols);
+      g.write(Math.max(0, Math.floor((cols - name.length) / 2)), valueRow + 1, name, colors.muted);
+    }
 
     g.flush();
     host.dataset.picaReady = "true";

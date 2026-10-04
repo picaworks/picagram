@@ -1,0 +1,22 @@
+{
+  "article-lead": {
+    "decision": "keep",
+    "note": "The revision landed. At 1280 the aside now ends at x=1216 against the 64px left margin, so both margins match on ink and paper. The reading column holds its measure and the hairline-ruled aside sits at the content edge. The In brief points are set at about 1.4 and no longer cramp. The accent 2rem rule, dateline, mono labels, lead-sized first paragraph and 390 stacked order (head, body, facts, brief) are intact, and nothing clips on either ground. The wide gap between the column and the aside is deliberate whitespace.",
+    "at": "2026-10-02T02:53:57.000Z"
+  },
+  "quote-band": {
+    "decision": "keep",
+    "note": "One quote in the page font, balanced to three lines at 1280 and four at 390, between two hairlines. The accent is a 2rem segment on the gutter hairline only. The dot lattice stays well below the type on ink and paper. The empty right side at 1280 reads as deliberate: the quote holds its 28em measure against the left gutter and the lattice carries the rest of the band. The 390 stack with the top rule is clean and nothing clips.",
+    "at": "2026-10-02T02:51:11.000Z"
+  },
+  "contact-panel": {
+    "decision": "keep",
+    "note": "The native form is clear on ink and paper: visible labels above 1px square controls, name and email side by side, message beneath. The single filled mint button has dark on-accent text, and the mono note sits beside it. The four channel rows are hairline-divided with mono labels above values; the email and phone are underlined links, and the address and hours are plain text. At 390 the details come first and the controls stack at full width. Full-page 390 captures on ink and paper now show the bottom: three labelled controls at full width, the message box with room to type, the mint Send message button with dark text, and the mono note wrapped under it, all inside the 24px inset with nothing clipped. No card, no empty bordered area.",
+    "at": "2026-10-02T02:53:57.000Z"
+  },
+  "event-schedule": {
+    "decision": "keep",
+    "note": "The revision landed. The heading, zone caption, day labels and rules now start at x=64 at 1280 and x=24 at 390, matching the sibling sections, with the right edge mirrored on ink and paper. The space under the last session of each day now matches the row rhythm. The 11rem day column, mono start over muted end, hairline-separated sessions, accent bar with the visible NEXT UP label, zone caption and the 390 stack with the time above the title are all intact.",
+    "at": "2026-10-02T02:53:57.000Z"
+  }
+}
