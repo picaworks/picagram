@@ -7,6 +7,7 @@ import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { CATEGORY_TITLES, type Category, type Meta } from "../lib/meta";
+import { isFullSite } from "../lib/collection";
 import { loadAll, ROOT, type Entry } from "./catalog";
 import { BUDGETS, HOMEPAGE, LICENSE_LABEL, LICENSE_URL, ORIGINAL_LABEL, REGISTRY_BASE, SITE_URL } from "./config";
 import { reactSingleFile, vanillaBundle, vanillaHtml, vanillaParts } from "./single-file";
@@ -200,6 +201,7 @@ function registryJson(entries: readonly Entry[]): string {
 function catalogJson(entries: readonly Entry[], sizes: ReadonlyMap<string, number>): string {
   const catalog = entries.map((e) => ({
     ...e.meta,
+    ...(isFullSite(e.meta.slug) ? { collection: "full-sites" } : {}),
     exportName: e.exportName,
     defaults: e.defaults,
     docs: e.docs,

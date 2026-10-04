@@ -1,23 +1,29 @@
 /** The catalog the site browses: public/catalog.json, written by scripts/build.ts. Never hand-edit that file. */
-import { CATEGORIES, CATEGORY_TITLES, FACETS, type Category, type Control, type Facet, type Meta } from "../../lib/meta";
+import { CATEGORIES as STORAGE_CATEGORIES, CATEGORY_TITLES as STORAGE_TITLES, FACETS, type Category as StorageCategory, type Control, type Facet, type Meta } from "../../lib/meta";
+import { isFullSite } from "../../lib/collection";
 import { TOKENS, type Token } from "../../lib/palette";
 import type { Json } from "../../lib/types";
 import type { PaletteProp } from "../../lib/use-pica";
 import generated from "../../public/catalog.json";
 
-export const CURRENT_RELEASE = "ascii-motion-2026-10-04";
+export const CURRENT_RELEASE = "components-2026-10-04";
 export const RELEASES = [
-  { id: CURRENT_RELEASE, title: "ASCII, motion and immersive" },
+  { id: CURRENT_RELEASE, title: "Reusable components" },
+  { id: "ascii-motion-2026-10-04", title: "ASCII, motion and immersive" },
   { id: "microsites-2026-10-04", title: "36 microsites" },
 ] as const;
 export type ReleaseFilter = typeof RELEASES[number]["id"] | "all";
-/** NEW identifies the two batches under review. Membership comes from authored release metadata. */
+/** NEW identifies the explicit release batches. Membership comes from authored release metadata. */
 export function isNew(item: Pick<Meta, "release">): boolean { return RELEASES.some((release) => release.id === item.release); }
 export function inRelease(item: Pick<Meta, "release">, release: ReleaseFilter): boolean { return release === "all" ? isNew(item) : item.release === release; }
 export function readRelease(value: string | null): ReleaseFilter | null { return value === "all" || RELEASES.some((release) => release.id === value) ? value as ReleaseFilter : null; }
 
-export type { Category, Control, Facet, PaletteProp, Token };
-export { CATEGORIES, CATEGORY_TITLES, FACETS, TOKENS };
+export type Category = StorageCategory | "full-sites";
+export const CATEGORIES: readonly Category[] = [...STORAGE_CATEGORIES, "full-sites"];
+export const CATEGORY_TITLES: Readonly<Record<Category, string>> = { ...STORAGE_TITLES, "full-sites": "Full Sites" };
+export function catalogCategory(item: Pick<Meta, "slug" | "category">): Category { return isFullSite(item.slug) ? "full-sites" : item.category; }
+export type { Control, Facet, PaletteProp, Token };
+export { FACETS, TOKENS };
 
 /** A prop value. Props are plain data by contract, so the inspector can set every one of them, including a
  *  textarea's string, a numbers control's array, or a json control's array or object. */
@@ -26,6 +32,8 @@ export type Props = Record<string, PropValue>;
 
 /** One catalog entry: the component's meta plus what the build adds to it. */
 export interface CatalogItem extends Meta {
+  /** Catalog grouping for complete pages, independent of their reusable source category. */
+  collection?: "full-sites";
   /** The React component's name, for the usage snippet. */
   exportName: string;
   /** The core's defaults. The inspector starts here and reports only what differs. */
@@ -102,7 +110,7 @@ export function groupByCategory(list: readonly CatalogItem[]): Group[] {
   return CATEGORIES.map((category) => ({
     category,
     title: CATEGORY_TITLES[category],
-    items: list.filter((item) => item.category === category).sort((a, b) => a.title.localeCompare(b.title)),
+    items: list.filter((item) => catalogCategory(item) === category).sort((a, b) => a.title.localeCompare(b.title)),
   })).filter((group) => group.items.length > 0);
 }
 
@@ -126,7 +134,7 @@ export function searchText(item: {
   readonly tags: readonly string[];
   readonly facets: readonly string[];
 }): string {
-  return [item.title, item.slug, item.description, item.category, ...item.tags, ...item.facets]
+  return [item.title, item.slug, item.description, item.category, isFullSite(item.slug) ? "full sites" : "", ...item.tags, ...item.facets]
     .join(" ")
     .toLowerCase();
 }
@@ -135,7 +143,7 @@ export function searchText(item: {
  *  the search reads an item's tags and facets as well as its words. */
 export function matches(item: CatalogItem, query: string, facets: readonly Facet[], newOnly = false, category: Category | "all" = "all", release: ReleaseFilter = "all"): boolean {
   if (newOnly && !inRelease(item, release)) return false;
-  if (category !== "all" && item.category !== category) return false;
+  if (category !== "all" && catalogCategory(item) !== category) return false;
   if (!facets.every((facet) => item.facets.includes(facet))) return false;
   const q = query.trim().toLowerCase();
   if (!q) return true;

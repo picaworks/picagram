@@ -89,6 +89,8 @@ Properties that must hold for every input, and where each is checked.
 
 ## Site
 
+Complete pages use the explicit Full Sites collection in `lib/collection.ts`. Catalog groups, category filters and inspector labels agree with that collection. Source categories, slugs, exports and release membership remain stable. `test/expansion.test.ts` checks the 45 page memberships and retains reusable maps, trees and image effects under ASCII.
+
 | Invariant | Check |
 |---|---|
 | The site links to its own files with relative paths, so it works under any base path | `test/site.test.ts` |
