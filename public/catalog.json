@@ -17476,11 +17476,11 @@
     },
     "events": {
       "valueChange": {
-        "doc": "Selected panel ID, emitted only after pointer or keyboard input.",
+        "doc": "Panel ID requested by pointer or keyboard input, including repeated controlled selections.",
         "detail": "string"
       }
     },
-    "gzipBytes": 5196
+    "gzipBytes": 5199
   },
   {
     "slug": "geodesic-shell",

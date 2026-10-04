@@ -31,7 +31,7 @@ export interface FoldedAtlasProps {
 }
 
 export interface FoldedAtlasEvents {
-  /** Selected panel ID, emitted only after pointer or keyboard input. */
+  /** Panel ID requested by pointer or keyboard input, including repeated controlled selections. */
   valueChange: string;
 }
 
@@ -260,7 +260,8 @@ export const mount: Mount<FoldedAtlasProps> = (host, initial = {}) => {
   }
 
   function select(id: string): void {
-    if (id === selected() || !panels.some((p) => p.id === id)) return;
+    // A controlled request can cancel a previous input the parent has not echoed yet.
+    if ((props.value === null && id === internalValue) || !panels.some((p) => p.id === id)) return;
     if (props.value === null) { internalValue = id; selection(); fitContent(); }
     emit("valueChange", id);
   }

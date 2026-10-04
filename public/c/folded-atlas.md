@@ -28,7 +28,7 @@ Each event is a CustomEvent on the host named `pica:` plus the event name in low
 
 | Event | React prop | Detail | Description |
 |---|---|---|---|
-| `valueChange` | `onValueChange` | `string` | Selected panel ID, emitted only after pointer or keyboard input. |
+| `valueChange` | `onValueChange` | `string` | Panel ID requested by pointer or keyboard input, including repeated controlled selections. |
 
 ## Colors
 
@@ -587,7 +587,7 @@ export interface FoldedAtlasProps {
 }
 
 export interface FoldedAtlasEvents {
-  /** Selected panel ID, emitted only after pointer or keyboard input. */
+  /** Panel ID requested by pointer or keyboard input, including repeated controlled selections. */
   valueChange: string;
 }
 
@@ -816,7 +816,8 @@ export const mount: Mount<FoldedAtlasProps> = (host, initial = {}) => {
   }
 
   function select(id: string): void {
-    if (id === selected() || !panels.some((p) => p.id === id)) return;
+    // A controlled request can cancel a previous input the parent has not echoed yet.
+    if ((props.value === null && id === internalValue) || !panels.some((p) => p.id === id)) return;
     if (props.value === null) { internalValue = id; selection(); fitContent(); }
     emit("valueChange", id);
   }
@@ -1403,7 +1404,7 @@ var PicaFoldedAtlas = (() => {
       if (started) draw();
     }
     function select(id) {
-      if (id === selected() || !panels.some((p) => p.id === id)) return;
+      if (props.value === null && id === internalValue || !panels.some((p) => p.id === id)) return;
       if (props.value === null) {
         internalValue = id;
         selection();

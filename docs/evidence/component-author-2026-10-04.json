@@ -547,9 +547,50 @@
       ],
       "firstSavedDesktopCaptureUTC": "2026-10-04T21:12:48.361Z",
       "secondsToFirstSavedCapture": 408.36145947265624,
-      "coordinatorRevisedFiles": [],
+      "coordinatorRevisedFiles": [
+        "core.ts"
+      ],
       "fullNativeVerification": true,
-      "verificationCompletedUTC": "2026-10-04T21:12:55.701Z"
+      "verificationCompletedUTC": "2026-10-04T21:12:55.701Z",
+      "postCIRevision": {
+        "reason": "Retain the latest controlled selection request while a previous parent echo is pending.",
+        "fullNativeVerification": true,
+        "delayedParentBefore": {
+          "verifiedUTC": "2026-10-04T22:03:36.117Z",
+          "ok": false,
+          "expected": {
+            "requests": [
+              "coast",
+              "estuary"
+            ],
+            "selected": "estuary"
+          },
+          "actual": {
+            "requests": [
+              "coast"
+            ],
+            "selected": "coast"
+          }
+        },
+        "delayedParentAfter": {
+          "verifiedUTC": "2026-10-04T22:05:04.109Z",
+          "ok": true,
+          "expected": {
+            "requests": [
+              "coast",
+              "estuary"
+            ],
+            "selected": "estuary"
+          },
+          "actual": {
+            "requests": [
+              "coast",
+              "estuary"
+            ],
+            "selected": "estuary"
+          }
+        }
+      }
     }
   ],
   "summary": {
@@ -563,7 +604,7 @@
     },
     "totalReadCallsReported": 74,
     "totalWriteCallsReported": 43,
-    "componentsNeedingCoordinatorSourceRevision": 15,
+    "componentsNeedingCoordinatorSourceRevision": 16,
     "preservedSources": 741,
     "preservationMismatches": [],
     "existing256TrackedRegistryChanges": ""

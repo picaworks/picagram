@@ -482,7 +482,7 @@ var PicaFoldedAtlas = (() => {
       if (started) draw();
     }
     function select(id) {
-      if (id === selected() || !panels.some((p) => p.id === id)) return;
+      if (props.value === null && id === internalValue || !panels.some((p) => p.id === id)) return;
       if (props.value === null) {
         internalValue = id;
         selection();
