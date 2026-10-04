@@ -1,0 +1,425 @@
+<!doctype html>
+<!--
+  Pica · XY pad · xy-pad
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>XY pad · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaXyPad = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/xy-pad/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+  function changed(before, after, keys) {
+    return keys.some((key) => !sameJson(before[key], after[key]));
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/xy-pad/core.ts
+  var defaults = {
+    value: null,
+    defaultValue: [50, 50],
+    bounds: [0, 100, 0, 100],
+    step: 1,
+    label: "Position",
+    axes: ["X", "Y"],
+    size: 16
+  };
+  var xyLayout = ["bounds", "step", "label", "axes", "size"];
+  function xyNumber(raw, fallback) {
+    return typeof raw === "number" && Number.isFinite(raw) ? raw : fallback;
+  }
+  function xyLimits(props) {
+    const raw = Array.isArray(props.bounds) ? props.bounds : [];
+    const axis = (at) => {
+      const min = xyNumber(raw[at], 0);
+      const max = xyNumber(raw[at + 1], 100);
+      return max >= min ? [min, max] : [min, min];
+    };
+    const [x0, x1] = axis(0);
+    const [y0, y1] = axis(2);
+    return [x0, x1, y0, y1];
+  }
+  function xyStep(props) {
+    return Number.isFinite(props.step) && props.step > 0 ? props.step : 1;
+  }
+  function xySnap(raw, min, max, step) {
+    const clamped = Math.min(max, Math.max(min, xyNumber(raw, min)));
+    const snapped = min + Math.round((clamped - min) / step) * step;
+    return Number(Math.min(max, Math.max(min, snapped)).toFixed(10));
+  }
+  function xyPlaces(n) {
+    const text = String(n);
+    const dot = text.indexOf(".");
+    return dot < 0 ? 0 : Math.min(8, text.length - dot - 1);
+  }
+  function xyPart(tag, name, ...children) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-pica", "");
+    node.setAttribute("data-part", name);
+    node.append(...children);
+    return node;
+  }
+  function xyRules(s, props, chars) {
+    const fg = cssVar("fg");
+    const accent = cssVar("accent");
+    const muted = cssVar("muted");
+    const line = `color-mix(in srgb, ${fg} 35%, transparent)`;
+    const size = Math.min(32, Math.max(8, xyNumber(props.size, 16)));
+    const part = (name) => `${s} [data-part="${name}"]`;
+    const pad = part("pad");
+    const thumb = part("thumb");
+    const input = `${s} input`;
+    const x = "calc(0.45rem + (100% - 0.9rem) * var(--xy-x, 0.5))";
+    const y = "calc(0.45rem + (100% - 0.9rem) * var(--xy-y, 0.5))";
+    const tick = `font-family:${GRID_FONT};font-size:0.75em;line-height:1;font-variant-numeric:tabular-nums;color:${muted}`;
+    return [
+      `${s}{display:inline-block;color:${fg};vertical-align:middle}`,
+      `${part("root")}{display:grid;grid-template-columns:auto auto;justify-content:start;gap:0.4em 0.5em;line-height:1.2}`,
+      `${part("label")}{grid-column:1/-1;contain:inline-size}`,
+      `${part("yticks")}{display:flex;flex-direction:column;justify-content:space-between;text-align:right;${tick}}`,
+      `${part("xticks")}{grid-column:2;display:flex;justify-content:space-between;${tick}}`,
+      `${pad}{position:relative;box-sizing:border-box;width:min(${size}rem,100vw - 8rem);aspect-ratio:1;border:1px solid ${line};touch-action:none;-webkit-user-select:none;user-select:none;cursor:crosshair}`,
+      `${pad}[data-dragging="true"]{border-color:${fg}}`,
+      `${part("h")}{position:absolute;left:0;right:0;top:${y};height:1px;background:${accent};pointer-events:none}`,
+      `${part("v")}{position:absolute;top:0;bottom:0;left:${x};width:1px;background:${accent};pointer-events:none}`,
+      `${thumb}{position:absolute;box-sizing:border-box;width:0.9rem;height:0.9rem;left:${x};top:${y};transform:translate(-50%,-50%);border:1px solid ${fg};border-radius:0;background:transparent;cursor:grab}`,
+      `${thumb}:hover,${pad}[data-dragging="true"] ${thumb}{background:${accent};border-color:${accent}}`,
+      `${pad}[data-dragging="true"] ${thumb}{cursor:grabbing}`,
+      `${part("fields")}{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:0.4em 0.9em;contain:inline-size}`,
+      `${part("field")}{display:flex;align-items:center;gap:0.4em}`,
+      `${part("axis")}{color:${muted}}`,
+      `${input}{box-sizing:content-box;width:${chars}ch;margin:0;padding:0.2em 0.4em;font:inherit;font-family:${GRID_FONT};font-variant-numeric:tabular-nums;text-align:right;color:${fg};background:transparent;border:1px solid ${line};border-radius:0;-moz-appearance:textfield;appearance:textfield}`,
+      `${input}::-webkit-inner-spin-button,${input}::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}`,
+      `${input}:hover{background:color-mix(in srgb, ${fg} 10%, transparent)}`,
+      `${input}:focus-visible{outline:2px solid ${accent};outline-offset:2px}`,
+      `${input}:invalid{box-shadow:none}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let current = snapPair(props.value ?? props.defaultValue);
+    let places = 0;
+    let rules = "";
+    let dragging = false;
+    let pointerId = -1;
+    let typing = null;
+    const emit = emitter(host);
+    const sheet = scope(host);
+    const abort = new AbortController();
+    const on = { signal: abort.signal };
+    const labelId = nextId("pica-xy-pad-label");
+    const label = xyPart("span", "label");
+    const yTicks = [xyPart("span", "tick"), xyPart("span", "tick")];
+    const xTicks = [xyPart("span", "tick"), xyPart("span", "tick")];
+    const names = [xyPart("span", "axis"), xyPart("span", "axis")];
+    const inputs = [xyPart("input", "x"), xyPart("input", "y")];
+    const thumb = xyPart("div", "thumb");
+    const pad = xyPart("div", "pad", xyPart("div", "h"), xyPart("div", "v"), thumb);
+    const left = xyPart("div", "yticks", ...yTicks);
+    const base = xyPart("div", "xticks", ...xTicks);
+    const fields = xyPart(
+      "div",
+      "fields",
+      xyPart("label", "field", names[0], inputs[0]),
+      xyPart("label", "field", names[1], inputs[1])
+    );
+    const root = xyPart("div", "root", label, left, pad, base, fields);
+    label.id = labelId;
+    root.setAttribute("role", "group");
+    for (const node of [pad, left, base]) node.setAttribute("aria-hidden", "true");
+    for (const input of inputs) {
+      input.type = "number";
+      input.autocomplete = "off";
+    }
+    host.append(root);
+    function snapPair(raw) {
+      const [x0, x1, y0, y1] = xyLimits(props);
+      const step = xyStep(props);
+      return [xySnap(raw[0] ?? x0, x0, x1, step), xySnap(raw[1] ?? y0, y0, y1, step)];
+    }
+    function shown() {
+      return snapPair(props.value ?? current);
+    }
+    function configure() {
+      const [x0, x1, y0, y1] = xyLimits(props);
+      const step = xyStep(props);
+      places = Math.max(xyPlaces(step), xyPlaces(x0), xyPlaces(y0));
+      const show = (n) => n.toFixed(places);
+      const title = String(props.label ?? "");
+      label.textContent = title;
+      label.hidden = title === "";
+      if (title) root.setAttribute("aria-labelledby", labelId);
+      else root.removeAttribute("aria-labelledby");
+      yTicks[0].textContent = show(y1);
+      yTicks[1].textContent = show(y0);
+      xTicks[0].textContent = show(x0);
+      xTicks[1].textContent = show(x1);
+      const axes = [
+        [names[0], inputs[0], x0, x1],
+        [names[1], inputs[1], y0, y1]
+      ];
+      for (const [at, [name, input, min, max]] of axes.entries()) {
+        const axis = String(props.axes?.[at] ?? "") || (at === 0 ? "X" : "Y");
+        name.textContent = axis;
+        input.min = String(min);
+        input.max = String(max);
+        input.step = String(step);
+        input.setAttribute("aria-label", title ? `${title} ${axis}` : axis);
+      }
+      const chars = Math.max(3, ...[x0, x1, y0, y1].map((n) => show(n).length)) + 1;
+      const next = xyRules(sheet.selector, props, chars);
+      if (next !== rules) {
+        rules = next;
+        sheet.setRules(next);
+      }
+    }
+    function paint() {
+      const [x0, x1, y0, y1] = xyLimits(props);
+      const [x, y] = shown();
+      const share = (n, min, max) => max > min ? (n - min) / (max - min) : 0;
+      pad.style.setProperty("--xy-x", String(share(x, x0, x1)));
+      pad.style.setProperty("--xy-y", String(1 - share(y, y0, y1)));
+      const texts = [x.toFixed(places), y.toFixed(places)];
+      inputs.forEach((input, at) => {
+        const text = texts[at];
+        if (text !== void 0 && input !== typing && input.value !== text) input.value = text;
+      });
+    }
+    function choose(raw) {
+      const next = snapPair(raw);
+      const [x, y] = shown();
+      const moved = next[0] !== x || next[1] !== y;
+      if (moved && props.value === null) current = next;
+      paint();
+      if (moved) emit("valueChange", next);
+    }
+    function choosePoint(event) {
+      const [x0, x1, y0, y1] = xyLimits(props);
+      const box = pad.getBoundingClientRect();
+      const edge = 1 + thumb.offsetWidth / 2;
+      const along = (offset, length) => Math.min(1, Math.max(0, (offset - edge) / Math.max(1, length - 2 * edge)));
+      choose([
+        x0 + along(event.clientX - box.left, box.width) * (x1 - x0),
+        y1 - along(event.clientY - box.top, box.height) * (y1 - y0)
+      ]);
+    }
+    const onPointerDown = (event) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      dragging = true;
+      pointerId = event.pointerId;
+      typing = null;
+      pad.dataset.dragging = "true";
+      pad.setPointerCapture(event.pointerId);
+      choosePoint(event);
+    };
+    const onPointerMove = (event) => {
+      if (dragging && event.pointerId === pointerId) choosePoint(event);
+    };
+    const endPointer = (event) => {
+      if (event.pointerId !== pointerId) return;
+      dragging = false;
+      pointerId = -1;
+      pad.removeAttribute("data-dragging");
+    };
+    const onKeyDown = (event) => {
+      const at = inputs.indexOf(event.target);
+      const sign = event.key === "ArrowUp" || event.key === "PageUp" ? 1 : event.key === "ArrowDown" || event.key === "PageDown" ? -1 : 0;
+      if (at < 0 || sign === 0 || event.ctrlKey || event.metaKey || event.altKey) return;
+      event.preventDefault();
+      typing = null;
+      const jump = event.shiftKey || event.key.startsWith("Page") ? 10 : 1;
+      const next = shown();
+      next[at] = (next[at] ?? 0) + sign * jump * xyStep(props);
+      choose(next);
+    };
+    const onInput = (event) => {
+      const input = event.target;
+      const at = inputs.indexOf(input);
+      if (at < 0) return;
+      typing = input;
+      if (!Number.isFinite(input.valueAsNumber)) return;
+      const next = shown();
+      next[at] = input.valueAsNumber;
+      choose(next);
+    };
+    const settle = () => {
+      typing = null;
+      paint();
+    };
+    pad.addEventListener("pointerdown", onPointerDown, on);
+    pad.addEventListener("pointermove", onPointerMove, on);
+    pad.addEventListener("pointerup", endPointer, on);
+    pad.addEventListener("pointercancel", endPointer, on);
+    pad.addEventListener("lostpointercapture", endPointer, on);
+    fields.addEventListener("keydown", onKeyDown, on);
+    fields.addEventListener("input", onInput, on);
+    fields.addEventListener("change", settle, on);
+    fields.addEventListener("focusout", settle, on);
+    configure();
+    paint();
+    host.dataset.picaReady = "true";
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        current = snapPair(props.value ?? current);
+        if (changed(before, props, xyLayout)) configure();
+        paint();
+      },
+      destroy() {
+        abort.abort();
+        root.remove();
+        sheet.destroy();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {"label":"Offset","bounds":[-100,100,-100,100],"defaultValue":[40,-60]}, window.PICA_PROPS || {});
+  var instance = PicaXyPad.mount(host, take(initial));
+  ["valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

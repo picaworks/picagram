@@ -7,7 +7,9 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 ## ASCII
 
 - [Archive tree](https://picagram.dev/c/ascii-archive-tree.md): An expandable archival finding aid with character branch prefixes and editable collection metadata.
+- [ASCII Binary Tide](https://picagram.dev/c/ascii-binary-tide.md): Slow analytic waves gather binary glyphs into broad density bands, with an optional clear center for reading content.
 - [Campus directory](https://picagram.dev/c/ascii-campus-directory.md): A campus guide with a character site map, department selection and accessible visiting directions.
+- [ASCII Cellular Tape](https://picagram.dev/c/ascii-cellular-tape.md): An elementary cellular automaton unfolds row by row into a numbered ASCII tape, with its rule table and current generation always visible.
 - [Circuit Board](https://picagram.dev/c/ascii-circuit-board.md): A character series circuit schematic with a selectable component inventory and readable terminal facts.
 - [Comparison Grid](https://picagram.dev/c/ascii-comparison-grid.md): An aligned character specimen matrix with selectable columns and readable material measurements.
 - [ASCII Exhibition Map](https://picagram.dev/c/ascii-exhibition-map.md): A floor plan drawn in box-drawing glyphs from room rectangles and doors, with a route-ordered room list that selects and fills one room.
@@ -17,6 +19,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [ASCII Image](https://picagram.dev/c/ascii-image.md): An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.
 - [Isometric room](https://picagram.dev/c/ascii-isometric-room.md): A fixed-cell character room elevation with a compact mobile plan, object selection and inventory facts.
 - [ASCII Library Catalog](https://picagram.dev/c/ascii-library-catalog.md): A reading collection with a character bookshelf, selectable catalogue rows, useful book notes and a curated reading route.
+- [Loom draft](https://picagram.dev/c/ascii-loom-draft.md): A weaving draft in glyphs, where toggling a tie-up cell redraws the crossings of its woven repeat.
 - [ASCII Morph](https://picagram.dev/c/ascii-morph.md): Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.
 - [ASCII Noise Field](https://picagram.dev/c/ascii-noise-field.md): A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.
 - [ASCII Observatory Console](https://picagram.dev/c/ascii-observatory-console.md): An observatory notebook with a character sky diagram, selectable observation records, a session ledger and instrument notes.
@@ -69,6 +72,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Duotone Image](https://picagram.dev/c/duotone-image.md): An image posterized into flat tone bands, each drawn at a stepped opacity in the host's ink color.
 - [Echo Arcs](https://picagram.dev/c/echo-arcs.md): Off centre arc segments expand and decay gradually around a protected reading area.
 - [Edge Trace Image](https://picagram.dev/c/edge-trace-image.md): A photograph reduced to its outlines: crisp one-pixel Sobel edges kept by Canny's two-threshold rule.
+- [Engraved Relief Image](https://picagram.dev/c/engraved-relief-image.md): Image luminance becomes a recessed height field with fine tool cuts, its fixed geometry revealed by a slowly rotating grazing light.
 - [Falling Sutures](https://picagram.dev/c/falling-sutures.md): Sparse stitched leaders drift down constrained side margins beside an uninterrupted reading centre.
 - [Folded Light](https://picagram.dev/c/folded-light.md): Triangular crease planes carry a slow shifting illumination in the page margins.
 - [Glitch Text](https://picagram.dev/c/glitch-text.md): Text that glitches in short bursts, its strips shifting sideways before it snaps back clean.
@@ -137,6 +141,8 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 ## Motion
 
 - [Marquee](https://picagram.dev/c/marquee.md): Scrolls its children sideways in an endless loop, like a ticker.
+- [Pendulum Chain](https://picagram.dev/c/pendulum-chain.md): Linked glyph pendulums exchange motion slowly across fixed cells, with real coupling controlling phase and energy transfer.
+- [Split-Flap Display](https://picagram.dev/c/split-flap-display.md): A short label in aligned split-flap cells, where only the characters that changed turn through the drum to their new glyph.
 
 ## Data
 
@@ -154,6 +160,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Scatter Plot](https://picagram.dev/c/scatter-plot.md): Points from JSON on two linear axes, with highlighted points labeled directly beside them and an optional fit line.
 - [Slope Chart](https://picagram.dev/c/slope-chart.md): Two periods on two shared-scale axes with one straight line per item, labelled at both ends, in an svg or braille glyph look.
 - [Streamgraph](https://picagram.dev/c/streamgraph.md): A stacked area chart centred on a middle line, where each layer's thickness is its value, in an svg or braille glyph look.
+- [Ternary Plot](https://picagram.dev/c/ternary-plot.md): Three-part compositions normalized to a triangular chart, with directly labeled samples, keyboard selection, and an accessible table of weights and proportions.
 - [Timeline Chart](https://picagram.dev/c/timeline-chart.md): Rows of labeled spans and point events over one shared time axis, for a project plan or a chronology.
 - [Waterfall Chart](https://picagram.dev/c/waterfall-chart.md): A start value, signed changes floating between running totals, and an end total, with hairline connectors.
 
@@ -187,6 +194,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Preview Card](https://picagram.dev/c/preview-card.md): A link that reveals a compact reference preview after a short hover or when focused.
 - [Progress](https://picagram.dev/c/progress.md): A labelled determinate progress bar drawn as flat block cells with an exact accessible value.
 - [Radio Group](https://picagram.dev/c/radio-group.md): A single-choice group with square marks, roving focus, and selection that follows focus.
+- [Range Brush](https://picagram.dev/c/range-brush.md): A two-handle numeric interval brush with ordered, stepped pointer and keyboard input.
 - [Scroll Area](https://picagram.dev/c/scroll-area.md): A native scroll container with quiet edge rules and a position marker that leave content and keyboard behavior untouched.
 - [Segmented Control](https://picagram.dev/c/segmented-control.md): A single-choice radio group drawn as one ruled strip, with selection following keyboard focus.
 - [Select](https://picagram.dev/c/select.md): A single-choice select with a keyboard-driven listbox, styled after the WAI-ARIA select-only combobox pattern.
@@ -201,6 +209,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Toggle Group](https://picagram.dev/c/toggle-group.md): A toolbar of independent buttons that can each be pressed or released.
 - [Toolbar](https://picagram.dev/c/toolbar.md): A labeled band of action and toggle controls with roving keyboard focus.
 - [Tree View](https://picagram.dev/c/tree-view.md): A keyboard navigable hierarchical tree with internal expansion and controllable selection.
+- [XY pad](https://picagram.dev/c/xy-pad.md): A square two-axis pad with a crosshair, paired with numeric fields so both axes move by pointer and keyboard.
 
 ## Sections
 

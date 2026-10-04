@@ -1,0 +1,399 @@
+<!doctype html>
+<!--
+  Pica · Range Brush · range-brush
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Range Brush · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><div id="pica"></div></div>
+<script>
+"use strict";
+var PicaRangeBrush = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ui/range-brush/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/ui/range-brush/core.ts
+  var defaults = {
+    min: 0,
+    max: 100,
+    step: 1,
+    value: null,
+    defaultValue: [25, 75],
+    label: "Selected window"
+  };
+  function rangeBrushLimits(p) {
+    const min = Number.isFinite(p.min) ? p.min : 0;
+    return [min, Number.isFinite(p.max) ? Math.max(min, p.max) : min];
+  }
+  function rangeBrushStep(p) {
+    return Number.isFinite(p.step) && p.step > 0 ? p.step : 1;
+  }
+  function rangeBrushSnap(raw, p) {
+    const [min, max] = rangeBrushLimits(p);
+    const step = rangeBrushStep(p);
+    const bounded = Math.min(max, Math.max(min, Number.isFinite(raw) ? raw : min));
+    return Number(Math.min(max, Math.max(min, min + Math.round((bounded - min) / step) * step)).toFixed(10));
+  }
+  function rangeBrushPair(value, p) {
+    const a = rangeBrushSnap(value[0], p);
+    const b = rangeBrushSnap(value[1], p);
+    return a <= b ? [a, b] : [b, a];
+  }
+  function rangeBrushRules(s) {
+    const fg = cssVar("fg");
+    const bg = cssVar("bg");
+    const accent = cssVar("accent");
+    const muted = cssVar("muted");
+    return [
+      `${s}{display:inline-block;color:${fg};vertical-align:middle}`,
+      `${s} [data-part="root"]{box-sizing:border-box;width:min(28rem,80vw);padding:1.4em;background:${bg};border:1px solid ${muted};font-family:${GRID_FONT};font-size:0.875em}`,
+      `${s} [data-part="head"]{display:flex;align-items:baseline;justify-content:space-between;gap:1em;line-height:1.5}`,
+      `${s} [data-part="label"]{font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em}`,
+      `${s} [data-part="value"]{font-variant-numeric:tabular-nums;white-space:nowrap}`,
+      `${s} [data-part="track"]{position:relative;height:3.5em;margin:0.5em 0;touch-action:none;user-select:none;cursor:pointer}`,
+      `${s} [data-part="rail"]{position:absolute;left:0.75em;right:0.75em;top:50%;height:2px;background:${muted}}`,
+      `${s} [data-part="fill"]{position:absolute;top:-2px;height:6px;left:var(--brush-start);width:var(--brush-width);background:${accent}}`,
+      `${s} input{appearance:none;-webkit-appearance:none;position:absolute;left:0;top:0;width:100%;height:100%;margin:0;border:0;border-radius:0;background:transparent;pointer-events:none;color:${fg};outline:none;font:inherit}`,
+      `${s} input::-webkit-slider-runnable-track{height:2px;background:transparent}`,
+      `${s} input::-moz-range-track{height:2px;background:transparent}`,
+      `${s} input::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;box-sizing:border-box;width:1.5em;height:2em;margin-top:calc(-1em + 1px);border:2px solid ${fg};border-radius:0;background:${bg};pointer-events:auto;cursor:grab}`,
+      `${s} input::-moz-range-thumb{box-sizing:border-box;width:1.5em;height:2em;border:2px solid ${fg};border-radius:0;background:${bg};pointer-events:auto;cursor:grab}`,
+      `${s} input:hover::-webkit-slider-thumb,${s} input:focus-visible::-webkit-slider-thumb{background:${accent}}`,
+      `${s} input:hover::-moz-range-thumb,${s} input:focus-visible::-moz-range-thumb{background:${accent}}`,
+      `${s} input:focus-visible::-webkit-slider-thumb{outline:2px solid ${fg};outline-offset:3px}`,
+      `${s} input:focus-visible::-moz-range-thumb{outline:2px solid ${fg};outline-offset:3px}`,
+      `${s} [data-part="scale"]{display:flex;justify-content:space-between;color:${muted};font-size:0.8em;font-variant-numeric:tabular-nums}`
+    ].join("\n");
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let current = rangeBrushPair(props.value ?? props.defaultValue, props);
+    let destroyed = false;
+    let active = 0;
+    let pointerId = null;
+    const emit = emitter(host);
+    const attributes = hostAttributes(host);
+    attributes.set("data-pica-id", host.getAttribute("data-pica-id"));
+    const sheet = scope(host);
+    const labelId = nextId("pica-range-brush");
+    const root = document.createElement("div");
+    const head = document.createElement("div");
+    const label = document.createElement("span");
+    const value = document.createElement("span");
+    const track = document.createElement("div");
+    const rail = document.createElement("div");
+    const fill = document.createElement("div");
+    const lower = document.createElement("input");
+    const upper = document.createElement("input");
+    const scale = document.createElement("div");
+    const minLabel = document.createElement("span");
+    const maxLabel = document.createElement("span");
+    const handles = [lower, upper];
+    for (const [node, part] of [
+      [root, "root"],
+      [head, "head"],
+      [label, "label"],
+      [value, "value"],
+      [track, "track"],
+      [rail, "rail"],
+      [fill, "fill"],
+      [lower, "lower"],
+      [upper, "upper"],
+      [scale, "scale"],
+      [minLabel, "minimum"],
+      [maxLabel, "maximum"]
+    ]) {
+      node.setAttribute("data-pica", "");
+      node.setAttribute("data-part", part);
+    }
+    root.setAttribute("role", "group");
+    root.setAttribute("aria-labelledby", labelId);
+    label.id = labelId;
+    rail.setAttribute("aria-hidden", "true");
+    scale.setAttribute("aria-hidden", "true");
+    value.setAttribute("aria-hidden", "true");
+    lower.type = upper.type = "range";
+    lower.setAttribute("aria-orientation", "horizontal");
+    upper.setAttribute("aria-orientation", "horizontal");
+    rail.append(fill);
+    track.append(rail, lower, upper);
+    head.append(label, value);
+    scale.append(minLabel, maxLabel);
+    root.append(head, track, scale);
+    host.append(root);
+    sheet.setRules(rangeBrushRules(sheet.selector));
+    function shown() {
+      return rangeBrushPair(props.value ?? current, props);
+    }
+    function render() {
+      const [min, max] = rangeBrushLimits(props);
+      const pair = shown();
+      const start = max === min ? 0 : (pair[0] - min) / (max - min);
+      const end = max === min ? 0 : (pair[1] - min) / (max - min);
+      const name = props.label.trim() || "Selected window";
+      label.textContent = name;
+      value.textContent = `${pair[0]} — ${pair[1]}`;
+      minLabel.textContent = String(min);
+      maxLabel.textContent = String(max);
+      rail.style.setProperty("--brush-start", `${start * 100}%`);
+      rail.style.setProperty("--brush-width", `${(end - start) * 100}%`);
+      for (const index of [0, 1]) {
+        const handle = handles[index];
+        handle.min = String(min);
+        handle.max = String(max);
+        handle.step = "any";
+        handle.value = String(pair[index]);
+        handle.disabled = min === max;
+        handle.setAttribute("aria-label", `${name}: ${index === 0 ? "lower" : "upper"} bound`);
+        handle.setAttribute("aria-valuemin", String(index === 0 ? min : pair[0]));
+        handle.setAttribute("aria-valuemax", String(index === 0 ? pair[1] : max));
+        handle.setAttribute("aria-valuenow", String(pair[index]));
+        handle.style.zIndex = index === active ? "2" : "1";
+      }
+    }
+    function choose(index, raw) {
+      const pair = shown();
+      const snapped = rangeBrushSnap(raw, props);
+      const next = index === 0 ? [Math.min(snapped, pair[1]), pair[1]] : [pair[0], Math.max(snapped, pair[0])];
+      if (props.value === null) current = next;
+      render();
+      if (next[0] !== pair[0] || next[1] !== pair[1]) emit("valueChange", next);
+    }
+    function pointerValue(event) {
+      const [min, max] = rangeBrushLimits(props);
+      const rect = rail.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (event.clientX - rect.left) / Math.max(1, rect.width)));
+      return min + ratio * (max - min);
+    }
+    const onPointerDown = (event) => {
+      const [min, max] = rangeBrushLimits(props);
+      if (event.button !== 0 || pointerId !== null || min === max) return;
+      event.preventDefault();
+      const raw = pointerValue(event);
+      const pair = shown();
+      if (event.target === lower) active = 0;
+      else if (event.target === upper) active = 1;
+      else if (Math.abs(raw - pair[0]) !== Math.abs(raw - pair[1])) active = Math.abs(raw - pair[0]) < Math.abs(raw - pair[1]) ? 0 : 1;
+      pointerId = event.pointerId;
+      track.dataset.dragging = "true";
+      handles[active].focus();
+      track.setPointerCapture(event.pointerId);
+      choose(active, raw);
+    };
+    const onPointerMove = (event) => {
+      if (pointerId === event.pointerId) choose(active, pointerValue(event));
+    };
+    const endPointer = (event) => {
+      if (pointerId !== event.pointerId) return;
+      pointerId = null;
+      track.removeAttribute("data-dragging");
+      if (track.hasPointerCapture(event.pointerId)) track.releasePointerCapture(event.pointerId);
+    };
+    const onKeyDown = (event) => {
+      const index = event.currentTarget === lower ? 0 : 1;
+      const pair = shown();
+      const [min, max] = rangeBrushLimits(props);
+      const step = rangeBrushStep(props);
+      let next;
+      if (event.key === "ArrowRight" || event.key === "ArrowUp") next = pair[index] + step;
+      else if (event.key === "ArrowLeft" || event.key === "ArrowDown") next = pair[index] - step;
+      else if (event.key === "PageUp") next = pair[index] + step * 10;
+      else if (event.key === "PageDown") next = pair[index] - step * 10;
+      else if (event.key === "Home") next = index === 0 ? min : pair[0];
+      else if (event.key === "End") next = index === 0 ? pair[1] : max;
+      else return;
+      event.preventDefault();
+      active = index;
+      choose(index, next);
+    };
+    const onInput = (event) => {
+      const index = event.currentTarget === lower ? 0 : 1;
+      choose(index, handles[index].valueAsNumber);
+    };
+    const onFocus = (event) => {
+      active = event.currentTarget === lower ? 0 : 1;
+      render();
+    };
+    for (const handle of handles) {
+      handle.addEventListener("keydown", onKeyDown);
+      handle.addEventListener("input", onInput);
+      handle.addEventListener("focus", onFocus);
+    }
+    track.addEventListener("pointerdown", onPointerDown);
+    track.addEventListener("pointermove", onPointerMove);
+    track.addEventListener("pointerup", endPointer);
+    track.addEventListener("pointercancel", endPointer);
+    track.addEventListener("lostpointercapture", endPointer);
+    render();
+    attributes.set("data-pica-ready", "true");
+    return {
+      update(next) {
+        if (destroyed) return;
+        const previous = shown();
+        props = { ...props, ...next };
+        current = rangeBrushPair(props.value ?? previous, props);
+        render();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        if (pointerId !== null && track.hasPointerCapture(pointerId)) track.releasePointerCapture(pointerId);
+        for (const handle of handles) {
+          handle.removeEventListener("keydown", onKeyDown);
+          handle.removeEventListener("input", onInput);
+          handle.removeEventListener("focus", onFocus);
+        }
+        track.removeEventListener("pointerdown", onPointerDown);
+        track.removeEventListener("pointermove", onPointerMove);
+        track.removeEventListener("pointerup", endPointer);
+        track.removeEventListener("pointercancel", endPointer);
+        track.removeEventListener("lostpointercapture", endPointer);
+        root.remove();
+        sheet.destroy();
+        attributes.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaRangeBrush.mount(host, take(initial));
+  ["valueChange"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -24,6 +24,26 @@
       }
     },
     {
+      "name": "ascii-binary-tide",
+      "type": "registry:component",
+      "title": "ASCII Binary Tide",
+      "description": "Slow analytic waves gather binary glyphs into broad density bands, with an optional clear center for reading content.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-binary-tide.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-campus-directory",
       "type": "registry:component",
       "title": "Campus directory",
@@ -34,6 +54,26 @@
       "files": [
         {
           "path": "public/react/ascii-campus-directory.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-cellular-tape",
+      "type": "registry:component",
+      "title": "ASCII Cellular Tape",
+      "description": "An elementary cellular automaton unfolds row by row into a numbered ASCII tape, with its rule table and current generation always visible.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-cellular-tape.tsx",
           "type": "registry:component"
         }
       ],
@@ -236,6 +276,26 @@
       "files": [
         {
           "path": "public/react/ascii-library-catalog.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-loom-draft",
+      "type": "registry:component",
+      "title": "Loom draft",
+      "description": "A weaving draft in glyphs, where toggling a tie-up cell redraws the crossings of its woven repeat.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-loom-draft.tsx",
           "type": "registry:component"
         }
       ],
@@ -1129,6 +1189,26 @@
       }
     },
     {
+      "name": "ternary-plot",
+      "type": "registry:component",
+      "title": "Ternary Plot",
+      "description": "Three-part compositions normalized to a triangular chart, with directly labeled samples, keyboard selection, and an accessible table of weights and proportions.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/ternary-plot.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "timeline-chart",
       "type": "registry:component",
       "title": "Timeline Chart",
@@ -1711,6 +1791,26 @@
             "license": "Algorithm, no code"
           }
         ]
+      }
+    },
+    {
+      "name": "engraved-relief-image",
+      "type": "registry:component",
+      "title": "Engraved Relief Image",
+      "description": "Image luminance becomes a recessed height field with fine tool cuts, its fixed geometry revealed by a slowly rotating grazing light.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/engraved-relief-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -2690,6 +2790,46 @@
       "files": [
         {
           "path": "public/react/marquee.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pendulum-chain",
+      "type": "registry:component",
+      "title": "Pendulum Chain",
+      "description": "Linked glyph pendulums exchange motion slowly across fixed cells, with real coupling controlling phase and energy transfer.",
+      "categories": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "public/react/pendulum-chain.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "split-flap-display",
+      "type": "registry:component",
+      "title": "Split-Flap Display",
+      "description": "A short label in aligned split-flap cells, where only the characters that changed turn through the drum to their new glyph.",
+      "categories": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "public/react/split-flap-display.tsx",
           "type": "registry:component"
         }
       ],
@@ -5712,6 +5852,26 @@
       }
     },
     {
+      "name": "range-brush",
+      "type": "registry:component",
+      "title": "Range Brush",
+      "description": "A two-handle numeric interval brush with ordered, stepped pointer and keyboard input.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/range-brush.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "scroll-area",
       "type": "registry:component",
       "title": "Scroll Area",
@@ -6075,6 +6235,26 @@
             "license": "W3C document"
           }
         ]
+      }
+    },
+    {
+      "name": "xy-pad",
+      "type": "registry:component",
+      "title": "XY pad",
+      "description": "A square two-axis pad with a crosshair, paired with numeric fields so both axes move by pointer and keyboard.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/xy-pad.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     }
   ]

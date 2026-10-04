@@ -1,0 +1,622 @@
+<!doctype html>
+<!--
+  Pica · Pendulum Chain · pendulum-chain
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Pendulum Chain · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaPendulumChain = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/motion/pendulum-chain/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/glyph-grid.ts
+  var DOM_CELL_LIMIT = 12e3;
+  var measurer;
+  function advanceOf(fontFamily) {
+    if (measurer === void 0) measurer = document.createElement("canvas").getContext("2d");
+    if (!measurer) return 0.6;
+    measurer.font = `100px ${fontFamily}`;
+    return measurer.measureText("M").width / 100 || 0.6;
+  }
+  function createGrid(host, options, onLayout) {
+    let opts = { ...options };
+    let cols = 1;
+    let rows = 1;
+    let cellW = 7.2;
+    let cellH = 14;
+    let fontPx = 12;
+    let width = -1;
+    let height = -1;
+    let cells = [" "];
+    let tints = [void 0];
+    let shown = [];
+    let view = null;
+    let lines = [];
+    let ctx = null;
+    let ink = "";
+    let alive = true;
+    const restoreHost = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const font = () => `${fontPx}px ${opts.fontFamily}`;
+    function layout(force) {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      const advance = advanceOf(opts.fontFamily);
+      const px = opts.columns > 0 ? Math.max(1, w) / (opts.columns * advance) : opts.fontSize;
+      const nextCellH = Math.max(1, Math.round(px * opts.lineHeight));
+      const nextCols = Math.max(1, opts.columns > 0 ? opts.columns : Math.floor(w / (px * advance)));
+      const nextRows = Math.max(1, Math.floor(h / nextCellH));
+      if (!force && w === width && h === height && nextCols === cols && nextRows === rows) return false;
+      width = w;
+      height = h;
+      fontPx = px;
+      cellW = px * advance;
+      cellH = nextCellH;
+      cols = nextCols;
+      rows = nextRows;
+      cells = new Array(cols * rows).fill(" ");
+      tints = new Array(cols * rows).fill(void 0);
+      mountView();
+      return true;
+    }
+    function mountView() {
+      view?.remove();
+      lines = [];
+      ctx = null;
+      const color = opts.color || cssVar("fg");
+      const mode = opts.renderer === "auto" ? cols * rows > DOM_CELL_LIMIT ? "canvas" : "dom" : opts.renderer;
+      if (mode === "dom") {
+        const pre = document.createElement("pre");
+        pre.style.cssText = [
+          "position:absolute",
+          "inset:0",
+          "margin:0",
+          "padding:0",
+          "overflow:hidden",
+          "white-space:pre",
+          "letter-spacing:0",
+          "user-select:none",
+          "pointer-events:none",
+          "font-kerning:none",
+          "font-variant-ligatures:none",
+          `font-family:${opts.fontFamily}`,
+          `font-size:${fontPx}px`,
+          `line-height:${cellH}px`,
+          `color:${color}`
+        ].join(";");
+        for (let y = 0; y < rows; y++) {
+          const line = document.createElement("span");
+          line.style.display = "block";
+          line.style.height = `${cellH}px`;
+          pre.appendChild(line);
+          lines.push(line);
+        }
+        view = pre;
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:${color};transition:color 1ms`;
+        canvas.addEventListener("transitionend", (event) => {
+          event.stopPropagation();
+          if (ctx && view === canvas) paintCanvas(ctx, canvas);
+        });
+        const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textBaseline = "middle";
+          ctx.font = font();
+        }
+        view = canvas;
+      }
+      view.setAttribute("data-pica", "");
+      view.setAttribute("aria-hidden", "true");
+      shown = new Array(rows).fill("\0");
+      ink = "";
+      host.appendChild(view);
+    }
+    function paintCanvas(context, target) {
+      const color = getComputedStyle(target).color;
+      if (color !== ink) {
+        ink = color;
+        shown.fill("\0");
+      }
+      for (let y = 0; y < rows; y++) {
+        const start = y * cols;
+        const text = cells.slice(start, start + cols).join("");
+        let tinted = false;
+        for (let x2 = 0; x2 < cols; x2++) {
+          if (tints[start + x2] !== void 0) {
+            tinted = true;
+            break;
+          }
+        }
+        const key = tinted ? `${text}\0${tints.slice(start, start + cols).join(",")}` : text;
+        if (key === shown[y]) continue;
+        shown[y] = key;
+        const top = y * cellH;
+        context.clearRect(0, top, width, cellH);
+        if (!tinted) {
+          context.fillStyle = ink;
+          context.fillText(text, 0, top + cellH / 2);
+          continue;
+        }
+        let x = 0;
+        while (x < cols) {
+          const tint = tints[start + x] ?? ink;
+          let end = x + 1;
+          while (end < cols && (tints[start + end] ?? ink) === tint) end++;
+          context.fillStyle = tint;
+          context.fillText(cells.slice(start + x, start + end).join(""), x * cellW, top + cellH / 2);
+          x = end;
+        }
+      }
+    }
+    function paintText() {
+      for (let y = 0; y < rows; y++) {
+        const row = cells.slice(y * cols, (y + 1) * cols).join("");
+        if (row === shown[y]) continue;
+        shown[y] = row;
+        const line = lines[y];
+        if (line) line.textContent = row;
+      }
+    }
+    function set(x, y, glyph, color) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+      const i = y * cols + x;
+      cells[i] = glyph;
+      tints[i] = color;
+    }
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (alive && layout(false)) onLayout();
+    }) : null;
+    resizeObserver?.observe(host);
+    const onFonts = () => {
+      if (alive && layout(true)) onLayout();
+    };
+    document.fonts.addEventListener("loadingdone", onFonts);
+    layout(true);
+    return {
+      get cols() {
+        return cols;
+      },
+      get rows() {
+        return rows;
+      },
+      get aspect() {
+        return cellW / cellH;
+      },
+      get cellWidth() {
+        return cellW;
+      },
+      get cellHeight() {
+        return cellH;
+      },
+      get font() {
+        return font();
+      },
+      set,
+      write(x, y, text, color) {
+        let i = 0;
+        for (const glyph of text) {
+          set(x + i, y, glyph, color);
+          i++;
+        }
+      },
+      clear(glyph = " ") {
+        cells.fill(glyph);
+        tints.fill(void 0);
+      },
+      flush() {
+        if (!view) return;
+        if (ctx) paintCanvas(ctx, view);
+        else paintText();
+      },
+      update(next) {
+        opts = { ...opts, ...next };
+        layout(true);
+        onLayout();
+      },
+      destroy() {
+        alive = false;
+        resizeObserver?.disconnect();
+        document.fonts.removeEventListener("loadingdone", onFonts);
+        view?.remove();
+        view = null;
+        restoreHost();
+      }
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // registry/motion/pendulum-chain/core.ts
+  var defaults = {
+    count: 7,
+    coupling: 0.65,
+    amplitude: 0.8,
+    period: 7,
+    label: "A chain of coupled pendulums transferring motion between neighbors",
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var pendulumClamp = (value, low, high) => Math.max(low, Math.min(high, value));
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let alive = true;
+    let clock = 0;
+    let modeWeights = [];
+    let modeShapes = [];
+    const attrs = hostAttributes(host);
+    const count = () => Math.round(pendulumClamp(Number.isFinite(props.count) ? props.count : defaults.count, 2, 16));
+    function label() {
+      attrs.set("role", props.label ? "img" : null);
+      attrs.set("aria-label", props.label || null);
+      attrs.set("aria-hidden", props.label ? null : "true");
+    }
+    function buildModes() {
+      const n = count();
+      const random = createRng(props.seed);
+      const displacement = Array.from({ length: n }, (_, i) => Math.exp(-i * 1.3) * (0.92 + random() * 0.08));
+      const first = displacement[0] ?? 1;
+      modeShapes = Array.from({ length: n }, (_, k) => Array.from(
+        { length: n },
+        (_2, i) => Math.sqrt((k === 0 ? 1 : 2) / n) * Math.cos(Math.PI * k * (i + 0.5) / n)
+      ));
+      modeWeights = modeShapes.map((shape) => shape.reduce((total, value, i) => total + value * (displacement[i] ?? 0) / first, 0));
+    }
+    function position(i, seconds) {
+      const n = count();
+      const natural = 2 * Math.PI / pendulumClamp(props.period, 2, 30);
+      const coupling = pendulumClamp(props.coupling, 0, 2);
+      let value = 0;
+      for (let k = 0; k < n; k++) {
+        const eigenvalue = 2 - 2 * Math.cos(Math.PI * k / n);
+        const frequency = natural * Math.sqrt(1 + coupling * eigenvalue);
+        value += (modeWeights[k] ?? 0) * (modeShapes[k]?.[i] ?? 0) * Math.cos(frequency * seconds);
+      }
+      return value;
+    }
+    label();
+    buildModes();
+    const palette = watchPalette(host, () => draw(clock));
+    const grid = createGrid(host, {
+      fontFamily: GRID_FONT,
+      fontSize: Number.parseFloat(getComputedStyle(host).fontSize) || 14,
+      columns: count() * 9 + 3,
+      lineHeight: 1.1,
+      renderer: "canvas",
+      color: ""
+    }, () => draw(clock));
+    function draw(t) {
+      if (!alive) return;
+      clock = t;
+      grid.clear();
+      const colors = palette.colors;
+      const n = count();
+      const cell = (grid.cols - 2) / n;
+      const depth = Math.max(1, Math.min(7, grid.rows - 6));
+      const top = Math.max(0, Math.floor((grid.rows - depth - 5) / 2));
+      const amplitude = pendulumClamp(props.amplitude, 0, 1);
+      const seconds = t / 1e3;
+      function bob(i, at) {
+        const pivot = Math.round(1 + cell * (i + 0.5));
+        const displacement = position(i, at) * amplitude;
+        const shift = displacement * Math.max(1, cell * 0.35);
+        const angle = Math.atan2(shift * grid.aspect, depth);
+        return { pivot, x: Math.round(pivot + shift), y: top + 1 + Math.round(depth * Math.cos(angle)) };
+      }
+      for (let i = 0; i < n; i++) {
+        const point = bob(i, seconds);
+        if (i < n - 1) {
+          const nextPivot = Math.round(1 + cell * (i + 1.5));
+          for (let x = point.pivot + 1; x < nextPivot; x++) grid.set(x, top, x % 3 === 0 ? "~" : "-", colors.muted);
+        }
+        for (let trail = 4; trail >= 1; trail--) {
+          const past = bob(i, seconds - trail * 0.2);
+          grid.set(past.x, past.y, ".", colors.muted);
+        }
+        const steps = Math.max(1, point.y - top - 1);
+        for (let step = 1; step <= steps; step++) {
+          const x = Math.round(point.pivot + (point.x - point.pivot) * step / (steps + 1));
+          const y = top + step;
+          grid.set(x, y, point.x === point.pivot ? "│" : point.x < point.pivot ? "/" : "\\", colors.fg);
+        }
+        grid.set(point.pivot, top, "+", colors.fg);
+        grid.set(point.x, point.y, i === 0 ? "●" : "o", i === 0 ? colors.accent : colors.fg);
+        grid.write(point.pivot - 1, top + depth + 3, String(i + 1).padStart(2, "0"), colors.muted);
+      }
+      grid.flush();
+      attrs.set("data-pica-ready", "true");
+    }
+    const loop = createLoop({ el: host, fps: 24, paused: props.paused, time: props.time, still: 4200, frame: draw });
+    return {
+      update(next) {
+        if (!alive) return;
+        const before = props;
+        props = { ...props, ...next };
+        if (props.label !== before.label) label();
+        if (props.count !== before.count || props.seed !== before.seed) buildModes();
+        if (props.count !== before.count) grid.update({ columns: count() * 9 + 3 });
+        palette.refresh();
+        loop.update({ paused: props.paused, time: props.time });
+        loop.redraw();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        loop.destroy();
+        grid.destroy();
+        palette.destroy();
+        attrs.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaPendulumChain.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

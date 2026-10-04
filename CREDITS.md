@@ -6,7 +6,15 @@ Generated from each component's meta by `npm run build:registry`. Edit the meta,
 
 Original to Picagram.
 
+## ASCII Binary Tide (`ascii-binary-tide`)
+
+Original to Picagram.
+
 ## Campus directory (`ascii-campus-directory`)
+
+Original to Picagram.
+
+## ASCII Cellular Tape (`ascii-cellular-tape`)
 
 Original to Picagram.
 
@@ -45,6 +53,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## ASCII Library Catalog (`ascii-library-catalog`)
+
+Original to Picagram.
+
+## Loom draft (`ascii-loom-draft`)
 
 Original to Picagram.
 
@@ -189,6 +201,10 @@ Original to Picagram.
 - Technique from [Stacked Graphs: Geometry and Aesthetics](https://doi.org/10.1109/TVCG.2008.166) by Lee Byron and Martin Wattenberg (Paper).
 - Technique from [Nice Numbers for Graph Labels](https://dl.acm.org/doi/10.5555/90767.90846) by Paul Heckbert, Graphics Gems (Algorithm, no code).
 
+## Ternary Plot (`ternary-plot`)
+
+Original to Picagram.
+
 ## Timeline Chart (`timeline-chart`)
 
 - Technique from [Joseph Priestley and the Graphic Invention of Modern Time](https://doi.org/10.1353/sec.2007.0013) by Daniel Rosenberg (Paper).
@@ -275,6 +291,10 @@ Original to Picagram.
 
 - Technique from [A Computational Approach to Edge Detection](https://doi.org/10.1109/TPAMI.1986.4767851) by John Canny (Paper).
 - Technique from [Sobel operator](https://en.wikipedia.org/wiki/Sobel_operator) by Wikipedia (Algorithm, no code).
+
+## Engraved Relief Image (`engraved-relief-image`)
+
+Original to Picagram.
 
 ## Falling Sutures (`falling-sutures`)
 
@@ -447,6 +467,14 @@ Original to Picagram.
 - Port of [Natural Earth](https://www.naturalearthdata.com/about/terms-of-use/) by Tom Patterson and Nathaniel Vaughn Kelso (Public domain).
 
 ## Marquee (`marquee`)
+
+Original to Picagram.
+
+## Pendulum Chain (`pendulum-chain`)
+
+Original to Picagram.
+
+## Split-Flap Display (`split-flap-display`)
 
 Original to Picagram.
 
@@ -982,6 +1010,10 @@ Original to Picagram.
 
 - Technique from [Radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 
+## Range Brush (`range-brush`)
+
+Original to Picagram.
+
 ## Scroll Area (`scroll-area`)
 
 Original to Picagram.
@@ -1039,3 +1071,7 @@ Original to Picagram.
 ## Tree View (`tree-view`)
 
 - Technique from [Tree view pattern](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## XY pad (`xy-pad`)
+
+Original to Picagram.

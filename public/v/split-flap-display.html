@@ -1,0 +1,394 @@
+<!doctype html>
+<!--
+  Pica · Split-Flap Display · split-flap-display
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Split-Flap Display · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div class="pica-stage"><span id="pica"></span></div>
+<script>
+"use strict";
+var PicaSplitFlapDisplay = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/motion/split-flap-display/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/a11y.ts
+  function hiddenText(text) {
+    const span = document.createElement("span");
+    span.textContent = text;
+    span.style.cssText = "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0";
+    return span;
+  }
+  function animatedText(host, text, tag = "span") {
+    const hidden = hiddenText(text);
+    hidden.setAttribute("data-pica", "");
+    const layer = document.createElement(tag);
+    layer.setAttribute("data-pica", "");
+    layer.setAttribute("aria-hidden", "true");
+    host.append(hidden, layer);
+    return {
+      layer,
+      setText(next) {
+        hidden.textContent = next;
+      },
+      remove() {
+        hidden.remove();
+        layer.remove();
+      }
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // lib/rng.ts
+  function createRng(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state = state + 1831565813 >>> 0;
+      let t = state;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hashMix(h) {
+    h = Math.imul(h ^ h >>> 16, 2146121005);
+    h = Math.imul(h ^ h >>> 15, 2221713035);
+    return (h ^ h >>> 16) >>> 0;
+  }
+  function hashSeed(seed, a, b = 0) {
+    return hashMix(hashMix(hashMix(seed >>> 0) ^ a >>> 0) ^ b >>> 0);
+  }
+
+  // registry/motion/split-flap-display/core.ts
+  var defaults = {
+    text: "SPLIT FLAP",
+    duration: 2400,
+    // A blank flap first, so a cell at rest is empty, then letters, digits, and the marks a time or a code needs.
+    chars: " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:.-",
+    label: "",
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var FPS = 30;
+  var STAGGER = 0.15;
+  var RESTING = 1e9;
+  var WHITESPACE = /\s/;
+  var EDGE = `color-mix(in srgb,${cssVar("muted")} 55%,transparent)`;
+  var HINGE = `color-mix(in srgb,${cssVar("muted")} 35%,transparent)`;
+  var ROW = `display:flex;flex-wrap:wrap;gap:2px;max-width:100%;user-select:none;font-family:${GRID_FONT}`;
+  var CELL = [
+    "box-sizing:border-box",
+    "flex:none",
+    "width:.95em",
+    "height:1.4em",
+    "line-height:calc(1.4em - 2px)",
+    "text-align:center",
+    `color:${cssVar("fg")}`,
+    `border:1px solid ${EDGE}`,
+    `background:linear-gradient(transparent calc(50% - .5px),${HINGE} calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),${cssVar("bg")}`
+  ].join(";");
+  var CAPTION = `display:block;margin-bottom:.6em;font-size:max(.4em,11px);line-height:1.2;letter-spacing:.04em;text-transform:uppercase;color:${cssVar("muted")}`;
+  function toDrum(chars) {
+    return [...new Set(chars.length > 0 ? chars : defaults.chars)];
+  }
+  function toGlyphs(text) {
+    return Array.from(text, (ch) => WHITESPACE.test(ch) ? " " : ch);
+  }
+  function route(drum, from, to) {
+    const out = [];
+    if (from === to) return out;
+    const goal = drum.indexOf(to);
+    let at = drum.indexOf(from);
+    if (goal < 0) {
+      for (at += 1; at < drum.length; at++) out.push(drum[at] ?? to);
+      out.push(to);
+      return out;
+    }
+    do {
+      at = (at + 1) % drum.length;
+      out.push(drum[at] ?? to);
+    } while (at !== goal);
+    return out;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let drum = toDrum(props.chars);
+    let target = toGlyphs(props.text);
+    let origin = [];
+    let turns = [];
+    let flapMs = 1;
+    let changes = 0;
+    let settled = false;
+    let loop = null;
+    let caption = null;
+    const cells = [];
+    const shown = [];
+    const text = animatedText(host, props.text);
+    const row = text.layer;
+    row.style.cssText = ROW;
+    function fit(count) {
+      while (cells.length < count) {
+        const cell = document.createElement("span");
+        cell.setAttribute("data-pica", "");
+        cell.style.cssText = CELL;
+        row.append(cell);
+        cells.push(cell);
+        shown.push("");
+      }
+      while (cells.length > count) {
+        cells.pop()?.remove();
+        shown.pop();
+      }
+    }
+    function setCaption() {
+      if (props.label === "") {
+        caption?.remove();
+        caption = null;
+        return;
+      }
+      if (!caption) {
+        caption = document.createElement("span");
+        caption.setAttribute("data-pica", "");
+        caption.style.cssText = CAPTION;
+        host.prepend(caption);
+      }
+      caption.textContent = props.label;
+    }
+    function plan() {
+      const blank = drum[0] ?? " ";
+      flapMs = Math.max(1, props.duration / drum.length);
+      turns = target.map((to, i) => {
+        const from = origin[i] || blank;
+        const path = route(drum, from, to);
+        const wait = path.length > 0 ? createRng(hashSeed(props.seed, i, changes))() * props.duration * STAGGER : 0;
+        return { from, path, wait };
+      });
+    }
+    function glyphAt(i, t) {
+      const turn = turns[i];
+      const to = target[i] ?? " ";
+      if (!turn || turn.path.length === 0) return to;
+      if (!(t >= turn.wait)) return turn.from;
+      const flaps = Math.min(turn.path.length, Math.floor((t - turn.wait) / flapMs) + 1);
+      return turn.path[flaps - 1] ?? to;
+    }
+    function hold() {
+      loop?.update({ paused: props.paused || settled });
+    }
+    function draw(t) {
+      let pending = 0;
+      for (const [i, cell] of cells.entries()) {
+        const glyph = glyphAt(i, t);
+        if (glyph !== target[i]) pending++;
+        if (glyph !== shown[i]) {
+          shown[i] = glyph;
+          cell.textContent = glyph;
+        }
+      }
+      if (pending === 0 !== settled) {
+        settled = pending === 0;
+        hold();
+      }
+      if (host.dataset.picaReady !== "true") host.dataset.picaReady = "true";
+    }
+    function begin() {
+      origin = shown.slice();
+      target = toGlyphs(props.text);
+      changes += 1;
+      fit(target.length);
+      plan();
+      settled = false;
+      loop?.update({ time: 0 });
+      loop?.update({ time: props.time, paused: props.paused || settled });
+      loop?.redraw();
+    }
+    setCaption();
+    fit(target.length);
+    plan();
+    loop = createLoop({ el: host, fps: FPS, paused: props.paused, time: props.time, still: RESTING, frame: draw });
+    if (settled) hold();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.label !== before.label) setCaption();
+        if (props.chars !== before.chars) drum = toDrum(props.chars);
+        if (props.text !== before.text) {
+          text.setText(props.text);
+          begin();
+          return;
+        }
+        if (!settled && (props.chars !== before.chars || props.duration !== before.duration || props.seed !== before.seed)) plan();
+        loop?.update({ time: props.time, paused: props.paused || settled });
+      },
+      destroy() {
+        loop?.destroy();
+        loop = null;
+        text.remove();
+        caption?.remove();
+        delete host.dataset.picaReady;
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {"text":"ON TIME","label":"Status"}, window.PICA_PROPS || {});
+  var instance = PicaSplitFlapDisplay.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>
