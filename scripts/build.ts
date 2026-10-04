@@ -45,7 +45,7 @@ export async function generate(): Promise<Artifact[]> {
   files.push(
     { path: "registry.json", content: registryJson(entries) },
     { path: "public/llms.txt", content: llmsTxt(entries) },
-    { path: "public/llms-full.txt", content: twins.join("\n---\n\n") },
+    { path: "public/llms-full.txt", content: twins.join("\n---\n\n").replace(/[ \t]+$/gm, "") },
     { path: "public/catalog.json", content: catalogJson(entries, sizes) },
     { path: "CREDITS.md", content: creditsMd(entries) },
   );

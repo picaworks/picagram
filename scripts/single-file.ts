@@ -159,7 +159,7 @@ export async function vanillaBundle(entry: Entry): Promise<VanillaBundle> {
  *  them becomes --pica-* custom properties on the host, as the React wrapper's palette prop does. The
  *  catalog site sends later prop changes, and the ground to show, by postMessage from the parent frame, and
  *  hears the component's events back as pica:event messages. */
-function mountScript(globalName: string, events: readonly string[]): string {
+function mountScript(globalName: string, events: readonly string[], demo: Readonly<Record<string, unknown>> = {}): string {
   const forward = events.length === 0
     ? ""
     : `
@@ -182,7 +182,8 @@ function mountScript(globalName: string, events: readonly string[]): string {
     }
     return data;
   }
-  var instance = ${globalName}.mount(host, take(window.PICA_PROPS || {}));${forward}
+  var initial = Object.assign({}, ${JSON.stringify(demo).replace(/</g, "\\u003c")}, window.PICA_PROPS || {});
+  var instance = ${globalName}.mount(host, take(initial));${forward}
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
     if (event.data.type === "pica:props") instance.update(take(event.data.props));
@@ -204,7 +205,7 @@ export function vanillaParts(entry: Entry, bundle: VanillaBundle): { html: strin
   return {
     html: inline ? `<div class="pica-stage">${host}</div>` : host,
     css: DEMO_PAGE_CSS,
-    js: `${bundle.js}\n${mountScript(bundle.globalName, Object.keys(entry.events))}`,
+    js: `${bundle.js}\n${mountScript(bundle.globalName, Object.keys(entry.events), entry.meta.demo?.props)}`,
   };
 }
 

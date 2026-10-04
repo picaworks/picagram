@@ -2294,7 +2294,8 @@ var PicaEtherealHero = (() => {
     }
     return data;
   }
-  var instance = PicaEtherealHero.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {"headline":"","subhead":"The depth below is a screen, not a shadow: sparse grain that thickens as it falls.","actions":[{"label":"Enter the catalog","href":"#catalog"},{"label":"Read the method","href":"#method"}]}, window.PICA_PROPS || {});
+  var instance = PicaEtherealHero.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
     if (event.data.type === "pica:props") instance.update(take(event.data.props));

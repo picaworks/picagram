@@ -403,7 +403,8 @@ var PicaMenu = (() => {
     }
     return data;
   }
-  var instance = PicaMenu.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaMenu.mount(host, take(initial));
   ["select"].forEach(function (name) {
     host.addEventListener("pica:" + name.toLowerCase(), function (event) {
       if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");

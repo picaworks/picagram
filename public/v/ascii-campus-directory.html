@@ -1,0 +1,329 @@
+<!doctype html>
+<!--
+  Pica · Campus directory · ascii-campus-directory
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Campus directory · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaAsciiCampusDirectory = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ascii/ascii-campus-directory/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // registry/ascii/ascii-campus-directory/core.ts
+  var defaults = {
+    "title": "Northbank campus",
+    "intro": "Find a department, plan your arrival and follow a step-free route from the south gate. The central walk connects every public building.",
+    "locations": [
+      {
+        "code": "A",
+        "name": "Archive hall",
+        "department": "History and collections",
+        "hours": "Mon–Fri / 09:00–17:00",
+        "directions": "From the south gate, follow Central Walk past the courtyard. Turn left at the reading garden; the level entrance faces east."
+      },
+      {
+        "code": "B",
+        "name": "Workshop wing",
+        "department": "Design and fabrication",
+        "hours": "Mon–Fri / 10:00–18:00",
+        "directions": "Follow Central Walk to the courtyard, then turn right. The accessible entrance is beside the covered loading path."
+      },
+      {
+        "code": "C",
+        "name": "Field sciences",
+        "department": "Ecology and survey",
+        "hours": "Mon–Thu / 08:30–16:30",
+        "directions": "Continue north along Central Walk. Cross the short bridge and use the ground-floor entrance beside the lift."
+      },
+      {
+        "code": "D",
+        "name": "Visitor house",
+        "department": "Admissions and visitor services",
+        "hours": "Daily / 09:00–16:00",
+        "directions": "Enter through the south gate. Visitor House is immediately on your left; the information desk is on the ground floor."
+      }
+    ]
+  };
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const attrs = hostAttributes(host);
+    const id = nextId("pica-ascii-system");
+    attrs.set("data-pica-id", id);
+    const sheet = document.createElement("style");
+    sheet.setAttribute("data-pica", "");
+    host.append(sheet);
+    const s = `[data-pica-id="${id}"]`;
+    sheet.textContent = `${s}{color:${cssVar("fg")};background:${cssVar("bg")};font:inherit;line-height:1.6}
+${s} [data-root]{max-width:1120px;margin:auto;padding:clamp(20px,4vw,52px);box-sizing:border-box}
+${s} *{box-sizing:border-box}
+${s} h1{font-size:clamp(32px,5vw,64px);line-height:1.05;font-weight:500;letter-spacing:-.035em;margin:16px 0 24px;max-width:16ch}
+${s} h2{font-size:20px;font-weight:500;margin:0 0 16px}
+${s} h3{font-size:16px;font-weight:500;margin:0 0 8px}
+${s} p{margin:0 0 16px;max-width:65ch}
+${s} [data-kicker],${s} dt,${s} button,${s} select,${s} summary,${s} [data-mono]{font-family:${GRID_FONT};font-size:12px;letter-spacing:.04em}
+${s} [data-kicker]{text-transform:uppercase;color:${cssVar("muted")}}
+${s} pre{font-family:${GRID_FONT};font-size:13px;line-height:1.35;white-space:pre;margin:0;overflow:auto}
+${s} figure{margin:0}
+${s} figcaption{font-family:${GRID_FONT};font-size:11px;color:${cssVar("muted")};margin-top:16px}
+${s} button,${s} select{color:inherit;background:${cssVar("bg")};border:1px solid ${cssVar("muted")};border-radius:0;padding:10px 12px;min-height:44px;cursor:pointer}
+${s} button[aria-pressed="true"]{border-bottom:4px solid ${cssVar("accent")}}
+${s} :focus-visible{outline:2px solid ${cssVar("accent")};outline-offset:3px}
+${s} [data-rule]{border-top:1px solid ${cssVar("muted")};padding-top:24px;margin-top:32px}
+${s} details{border-top:1px solid ${cssVar("muted")};padding:12px 0}
+${s} summary{cursor:pointer;min-height:32px}
+${s} details p{margin:12px 0}
+${s} ul,${s} ol{padding-left:20px;margin:12px 0}
+${s} li{margin:8px 0}
+${s} dl{margin:0}
+${s} dt{color:${cssVar("muted")};text-transform:uppercase}
+${s} dd{margin:0 0 16px}
+${s} [data-compact]{display:none}
+@media(max-width:620px){${s} [data-wide]{display:none}${s} [data-compact]{display:block}${s} h1{font-size:38px}${s} pre{font-size:12px}}
+${s} [data-site]{margin:32px 0;padding:32px 0;border-top:4px solid ${cssVar("accent")};border-bottom:1px solid ${cssVar("muted")}}
+${s} [data-site] figure{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:center}
+${s} [data-directory]{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+${s} [data-locations]{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+${s} [data-locations] button{text-align:left}
+${s} [data-location]{padding-top:12px}
+@media(max-width:760px){${s} [data-directory],${s} [data-site] figure{grid-template-columns:1fr;gap:24px}}
+`;
+    const root = document.createElement("div");
+    root.setAttribute("data-pica", "");
+    root.setAttribute("data-root", "");
+    host.append(root);
+    function el(tag, text = "", parent = root) {
+      const node = document.createElement(tag);
+      node.setAttribute("data-pica", "");
+      node.textContent = text;
+      parent.append(node);
+      return node;
+    }
+    function marked(tag, mark, text = "", parent = root) {
+      const node = el(tag, text, parent);
+      node.setAttribute(`data-${mark}`, "");
+      return node;
+    }
+    function drawing(parent, wide, compact, caption) {
+      const figure = el("figure", "", parent);
+      marked("pre", "wide", wide, figure).setAttribute("aria-hidden", "true");
+      marked("pre", "compact", compact, figure).setAttribute("aria-hidden", "true");
+      el("figcaption", caption, figure);
+    }
+    function render() {
+      root.replaceChildren();
+      attrs.set("role", "region");
+      attrs.set("aria-label", props.title.trim() || "Campus directory");
+      attrs.set("aria-hidden", null);
+      marked("p", "kicker", "VISITOR GUIDE / NORTHBANK / 01");
+      el("h1", props.title.trim() || "Campus directory");
+      el("p", props.intro);
+      const map = marked("section", "site");
+      const codes = Array.from({ length: 4 }, (_, i) => (props.locations[i]?.code ?? "·").slice(0, 1));
+      drawing(map, `                          N ↑
+     ┌──────────┐    ║    ┌──────────┐
+     │ ${codes[0]} / 01   │────╫────│ ${codes[2]} / 03   │
+     └──────────┘    ║    └──────────┘
+         garden      ║       bridge
+     · · · · ·    CENTRAL    · · · · ·
+                  COURT
+     ┌──────────┐    ║    ┌──────────┐
+     │ ${codes[3]} / 04   │────╫────│ ${codes[1]} / 02   │
+     └──────────┘    ║    └──────────┘
+                  SOUTH GATE`, `          N ↑
+  [${codes[0]}]─────╬─────[${codes[2]}]
+          ║
+       COURTYARD
+          ║
+  [${codes[3]}]─────╬─────[${codes[1]}]
+      SOUTH GATE`, `Schematic map, north at the top. ${props.locations.slice(0, 4).map((item) => `${item.code}: ${item.name}`).join("; ")}. Central Walk runs north from the south gate.`);
+      const directory = marked("section", "directory");
+      const index = el("div", "", directory);
+      el("h2", "Department index", index);
+      const nav = marked("div", "locations", "", index);
+      const panel = marked("article", "location", "", directory);
+      panel.setAttribute("aria-live", "polite");
+      const buttons = [];
+      const choose = (i) => {
+        buttons.forEach((b, j) => b.setAttribute("aria-pressed", String(i === j)));
+        panel.replaceChildren();
+        const item = props.locations[i];
+        if (!item) {
+          el("h2", "No locations listed", panel);
+          el("p", "Add campus locations to populate this directory.", panel);
+          return;
+        }
+        panel.setAttribute("data-code", item.code);
+        marked("p", "kicker", `LOCATION ${item.code} / ${item.department}`, panel);
+        el("h2", item.name, panel);
+        const facts = el("dl", "", panel);
+        el("dt", "Visitor hours", facts);
+        el("dd", item.hours, facts);
+        el("dt", "Step-free directions", facts);
+        el("dd", item.directions, facts);
+      };
+      props.locations.forEach((item, i) => {
+        const button = el("button", `${item.code} / ${item.department}`, nav);
+        button.type = "button";
+        buttons.push(button);
+        button.addEventListener("click", () => choose(i));
+      });
+      choose(0);
+      const visit = marked("footer", "rule");
+      el("h2", "Arriving at Northbank", visit);
+      el("p", "The public bus stops at South Gate. Cycle stands sit beside Visitor House. Accessible parking is reached from River Road; check in at Visitor House on arrival.", visit);
+      const details = el("details", "", visit);
+      el("summary", "After-hours access", details);
+      el("p", "Public buildings close at the listed times. Arrange an appointment with your department before travelling outside visitor hours.", details);
+      attrs.set("data-pica-ready", "true");
+    }
+    render();
+    return {
+      update(partial) {
+        const next = { ...props, ...partial };
+        if (!sameJson(props, next)) {
+          props = next;
+          render();
+        }
+      },
+      destroy() {
+        root.remove();
+        sheet.remove();
+        attrs.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaAsciiCampusDirectory.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

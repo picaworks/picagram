@@ -2,11 +2,51 @@
 
 Generated from each component's meta by `npm run build:registry`. Edit the meta, not this file.
 
+## Archive tree (`ascii-archive-tree`)
+
+Original to Picagram.
+
+## Campus directory (`ascii-campus-directory`)
+
+Original to Picagram.
+
+## Circuit Board (`ascii-circuit-board`)
+
+Original to Picagram.
+
+## Comparison Grid (`ascii-comparison-grid`)
+
+Original to Picagram.
+
+## ASCII Exhibition Map (`ascii-exhibition-map`)
+
+Original to Picagram.
+
+## Expedition log (`ascii-expedition-log`)
+
+Original to Picagram.
+
+## ASCII Folio Ledger (`ascii-folio-ledger`)
+
+Original to Picagram.
+
+## Garden Plan (`ascii-garden-plan`)
+
+Original to Picagram.
+
 ## ASCII Image (`ascii-image`)
 
 - Port of [AsciiImage, rishab.fyi](https://rishab.fyi) by Rishab Balak (Author's own work, relicensed under Pica's license).
 - Technique from [Beyond the luminance ramp: a shape-aware ASCII renderer](https://tympanus.net/codrops/2026/09/04/beyond-the-luminance-ramp-a-shape-aware-ascii-renderer-in-three-js/) by Codrops (MIT).
 - Technique from [Ditherpunk](https://surma.dev/things/ditherpunk/) by Surma (Article).
+
+## Isometric room (`ascii-isometric-room`)
+
+Original to Picagram.
+
+## ASCII Library Catalog (`ascii-library-catalog`)
+
+Original to Picagram.
 
 ## ASCII Morph (`ascii-morph`)
 
@@ -16,21 +56,49 @@ Original to Picagram.
 
 - Technique from [Simplex noise demystified](https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf) by Stefan Gustavson (Public domain).
 
+## ASCII Observatory Console (`ascii-observatory-console`)
+
+Original to Picagram.
+
+## Packet Route (`ascii-packet-route`)
+
+Original to Picagram.
+
 ## ASCII Pointer Ripple (`ascii-pointer-ripple`)
 
 - Technique from [play.core](https://github.com/ertdfgcvb/play.core) by Andreas Gysin (Apache-2.0).
+
+## ASCII Press Wire (`ascii-press-wire`)
+
+Original to Picagram.
+
+## Process map (`ascii-process-map`)
+
+Original to Picagram.
 
 ## ASCII Rain (`ascii-rain`)
 
 - Technique from [Matrix digital rain](https://en.wikipedia.org/wiki/Matrix_digital_rain) by Simon Whiteley, title design for The Matrix (1999) (Cultural reference, no code).
 
+## Release room (`ascii-release-room`)
+
+Original to Picagram.
+
 ## ASCII Reveal (`ascii-reveal`)
+
+Original to Picagram.
+
+## Score Strip (`ascii-score-strip`)
 
 Original to Picagram.
 
 ## ASCII Solid (`ascii-solid`)
 
 - Technique from [Donut math: how donut.c works](https://www.a1k0n.net/2011/07/20/donut-math.html) by Andy Sloane (Article).
+
+## ASCII Terminal Journal (`ascii-terminal-journal`)
+
+Original to Picagram.
 
 ## ASCII Text (`ascii-text`)
 
@@ -47,6 +115,14 @@ Original to Picagram.
 - Technique from [ascii-camera](https://github.com/idevelop/ascii-camera) by Andrei Gheorghe (MIT).
 
 ## ASCII Waves (`ascii-waves`)
+
+Original to Picagram.
+
+## Weather Station (`ascii-weather-station`)
+
+Original to Picagram.
+
+## ASCII Workshop Index (`ascii-workshop-index`)
 
 Original to Picagram.
 
@@ -183,7 +259,15 @@ Original to Picagram.
 
 - Technique from [Printing registration](https://en.wikipedia.org/wiki/Printing_registration) by Wikipedia (Reference, no code).
 
+## Cylinder Roll (`cylinder-roll`)
+
+Original to Picagram.
+
 ## Duotone Image (`duotone-image`)
+
+Original to Picagram.
+
+## Echo Arcs (`echo-arcs`)
 
 Original to Picagram.
 
@@ -191,6 +275,14 @@ Original to Picagram.
 
 - Technique from [A Computational Approach to Edge Detection](https://doi.org/10.1109/TPAMI.1986.4767851) by John Canny (Paper).
 - Technique from [Sobel operator](https://en.wikipedia.org/wiki/Sobel_operator) by Wikipedia (Algorithm, no code).
+
+## Falling Sutures (`falling-sutures`)
+
+Original to Picagram.
+
+## Folded Light (`folded-light`)
+
+Original to Picagram.
 
 ## Glitch Text (`glitch-text`)
 
@@ -204,6 +296,30 @@ Original to Picagram.
 
 - Technique from [CSS halftone patterns](https://css-irl.info/css-halftone-patterns/) by Michelle Barker, CSS { In Real Life } (Article).
 
+## Ink Erosion (`ink-erosion`)
+
+Original to Picagram.
+
+## Magnetic Filings (`magnetic-filings`)
+
+Original to Picagram.
+
+## Moire Interference (`moire-interference`)
+
+Original to Picagram.
+
+## Orbital Threads (`orbital-threads`)
+
+Original to Picagram.
+
+## Paper Shutters (`paper-shutters`)
+
+Original to Picagram.
+
+## Perforation Drift (`perforation-drift`)
+
+Original to Picagram.
+
 ## Photocopy Image (`photocopy-image`)
 
 - Technique from [Adaptive Thresholding using the Integral Image](https://doi.org/10.1080/2151237X.2007.10129236) by Derek Bradley, Gerhard Roth (Paper).
@@ -213,15 +329,35 @@ Original to Picagram.
 
 - Technique from [Simplex noise](https://en.wikipedia.org/wiki/Simplex_noise) by Wikipedia (Algorithm, no code).
 
+## Pixel Louver (`pixel-louver`)
+
+Original to Picagram.
+
 ## Pixel Sort (`pixel-sort`)
 
 - Technique from [ASDF pixel sorting](https://github.com/kimasendorf/ASDFPixelSort) by Kim Asendorf (Technique, no code read).
+
+## Print Registration (`print-registration`)
+
+Original to Picagram.
+
+## Radar Sweep (`radar-sweep`)
+
+Original to Picagram.
+
+## Ribbon Current (`ribbon-current`)
+
+Original to Picagram.
 
 ## Risograph Image (`risograph-image`)
 
 - Technique from [Digital Duplicator](https://www.riso.co.jp/english/product/digital_dup/) by RISO Kagaku Corporation (Reference, no code).
 - Technique from [Risograph](https://en.wikipedia.org/wiki/Risograph) by Wikipedia (Reference, no code).
 - Technique from [Void-and-cluster method for dither array generation](https://doi.org/10.1117/12.152707) by Robert A. Ulichney (Paper).
+
+## Route Beacons (`route-beacons`)
+
+Original to Picagram.
 
 ## Scan Reveal Image (`scan-reveal-image`)
 
@@ -231,26 +367,78 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Scanning Prism (`scanning-prism`)
+
+Original to Picagram.
+
+## Seismic Trace (`seismic-trace`)
+
+Original to Picagram.
+
+## Sliding Apertures (`sliding-apertures`)
+
+Original to Picagram.
+
 ## Slit Scan Image (`slit-scan-image`)
 
 - Technique from [An Informal Catalogue of Slit-Scan Video Artworks and Research](https://www.flong.com/archive/texts/lists/slit_scan/index.html) by Golan Levin (Article).
+
+## Tape Head (`tape-head`)
+
+Original to Picagram.
+
+## Tidal Bands (`tidal-bands`)
+
+Original to Picagram.
+
+## Waveguide (`waveguide`)
+
+Original to Picagram.
+
+## Wind Vector (`wind-vector`)
+
+Original to Picagram.
+
+## Woven Tension (`woven-tension`)
+
+Original to Picagram.
+
+## Archive aisle (`archive-aisle`)
+
+Original to Picagram.
 
 ## City Grid (`city-grid`)
 
 - Technique from [Procedural modeling of cities](https://doi.org/10.1145/383259.383292) by Yoav I. H. Parish and Pascal Müller (Paper).
 
+## Exhibit constellation (`exhibit-constellation`)
+
+Original to Picagram.
+
 ## Globe (`globe`)
 
 - Technique from [Evenly distributing points on a sphere](https://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/) by Martin Roberts (Article).
+
+## Memory palace (`memory-palace`)
+
+Original to Picagram.
 
 ## Orbit View (`orbit-view`)
 
 - Technique from [Map Projections: A Working Manual](https://doi.org/10.3133/pp1395) by John P. Snyder, USGS Professional Paper 1395 (Public domain).
 - Port of [Natural Earth](https://www.naturalearthdata.com/about/terms-of-use/) by Tom Patterson and Nathaniel Vaughn Kelso (Public domain).
 
+## Paper theatre (`paper-theatre`)
+
+Original to Picagram.
+
 ## Terrain Field (`terrain-field`)
 
 - Technique from [A Two-Space Solution to the Hidden Line Problem for Plotting Functions of Two Variables](https://doi.org/10.1109/T-C.1973.223597) by T. J. Wright (Paper).
+
+## Watershed walk (`watershed-walk`)
+
+Original to Picagram.
 
 ## World Map (`world-map`)
 
@@ -326,6 +514,14 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Architect dossier (`architect-dossier`)
+
+Original to Picagram.
+
+## Archive Finding Aid (`archive-finding-aid`)
+
+Original to Picagram.
+
 ## Article Lead (`article-lead`)
 
 Original to Picagram.
@@ -342,7 +538,31 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Botanical atelier (`botanical-atelier`)
+
+Original to Picagram.
+
 ## Brutalist Hero (`brutalist-hero`)
+
+Original to Picagram.
+
+## Cartographic Story (`cartographic-story`)
+
+Original to Picagram.
+
+## Ceramic studio (`ceramic-studio`)
+
+Original to Picagram.
+
+## Choreographic score (`choreographic-score`)
+
+Original to Picagram.
+
+## Cinemateque Program (`cinemateque-program`)
+
+Original to Picagram.
+
+## City Atlas (`city-atlas`)
 
 Original to Picagram.
 
@@ -350,11 +570,23 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Conservation Report (`conservation-report`)
+
+Original to Picagram.
+
 ## Contact Panel (`contact-panel`)
 
 Original to Picagram.
 
+## Culinary notebook (`culinary-notebook`)
+
+Original to Picagram.
+
 ## Cyberpunk Hero (`cyberpunk-hero`)
+
+Original to Picagram.
+
+## Desert Transmission (`desert-transmission`)
 
 Original to Picagram.
 
@@ -370,11 +602,47 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Exhibition Labels (`exhibition-labels`)
+
+Original to Picagram.
+
+## Fashion lookbook (`fashion-lookbook`)
+
+Original to Picagram.
+
+## Festival Route (`festival-route`)
+
+Original to Picagram.
+
+## Field Dispatch (`field-dispatch`)
+
+Original to Picagram.
+
+## Folio index (`folio-index`)
+
+Original to Picagram.
+
+## Forum Rome (`forum-rome`)
+
+Original to Picagram.
+
 ## Glass Hero (`glass-hero`)
 
 Original to Picagram.
 
 ## Hero (`hero`)
+
+Original to Picagram.
+
+## Homeward Voyage (`homeward-voyage`)
+
+Original to Picagram.
+
+## Landscape study (`landscape-study`)
+
+Original to Picagram.
+
+## Letterpress Broadside (`letterpress-broadside`)
 
 Original to Picagram.
 
@@ -386,6 +654,14 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Margin Journal (`margin-journal`)
+
+Original to Picagram.
+
+## Material library (`material-library`)
+
+Original to Picagram.
+
 ## Maximalist Hero (`maximalist-hero`)
 
 Original to Picagram.
@@ -394,7 +670,35 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Monograph Spread (`monograph-spread`)
+
+Original to Picagram.
+
+## Museum Acquisition (`museum-acquisition`)
+
+Original to Picagram.
+
 ## Neumorphic Hero (`neumorphic-hero`)
+
+Original to Picagram.
+
+## Nocturne Film (`nocturne-film`)
+
+Original to Picagram.
+
+## Observatory Bulletin (`observatory-bulletin`)
+
+Original to Picagram.
+
+## Oral History (`oral-history`)
+
+Original to Picagram.
+
+## Orbital Log (`orbital-log`)
+
+Original to Picagram.
+
+## Photo contact sheet (`photo-contact-sheet`)
 
 Original to Picagram.
 
@@ -402,11 +706,27 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Polar Expedition (`polar-expedition`)
+
+Original to Picagram.
+
 ## Pricing (`pricing`)
 
 - Technique from [Radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
 
+## Public Lecture (`public-lecture`)
+
+Original to Picagram.
+
 ## Quote Band (`quote-band`)
+
+Original to Picagram.
+
+## Reading Room (`reading-room`)
+
+Original to Picagram.
+
+## Repertory Playbill (`repertory-playbill`)
 
 Original to Picagram.
 
@@ -415,6 +735,14 @@ Original to Picagram.
 Original to Picagram.
 
 ## Sketch Hero (`sketch-hero`)
+
+Original to Picagram.
+
+## Sound practice (`sound-practice`)
+
+Original to Picagram.
+
+## Specimen Review (`specimen-review`)
 
 Original to Picagram.
 
@@ -433,6 +761,10 @@ Original to Picagram.
 ## Testimonials (`testimonials`)
 
 - Technique from [Carousel pattern](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/) by W3C WAI-ARIA Authoring Practices Guide (W3C document).
+
+## Type foundry (`type-foundry`)
+
+Original to Picagram.
 
 ## Victorian Hero (`victorian-hero`)
 

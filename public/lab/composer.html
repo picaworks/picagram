@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Picagram · composition lab</title>
+<style>
+:root{color-scheme:dark;--bg:#0a0a0a;--panel:#111;--fg:#f1f1ef;--muted:#a6a6a1;--line:#343434;--accent:#13c4a3;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg)}button,input,textarea{font:inherit;color:inherit}button{border:1px solid var(--line);background:transparent;padding:8px 10px;cursor:pointer;text-align:left}button:hover{border-color:var(--accent)}button:disabled{opacity:.35;cursor:default}button:focus-visible,input:focus-visible,textarea:focus-visible,[draggable]:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button[aria-pressed=true]{background:var(--fg);color:var(--bg)}input{background:transparent;border:0;border-bottom:1px solid var(--line);padding:9px 0;min-width:0}a{color:var(--accent)}header{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding:18px 24px}.brand{font-size:19px;letter-spacing:-1px}header small{color:var(--muted)}main{max-width:1800px;margin:auto;padding:24px}.intro{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}h1{font-size:28px;font-weight:400;letter-spacing:-1px;margin:0 0 10px}p{line-height:1.6;margin:0;color:var(--muted)}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:1.5px;margin-bottom:10px}.title-field{display:grid;gap:4px;min-width:220px;color:var(--muted);font-size:11px}.workspace{display:grid;grid-template-columns:220px 250px minmax(0,1fr);border:1px solid var(--line)}.pane{min-width:0;padding:16px}.pane+.pane{border-left:1px solid var(--line)}.pane-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.pane-heading h2{font-size:12px;font-weight:400;margin:0;letter-spacing:1px}.count{color:var(--muted);font-size:11px}.library{display:grid;gap:8px}.part{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;border:1px solid var(--line);padding:10px;background:var(--panel);cursor:grab}.part strong{font-size:12px;font-weight:400}.part small{grid-column:1;color:var(--muted);font-size:10px;line-height:1.5}.part button{grid-column:2;grid-row:1 / span 2;align-self:start;padding:6px 9px;width:max-content;font-size:11px}.hint{font-size:11px;line-height:1.6;color:var(--muted);margin-top:16px}.stack{list-style:none;padding:0;margin:0;min-height:160px;display:grid;align-content:start;gap:8px}.stack:empty:after{content:"Drop a part here or use Add.";color:var(--muted);font-size:12px;line-height:1.6;padding:24px 8px;border:1px dashed var(--line)}.stack-row{border:1px solid var(--line);background:var(--panel);padding:12px;cursor:grab;min-width:0}.stack-row .name{display:flex;gap:8px;align-items:start;line-height:1.5;font-size:12px}.ordinal{color:var(--accent);font-size:10px;line-height:1.8}.row-actions{display:flex;gap:5px;margin-top:10px}.row-actions button{font-size:10px;padding:5px 7px}.dragging{opacity:.45}.drop-before{border-top:3px solid var(--accent)}.stack.drop-end{border-bottom:3px solid var(--accent)}.preview-bar{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-bottom:14px}.toggle{display:flex;gap:4px}.toggle button{font-size:10px;padding:7px 8px}.viewport{overflow:hidden;background:#171717;border:1px solid var(--line);position:relative;min-height:250px}.viewport iframe{display:block;border:0;transform-origin:top left;background:#0a0a0a}.preview-caption{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);padding:10px 0;gap:10px}.export-bar{border:1px solid var(--line);border-top:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:14px 16px}.export-bar .primary{color:var(--accent);border-color:var(--accent)}.status{color:var(--muted);font-size:11px;flex:1;min-width:180px;margin-left:8px}details{margin-top:16px;color:var(--muted);font-size:11px}summary{cursor:pointer}textarea{display:block;width:100%;height:220px;margin-top:12px;background:var(--panel);border:1px solid var(--line);padding:12px;line-height:1.5}.foot{font-size:10px;display:flex;justify-content:space-between;gap:20px;margin-top:16px;line-height:1.5}
+@media(max-width:1100px){.workspace{grid-template-columns:210px minmax(0,1fr)}.preview-pane{grid-column:1/-1;border-left:0!important;border-top:1px solid var(--line)}.library{grid-template-columns:1fr}.stack{grid-template-columns:repeat(2,minmax(0,1fr))}.preview-pane .viewport{max-width:100%}}
+@media(max-width:600px){header{padding:16px}header small{display:none}main{padding:16px}.intro{display:block}.title-field{margin-top:16px}h1{font-size:25px}.workspace{grid-template-columns:1fr}.pane+.pane{border-left:0;border-top:1px solid var(--line)}.library{grid-template-columns:repeat(2,minmax(0,1fr))}.stack{grid-template-columns:1fr}.preview-pane{grid-column:auto}.pane{padding:12px}.foot{display:block}.foot span{display:block;margin-bottom:8px}.status{margin-left:0;flex-basis:100%}}
+</style>
+</head>
+<body>
+<header><span class="brand">Picagram <span style="color:var(--muted)">/ lab</span></span><small>COMPOSITION PROOF · 01</small><a href="../">Catalog ↗</a></header>
+<main>
+<div class="intro"><div><div class="eyebrow">A PAGE FROM PARTS</div><h1>Pick. Arrange. Take the code.</h1><p>Real components, one ordered stack. Drag a part in or use the buttons.</p></div><label class="title-field">PAGE TITLE<input id="page-title" value="A Picagram page" maxlength="100"></label></div>
+<div class="workspace">
+<section class="pane" aria-labelledby="library-heading"><div class="pane-heading"><h2 id="library-heading">01 / PARTS</h2><span class="count">7 curated</span></div><div id="library" class="library"></div><p class="hint">Each part uses the catalog’s generated HTML. Add the same part twice to try independent instances.</p></section>
+<section class="pane" aria-labelledby="stack-heading"><div class="pane-heading"><h2 id="stack-heading">02 / ORDER</h2><span id="stack-count" class="count">0 / 12</span></div><ol id="stack" class="stack" aria-label="Page composition"></ol><p class="hint">Drop between rows to reorder. Keyboard: focus Add, Up, Down, or Remove, then press Enter. The preview scrolls independently.</p></section>
+<section class="pane preview-pane" aria-labelledby="preview-heading"><div class="pane-heading"><h2 id="preview-heading">03 / PREVIEW</h2><span class="count">LIVE CODE</span></div><div class="preview-bar"><div class="toggle" aria-label="Preview width"><button data-width="1280" aria-pressed="true">Desktop</button><button data-width="768" aria-pressed="false">Tablet</button><button data-width="390" aria-pressed="false">Mobile</button></div><div class="toggle" aria-label="Preview ground"><button data-ground="ink" aria-pressed="true">Ink</button><button data-ground="paper" aria-pressed="false">Paper</button></div></div><div class="viewport" id="viewport"><iframe id="preview" title="Composed page preview" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe></div><div class="preview-caption"><span id="dimensions">1280 px · scaled to fit</span><span id="preview-state">Loading parts…</span></div></section>
+</div>
+<div class="export-bar"><button id="download" class="primary" disabled>Download HTML ↓</button><button id="copy-html" disabled>Copy HTML</button><button id="copy-handoff" disabled>Copy ChatGPT handoff</button><span id="status" class="status" role="status" aria-live="polite">Loading local generated parts…</span></div>
+<details id="copy-fallback"><summary>Inspect / select the last export</summary><textarea id="export-text" aria-label="Last export or implementation handoff" readonly spellcheck="false"></textarea></details>
+<div class="foot"><span>Bounded proof: seven parts, twelve instances, a vertical flow. Reload starts a fresh page.</span><span>Exports embed HTML, CSS, JavaScript, and source origins. Open the download directly from disk.</span></div>
+</main>
+<script>
+'use strict';
+const LICENSE = "MIT License\n\nCopyright (c) 2026 rbalak\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n\n\"Commons Clause\" License Condition v1.0\n\nThe Software is provided to you by the Licensor under the License, as defined\nbelow, subject to the following condition.\n\nWithout limiting other conditions in the License, the grant of rights under the\nLicense will not include, and the License does not grant to you, the right to\nSell the Software.\n\nFor purposes of the foregoing, \"Sell\" means practicing any or all of the rights\ngranted to you under the License to provide to third parties, for a fee or\nother consideration (including without limitation fees for hosting or\nconsulting/support services related to the Software), a product or service\nwhose value derives, entirely or substantially, from the functionality of the\nSoftware. Any license notice or attribution required by the License must also\ninclude this Commons Clause License Condition notice.\n\nSoftware: Picagram\nLicense: MIT\nLicensor: rbalak\n";
+const PARTS = [
+ {slug:'article-lead',name:'Article lead',category:'sections',note:'A headline, introduction, and reading details.'},
+ {slug:'quote-band',name:'Pull quote',category:'sections',note:'A quote with a quiet patterned ground.'},
+ {slug:'stats-kpi',name:'Stats / KPI',category:'sections',note:'Four metrics and their small trend lines.'},
+ {slug:'event-schedule',name:'Event schedule',category:'sections',note:'Sessions, speakers, and a responsive timeline.'},
+ {slug:'accordion',name:'Accordion',category:'ui',note:'Three panels with keyboard controls.'},
+ {slug:'contact-panel',name:'Contact panel',category:'sections',note:'Contact details and a local demo form.'},
+ {slug:'button',name:'Button',category:'ui',note:'A working button with a press event.'}
+];
+const parts = new Map(), stack = [], LIMIT = 12;
+let serial = 0, width = 1280, ground = 'ink', exportHTML = '', revision = 0, drag = null;
+const $ = id => document.getElementById(id);
+const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const scriptSafe = code => code.replace(/<\/script/gi, '<\\/script');
+function announce(message) { $('status').textContent = message; }
+function manifest() {
+ return {format:'picagram-composition-1', title:$('page-title').value || 'A Picagram page', ground,
+  layout:'vertical-flow', instances:stack.map(item => ({id:item.id,slug:item.slug,props:item.props,
+   generated:'public/v/'+item.slug+'.json', core:'registry/'+parts.get(item.slug).category+'/'+item.slug+'/core.ts'}))};
+}
+function assemble() {
+ const styles = [], markup = [], scripts = [];
+ for (const item of stack) {
+  const part = parts.get(item.slug), id = item.id, stage = 'stage-'+id;
+  // The generated runtime owns data-pica-id via globalThis.__picaSerial. Keep it intact.
+  const html = part.html.replace(/id="pica"/g, 'id="'+id+'"').replace(/class="pica-stage"/g, 'class="'+stage+'"');
+  const css = part.css.replace(/#pica\b/g, '#'+id).replace(/\.pica-stage\b/g, '.'+stage);
+  const js = part.js.replace(/document\.getElementById\(["']pica["']\)/g, 'document.getElementById('+JSON.stringify(id)+')')
+   .replace(/window\.PICA_PROPS\s*\|\|\s*\{\}/g, JSON.stringify(item.props));
+  styles.push(css, '#'+id+'{height:auto!important;min-height:0!important;width:100%;} .'+stage+'{height:auto;min-height:0;padding:24px;justify-content:flex-start;font-size:20px;}');
+  markup.push('<section class="composition-part" data-instance="'+id+'" data-slug="'+item.slug+'">'+html+'</section>');
+  // Each bundle gets a lexical boundary even when the same part is pasted twice.
+  scripts.push('<script>\n(function(){\n'+scriptSafe(js)+'\n})();\n<\/script>');
+ }
+ const data = manifest();
+ const layout = ':root{--pica-accent:#13c4a3;}html,body{background:#0a0a0a;color:#f1f1ef;font-family:ui-sans-serif,system-ui,sans-serif;}html[data-ground="paper"],html[data-ground="paper"] body{background:#f1f1ef;color:#0a0a0a;}html,body{height:auto;min-height:100%;}body{margin:0;}*{box-sizing:border-box;} .composition{width:100%;max-width:1280px;margin:0 auto;} .composition-part{position:relative;overflow:clip;border-bottom:1px solid currentColor;} .composition-part[data-slug="stats-kpi"],.composition-part[data-slug="accordion"]{padding:clamp(1.25rem,5vw,4rem);} .composition-empty{padding:64px 24px;font-family:ui-monospace,monospace;}';
+ const ready = 'window.addEventListener("load",function(){var hosts=Array.from(document.querySelectorAll("[data-instance]")).map(function(section){return section.querySelector("[id^=pica-instance-]");}).filter(function(host){return host&&host.dataset.picaReady==="true";});window.parent.postMessage({type:"composer:ready",revision:'+revision+',count:hosts.length},"*");});';
+ return '<!doctype html>\n<!-- '+LICENSE.replace(/--/g,'—')+' -->\n<html lang="en" data-ground="'+ground+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escapeHTML(data.title)+'</title><style>\n'+styles.join('\n')+'\n'+layout+'\n</style></head><body><main class="composition">'+(markup.join('\n') || '<p class="composition-empty">Add a part to start your page.</p>')+'</main>\n<script type="application/json" id="composition-manifest">'+scriptSafe(JSON.stringify(data,null,2))+'<\/script>\n'+scripts.join('\n')+'\n<script>'+ready+'<\/script>\n</body></html>';
+}
+function fitPreview() {
+ const available = $('viewport').clientWidth, scale = Math.min(1, available / width);
+ const frame = $('preview'); frame.style.width = width+'px'; frame.style.height = '900px'; frame.style.transform = 'scale('+scale+')';
+ $('viewport').style.height = (900*scale)+'px'; $('dimensions').textContent = width+' px · '+Math.round(scale*100)+'% display scale';
+}
+function renderPreview() {
+ revision++; exportHTML = assemble(); $('preview-state').textContent = 'Rendering…'; $('preview').srcdoc = exportHTML; fitPreview();
+}
+function renderStack(focus) {
+ $('stack').replaceChildren(); $('stack-count').textContent = stack.length+' / '+LIMIT;
+ stack.forEach((item,index) => {
+  const row = document.createElement('li'); row.className = 'stack-row'; row.draggable = true; row.dataset.id = item.id;
+  const name = document.createElement('div'); name.className = 'name'; name.innerHTML = '<span class="ordinal">'+String(index+1).padStart(2,'0')+'</span><span>'+escapeHTML(parts.get(item.slug).name)+'</span>'; row.append(name);
+  const actions = document.createElement('div'); actions.className = 'row-actions';
+  for (const action of ['up','down','remove']) {
+   const button = document.createElement('button'); button.textContent = action[0].toUpperCase()+action.slice(1); button.dataset.action = action;
+   button.setAttribute('aria-label', button.textContent+' '+parts.get(item.slug).name+' '+(index+1));
+   button.disabled = action==='up' ? index===0 : action==='down' ? index===stack.length-1 : false;
+   button.addEventListener('click', () => {
+    if (action==='remove') { stack.splice(index,1); renderStack({id:stack[Math.min(index,stack.length-1)]?.id,action:'remove'}); announce('Removed '+parts.get(item.slug).name+'.'); }
+    else { move(item.id,index+(action==='up'?-1:1)); renderStack({id:item.id,action}); announce('Moved '+parts.get(item.slug).name+' to position '+(stack.indexOf(item)+1)+'.'); }
+    renderPreview();
+   }); actions.append(button);
+  }
+  row.append(actions); row.addEventListener('dragstart', event => startDrag(event,{kind:'instance',id:item.id},row)); row.addEventListener('dragend', clearDrag); $('stack').append(row);
+ });
+ document.querySelectorAll('[data-add]').forEach(button => { button.disabled = stack.length>=LIMIT; });
+ if (focus?.id) { const row = document.querySelector('[data-id="'+focus.id+'"]'); (row?.querySelector('[data-action="'+focus.action+'"]:not(:disabled)') || row?.querySelector('button:not(:disabled)'))?.focus(); }
+ else if (focus) document.querySelector('[data-add]')?.focus();
+}
+function add(slug,index=stack.length) {
+ if (!parts.has(slug) || stack.length>=LIMIT) { announce('This proof holds up to twelve parts. Remove a part to add another.'); return; }
+ const item = {id:'pica-instance-'+(++serial),slug,props:slug==='stats-kpi'?{countUp:false}:{}};
+ stack.splice(index,0,item); renderStack(); renderPreview(); announce('Added '+parts.get(slug).name+' at position '+(index+1)+'.');
+}
+function move(id,index) { const old = stack.findIndex(item=>item.id===id); if(old<0) return; const [item] = stack.splice(old,1); stack.splice(Math.max(0,Math.min(index,stack.length)),0,item); }
+function startDrag(event,data,row) { drag=data; event.dataTransfer.effectAllowed = data.kind==='part'?'copy':'move'; event.dataTransfer.setData('application/pica+json',JSON.stringify(data)); event.dataTransfer.setData('text/plain',JSON.stringify(data)); row.classList.add('dragging'); }
+function clearDrag() { drag=null; document.querySelectorAll('.dragging,.drop-before,.drop-end').forEach(el=>el.classList.remove('dragging','drop-before','drop-end')); }
+function dropIndex(event) { const row = event.target.closest('.stack-row'); if(!row) return stack.length; const index=stack.findIndex(item=>item.id===row.dataset.id); return index+(event.clientY>row.getBoundingClientRect().top+row.getBoundingClientRect().height/2?1:0); }
+$('stack').addEventListener('dragover',event=>{if(!drag)return;event.preventDefault();event.dataTransfer.dropEffect=drag.kind==='part'?'copy':'move';document.querySelectorAll('.drop-before,.drop-end').forEach(el=>el.classList.remove('drop-before','drop-end'));const index=dropIndex(event);const row=$('stack').children[index];if(row)row.classList.add('drop-before');else $('stack').classList.add('drop-end');});
+$('stack').addEventListener('drop',event=>{event.preventDefault();let data=drag;try{data=JSON.parse(event.dataTransfer.getData('application/pica+json')||event.dataTransfer.getData('text/plain'));}catch{}if(!data)return;let index=dropIndex(event);if(data.kind==='part')add(data.slug,index);else if(data.kind==='instance'){const old=stack.findIndex(item=>item.id===data.id);if(old>=0){if(old<index)index--;move(data.id,index);renderStack();renderPreview();announce('Part moved to position '+(index+1)+'.');}}clearDrag();});
+function handoff() {
+ return 'Implement this Picagram page in my project. Preserve the ordered composition, responsive vertical flow, selected ground, component accessibility, and independent instances. Adapt the real code below to the project conventions. Keep the embedded license. Explain and wire any app-specific actions: the button emits pica:press and the contact panel emits pica:send; the demo form currently has no backend. Do not invent a submission service.\n\nComposition and source origins:\n'+JSON.stringify(manifest(),null,2)+'\n\nRuntime rule: each host ID is unique; generated core CSS and ARIA IDs use globalThis.__picaSerial. Keep this shared counter and a lexical boundary per generated bundle.\n\nComplete standalone HTML (all code embedded, no runtime network dependency):\n```html\n'+exportHTML+'\n```';
+}
+async function copy(text,label) {
+ $('export-text').value=text;
+ try { await navigator.clipboard.writeText(text); announce(label+' copied.'); }
+ catch { $('copy-fallback').open=true; $('export-text').focus(); $('export-text').select(); if(document.execCommand('copy'))announce(label+' copied via the selection fallback.');else announce('Clipboard unavailable. The '+label.toLowerCase()+' is selected below; use your browser’s Copy command.'); }
+}
+$('copy-html').addEventListener('click',()=>copy(exportHTML,'HTML'));
+$('copy-handoff').addEventListener('click',()=>copy(handoff(),'ChatGPT handoff'));
+$('download').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([exportHTML],{type:'text/html;charset=utf-8'}));const link=document.createElement('a');link.href=url;link.download=($('page-title').value.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'picagram-page')+'.html';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$('export-text').value=exportHTML;announce('Downloaded standalone HTML with '+stack.length+' parts.');});
+$('page-title').addEventListener('input',()=>{if(parts.size)renderPreview();});
+for(const button of document.querySelectorAll('[data-width]'))button.addEventListener('click',()=>{width=Number(button.dataset.width);document.querySelectorAll('[data-width]').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));fitPreview();});
+for(const button of document.querySelectorAll('button[data-ground]'))button.addEventListener('click',()=>{ground=button.dataset.ground;document.querySelectorAll('button[data-ground]').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));renderPreview();});
+window.addEventListener('message',event=>{if(event.source!==$('preview').contentWindow||event.data?.type!=='composer:ready'||event.data.revision!==revision)return;$('preview-state').textContent=event.data.count+' / '+stack.length+' parts ready';});
+new ResizeObserver(fitPreview).observe($('viewport'));
+async function init() {
+ try {
+  const loaded = await Promise.all(PARTS.map(async meta=>{const url=new URL('../v/'+meta.slug+'.json',location.href);if(url.origin!==location.origin)throw new Error('Parts must be local.');const response=await fetch(url,{credentials:'omit'});if(!response.ok)throw new Error(meta.slug+' is unavailable.');const code=await response.json();if(!['html','css','js'].every(key=>typeof code[key]==='string')||!code.html.includes('id="pica"')||!code.js.includes('getElementById("pica")'))throw new Error(meta.slug+' has an unsupported generated shape.');return {...meta,...code};}));
+  for(const part of loaded){parts.set(part.slug,part);const tile=document.createElement('div');tile.className='part';tile.draggable=true;tile.innerHTML='<strong>'+escapeHTML(part.name)+'</strong><small>'+escapeHTML(part.note)+'</small>';const button=document.createElement('button');button.textContent='+ Add';button.dataset.add=part.slug;button.setAttribute('aria-label','Add '+part.name);button.addEventListener('click',()=>add(part.slug));tile.append(button);tile.addEventListener('dragstart',event=>startDrag(event,{kind:'part',slug:part.slug},tile));tile.addEventListener('dragend',clearDrag);$('library').append(tile);}
+  ['article-lead','quote-band','event-schedule'].forEach(slug=>stack.push({id:'pica-instance-'+(++serial),slug,props:{}}));renderStack();renderPreview();document.querySelectorAll('.export-bar button').forEach(button=>button.disabled=false);announce('Ready. Arrange the starter page or add a part.');
+ } catch(error){announce('Could not load the local component set: '+error.message);$('preview-state').textContent='Parts unavailable';}
+}
+init();
+</script>
+</body>
+</html>

@@ -1027,7 +1027,8 @@ var PicaToast = (() => {
     }
     return data;
   }
-  var instance = PicaToast.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {"toasts":[{"id":"build-finished","title":"Build finished","message":"All checks passed in 42 seconds.","tone":"accent"},{"id":"warnings","title":"3 warnings","message":"Review the remaining type warnings.","tone":"default"}],"duration":0}, window.PICA_PROPS || {});
+  var instance = PicaToast.mount(host, take(initial));
   ["dismiss"].forEach(function (name) {
     host.addEventListener("pica:" + name.toLowerCase(), function (event) {
       if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");

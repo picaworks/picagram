@@ -17,7 +17,7 @@ const FOCUSABLE = "a[href], area[href], button, input, select, textarea, summary
 /** What a section's calls to action may be: a real link, a real button, or a native visible form control, so
  *  the browser's own keyboard, middle click, and form behavior come with them. A span or div made focusable
  *  with tabindex or a role is none of these. */
-const REAL = "a[href], button, input:not([type=hidden]), select, textarea";
+const REAL = "a[href], button, input:not([type=hidden]), select, textarea, details > summary";
 
 /** Runs in the page: the first text the host wraps, meaning an element the core did not create that holds
  *  text of its own, with its computed family beside the body's. */

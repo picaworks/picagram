@@ -1,0 +1,355 @@
+<!doctype html>
+<!--
+  Pica · Circuit Board · ascii-circuit-board
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Circuit Board · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaAsciiCircuitBoard = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/ascii/ascii-circuit-board/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/events.ts
+  function eventType(name) {
+    return `pica:${name.toLowerCase()}`;
+  }
+  function emitter(host) {
+    return (name, detail) => {
+      host.dispatchEvent(new CustomEvent(eventType(name), { detail, bubbles: false }));
+    };
+  }
+
+  // registry/ascii/ascii-circuit-board/core.ts
+  var defaults = {
+    title: "BENCH / LED INDICATOR",
+    label: "Circuit Board records",
+    components: [
+      {
+        "name": "Supply",
+        "reference": "V1",
+        "value": "5 V DC",
+        "terminals": "Positive to S1; negative to ground",
+        "note": "Use a regulated bench supply with a current limit. The schematic records the intended source."
+      },
+      {
+        "name": "Switch",
+        "reference": "S1",
+        "value": "Normally open",
+        "terminals": "Between V1 positive and R1",
+        "note": "Closing S1 completes the series path. No electrical simulation is performed."
+      },
+      {
+        "name": "Resistor",
+        "reference": "R1",
+        "value": "330 ohm / 0.25 W",
+        "terminals": "Between S1 and D1 anode",
+        "note": "At a nominal LED drop of 2 V, the resistor limits current to about 9 mA."
+      },
+      {
+        "name": "Indicator",
+        "reference": "D1",
+        "value": "LED / 2 V nominal",
+        "terminals": "Anode to R1; cathode to ground",
+        "note": "Observe LED polarity. TP1 is the point after the resistor for a voltage check."
+      },
+      {
+        "name": "Test point",
+        "reference": "TP1",
+        "value": "LED anode",
+        "terminals": "Junction of R1 and D1",
+        "note": "Measure relative to ground. The recorded circuit expects approximately the LED forward drop here."
+      }
+    ],
+    selected: 0
+  };
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let selected = props.selected;
+    let records = [];
+    const attrs = hostAttributes(host);
+    const scopeId = nextId("ascii-record");
+    attrs.set("data-pica-id", scopeId);
+    const stylesheet = make("style");
+    host.append(stylesheet);
+    const styles = {
+      selector: `[data-pica-id="${scopeId}"]`,
+      setRules(css) {
+        stylesheet.textContent = css;
+      },
+      destroy() {
+        stylesheet.remove();
+      }
+    };
+    const s = styles.selector;
+    styles.setRules(`
+    ${s} { color:${cssVar("fg")};background:${cssVar("bg")};box-sizing:border-box; }
+    ${s} [data-part="record"] { padding:clamp(18px,4vw,48px);max-width:1080px;margin:auto; }
+    ${s} h2 { font:inherit;font-size:1.15em;margin:0 0 12px; }
+    ${s} [data-part="intro"] { color:${cssVar("muted")};max-width:62ch;line-height:1.6;margin:0 0 28px; }
+    ${s} [data-part="body"] { display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:36px;border-top:1px solid ${cssVar("muted")};padding-top:24px; }
+    ${s} pre { font:14px/1.7 ${GRID_FONT};margin:0;overflow:auto;white-space:pre; }
+    ${s} ol { padding:0;margin:24px 0 0;list-style:none; }
+    ${s} li { border-top:1px solid ${cssVar("muted")}; }
+    ${s} button { display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:space-between;width:100%;text-align:left;padding:12px 8px;color:${cssVar("fg")};background:${cssVar("bg")};border:0;border-left:3px solid transparent;font:inherit;cursor:pointer; }
+    ${s} button[aria-pressed="true"] { border-left-color:${cssVar("accent")}; }
+    ${s} button:focus-visible { outline:2px solid ${cssVar("accent")};outline-offset:2px; }
+    ${s} [data-part="metric"],${s} [data-part="eyebrow"] { font:12px/1.6 ${GRID_FONT};color:${cssVar("muted")}; }
+    ${s} [data-part="detail"] { border-top:3px solid ${cssVar("accent")};padding-top:20px;min-width:0; }
+    ${s} h3 { font:inherit;font-size:1.3em;margin:12px 0; }
+    ${s} [data-part="facts"] { white-space:pre-line;font:13px/1.8 ${GRID_FONT};overflow-wrap:anywhere; }
+    ${s} [data-part="note"] { line-height:1.65;overflow-wrap:anywhere; }
+    @media(max-width:640px) { ${s} [data-part="body"] { grid-template-columns:1fr;gap:28px; } ${s} pre { font-size:12px; } }
+  `);
+    function make(tag, part = "") {
+      const el = document.createElement(tag);
+      el.setAttribute("data-pica", "");
+      if (part) el.setAttribute("data-part", part);
+      return el;
+    }
+    const record = make("section", "record");
+    const heading = make("h2");
+    const intro = make("p", "intro");
+    intro.textContent = "A low current indicator circuit. Select a reference to inspect its value and connected terminals.";
+    const body = make("div", "body");
+    const diagram = make("div");
+    const art = make("pre");
+    art.setAttribute("aria-hidden", "true");
+    const list = make("ol");
+    list.setAttribute("aria-label", "Circuit Board register");
+    const detail = make("section", "detail");
+    const eyebrow = make("div", "eyebrow");
+    eyebrow.textContent = "SELECTED RECORD";
+    const detailTitle = make("h3");
+    const facts = make("p", "facts");
+    const note = make("p", "note");
+    detail.setAttribute("aria-live", "polite");
+    detail.append(eyebrow, detailTitle, facts, note);
+    diagram.append(art, list);
+    body.append(diagram, detail);
+    record.append(heading, intro, body);
+    host.append(record);
+    const emit = emitter(host);
+    function text(value, max = 40) {
+      return String(value ?? "").replace(/[\r\n\t]/g, " ").slice(0, max);
+    }
+    function rebuild() {
+      records = (Array.isArray(props.components) ? props.components : []).filter((r) => r && typeof r === "object").slice(0, 8).map((r) => ({ name: text(r.name), reference: text(r.reference, 8), value: text(r.value, 60), terminals: text(r.terminals, 120), note: text(r.note, 350) }));
+      list.replaceChildren();
+      records.forEach((r, i) => {
+        const li = make("li");
+        const button = make("button");
+        button.type = "button";
+        button.dataset.choice = String(i);
+        const name = make("span");
+        name.textContent = `${String(i + 1).padStart(2, "0")} / ${r.name}`;
+        const metric = make("span", "metric");
+        metric.textContent = `${r.reference} / ${r.value}`;
+        button.append(name, metric);
+        li.append(button);
+        list.append(li);
+      });
+    }
+    function paint() {
+      attrs.set("role", "region");
+      attrs.set("aria-label", props.label || null);
+      attrs.set("aria-hidden", props.label ? null : "true");
+      heading.textContent = props.title;
+      selected = Math.max(0, Math.min(records.length - 1, Math.floor(Number.isFinite(selected) ? selected : 0)));
+      list.querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-pressed", String(i === selected)));
+      const r = records[selected];
+      if (!r) {
+        art.textContent = "[ no records supplied ]";
+        detailTitle.textContent = "No records";
+        facts.textContent = "Add records through the JSON data prop.";
+        note.textContent = "";
+      } else {
+        const marker = (ref) => r.reference === ref ? "*" : " ";
+        const wire = (left, right) => left.padEnd(28) + right;
+        const supply = records.find((part) => part.reference === "V1")?.value ?? "supply";
+        art.textContent = [
+          "          SERIES / " + supply.slice(0, 12),
+          "",
+          "  +----o/ o------[ R1 ]-----o",
+          wire(`  |    ${marker("S1")} S1       ${marker("R1")}`, `| ${marker("TP1")} TP1`),
+          wire(" (+)", "|"),
+          `  V1 ${marker("V1")}`.padEnd(27) + ">| D1",
+          wire(" (-)", `| ${marker("D1")}`),
+          wire("  |", "|"),
+          "  +-------------------------+",
+          "               === GND",
+          "",
+          "  * selected component"
+        ].join("\n");
+        detailTitle.textContent = r.name;
+        facts.textContent = `${r.reference} · ${r.value}
+${r.terminals}`;
+        note.textContent = r.note;
+      }
+      attrs.set("data-pica-ready", "true");
+    }
+    const onClick = (event) => {
+      const button = event.target.closest("button[data-choice]");
+      if (!button || !list.contains(button)) return;
+      selected = Number(button.dataset.choice);
+      paint();
+      emit("selection", { index: selected });
+    };
+    list.addEventListener("click", onClick);
+    rebuild();
+    paint();
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (next.selected !== void 0) selected = next.selected;
+        if (!sameJson(before.components, props.components)) rebuild();
+        paint();
+      },
+      destroy() {
+        list.removeEventListener("click", onClick);
+        record.remove();
+        styles.destroy();
+        attrs.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaAsciiCircuitBoard.mount(host, take(initial));
+  ["selection"].forEach(function (name) {
+    host.addEventListener("pica:" + name.toLowerCase(), function (event) {
+      if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");
+    });
+  });
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -744,7 +744,8 @@ var PicaField = (() => {
     }
     return data;
   }
-  var instance = PicaField.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {"error":"Branch main is protected."}, window.PICA_PROPS || {});
+  var instance = PicaField.mount(host, take(initial));
   window.addEventListener("message", function (event) {
     if (event.source !== window.parent || !event.data) return;
     if (event.data.type === "pica:props") instance.update(take(event.data.props));

@@ -1,0 +1,182 @@
+{
+  "forum-rome": {
+    "decision": "keep",
+    "note": "A Roman civic exhibition: stone arch elevation, excavation ledger, public-space argument and visiting notes. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "homeward-voyage": {
+    "decision": "keep",
+    "note": "A long-form epic journey: a route profile, chapter navigation, six narrative passages and a margin quotation. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "nocturne-film": {
+    "decision": "keep",
+    "note": "An original noir screening page: tall typographic poster, oblique skyline drawing, synopsis, running order and credits. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "desert-transmission": {
+    "decision": "keep",
+    "note": "A fictional field-radio archive: frequency masthead, landscape signal drawing, timed transcript and expedition equipment. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "orbital-log": {
+    "decision": "keep",
+    "note": "An orbital research journal: concentric schematic, observation log, mission evidence and final dispatch. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "polar-expedition": {
+    "decision": "keep",
+    "note": "A polar field record: route through contour bands, sample ledger and three evidence columns. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "folio-index": {
+    "decision": "keep",
+    "note": "A working designer portfolio: oversized linked project index, readable project notes and practice/contact sections. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "architect-dossier": {
+    "decision": "keep",
+    "note": "An architectural project dossier: dimensioned plan and elevation, register of facts, assembly notes and enquiries. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "type-foundry": {
+    "decision": "keep",
+    "note": "A type specimen and foundry page: oversized Ag, character set, graduated text sizes, letterform notes and downloadable text specimen. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "ceramic-studio": {
+    "decision": "keep",
+    "note": "A ceramic atelier catalog: original vessel silhouettes, edition ledger, material/process notes and reservation information. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "botanical-atelier": {
+    "decision": "keep",
+    "note": "A botanical illustration practice: three herbarium plates with annotations, observation method and commission information. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "sound-practice": {
+    "decision": "keep",
+    "note": "A sound artist portfolio: three waveform studies, expandable listening notes and a practice taxonomy. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "margin-journal": {
+    "decision": "keep",
+    "note": "An essay with side notes: compact editorial masthead, large drop cap, numbered marginalia and return links. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "field-dispatch": {
+    "decision": "keep",
+    "note": "A travel correspondence: route drawing, dated telegram-like dispatch rows and a field notebook. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "specimen-review": {
+    "decision": "keep",
+    "note": "An object review: measured capsule drawing, three observations and comparison table. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "city-atlas": {
+    "decision": "keep",
+    "note": "A district atlas: address index, city-block diagram, four place essays and walk-reading notes. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "reading-room": {
+    "decision": "keep",
+    "note": "A quiet reading essay: bookshelf sidebar, centered serif opening, narrow body column and continuation shelf. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "oral-history": {
+    "decision": "keep",
+    "note": "An edited conversation: transcript folio, speaker question/answer rhythm, prominent quotations and recording notes. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "cinemateque-program": {
+    "decision": "keep",
+    "note": "A cinema repertory program: festival date block and four film-strip screening cells with visitor/access notes. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "repertory-playbill": {
+    "decision": "keep",
+    "note": "A theater playbill: title/cast split, seating diagram, director note and performance access details. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "exhibition-labels": {
+    "decision": "keep",
+    "note": "An exhibition catalog: three original abstract works paired with wall labels and gallery visiting information. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "archive-finding-aid": {
+    "decision": "keep",
+    "note": "An archive finding aid: accession rail, administrative history, native expandable series tree and consultation instructions. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "festival-route": {
+    "decision": "keep",
+    "note": "A walking festival page: five-stop route diagram, distance ledger, linked stop schedule and preparation notes. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "museum-acquisition": {
+    "decision": "keep",
+    "note": "A museum acquisition record: orthographic lamp drawing, accession facts, provenance timeline and conservation notes. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "photo-contact-sheet": {
+    "decision": "keep",
+    "note": "A photography portfolio: six original geometric studies in a contact sheet and linked enlarged reading of a frame. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "fashion-lookbook": {
+    "decision": "keep",
+    "note": "A fashion collection: alternating garment outlines and construction studies, numbered looks and material notes. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "material-library": {
+    "decision": "keep",
+    "note": "A material reference: four texture swatches, specification ledger and selection checklist. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "landscape-study": {
+    "decision": "keep",
+    "note": "A landscape project: contoured ground plan, elevation section, seasonal measurements and water-management essay. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "choreographic-score": {
+    "decision": "keep",
+    "note": "A performance score: large stacked title, timestamp rail, four movement diagrams and audience/program information. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "culinary-notebook": {
+    "decision": "keep",
+    "note": "A recipe notebook: original ingredients drawing, measured ingredient ledger, numbered method and cook notes. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "letterpress-broadside": {
+    "decision": "keep",
+    "note": "A civic broadside: condensed display typography, issue stamp, assembly agenda and invitation. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "monograph-spread": {
+    "decision": "keep",
+    "note": "A studio monograph: facing-page image/text composition, folio numbers, essay and edition colophon. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "public-lecture": {
+    "decision": "keep",
+    "note": "A lecture announcement: circular argument model, speaker introduction, three-part running order and access information. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "observatory-bulletin": {
+    "decision": "keep",
+    "note": "An observatory bulletin: original sky chart above a ridge, observing notes, target table and field-log marker. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "cartographic-story": {
+    "decision": "keep",
+    "note": "A map essay: vertical waterway, numbered stops, landscape reflections and explicit illustrative-route note. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  },
+  "conservation-report": {
+    "decision": "keep",
+    "note": "A project conservation record: annotated elevation, before/after diagrams, intervention timeline and evidence table. Main integration review accepted the full-page compositions at 1280, 768 and 390 on ink and paper. Final independent 216-scenario batch proof passed accessibility, width, heading, anchors, focus and resource checks; component gate passed React/vanilla parity, lifecycle, palette and declared interactions. Individual captures and contact sheets are saved in task-9/artifacts/final. Native ChatGPT annotations remain untested.",
+    "at": "2026-10-04T05:02:34.547947+00:00"
+  }
+}

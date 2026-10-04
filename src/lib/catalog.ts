@@ -5,6 +5,17 @@ import type { Json } from "../../lib/types";
 import type { PaletteProp } from "../../lib/use-pica";
 import generated from "../../public/catalog.json";
 
+export const CURRENT_RELEASE = "ascii-motion-2026-10-04";
+export const RELEASES = [
+  { id: CURRENT_RELEASE, title: "ASCII, motion and immersive" },
+  { id: "microsites-2026-10-04", title: "36 microsites" },
+] as const;
+export type ReleaseFilter = typeof RELEASES[number]["id"] | "all";
+/** NEW identifies the two batches under review. Membership comes from authored release metadata. */
+export function isNew(item: Pick<Meta, "release">): boolean { return RELEASES.some((release) => release.id === item.release); }
+export function inRelease(item: Pick<Meta, "release">, release: ReleaseFilter): boolean { return release === "all" ? isNew(item) : item.release === release; }
+export function readRelease(value: string | null): ReleaseFilter | null { return value === "all" || RELEASES.some((release) => release.id === value) ? value as ReleaseFilter : null; }
+
 export type { Category, Control, Facet, PaletteProp, Token };
 export { CATEGORIES, CATEGORY_TITLES, FACETS, TOKENS };
 
@@ -122,7 +133,9 @@ export function searchText(item: {
 
 /** Whether an item survives the search box and the active facet chips. Every active facet must be present, and
  *  the search reads an item's tags and facets as well as its words. */
-export function matches(item: CatalogItem, query: string, facets: readonly Facet[]): boolean {
+export function matches(item: CatalogItem, query: string, facets: readonly Facet[], newOnly = false, category: Category | "all" = "all", release: ReleaseFilter = "all"): boolean {
+  if (newOnly && !inRelease(item, release)) return false;
+  if (category !== "all" && item.category !== category) return false;
   if (!facets.every((facet) => item.facets.includes(facet))) return false;
   const q = query.trim().toLowerCase();
   if (!q) return true;

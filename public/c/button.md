@@ -1105,7 +1105,8 @@ var PicaButton = (() => {
     }
     return data;
   }
-  var instance = PicaButton.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaButton.mount(host, take(initial));
   ["press"].forEach(function (name) {
     host.addEventListener("pica:" + name.toLowerCase(), function (event) {
       if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");

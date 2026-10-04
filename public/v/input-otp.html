@@ -325,7 +325,8 @@ var PicaInputOtp = (() => {
     }
     return data;
   }
-  var instance = PicaInputOtp.mount(host, take(window.PICA_PROPS || {}));
+  var initial = Object.assign({}, {"defaultValue":"37"}, window.PICA_PROPS || {});
+  var instance = PicaInputOtp.mount(host, take(initial));
   ["valueChange","complete"].forEach(function (name) {
     host.addEventListener("pica:" + name.toLowerCase(), function (event) {
       if (window.parent !== window) window.parent.postMessage({ type: "pica:event", name: name, detail: event.detail }, "*");

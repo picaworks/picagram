@@ -1,0 +1,214 @@
+import { GRID_FONT } from "../../../lib/font";
+import { hostAttributes, nextId, scope } from "../../../lib/host";
+import { sameJson } from "../../../lib/json";
+import { cssVar } from "../../../lib/palette";
+import type { Mount } from "../../../lib/types";
+
+export interface CeramicPiece {
+  /** Vessel name. */
+  name: string;
+  /** Vessel drawing form. */
+  form: "bowl" | "vase" | "cup";
+  /** Material and dimensions. */
+  material: string;
+  /** Edition and availability. */
+  edition: string;
+}
+export interface CeramicStep {
+  /** Process stage. */
+  title: string;
+  /** Process description. */
+  text: string;
+}
+export interface CeramicStudioProps {
+  /** Accessible name for the collection. */
+  label: string;
+  /** Maker name. */
+  studio: string;
+  /** Collection name. */
+  collection: string;
+  /** Collection introduction. */
+  intro: string;
+  /** Collection pieces and silhouette forms. */
+  pieces: readonly CeramicPiece[];
+  /** Maker process stages. */
+  process: readonly CeramicStep[];
+  /** Care notes. */
+  care: string;
+  /** Ordering instructions. */
+  contact: string;
+}
+
+export const defaults: CeramicStudioProps = {
+  "label": "Ceramic studio collection",
+  "studio": "Ruth Vale / Clay works",
+  "collection": "Objects for daily rituals.",
+  "intro": "Small batches of useful things. Thrown slowly, glazed by hand, and made to gather the marks of a life well lived.",
+  "pieces": [
+    {
+      "name": "Low bowl",
+      "form": "bowl",
+      "material": "Stoneware / Ø 21 × 6 cm",
+      "edition": "Edition 03 / 18 pieces"
+    },
+    {
+      "name": "Stem vessel",
+      "form": "vase",
+      "material": "Stoneware / Ø 10 × 24 cm",
+      "edition": "Edition 03 / 12 pieces"
+    },
+    {
+      "name": "Morning cup",
+      "form": "cup",
+      "material": "Stoneware / Ø 8 × 9 cm",
+      "edition": "Edition 03 / 24 pieces"
+    }
+  ],
+  "process": [
+    {
+      "title": "The clay",
+      "text": "A local stoneware body is wedged by hand. Small mineral flecks remain visible in the fired surface."
+    },
+    {
+      "title": "The wheel",
+      "text": "Each form is thrown, rested, and trimmed. The foot carries a quiet record of the maker’s hand."
+    },
+    {
+      "title": "The kiln",
+      "text": "A thin ash glaze settles unevenly over the clay. The final firing reaches 1,240 °C and lasts two days, including cooling."
+    }
+  ],
+  "care": "These pieces are made for everyday use. Wash gently and allow to dry fully. Avoid sudden changes in temperature. Subtle differences in glaze and dimension are part of the work.",
+  "contact": "To reserve a piece, write to studio@ruthvale.example with the form and quantity. We confirm availability, packing, and delivery before taking payment. Studio visits by appointment."
+};
+
+function ceramicStudioEl<K extends keyof HTMLElementTagNameMap>(tag: K, text = "", mark = ""): HTMLElementTagNameMap[K] {
+  const el = document.createElement(tag);
+  el.setAttribute("data-pica", "");
+  if (mark) el.setAttribute(`data-pica-${mark}`, "");
+  if (text) el.textContent = text;
+  return el;
+}
+function ceramicStudioLink(text: string, target: string): HTMLAnchorElement {
+  const el = ceramicStudioEl("a", text);
+  el.href = `#${target}`;
+  return el;
+}
+function ceramicStudioLabel(text: string): HTMLElement { return ceramicStudioEl("p", text, "label"); }
+function ceramicStudioSection(id: string): HTMLElement {
+  const el = ceramicStudioEl("section", "", "section");
+  el.id = id;
+  return el;
+}
+function ceramicStudioSvg(viewBox: string, paths: readonly string[]): SVGSVGElement {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  el.setAttribute("data-pica", "");
+  el.setAttribute("viewBox", viewBox);
+  el.setAttribute("aria-hidden", "true");
+  for (const d of paths) {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("data-pica", "");
+    path.setAttribute("d", d);
+    el.append(path);
+  }
+  return el;
+}
+
+
+function ceramicStudioRules(s: string): string {
+  const fg = cssVar("fg");
+  const bg = cssVar("bg");
+  const muted = cssVar("muted");
+  const accent = cssVar("accent");
+  return `
+${s}{box-sizing:border-box;color:${fg};background:${bg};font:inherit;line-height:1.5}
+${s} [data-pica-page]{max-width:1440px;margin:auto;padding:clamp(20px,4vw,60px)}
+${s} [data-pica-page] *{box-sizing:border-box}
+${s} [data-pica-page] h1,${s} [data-pica-page] h2,${s} [data-pica-page] h3,${s} [data-pica-page] p,${s} [data-pica-page] figure{margin:0}
+${s} [data-pica-page] h1,${s} [data-pica-page] h2,${s} [data-pica-page] h3{font-weight:500;line-height:1.05;overflow-wrap:anywhere}
+${s} [data-pica-page] a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.25em}
+${s} [data-pica-page] a:focus-visible,${s} [data-pica-page] summary:focus-visible{outline:2px solid ${accent};outline-offset:4px}
+${s} [data-pica-page] [data-pica-label]{font-family:${GRID_FONT};font-size:11px;letter-spacing:.07em;text-transform:uppercase;line-height:1.6;color:${muted}}
+${s} [data-pica-page] [data-pica-header]{display:flex;justify-content:space-between;gap:24px;padding-bottom:22px;border-bottom:1px solid ${fg};align-items:baseline}
+${s} [data-pica-page] [data-pica-nav]{display:flex;gap:20px;flex-wrap:wrap;font-size:13px}
+${s} [data-pica-page] [data-pica-footer]{display:grid;grid-template-columns:1fr 1fr;gap:30px;padding-top:30px;margin-top:64px;border-top:1px solid ${fg}}
+${s} [data-pica-page] [data-pica-footer] h2{font-size:clamp(28px,4vw,52px);max-width:650px}
+${s} [data-pica-page] [data-pica-footer] p{max-width:480px}
+${s} [data-pica-page] [data-pica-accent]{color:${fg};border-bottom:6px solid ${accent};padding-bottom:8px}
+${s} [data-pica-page] details{border-top:1px solid ${muted};padding:14px 0}
+${s} [data-pica-page] summary{cursor:pointer;font-size:14px}
+${s} [data-pica-page] details p{margin-top:16px;max-width:58ch;font-size:14px}
+${s} [data-pica-page] svg{display:block;width:100%;height:auto;fill:none;stroke:currentColor;stroke-width:1.4;vector-effect:non-scaling-stroke}
+${s} [data-pica-page] [data-pica-body]{font-size:15px;max-width:58ch;line-height:1.7}
+${s} [data-pica-page] [data-pica-section]{scroll-margin-top:20px}
+@media(max-width:600px){${s} [data-pica-page] [data-pica-header]{align-items:flex-start;flex-direction:column;gap:14px}${s} [data-pica-page] [data-pica-nav]{gap:16px}${s} [data-pica-page] [data-pica-footer]{grid-template-columns:1fr;margin-top:44px}}
+
+${s} [data-pica-page] [data-pica-clay-lead]{max-width:750px;margin:48px auto 20px;text-align:center}
+${s} [data-pica-page] [data-pica-clay-lead] h1{font-family:var(--pica-font-serif,Georgia,serif);font-size:clamp(48px,6.7vw,90px);letter-spacing:-.04em;margin:20px 0}
+${s} [data-pica-page] [data-pica-clay-lead] [data-pica-body]{margin:auto;max-width:43ch;font-size:18px}
+${s} [data-pica-page] [data-pica-clay-collection]{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;align-items:end;padding:24px 0 44px}
+${s} [data-pica-page] [data-pica-clay-collection] svg{height:340px;max-height:34vw;stroke-width:1.15}
+${s} [data-pica-page] [data-pica-clay-collection] figure{text-align:center}
+${s} [data-pica-page] [data-pica-clay-collection] h2{font-family:var(--pica-font-serif,Georgia,serif);font-size:30px;margin:12px 0}
+${s} [data-pica-page] [data-pica-clay-ledger]{border-top:1px solid ${fg};padding-top:18px}
+${s} [data-pica-page] [data-pica-clay-ledger]>div{display:grid;grid-template-columns:65px 1fr 1fr;gap:18px;border-bottom:1px solid ${muted};padding:14px 0;font-size:14px}
+${s} [data-pica-page] [data-pica-clay-process]{display:grid;grid-template-columns:1fr 1.2fr;gap:80px;padding-top:56px}
+${s} [data-pica-page] [data-pica-clay-process] h2{font-family:var(--pica-font-serif,Georgia,serif);font-size:clamp(40px,5.3vw,70px);margin-top:20px;max-width:11ch}
+${s} [data-pica-page] [data-pica-clay-process]>div:last-child>div{margin-bottom:24px}
+${s} [data-pica-page] [data-pica-clay-process] [data-pica-body]{margin-top:10px}
+@media(max-width:800px){${s} [data-pica-page] [data-pica-clay-process]{gap:36px}}
+@media(max-width:600px){${s} [data-pica-page] [data-pica-clay-collection]{grid-template-columns:1fr;gap:34px}${s} [data-pica-page] [data-pica-clay-collection] svg{height:290px;max-height:none}${s} [data-pica-page] [data-pica-clay-ledger]>div{grid-template-columns:30px 1fr}${s} [data-pica-page] [data-pica-clay-ledger]>div>p:last-child{grid-column:2}${s} [data-pica-page] [data-pica-clay-process]{grid-template-columns:1fr;gap:28px}}
+`;
+}
+
+function ceramicStudioRender(root: HTMLElement, p: CeramicStudioProps, ids: Record<string, string>): void {
+  root.replaceChildren();
+
+  const header = ceramicStudioEl("header", "", "header"); header.append(ceramicStudioLabel(p.studio)); const nav = ceramicStudioEl("nav", "", "nav"); nav.setAttribute("aria-label", "Studio navigation"); nav.append(ceramicStudioLink("Collection", ids.collection!), ceramicStudioLink("Process", ids.process!), ceramicStudioLink("Reserve", ids.contact!)); header.append(nav); root.append(header);
+  const lead = ceramicStudioEl("div", "", "clay-lead"); lead.append(ceramicStudioLabel("Kiln edition 03 / Spring 2026"), ceramicStudioEl("h1", p.collection, "accent"), ceramicStudioEl("p", p.intro, "body")); root.append(lead);
+  const collection = ceramicStudioSection(ids.collection!); collection.setAttribute("data-pica-clay-collection", "");
+  p.pieces.forEach((piece, i) => {
+    const fig = ceramicStudioEl("figure"); fig.append(ceramicStudioLabel(`${String(i + 1).padStart(2, "0")} / ${piece.form}`));
+    const paths = piece.form === "vase" ? ["M112 50C110 80 116 105 96 132C64 175 70 259 88 291C103 302 137 302 153 290C170 257 174 176 143 132C124 105 130 80 128 50", "M112 50C112 45 128 45 128 50C128 55 112 55 112 50 M88 291C103 282 137 282 153 290", "M98 154C87 190 86 244 98 270 M143 158C153 194 150 247 141 276"] : piece.form === "cup" ? ["M60 139C58 177 65 235 76 267C92 284 143 284 157 267C169 230 171 180 167 139", "M60 139C60 125 168 125 167 139C165 154 61 153 60 139 M76 267C96 260 136 261 157 267", "M169 156C220 145 220 236 163 229 M173 171C200 169 204 215 168 214", "M73 165C70 196 77 231 82 250 M153 165C155 196 150 233 145 253"] : ["M29 161C36 203 57 250 82 271C103 283 137 283 158 270C184 250 206 203 212 161", "M29 161C29 143 212 143 212 161C212 183 29 182 29 161 M82 271C102 265 138 265 158 270", "M44 184C54 218 70 243 85 253 M196 184C186 219 170 242 154 254"];
+    fig.append(ceramicStudioSvg("0 0 240 330", paths)); const caption = ceramicStudioEl("figcaption"); caption.append(ceramicStudioEl("h2", piece.name), ceramicStudioLabel(piece.material)); fig.append(caption); collection.append(fig);
+  }); root.append(collection);
+  const ledger = ceramicStudioEl("section", "", "clay-ledger"); ledger.append(ceramicStudioLabel("Firing register / Edition 03"));
+  p.pieces.forEach((piece, i) => { const row = ceramicStudioEl("div"); row.append(ceramicStudioLabel(String(i + 1).padStart(2, "0")), ceramicStudioEl("p", piece.name), ceramicStudioEl("p", piece.edition)); ledger.append(row); }); root.append(ledger);
+  const process = ceramicStudioSection(ids.process!); process.setAttribute("data-pica-clay-process", ""); const statement = ceramicStudioEl("div"); statement.append(ceramicStudioLabel("A way of making"), ceramicStudioEl("h2", "Time is an ingredient.")); process.append(statement);
+  const stages = ceramicStudioEl("div"); p.process.forEach((step, i) => { const part = ceramicStudioEl("div"); part.append(ceramicStudioLabel(`0${i + 1} / ${step.title}`), ceramicStudioEl("p", step.text, "body")); stages.append(part); }); const detail = ceramicStudioEl("details"); detail.append(ceramicStudioEl("summary", "Living with your ceramics"), ceramicStudioEl("p", p.care)); stages.append(detail); process.append(stages); root.append(process);
+  const footer = ceramicStudioEl("footer", "", "footer"); footer.id = ids.contact!; footer.append(ceramicStudioEl("h2", "Make a little room for handmade."), ceramicStudioEl("p", p.contact)); root.append(footer);
+
+}
+
+export const mount: Mount<CeramicStudioProps> = (host, initial = {}) => {
+  let props = { ...defaults, ...initial };
+  const attrs = hostAttributes(host);
+  attrs.set("data-pica-id", host.getAttribute("data-pica-id"));
+  attrs.set("role", "region");
+  attrs.set("aria-label", props.label);
+  const sheet = scope(host);
+  const root = ceramicStudioEl("div", "", "page");
+  host.append(root);
+  const ids: Record<string, string> = { collection: nextId("ceramic-studio-collection"), process: nextId("ceramic-studio-process"), contact: nextId("ceramic-studio-contact") };
+  sheet.setRules(ceramicStudioRules(sheet.selector));
+  ceramicStudioRender(root, props, ids);
+  attrs.set("data-pica-ready", "true");
+  let destroyed = false;
+  return {
+    update(next) {
+      if (destroyed) return;
+      const before = props;
+      props = { ...props, ...next };
+      if (sameJson(before, props)) return;
+      attrs.set("aria-label", props.label);
+      ceramicStudioRender(root, props, ids);
+    },
+    destroy() {
+      if (destroyed) return;
+      destroyed = true;
+      root.remove();
+      sheet.destroy();
+      attrs.restore();
+    },
+  };
+};

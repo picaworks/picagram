@@ -1,0 +1,313 @@
+<!doctype html>
+<!--
+  Pica · Cinemateque Program · cinemateque-program
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en" data-stage="flow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Cinemateque Program · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaCinematequeProgram = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/sections/cinemateque-program/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/font.ts
+  var GRID_FONT = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace';
+
+  // lib/host.ts
+  function nextSerial() {
+    const g = globalThis;
+    g.__picaSerial = (g.__picaSerial ?? 0) + 1;
+    return g.__picaSerial;
+  }
+  function nextId(prefix) {
+    return `${prefix}-${nextSerial()}`;
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function scope(host) {
+    const id = String(nextSerial());
+    host.setAttribute("data-pica-id", id);
+    const style = document.createElement("style");
+    style.setAttribute("data-pica", "");
+    host.append(style);
+    return {
+      selector: `[data-pica-id="${id}"]`,
+      setRules(css) {
+        style.textContent = css;
+      },
+      destroy() {
+        style.remove();
+        host.removeAttribute("data-pica-id");
+      }
+    };
+  }
+
+  // lib/json.ts
+  function sameJson(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    const left = a;
+    const right = b;
+    const keys = Object.keys(left);
+    if (keys.length !== Object.keys(right).length) return false;
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(right, key) || !sameJson(left[key], right[key])) return false;
+    }
+    return true;
+  }
+
+  // lib/palette.ts
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+
+  // registry/sections/cinemateque-program/core.ts
+  var defaults = {
+    title: "The city after dark",
+    cinema: "North Screen / Cinematheque",
+    date: "NOV 06—09",
+    introduction: "Four nights of streets, strangers, and the spaces in between. A repertory program about the city as both a stage and a state of mind.",
+    films: [
+      { when: "THU 06 / 19:00", title: "Night on the tram", credit: "Mira Orlov · 1962 · 92 min · 35 mm", note: "A last tram crosses a sleeping city. Introduced by curator Ada Vale." },
+      { when: "FRI 07 / 20:30", title: "Windows facing west", credit: "Lucien Morel · 1974 · 108 min · 16 mm", note: "Three apartments, one summer evening. A newly restored print." },
+      { when: "SAT 08 / 18:00", title: "Under the railway", credit: "Emi Tanaka · 1988 · 84 min · DCP", note: "A tender portrait of the people who keep the night running." },
+      { when: "SUN 09 / 16:00", title: "The morning returns", credit: "Jonas Reed · 1997 · 101 min · 35 mm", note: "The closing screening is followed by a conversation in the foyer." }
+    ]
+  };
+  function cinemaNode(tag, part, text = "") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    if (part) el.setAttribute("data-pica-part", part);
+    el.textContent = text;
+    return el;
+  }
+  function cinemaLink(label, target) {
+    const a = cinemaNode("a", "", label);
+    a.href = `#${target}`;
+    return a;
+  }
+  function cinemaRules(s) {
+    const fg = cssVar("fg");
+    const bg = cssVar("bg");
+    const muted = cssVar("muted");
+    const accent = cssVar("accent");
+    return `
+${s}{box-sizing:border-box;color:${fg};background:${bg}}
+${s} [data-pica-page]{max-width:1200px;margin:auto;padding:clamp(20px,4vw,54px);font-size:16px;line-height:1.55}
+${s} [data-pica-page] *{box-sizing:border-box;min-width:0}
+${s} h1,${s} h2,${s} h3,${s} p,${s} figure,${s} dl,${s} dd{margin:0}
+${s} h1{font:inherit;font-size:clamp(42px,6vw,80px);line-height:.98;letter-spacing:-.055em;font-weight:500}
+${s} h2{font:inherit;font-size:clamp(25px,3vw,38px);line-height:1.1;letter-spacing:-.035em;font-weight:500}
+${s} h3{font:inherit;font-size:22px;line-height:1.2;letter-spacing:-.02em;font-weight:500}
+${s} [data-pica-part="label"]{font-family:${GRID_FONT};font-size:11px;line-height:1.5;letter-spacing:.08em;text-transform:uppercase}
+${s} [data-pica-part="muted"]{color:${muted}}
+${s} [data-pica-part="top"]{display:flex;justify-content:space-between;align-items:center;gap:18px;border-bottom:1px solid ${fg};padding-bottom:15px}
+${s} nav{display:flex;gap:22px;flex-wrap:wrap}
+${s} a{color:inherit;text-decoration-thickness:1px;text-underline-offset:4px;font-family:${GRID_FONT};font-size:11px;letter-spacing:.04em}
+${s} a:focus-visible,${s} summary:focus-visible{outline:2px solid ${accent};outline-offset:4px}
+${s} [data-pica-part="footer"]{display:flex;justify-content:space-between;gap:20px;margin-top:44px;border-top:1px solid ${fg};padding-top:18px;font-size:12px}
+${s} svg{display:block;width:100%;height:auto;fill:none;stroke:currentColor;stroke-width:1.4}
+${s} [data-pica-part="solid"]{fill:currentColor;stroke:none}
+${s} [data-pica-part="accent"]{color:${accent}}
+${s} [data-pica-part="rule"]{height:1px;background:${fg}}
+@media(max-width:600px){${s} [data-pica-part="top"]{align-items:flex-start;flex-direction:column;gap:12px}${s} nav{gap:17px}${s} [data-pica-part="footer"]{flex-direction:column;gap:8px}${s} [data-pica-page]{font-size:15px}}
+
+${s} [data-pica-part="opening"]{display:grid;grid-template-columns:1fr 2.1fr;gap:42px;padding:40px 0 45px}
+${s} [data-pica-part="issue"]{border-right:1px solid ${fg};padding-right:30px;display:flex;flex-direction:column;justify-content:space-between;gap:24px}
+${s} [data-pica-part="date"]{font-family:${GRID_FONT};font-size:clamp(40px,5vw,68px);font-weight:500;line-height:.95;letter-spacing:-.08em;max-width:6ch;overflow-wrap:normal;color:${fg};border-bottom:3px solid ${accent};padding-bottom:15px}
+${s} [data-pica-part="month"]{display:block;font-size:22px;line-height:1.4;letter-spacing:.04em;margin-bottom:8px}
+${s} [data-pica-part="days"]{white-space:nowrap}
+${s} [data-pica-part="statement"]{max-width:38rem;margin-top:25px;font-size:18px;line-height:1.55}
+${s} [data-pica-part="section-title"]{border-top:1px solid ${fg};padding:18px 0;font-family:${GRID_FONT};font-size:12px;letter-spacing:.05em;text-transform:uppercase}
+${s} [data-pica-part="program"]{display:grid;grid-template-columns:1.25fr .75fr 1fr 1fr;border-top:1px solid ${fg};border-bottom:1px solid ${fg}}
+${s} [data-pica-part="film"]{padding:22px 20px 30px 0;display:flex;flex-direction:column;gap:14px}
+${s} [data-pica-part="film"]+[data-pica-part="film"]{border-left:1px solid ${fg};padding-left:20px}
+${s} [data-pica-part="strip"]{font-family:${GRID_FONT};font-size:20px;height:62px;overflow:hidden;display:flex;align-items:center;letter-spacing:4px;color:${muted};border-top:1px solid ${muted};border-bottom:1px solid ${muted}}
+${s} [data-pica-part="film"]:nth-child(2) [data-pica-part="strip"]{height:92px}
+${s} [data-pica-part="film"]:nth-child(3) [data-pica-part="strip"]{height:44px}
+${s} [data-pica-part="credit"]{font-family:${GRID_FONT};font-size:11px;line-height:1.6;color:${muted}}
+${s} [data-pica-part="film-note"]{font-size:14px;line-height:1.6}
+${s} [data-pica-part="visit"]{display:grid;grid-template-columns:1.25fr 1fr;gap:80px;padding-top:36px}
+${s} [data-pica-part="notes"],${s} [data-pica-part="access"]{display:grid;align-content:start;gap:14px}
+${s} [data-pica-part="access"]{font-size:14px;border-left:1px solid ${muted};padding-left:26px}
+@media(max-width:900px){${s} [data-pica-part="program"]{grid-template-columns:1fr 1fr}${s} [data-pica-part="film"]:nth-child(3){border-left:0;padding-left:0;border-top:1px solid ${fg}}${s} [data-pica-part="film"]:nth-child(4){border-top:1px solid ${fg}}${s} [data-pica-part="visit"]{gap:35px}}
+@media(max-width:600px){${s} [data-pica-part="opening"]{grid-template-columns:1fr;gap:25px;padding:26px 0}${s} [data-pica-part="issue"]{border-right:0;flex-direction:row;align-items:flex-start;padding:0;gap:15px}${s} [data-pica-part="issue"]>span{max-width:9ch}${s} [data-pica-part="issue"]>p{display:none}${s} [data-pica-part="date"]{max-width:none;font-size:38px;letter-spacing:-.08em}${s} [data-pica-part="month"]{font-size:16px;margin-bottom:4px}${s} [data-pica-part="program"]{grid-template-columns:1fr}${s} [data-pica-part="film"]+[data-pica-part="film"]{border-left:0;padding-left:0;border-top:1px solid ${fg}}${s} [data-pica-part="strip"]{height:45px!important}${s} [data-pica-part="visit"]{grid-template-columns:1fr;gap:25px}${s} [data-pica-part="access"]{padding-left:0;border-left:0;border-top:1px solid ${muted};padding-top:20px}}
+`;
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const attributes = hostAttributes(host);
+    const container = cinemaNode("div", "");
+    host.append(container);
+    const sheet = scope(container);
+    const page = cinemaNode("article", "");
+    page.setAttribute("data-pica-page", "");
+    container.append(page);
+    const id = nextId("pica-cinemateque-program");
+    sheet.setRules(cinemaRules(sheet.selector));
+    let destroyed = false;
+    const render = () => {
+      attributes.set("aria-hidden", "false");
+      attributes.set("role", "region");
+      attributes.set("aria-label", props.title);
+      page.replaceChildren();
+      const top = cinemaNode("header", "top");
+      top.append(cinemaNode("span", "label", props.cinema));
+      const nav = cinemaNode("nav", "");
+      nav.setAttribute("aria-label", "Program sections");
+      nav.append(cinemaLink("01 / Screenings", `${id}-screenings`), cinemaLink("02 / Visiting", `${id}-visit`));
+      top.append(nav);
+      const opening = cinemaNode("div", "opening");
+      const issue = cinemaNode("div", "issue");
+      const date = cinemaNode("div", "date");
+      const dateParts = props.date.trim().split(/\s+/);
+      if (dateParts.length > 1) {
+        date.append(cinemaNode("span", "month", `${dateParts.shift() ?? ""} `), cinemaNode("span", "days", dateParts.join(" ")));
+      } else date.textContent = props.date;
+      issue.append(cinemaNode("span", "label", "PROGRAM 041 / REPERTORY"), date, cinemaNode("p", "label", "One screen. Shared attention."));
+      const intro = cinemaNode("div", "intro");
+      intro.append(cinemaNode("h1", "", props.title), cinemaNode("p", "statement", props.introduction));
+      opening.append(issue, intro);
+      const screenings = cinemaNode("section", "screenings");
+      screenings.id = `${id}-screenings`;
+      screenings.append(cinemaNode("h2", "section-title", "On the screen"));
+      const program = cinemaNode("div", "program");
+      for (const [i, film] of props.films.entries()) {
+        const screening = cinemaNode("article", "film");
+        screening.append(cinemaNode("span", "label", `${String(i + 1).padStart(2, "0")}  /  ${film.when}`));
+        const strip = cinemaNode("div", "strip");
+        strip.setAttribute("aria-hidden", "true");
+        strip.append(cinemaNode("span", "", "▥ ▥ ▥ ▥ ▥ ▥ ▥ ▥ ▥ ▥ ▥ ▥"));
+        screening.append(strip, cinemaNode("h3", "", film.title), cinemaNode("p", "credit", film.credit), cinemaNode("p", "film-note", film.note));
+        program.append(screening);
+      }
+      screenings.append(program);
+      const visit = cinemaNode("section", "visit");
+      visit.id = `${id}-visit`;
+      const notes = cinemaNode("div", "notes");
+      notes.append(cinemaNode("span", "label", "A note on projection"), cinemaNode("h2", "", "Seen together, in the dark."), cinemaNode("p", "", "Each print has its own grain, rhythm, and history. The lights come down at the listed time; arrive fifteen minutes early to find your seat."));
+      const access = cinemaNode("div", "access");
+      access.append(cinemaNode("span", "label", "Plan your evening"), cinemaNode("p", "", "Box office opens 45 minutes before each screening. All films include English subtitles. Step-free entry is available from the courtyard."), cinemaNode("p", "muted", "12 Mercer Lane · 86 seats · Hearing loop in rows A–D"));
+      visit.append(notes, access);
+      const footer = cinemaNode("footer", "footer");
+      footer.append(cinemaNode("span", "label", "Independent cinema / shared attention"), cinemaLink("Back to screenings ↑", `${id}-screenings`));
+      page.append(top, opening, screenings, visit, footer);
+      attributes.set("data-pica-ready", "true");
+    };
+    render();
+    return {
+      update(next) {
+        if (destroyed) return;
+        const before = props;
+        props = { ...props, ...next };
+        if (!sameJson(before, props)) render();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        container.remove();
+        sheet.destroy();
+        attributes.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaCinematequeProgram.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

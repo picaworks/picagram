@@ -103,6 +103,8 @@ export interface Meta {
   facets: readonly Facet[];
   /** The generation wave that produced it, for the review sheet. */
   wave: number;
+  /** Stable release batch, used by the catalog's explicit review batch filters. */
+  release?: string;
   animated: boolean;
   /** Decorative components are aria-hidden, unless they wrap content. Others label themselves from a prop. */
   decorative: boolean;

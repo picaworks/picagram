@@ -1,0 +1,118 @@
+[
+  {
+    "id": "fraunces",
+    "family": "Fraunces",
+    "file": "fraunces.woff2",
+    "axes": {
+      "SOFT": [
+        0.0,
+        100.0
+      ],
+      "WONK": [
+        0.0,
+        1.0
+      ],
+      "opsz": [
+        9.0,
+        144.0
+      ],
+      "wght": [
+        100.0,
+        900.0
+      ]
+    },
+    "license": "SIL Open Font License 1.1",
+    "source": "https://github.com/google/fonts/tree/main/ofl/fraunces",
+    "bytes": 168372,
+    "sourceSha256": "177ff6c0f14e5550a3c624247cd1189611d4eb65d000b14944c63d967958abbb",
+    "sha256": "59bc2eb213930cc2f66b44ad63ec2c215a7eb90e44eaebb9f6cbacd3873e9703"
+  },
+  {
+    "id": "newsreader",
+    "family": "Newsreader",
+    "file": "newsreader.woff2",
+    "axes": {
+      "opsz": [
+        6.0,
+        72.0
+      ],
+      "wght": [
+        200.0,
+        800.0
+      ]
+    },
+    "license": "SIL Open Font License 1.1",
+    "source": "https://github.com/google/fonts/tree/main/ofl/newsreader",
+    "bytes": 187936,
+    "sourceSha256": "8a08d13f8a6c0d51be379a60af84f945f65369a67e509ee3c3bdcc421254d7c1",
+    "sha256": "7b4d6720c437b39a458812a8be531827113b228027dcd2a17c14d8438b3c90e5"
+  },
+  {
+    "id": "cormorantgaramond",
+    "family": "Cormorant Garamond",
+    "file": "cormorantgaramond.woff2",
+    "axes": {
+      "wght": [
+        300.0,
+        700.0
+      ]
+    },
+    "license": "SIL Open Font License 1.1",
+    "source": "https://github.com/google/fonts/tree/main/ofl/cormorantgaramond",
+    "bytes": 103592,
+    "sourceSha256": "b20b7d9626dd956b2c5e558692ad328b1f19e3275e2782db4fa07670d83f35e0",
+    "sha256": "12d8c88537a08fde5aadc79833620d4952486be386c7b4952f61ad8799953854"
+  },
+  {
+    "id": "publicsans",
+    "family": "Public Sans",
+    "file": "publicsans.woff2",
+    "axes": {
+      "wght": [
+        100.0,
+        900.0
+      ]
+    },
+    "license": "SIL Open Font License 1.1",
+    "source": "https://github.com/google/fonts/tree/main/ofl/publicsans",
+    "bytes": 33228,
+    "sourceSha256": "d75a7dc1a27eb9e336d5b33f55489d2ecb5621bf694d5c43b2415bce2ca830a8",
+    "sha256": "4ea76bf09391613b214d127ea3cd20ccb7d66583cbdf2b2bd75313aa1fc6a13d"
+  },
+  {
+    "id": "spacegrotesk",
+    "family": "Space Grotesk",
+    "file": "spacegrotesk.woff2",
+    "axes": {
+      "wght": [
+        300.0,
+        700.0
+      ]
+    },
+    "license": "SIL Open Font License 1.1",
+    "source": "https://github.com/google/fonts/tree/main/ofl/spacegrotesk",
+    "bytes": 38588,
+    "sourceSha256": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72",
+    "sha256": "81e4f9243334312d1a411295880c4bca340a99d2399273c0e4767e32dbfbd2c5"
+  },
+  {
+    "id": "anybody",
+    "family": "Anybody",
+    "file": "anybody.woff2",
+    "axes": {
+      "wdth": [
+        50.0,
+        150.0
+      ],
+      "wght": [
+        100.0,
+        900.0
+      ]
+    },
+    "license": "SIL Open Font License 1.1",
+    "source": "https://github.com/google/fonts/tree/main/ofl/anybody",
+    "bytes": 73648,
+    "sourceSha256": "b184bd7e6ca8348bbaecec98951565729d7e89b7872d4898a1f9981342b5b64c",
+    "sha256": "4a80f0d6005979900f5a572cfa2599365a3c723b2d89f5e19685c90d759a0b33"
+  }
+]
