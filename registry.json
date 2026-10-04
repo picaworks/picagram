@@ -184,6 +184,26 @@
       }
     },
     {
+      "name": "ascii-fretboard",
+      "type": "registry:component",
+      "title": "ASCII Fretboard",
+      "description": "A monospace fretboard maps MIDI string tuning and root-relative scale intervals to real pitches, marking roots with brackets.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-fretboard.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-garden-plan",
       "type": "registry:component",
       "title": "Garden Plan",
@@ -276,6 +296,26 @@
       "files": [
         {
           "path": "public/react/ascii-library-catalog.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-lissajous-scope",
+      "type": "registry:component",
+      "title": "ASCII Lissajous Scope",
+      "description": "Two oscillator harmonics form a measured glyph trace with equal amplitude scales, a fading persistence trail, and labeled X-phase landmarks.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-lissajous-scope.tsx",
           "type": "registry:component"
         }
       ],
@@ -384,6 +424,26 @@
       "files": [
         {
           "path": "public/react/ascii-packet-route.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-piano-roll",
+      "type": "registry:component",
+      "title": "ASCII Piano Roll",
+      "description": "Supplied notes align by pitch and beat on a monospace grid, with duration-sized bars and accessible controlled selection.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-piano-roll.tsx",
           "type": "registry:component"
         }
       ],
@@ -661,6 +721,26 @@
       }
     },
     {
+      "name": "ascii-tree-rings",
+      "type": "registry:component",
+      "title": "ASCII Tree Rings",
+      "description": "Annual growth values determine the spacing of nested, irregular ASCII tree rings, with a selected year's band accented.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-tree-rings.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-video",
       "type": "registry:component",
       "title": "ASCII Video",
@@ -693,6 +773,26 @@
             "license": "MIT"
           }
         ]
+      }
+    },
+    {
+      "name": "ascii-wave-tank",
+      "type": "registry:component",
+      "title": "ASCII Wave Tank",
+      "description": "A bounded shallow-water simulation uses measured ASCII density as timed impulses reflect from tank walls and supplied solid barriers.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-wave-tank.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -882,6 +982,46 @@
       }
     },
     {
+      "name": "chord-diagram",
+      "type": "registry:component",
+      "title": "Chord Diagram",
+      "description": "A directed relationship matrix becomes a ring of proportional ribbons with direct endpoint labels, group selection, and an accessible numeric matrix.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/chord-diagram.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "dendrogram",
+      "type": "registry:component",
+      "title": "Dendrogram",
+      "description": "Merge distances set branch lengths in a selectable hierarchy with aligned leaves, horizontal or vertical layouts, and SVG or glyph rendering.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/dendrogram.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "donut-chart",
       "type": "registry:component",
       "title": "Donut Chart",
@@ -892,6 +1032,26 @@
       "files": [
         {
           "path": "public/react/donut-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "fan-chart",
+      "type": "registry:component",
+      "title": "Fan Chart",
+      "description": "A central series and supplied uncertainty bounds form nested forecast envelopes in SVG or measured glyph density, with an accessible numeric table.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/fan-chart.tsx",
           "type": "registry:component"
         }
       ],
@@ -955,6 +1115,26 @@
             "license": "Paper"
           }
         ]
+      }
+    },
+    {
+      "name": "horizon-chart",
+      "type": "registry:component",
+      "title": "Horizon Chart",
+      "description": "Signed series fold into compact density bands with a shared magnitude scale, negative slash hatching, and an accessible sample table.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/horizon-chart.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -1046,6 +1226,26 @@
             "license": "Algorithm, no code"
           }
         ]
+      }
+    },
+    {
+      "name": "parallel-coordinate-plot",
+      "type": "registry:component",
+      "title": "Parallel Coordinate Plot",
+      "description": "Supplied records traverse normalized vertical axes with direct labels, selectable paths, missing-value gaps, and an accessible numeric table.",
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "public/react/parallel-coordinate-plot.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -1699,6 +1899,26 @@
       }
     },
     {
+      "name": "contour-wipe-image",
+      "type": "registry:component",
+      "title": "Contour Wipe Image",
+      "description": "A progress-controlled monochrome image reveal traverses ordered luminance bands, with a single accent contour tracing the active threshold.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/contour-wipe-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "cylinder-roll",
       "type": "registry:component",
       "title": "Cylinder Roll",
@@ -1749,6 +1969,26 @@
       "files": [
         {
           "path": "public/react/echo-arcs.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "edge-fold-image",
+      "type": "registry:component",
+      "title": "Edge Fold Image",
+      "description": "A monochrome image's edge rotates around a fixed crease, foreshortening its texture in perspective and exposing a controllable opening.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/edge-fold-image.tsx",
           "type": "registry:component"
         }
       ],
@@ -1940,6 +2180,26 @@
       "files": [
         {
           "path": "public/react/ink-erosion.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "lenticular-image",
+      "type": "registry:component",
+      "title": "Lenticular Image",
+      "description": "Two registered images share parallel lenticular strips, with viewing position revealing different source content through each strip.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/lenticular-image.tsx",
           "type": "registry:component"
         }
       ],
@@ -2158,6 +2418,46 @@
             "license": "Technique, no code read"
           }
         ]
+      }
+    },
+    {
+      "name": "pixel-weft-image",
+      "type": "registry:component",
+      "title": "Pixel Weft Image",
+      "description": "Registered image rows and columns enter from alternating edges and interlace at checkerboard over-and-under crossings.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-weft-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pressure-print-image",
+      "type": "registry:component",
+      "title": "Pressure Print Image",
+      "description": "A local circular contact field reveals an image as a monochrome print; increasing pressure expands its footprint and deposits denser ink.",
+      "categories": [
+        "effects"
+      ],
+      "files": [
+        {
+          "path": "public/react/pressure-print-image.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -2587,6 +2887,46 @@
       }
     },
     {
+      "name": "folded-atlas",
+      "type": "registry:component",
+      "title": "Folded Atlas",
+      "description": "Supplied polygon panels form a connected accordion atlas with projected hinges, accessible panel buttons, and independent selected content.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/folded-atlas.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "geodesic-shell",
+      "type": "registry:component",
+      "title": "Geodesic Shell",
+      "description": "A subdivided icosahedral dome maps supplied panel records to selectable facets, with camera controls and accessible panel buttons.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/geodesic-shell.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "globe",
       "type": "registry:component",
       "title": "Globe",
@@ -2680,6 +3020,46 @@
       "files": [
         {
           "path": "public/react/paper-theatre.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "perspective-maze",
+      "type": "registry:component",
+      "title": "Perspective Maze",
+      "description": "A supplied wall grid becomes a perspective viewport with collision-safe navigation, native controls, and a text-map fallback.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/perspective-maze.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "strata-stack",
+      "type": "registry:component",
+      "title": "Strata Stack",
+      "description": "Supplied geological thicknesses form an exploded stack with adjustable gaps, three views, and accessible layer selection.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/strata-stack.tsx",
           "type": "registry:component"
         }
       ],
@@ -2820,6 +3200,26 @@
       }
     },
     {
+      "name": "scroll-ruler",
+      "type": "registry:component",
+      "title": "Scroll Ruler",
+      "description": "A measured local scroll ruler shows position and extent, with pixel or percent ticks and pointer and keyboard seeking.",
+      "categories": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "public/react/scroll-ruler.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "split-flap-display",
       "type": "registry:component",
       "title": "Split-Flap Display",
@@ -2840,6 +3240,26 @@
       }
     },
     {
+      "name": "spring-trace",
+      "type": "registry:component",
+      "title": "Spring Trace",
+      "description": "A damped spring approaches its target along a glyph trace, with analytic overshoot, continuous retargeting, and automatic settling.",
+      "categories": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "public/react/spring-trace.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "brick-lattice",
       "type": "registry:component",
       "title": "Brick Lattice",
@@ -2850,6 +3270,26 @@
       "files": [
         {
           "path": "public/react/brick-lattice.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "cairo-pentagons",
+      "type": "registry:component",
+      "title": "Cairo Pentagons",
+      "description": "Exact interlocking Cairo pentagons form quiet one-pixel seams behind content, with adjustable scale, orientation, and opacity.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/cairo-pentagons.tsx",
           "type": "registry:component"
         }
       ],
@@ -2968,6 +3408,26 @@
       }
     },
     {
+      "name": "dragon-fold",
+      "type": "registry:component",
+      "title": "Dragon Fold",
+      "description": "A deterministic paper-fold sequence draws one connected angular dragon path in quiet ink behind page-owned content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/dragon-fold.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "grid-paper",
       "type": "registry:component",
       "title": "Grid Paper",
@@ -3073,6 +3533,26 @@
             "license": "Book"
           }
         ]
+      }
+    },
+    {
+      "name": "penrose-tiles",
+      "type": "registry:component",
+      "title": "Penrose Tiles",
+      "description": "Golden-ratio substitution forms a bounded patch of thin and thick Penrose rhombi, drawn quietly behind page-owned content.",
+      "categories": [
+        "patterns"
+      ],
+      "files": [
+        {
+          "path": "public/react/penrose-tiles.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -4863,6 +5343,26 @@
       }
     },
     {
+      "name": "shadow-lattice",
+      "type": "registry:component",
+      "title": "Shadow Lattice",
+      "description": "A slowly moving grazing light casts coherent, dithered shadows through shallow crossed ribs, with a palette-based CSS fallback.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/shadow-lattice.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "tunnel-grid",
       "type": "registry:component",
       "title": "Tunnel Grid",
@@ -5448,6 +5948,26 @@
             "license": "CC-BY-SA documentation"
           }
         ]
+      }
+    },
+    {
+      "name": "crop-window",
+      "type": "registry:component",
+      "title": "Crop Window",
+      "description": "Four pointer and keyboard edges constrain a normalized crop over child content, with optional pixel aspect ratio and coordinate events.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/crop-window.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -6109,6 +6629,26 @@
       "files": [
         {
           "path": "public/react/textarea.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "timecode-editor",
+      "type": "registry:component",
+      "title": "Timecode Editor",
+      "description": "Four native inputs edit non-drop hours, minutes, seconds, and frames with frame-rate-aware carrying and keyboard stepping.",
+      "categories": [
+        "ui"
+      ],
+      "files": [
+        {
+          "path": "public/react/timecode-editor.tsx",
           "type": "registry:component"
         }
       ],
