@@ -530,7 +530,46 @@
         "registry/immersive/strata-stack/core.ts"
       ],
       "fullNativeVerification": true,
-      "verificationCompletedUTC": "2026-10-04T21:13:13.939Z"
+      "verificationCompletedUTC": "2026-10-04T21:13:13.939Z",
+      "postCIRevision": {
+        "reason": "Retain the latest controlled layer request while a previous parent echo is pending.",
+        "fullNativeVerification": true,
+        "delayedParentBefore": {
+          "verifiedUTC": "2026-10-04T22:20:56.695Z",
+          "ok": false,
+          "expected": {
+            "requests": [
+              "shale",
+              "limestone"
+            ],
+            "selected": "limestone"
+          },
+          "actual": {
+            "requests": [
+              "shale"
+            ],
+            "selected": "shale"
+          }
+        },
+        "delayedParentAfter": {
+          "verifiedUTC": "2026-10-04T22:24:16.684Z",
+          "ok": true,
+          "expected": {
+            "requests": [
+              "shale",
+              "limestone"
+            ],
+            "selected": "limestone"
+          },
+          "actual": {
+            "requests": [
+              "shale",
+              "limestone"
+            ],
+            "selected": "limestone"
+          }
+        }
+      }
     },
     {
       "slug": "folded-atlas",
@@ -615,5 +654,88 @@
     "Capture birthtimes measure first saved ready/parity capture, not completion of every verifier check.",
     "Reported call counts use each author's command/tool-operation convention; one rejected patch-format attempt made no source mutation.",
     "Earlier native dispatch timestamps were missing; no controlled causal comparison with the prior workflow is claimed."
-  ]
+  ],
+  "coordinatorVerifierFollowup": {
+    "controlledEchoAcknowledgement": {
+      "preservedComponent": "archive-aisle",
+      "slowParentBefore": {
+        "verifiedUTC": "2026-10-04T22:20:41.940Z",
+        "parentEchoDelayMs": 200,
+        "ok": false,
+        "controlled": {
+          "name": "controlled value",
+          "ok": false,
+          "detail": "echoed 11.194% of pixels off uncontrolled; ignored moved 0.000% of pixels"
+        },
+        "checks": [
+          {
+            "name": "interaction 1",
+            "ok": true,
+            "detail": "8 steps and 2 events, the same in both shapes"
+          },
+          {
+            "name": "interaction 2",
+            "ok": true,
+            "detail": "11 steps and 3 events, the same in both shapes"
+          },
+          {
+            "name": "interaction 3",
+            "ok": true,
+            "detail": "6 steps and 1 events, the same in both shapes"
+          },
+          {
+            "name": "hover changes the picture",
+            "ok": true,
+            "detail": "2 hovers, the smallest 95.030% of pixels of its box"
+          },
+          {
+            "name": "controlled value",
+            "ok": false,
+            "detail": "echoed 11.194% of pixels off uncontrolled; ignored moved 0.000% of pixels"
+          }
+        ],
+        "errors": []
+      },
+      "slowParentAfter": {
+        "verifiedUTC": "2026-10-04T22:21:55.715Z",
+        "parentEchoDelayMs": 200,
+        "ok": true,
+        "controlled": {
+          "name": "controlled value",
+          "ok": true,
+          "detail": "echoed ends like uncontrolled; ignored stays put"
+        },
+        "checks": [
+          {
+            "name": "interaction 1",
+            "ok": true,
+            "detail": "8 steps and 2 events, the same in both shapes"
+          },
+          {
+            "name": "interaction 2",
+            "ok": true,
+            "detail": "11 steps and 3 events, the same in both shapes"
+          },
+          {
+            "name": "interaction 3",
+            "ok": true,
+            "detail": "6 steps and 1 events, the same in both shapes"
+          },
+          {
+            "name": "hover changes the picture",
+            "ok": true,
+            "detail": "2 hovers, the smallest 95.030% of pixels of its box"
+          },
+          {
+            "name": "controlled value",
+            "ok": true,
+            "detail": "echoed ends like uncontrolled; ignored stays put"
+          }
+        ],
+        "errors": []
+      },
+      "assertionsPreserved": true,
+      "componentSourceUnchanged": true
+    }
+  }
 }

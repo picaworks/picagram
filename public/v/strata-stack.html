@@ -371,7 +371,7 @@ var PicaStrataStack = (() => {
       }
     }
     function choose(id) {
-      if (!records.some((record) => record.id === id) || id === selected()) return;
+      if (!records.some((record) => record.id === id) || props.value === null && id === selected()) return;
       if (props.value === null) current = id;
       describe();
       draw();

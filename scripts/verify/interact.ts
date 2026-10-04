@@ -7,7 +7,7 @@ import type { BrowserContext, Page } from "@playwright/test";
 import { sameJson } from "../../lib/json";
 import type { Step } from "../../lib/meta";
 import { PARITY_TOLERANCE } from "../config";
-import { AXE_TAGS, changedRatio, clipOf, diffRatio, open, percent, readLog, READY, type OpenOptions } from "./page";
+import { AXE_TAGS, changedRatio, clipOf, diffRatio, open, percent, readLog, READY, type LogEntry, type OpenOptions } from "./page";
 import type { Ctx } from "./types";
 
 type Reported = { name: string; detail: unknown }[];
@@ -111,6 +111,14 @@ async function drive(ctx: Ctx, context: BrowserContext, options: OpenOptions, st
   const start = await page.screenshot();
   for (const step of steps) {
     await perform(page, step);
+    if (options.echo?.mode === "echo") {
+      // The next input must see the value the controlled test parent has echoed through React effects.
+      await page.waitForFunction(({ event }) => {
+        const w = window as unknown as { PICA_LOG: LogEntry[]; PICA_ECHO_APPLIED?: unknown };
+        const last = w.PICA_LOG.filter((entry) => entry.via === "react" && entry.name === event).at(-1);
+        return !last || JSON.stringify(w.PICA_ECHO_APPLIED) === JSON.stringify(last.detail);
+      }, { event: options.echo.event });
+    }
     await page.waitForTimeout(40);
   }
   await page.waitForTimeout(150);

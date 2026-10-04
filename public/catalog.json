@@ -18825,11 +18825,11 @@
     },
     "events": {
       "valueChange": {
-        "doc": "ID of the supplied geological layer requested by pointer or keyboard input.",
+        "doc": "Layer ID requested by pointer or keyboard input, including repeated controlled selections.",
         "detail": "string"
       }
     },
-    "gzipBytes": 4857
+    "gzipBytes": 4860
   },
   {
     "slug": "terrain-field",

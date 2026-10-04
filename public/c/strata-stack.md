@@ -29,7 +29,7 @@ Each event is a CustomEvent on the host named `pica:` plus the event name in low
 
 | Event | React prop | Detail | Description |
 |---|---|---|---|
-| `valueChange` | `onValueChange` | `string` | ID of the supplied geological layer requested by pointer or keyboard input. |
+| `valueChange` | `onValueChange` | `string` | Layer ID requested by pointer or keyboard input, including repeated controlled selections. |
 
 ## Colors
 
@@ -588,7 +588,7 @@ export interface StrataStackProps {
 }
 
 export interface StrataStackEvents {
-  /** ID of the supplied geological layer requested by pointer or keyboard input. */
+  /** Layer ID requested by pointer or keyboard input, including repeated controlled selections. */
   valueChange: string;
 }
 
@@ -705,7 +705,8 @@ export const mount: Mount<StrataStackProps> = (host, initial = {}) => {
   }
 
   function choose(id: string): void {
-    if (!records.some((record) => record.id === id) || id === selected()) return;
+    // Preserve a request that cancels a previous input still pending in a controlled parent.
+    if (!records.some((record) => record.id === id) || (props.value === null && id === selected())) return;
     if (props.value === null) current = id;
     describe();
     draw();
@@ -1290,7 +1291,7 @@ var PicaStrataStack = (() => {
       }
     }
     function choose(id) {
-      if (!records.some((record) => record.id === id) || id === selected()) return;
+      if (!records.some((record) => record.id === id) || props.value === null && id === selected()) return;
       if (props.value === null) current = id;
       describe();
       draw();

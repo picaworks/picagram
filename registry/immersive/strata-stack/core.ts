@@ -31,7 +31,7 @@ export interface StrataStackProps {
 }
 
 export interface StrataStackEvents {
-  /** ID of the supplied geological layer requested by pointer or keyboard input. */
+  /** Layer ID requested by pointer or keyboard input, including repeated controlled selections. */
   valueChange: string;
 }
 
@@ -148,7 +148,8 @@ export const mount: Mount<StrataStackProps> = (host, initial = {}) => {
   }
 
   function choose(id: string): void {
-    if (!records.some((record) => record.id === id) || id === selected()) return;
+    // Preserve a request that cancels a previous input still pending in a controlled parent.
+    if (!records.some((record) => record.id === id) || (props.value === null && id === selected())) return;
     if (props.value === null) current = id;
     describe();
     draw();
