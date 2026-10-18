@@ -8,6 +8,7 @@ export const meta: Meta = {
   tags: ["hero", "cyberpunk", "terminal", "scanlines", "glitch", "section", "cta", "landing"],
   facets: ["animated", "text", "overlay"],
   wave: 9,
+  archived: true,
   animated: true,
   decorative: false,
   wraps: "content",

@@ -2,7 +2,7 @@
  *  Chromium's fake camera. */
 import { PNG } from "pngjs";
 import { takesImage } from "../catalog";
-import { inkRatio, message, open, percent } from "./page";
+import { diffRatio, inkRatio, message, open, percent, settle } from "./page";
 import type { Ctx } from "./types";
 
 let fixture = "";
@@ -41,6 +41,19 @@ async function attempt(ctx: Ctx, name: string, props: Record<string, unknown>): 
 
 export async function fixtures(ctx: Ctx): Promise<void> {
   const { defaults } = ctx.entry;
+  if (typeof defaults.preRoll === "number") {
+    const context = await ctx.context();
+    try {
+      const page = await open(context, ctx.url("vanilla"), { props: { ...ctx.base, time: 0, preRoll: defaults.preRoll } }, ctx.errors);
+      const opening = await page.screenshot();
+      await page.evaluate((time) => window.postMessage({ type: "pica:props", props: { time, preRoll: 0 } }, "*"), defaults.preRoll);
+      await settle(page);
+      const difference = diffRatio(opening, await page.screenshot());
+      ctx.checks.push({ name: "pre-roll matches explicit seek", ok: difference === 0, detail: `${percent(difference)} differ after updating to a zero-opening seek` });
+    } finally {
+      await context.close();
+    }
+  }
   if (takesImage(ctx.entry)) await attempt(ctx, "renders a real image", { ...ctx.base, src: image() });
   if (typeof defaults.webcam === "boolean") await attempt(ctx, "renders the camera", { ...ctx.base, webcam: true });
 }

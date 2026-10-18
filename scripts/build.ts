@@ -42,9 +42,11 @@ export async function generate(): Promise<Artifact[]> {
     );
   }
   if (over.length > 0) throw new Error(`Over the byte budget for their category: ${over.join(", ")}`);
-  const twins = files.filter((f) => f.path.startsWith("public/c/")).map((f) => f.content);
+  const active = new Set(entries.filter((entry) => !entry.meta.archived).map((entry) => `public/c/${entry.meta.slug}.md`));
+  const twins = files.filter((file) => active.has(file.path)).map((file) => file.content);
   files.push(
     { path: "registry.json", content: registryJson(entries) },
+    { path: "public/r/registry.json", content: registryJson(entries.filter((entry) => !entry.meta.archived)) },
     { path: "public/llms.txt", content: llmsTxt(entries) },
     { path: "public/llms-full.txt", content: twins.join("\n---\n\n").replace(/[ \t]+$/gm, "") },
     { path: "public/catalog.json", content: catalogJson(entries, sizes) },
@@ -97,6 +99,7 @@ function markdown(entry: Entry, react: string, html: string, bytes: number): str
     `# ${meta.title}`,
     "",
     `> ${meta.description}`,
+    ...(meta.archived ? ["", "Archived from default discovery. Existing files and installation URLs remain available."] : []),
     "",
     `Category: ${meta.category}. Tags: ${meta.tags.join(", ")}. ${motion} Size: ${(bytes / 1024).toFixed(1)} KB gzipped, runtime included. License: ${LICENSE_LABEL}, ${LICENSE_URL}.`,
     "",
@@ -108,6 +111,10 @@ function markdown(entry: Entry, react: string, html: string, bytes: number): str
     "",
     "Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.",
     "",
+    ...(meta.presets?.length ? [
+      "## Presets", "", "Use these JSON props in React or as window.PICA_PROPS in HTML. The catalog applies them before copying either format.", "",
+      ...meta.presets.flatMap((preset) => [`### ${preset.name}`, "", preset.description, "", "```json", JSON.stringify(preset.props, null, 2), "```", ""]),
+    ] : []),
     "## Props",
     "",
     "| Prop | Type | Default | Description |",
@@ -157,7 +164,7 @@ function byCategory(entries: readonly Entry[]): [Category, Entry[]][] {
 }
 
 function llmsTxt(entries: readonly Entry[]): string {
-  const sections = byCategory(entries).flatMap(([category, list]) => [
+  const sections = byCategory(entries.filter((entry) => !entry.meta.archived)).flatMap(([category, list]) => [
     `## ${CATEGORY_TITLES[category]}`,
     "",
     ...list.map((e) => `- [${e.meta.title}](${SITE_URL}/c/${e.meta.slug}.md): ${e.meta.description}`),
@@ -189,10 +196,10 @@ function registryJson(entries: readonly Entry[]): string {
       name: e.meta.slug,
       type: "registry:component",
       title: e.meta.title,
-      description: e.meta.description,
+      description: `${e.meta.archived ? "Archived. " : ""}${e.meta.description}`,
       categories: [e.meta.category],
       files: [{ path: `public/react/${e.meta.slug}.tsx`, type: "registry:component" }],
-      meta: { license: LICENSE_LABEL, licenseUrl: LICENSE_URL, credits: e.meta.credits },
+      meta: { license: LICENSE_LABEL, licenseUrl: LICENSE_URL, credits: e.meta.credits, ...(e.meta.archived ? { archived: true } : {}) },
     })),
   };
   return `${JSON.stringify(registry, null, 2)}\n`;
@@ -232,6 +239,10 @@ async function main(): Promise<void> {
     await writeFile(join(ROOT, file.path), file.content);
   }
   await run(join(ROOT, "node_modules", ".bin", "shadcn"), ["build", "--output", "public/r"], { cwd: ROOT });
+  // shadcn needs the full source manifest to keep legacy items installable, then the public index is curated.
+  const index = files.find((file) => file.path === "public/r/registry.json");
+  if (!index) throw new Error("Missing curated registry index");
+  await writeFile(join(ROOT, index.path), index.content);
   const count = files.filter((f) => f.path.startsWith("public/c/")).length;
   console.log(`Built ${count} components: public/r, public/v, public/c, llms.txt, catalog.json, CREDITS.md`);
 }

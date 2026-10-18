@@ -11,6 +11,7 @@ import {
   type Token,
 } from "@/lib/catalog";
 import { formatBytes } from "@/lib/props";
+import { sameJson } from "../../lib/json";
 import type { Json } from "../../lib/types";
 import { ORIGINAL_LABEL } from "../../scripts/config";
 import { CodeTabs } from "./CodeTabs";
@@ -35,6 +36,7 @@ interface InspectorProps {
   codeOverrides: Props;
   onChange: (name: string, value: PropValue) => void;
   onReset: () => void;
+  onPreset: (props: Readonly<Props>) => void;
   activeFacets: readonly Facet[];
   onToggleFacet: (facet: Facet) => void;
   /** A tag is not a filter: pressing one puts it in the search box. */
@@ -125,6 +127,7 @@ function Details({ p, item }: { p: InspectorProps; item: CatalogItem }) {
         </p>
         <h1 className="inspector-title">{item.title}</h1>
         <p className="inspector-desc">{item.description}</p>
+        {item.archived && <p className="inspector-note" role="status">Archived. Available here for existing links and installations.</p>}
         <dl className="inspector-meta">
           <dt>size</dt>
           <dd>{formatBytes(item.gzipBytes)} gzipped, runtime included</dd>
@@ -158,6 +161,21 @@ function Details({ p, item }: { p: InspectorProps; item: CatalogItem }) {
           </div>
         )}
       </header>
+
+      {item.presets && item.presets.length > 0 && (
+        <section className="inspector-section" aria-labelledby="presets-heading">
+          <h2 id="presets-heading" className="label">Presets</h2>
+          <p className="inspector-note">Choose a starting point, then adjust the controls.{typeof item.defaults.src === "string" ? " Your image is kept." : ""}</p>
+          {item.presets.map((preset) => (
+            <div key={preset.name} className="control">
+              <button type="button" className="chip" aria-pressed={Object.entries(preset.props).every(([name, value]) => sameJson(p.values[name], value))} onClick={() => p.onPreset(preset.props)}>
+                {preset.name}
+              </button>
+              <p className="control-hint">{preset.description}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
       <section className="inspector-section" aria-labelledby="controls-heading">
         <div className="section-head">

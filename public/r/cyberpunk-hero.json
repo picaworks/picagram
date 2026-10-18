@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "cyberpunk-hero",
   "title": "Cyberpunk Hero",
-  "description": "A hero that reads as a terminal held open too long, with scanlines over everything, a headline that tears in rare bursts, and readouts in the corners.",
+  "description": "Archived. A hero that reads as a terminal held open too long, with scanlines over everything, a headline that tears in rare bursts, and readouts in the corners.",
   "files": [
     {
       "path": "public/react/cyberpunk-hero.tsx",
@@ -13,7 +13,8 @@
   "meta": {
     "license": "MIT + Commons Clause",
     "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
-    "credits": []
+    "credits": [],
+    "archived": true
   },
   "categories": [
     "sections"

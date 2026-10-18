@@ -11,8 +11,13 @@ export const meta: Meta = {
   animated: true,
   decorative: true,
   palette: ["fg", "accent", "bg"],
+  presets: [
+    { name: "Quiet background", description: "Open contour bands with a gentle fold.", props: {"speed": 0.12, "scale": 1.2, "bands": 8, "thickness": 0.04, "warp": 0.3, "levels": 5, "pixel": 1} },
+    { name: "Wide current", description: "Broad, slow contours with more empty ground.", props: {"speed": 0.08, "scale": 0.8, "bands": 6, "thickness": 0.03, "warp": 0.15, "levels": 6, "pixel": 1} },
+    { name: "Fine contours", description: "More lines while keeping the strokes light.", props: {"speed": 0.12, "scale": 1.5, "bands": 14, "thickness": 0.04, "warp": 0.4, "levels": 5, "pixel": 1} },
+  ],
   controls: {
-    speed: { type: "number", min: 0, max: 1, step: 0.05 },
+    speed: { type: "number", min: 0, max: 1, step: 0.01, label: "Motion speed" },
     scale: { type: "number", min: 0.5, max: 4, step: 0.1 },
     bands: { type: "number", min: 4, max: 40, step: 1 },
     thickness: { type: "number", min: 0.02, max: 0.3, step: 0.01 },

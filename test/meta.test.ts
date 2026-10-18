@@ -44,6 +44,30 @@ describe.each(entries.map((e) => [e.meta.slug, e] as const))("%s", (_slug, entry
     expect(JSON.parse(JSON.stringify(defaults))).toEqual(defaults);
   });
 
+  it("presets contain named JSON settings for known props within their controls", () => {
+    const presets = meta.presets ?? [];
+    expect(new Set(presets.map((preset) => preset.name)).size).toBe(presets.length);
+    for (const preset of presets) {
+      expect(preset.name.trim().length).toBeGreaterThan(0);
+      expect(preset.description.trim().length).toBeGreaterThan(0);
+      expect(JSON.parse(JSON.stringify(preset.props))).toEqual(preset.props);
+      for (const [name, value] of Object.entries(preset.props)) {
+        expect(Object.hasOwn(defaults, name), `${preset.name}: unknown prop ${name}`).toBe(true);
+        const control = meta.controls[name];
+        if (control?.type === "number") {
+          expect(typeof value, `${preset.name}: ${name}`).toBe("number");
+          expect(value).toBeGreaterThanOrEqual(control.min);
+          expect(value).toBeLessThanOrEqual(control.max);
+        } else if (control?.type === "select") {
+          expect(control.options).toContain(value);
+        } else if (defaults[name] !== null) {
+          expect(typeof value, `${preset.name}: ${name}`).toBe(typeof defaults[name]);
+          expect(Array.isArray(value)).toBe(Array.isArray(defaults[name]));
+        }
+      }
+    }
+  });
+
   it("each control fits the kind of its default", () => {
     for (const [name, control] of Object.entries(meta.controls)) {
       const value = defaults[name];

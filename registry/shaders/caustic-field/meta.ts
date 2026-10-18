@@ -11,8 +11,13 @@ export const meta: Meta = {
   animated: true,
   decorative: true,
   palette: ["fg", "accent", "bg"],
+  presets: [
+    { name: "Pool light", description: "A broad, quiet net for an open surface.", props: {"speed": 0.1, "scale": 1.4, "waves": 4, "depth": 0.4, "sharpness": 0.9, "levels": 7, "pixel": 1} },
+    { name: "Soft background", description: "Fewer marks and slower motion behind content.", props: {"speed": 0.08, "scale": 1.1, "waves": 4, "depth": 0.3, "sharpness": 0.95, "levels": 8, "pixel": 1} },
+    { name: "Close ripples", description: "A denser view of fine water filaments.", props: {"speed": 0.14, "scale": 2, "waves": 4, "depth": 0.5, "sharpness": 0.85, "levels": 7, "pixel": 1} },
+  ],
   controls: {
-    speed: { type: "number", min: 0, max: 1, step: 0.05 },
+    speed: { type: "number", min: 0, max: 1, step: 0.01, label: "Motion speed" },
     scale: { type: "number", min: 0.5, max: 6, step: 0.1 },
     waves: { type: "number", min: 2, max: 5, step: 1 },
     depth: { type: "number", min: 0, max: 1, step: 0.05 },

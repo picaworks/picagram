@@ -518,13 +518,13 @@ float pica_bayer8(ivec2 p) {
 
   // registry/shaders/caustic-field/core.ts
   var defaults = {
-    speed: 0.15,
-    scale: 2,
-    waves: 3,
-    depth: 0.5,
-    sharpness: 0.7,
-    levels: 5,
-    pixel: 2,
+    speed: 0.1,
+    scale: 1.4,
+    waves: 4,
+    depth: 0.4,
+    sharpness: 0.9,
+    levels: 7,
+    pixel: 1,
     fps: 30,
     paused: false,
     time: null,
@@ -570,7 +570,7 @@ float pica_bayer8(ivec2 p) {
     float fil = (1.0 - smoothstep(w - 0.35, w + 0.35, abs(det) / grad)) * fold;
     float knot = smoothstep(0.4, 0.85, fil) * (1.0 - smoothstep(0.14, 0.73, gs));
     float inside = step(det, 0.0) * step(-det, grad * 6.0);
-    float tone = max(fil * 0.65, knot);
+    float tone = max(fil * 0.38, knot * 0.7);
     tone = max(tone, inside * 0.02);
     vec4 ink = mix(u_fg, u_accent, knot);
     pica_color = pica_tone(tone, ink, u_levels - 1.0);

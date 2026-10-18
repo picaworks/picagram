@@ -90,6 +90,13 @@ export interface Credit {
   license: string;
 }
 
+/** Named JSON settings offered before the detailed catalog controls. */
+export interface Preset {
+  name: string;
+  description: string;
+  props: Readonly<Record<string, Json>>;
+}
+
 export interface Meta {
   /** Matches the component's directory name. */
   slug: string;
@@ -105,6 +112,10 @@ export interface Meta {
   wave: number;
   /** Stable release batch, used by the catalog's explicit review batch filters. */
   release?: string;
+  /** Excluded from normal discovery; direct links and generated files remain available. */
+  archived?: boolean;
+  /** Named starting points. Applying a preset keeps supplied image data and accessible labels. */
+  presets?: readonly Preset[];
   animated: boolean;
   /** Decorative components are aria-hidden, unless they wrap content. Others label themselves from a prop. */
   decorative: boolean;

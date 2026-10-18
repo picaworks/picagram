@@ -342,7 +342,7 @@ Original to Picagram.
 
 ## Engraved Relief Image (`engraved-relief-image`)
 
-Original to Picagram.
+- Port of [Demo photograph: The Blue Marble from Apollo 17](https://svs.gsfc.nasa.gov/30613/) by NASA Johnson Space Center / Apollo 17 crew (NASA media usage guidelines).
 
 ## Falling Sutures (`falling-sutures`)
 

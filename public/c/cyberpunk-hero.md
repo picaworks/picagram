@@ -2,6 +2,8 @@
 
 > A hero that reads as a terminal held open too long, with scanlines over everything, a headline that tears in rare bursts, and readouts in the corners.
 
+Archived from default discovery. Existing files and installation URLs remain available.
+
 Category: sections. Tags: hero, cyberpunk, terminal, scanlines, glitch, section, cta, landing. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 6.2 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install

@@ -67,3 +67,9 @@ The name is Picagram (see `docs/decisions/0008-public-name.md`), and the wordmar
 ## Rules the stylesheet keeps
 
 Two grounds and six chrome tokens in `src/app/globals.css`. `--ink` and `--paper` stay what a component is captured on, and `--bg`, `--fg`, `--muted`, `--muted-2`, `--line`, and `--accent` dress the page, with a value per theme. One monospace stack with no web font, zero radius, no shadows, no gradients, and hairlines in `--line`. Every text tone clears 4.5:1 on its own ground in both themes and the focus ring clears 3:1, which `test/site.test.ts` checks by parsing this file: on paper the accent darkens to `#2C63B0`, because azure measures 3.29:1 there, and `--muted-2` colors no text in either theme. `prefers-reduced-motion` comes first in the file and turns off the page's one transition, the canvas easing into a zoom.
+
+## Curation and presets
+
+`meta.archived` removes an asset from ordinary browsing, including the canvas, but keeps it available when its slug is selected through a direct hash link. The inspector labels that view as archived. All generated installation files remain available. Agent discovery indexes omit archived assets; their individual markdown twins and registry entries identify their status.
+
+`meta.presets` supplies named JSON prop settings above detailed controls. A choice resets visual settings to defaults plus the preset, retains a supplied `src`, accessible `label`, and pause choice unless the preset explicitly replaces them, and uses the same live state as React and HTML exports. Metadata and per-component markdown both carry preset settings. Manual controls remain available after a preset is applied.

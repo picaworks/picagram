@@ -2,7 +2,7 @@
 
 > A bounded shallow-water simulation uses measured ASCII density as timed impulses reflect from tank walls and supplied solid barriers.
 
-Category: ascii. Tags: waves, water, simulation, obstacles, reflections. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.7 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
+Category: ascii. Tags: waves, water, simulation, obstacles, reflections. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 5.8 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
@@ -12,13 +12,110 @@ npx shadcn@latest add https://picagram.dev/r/ascii-wave-tank.json
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
 
+## Presets
+
+Use these JSON props in React or as window.PICA_PROPS in HTML. The catalog applies them before copying either format.
+
+### Reflections
+
+Developed waves reflecting around one slender barrier.
+
+```json
+{
+  "preRoll": 1200,
+  "obstacles": [
+    {
+      "x": 0.55,
+      "y": 0.36,
+      "width": 0.025,
+      "height": 0.28
+    }
+  ],
+  "impulses": [
+    {
+      "x": 0.25,
+      "y": 0.42,
+      "amplitude": 1,
+      "radius": 0.035,
+      "time": 0,
+      "repeat": 3200
+    },
+    {
+      "x": 0.76,
+      "y": 0.62,
+      "amplitude": -0.85,
+      "radius": 0.03,
+      "time": 450,
+      "repeat": 3900
+    }
+  ],
+  "damping": 0.4,
+  "speed": 0.26
+}
+```
+
+### Open water
+
+A single source in a clear tank.
+
+```json
+{
+  "preRoll": 1200,
+  "obstacles": [],
+  "impulses": [
+    {
+      "x": 0.45,
+      "y": 0.5,
+      "amplitude": 1,
+      "radius": 0.035,
+      "time": 0,
+      "repeat": 3000
+    }
+  ],
+  "damping": 0.6,
+  "speed": 0.24
+}
+```
+
+### Two sources
+
+Two opposing sources show wave interference.
+
+```json
+{
+  "preRoll": 1600,
+  "obstacles": [],
+  "impulses": [
+    {
+      "x": 0.25,
+      "y": 0.5,
+      "amplitude": 0.8,
+      "radius": 0.025,
+      "time": 0,
+      "repeat": 3600
+    },
+    {
+      "x": 0.75,
+      "y": 0.5,
+      "amplitude": 0.8,
+      "radius": 0.025,
+      "time": 0,
+      "repeat": 3600
+    }
+  ],
+  "damping": 0.4,
+  "speed": 0.24
+}
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `obstacles` | WaveTankObstacle[] | `[{"x":0.55,"y":0.32,"width":0.055,"height":0.34},{"x":0.2,"y":0.73,"width":0.24,"height":0.045}]` | Solid rectangular barriers in normalized interior coordinates. |
-| `impulses` | WaveTankImpulse[] | `[{"x":0.17,"y":0.32,"amplitude":1.1,"radius":0.036,"time":0,"repeat":4800},{"x":0.83,"y":0.65,"amplitude":-0.85,"radius":0.03,"time":620,"repeat":6100}]` | Gaussian disturbances; impulses inside a solid barrier are ignored. |
-| `damping` | number | `0.48` | Velocity damping per second, from 0 to 4; lower values preserve reflections. |
+| `obstacles` | WaveTankObstacle[] | `[{"x":0.55,"y":0.36,"width":0.025,"height":0.28}]` | Solid rectangular barriers in normalized interior coordinates. |
+| `impulses` | WaveTankImpulse[] | `[{"x":0.25,"y":0.42,"amplitude":1,"radius":0.035,"time":0,"repeat":3200},{"x":0.76,"y":0.62,"amplitude":-0.85,"radius":0.03,"time":450,"repeat":3900}]` | Gaussian disturbances; impulses inside a solid barrier are ignored. |
+| `preRoll` | number | `1200` | Simulation time before the first visible frame, in milliseconds; zero starts with the first impulses. |
+| `damping` | number | `0.4` | Velocity damping per second, from 0 to 4; lower values preserve reflections. |
 | `speed` | number | `0.26` | Wave speed in tank widths per second, from 0.03 to 0.4. |
 | `chars` | string | `" .:-=+*#%@"` | Printable ASCII glyphs ordered by their measured ink coverage. |
 | `label` | string | `"Shallow water waves reflecting from a bounded tank and solid barriers"` | Accessible description of the wave field; empty hides it from assistive technology. |
@@ -1069,6 +1166,8 @@ export interface WaveTankImpulse {
 export interface AsciiWaveTankProps extends MotionProps {
   /** Solid rectangular barriers in normalized interior coordinates. */
   obstacles: WaveTankObstacle[];
+  /** Simulation time before the first visible frame, in milliseconds; zero starts with the first impulses. */
+  preRoll: number;
   /** Gaussian disturbances; impulses inside a solid barrier are ignored. */
   impulses: WaveTankImpulse[];
   /** Velocity damping per second, from 0 to 4; lower values preserve reflections. */
@@ -1091,14 +1190,14 @@ export interface AsciiWaveTankProps extends MotionProps {
 
 export const defaults: AsciiWaveTankProps = {
   obstacles: [
-    { x: 0.55, y: 0.32, width: 0.055, height: 0.34 },
-    { x: 0.2, y: 0.73, width: 0.24, height: 0.045 },
+    { x: 0.55, y: 0.36, width: 0.025, height: 0.28 },
   ],
   impulses: [
-    { x: 0.17, y: 0.32, amplitude: 1.1, radius: 0.036, time: 0, repeat: 4800 },
-    { x: 0.83, y: 0.65, amplitude: -0.85, radius: 0.03, time: 620, repeat: 6100 },
+    { x: 0.25, y: 0.42, amplitude: 1, radius: 0.035, time: 0, repeat: 3200 },
+    { x: 0.76, y: 0.62, amplitude: -0.85, radius: 0.03, time: 450, repeat: 3900 },
   ],
-  damping: 0.48,
+  preRoll: 1200,
+  damping: 0.4,
   speed: 0.26,
   chars: " .:-=+*#%@",
   label: "Shallow water waves reflecting from a bounded tank and solid barriers",
@@ -1251,7 +1350,7 @@ export const mount: Mount<AsciiWaveTankProps> = (host, initial = {}) => {
 
   function frame(time: number): void {
     if (!alive) return;
-    const target = Math.floor(Math.max(0, Number.isFinite(time) ? time : 0) * TANK_HZ / 1000);
+    const target = Math.floor((Math.max(0, Number.isFinite(time) ? time : 0) + tankNumber(props.preRoll, defaults.preRoll, 0, 5000)) * TANK_HZ / 1000);
     const expectedWidth = Math.max(8, Math.min(96, grid.cols - 2));
     const expectedHeight = Math.max(8, Math.min(60, grid.rows - 2));
     const expectedAspect = Math.max(0.1, (grid.rows - 2) / Math.max(1, (grid.cols - 2) * grid.aspect));
@@ -1282,7 +1381,7 @@ export const mount: Mount<AsciiWaveTankProps> = (host, initial = {}) => {
         const i = sy * width + sx;
         if (solid[i]) { grid.set(x, y, "#"); continue; }
         const displacement = Math.abs((current[i] ?? 0) - equilibrium);
-        const coverage = Math.min(1, displacement * 5.2);
+        const coverage = Math.min(1, displacement * 4.8);
         grid.set(x, y, coverage < 0.045 ? " " : pick(ramp, coverage));
       }
     }
@@ -1308,7 +1407,7 @@ export const mount: Mount<AsciiWaveTankProps> = (host, initial = {}) => {
       if (before.label !== props.label) accessibility();
       if (before.fontSize !== props.fontSize || before.fontFamily !== props.fontFamily || before.lineHeight !== props.lineHeight) grid.update(options());
       if (!sameJson(before.obstacles, props.obstacles) || !sameJson(before.impulses, props.impulses)
-        || before.speed !== props.speed || before.damping !== props.damping || before.seed !== props.seed) reset();
+        || before.speed !== props.speed || before.damping !== props.damping || before.seed !== props.seed || before.preRoll !== props.preRoll) reset();
       palette.refresh();
       loop?.update({ paused: props.paused, time: props.time, fps: tankNumber(props.fps, 24, 1, 30) });
       loop?.redraw();
@@ -1929,14 +2028,14 @@ var PicaAsciiWaveTank = (() => {
   // registry/ascii/ascii-wave-tank/core.ts
   var defaults = {
     obstacles: [
-      { x: 0.55, y: 0.32, width: 0.055, height: 0.34 },
-      { x: 0.2, y: 0.73, width: 0.24, height: 0.045 }
+      { x: 0.55, y: 0.36, width: 0.025, height: 0.28 }
     ],
     impulses: [
-      { x: 0.17, y: 0.32, amplitude: 1.1, radius: 0.036, time: 0, repeat: 4800 },
-      { x: 0.83, y: 0.65, amplitude: -0.85, radius: 0.03, time: 620, repeat: 6100 }
+      { x: 0.25, y: 0.42, amplitude: 1, radius: 0.035, time: 0, repeat: 3200 },
+      { x: 0.76, y: 0.62, amplitude: -0.85, radius: 0.03, time: 450, repeat: 3900 }
     ],
-    damping: 0.48,
+    preRoll: 1200,
+    damping: 0.4,
     speed: 0.26,
     chars: " .:-=+*#%@",
     label: "Shallow water waves reflecting from a bounded tank and solid barriers",
@@ -2075,7 +2174,7 @@ var PicaAsciiWaveTank = (() => {
     }
     function frame(time) {
       if (!alive) return;
-      const target = Math.floor(Math.max(0, Number.isFinite(time) ? time : 0) * TANK_HZ / 1e3);
+      const target = Math.floor((Math.max(0, Number.isFinite(time) ? time : 0) + tankNumber(props.preRoll, defaults.preRoll, 0, 5e3)) * TANK_HZ / 1e3);
       const expectedWidth = Math.max(8, Math.min(96, grid.cols - 2));
       const expectedHeight = Math.max(8, Math.min(60, grid.rows - 2));
       const expectedAspect = Math.max(0.1, (grid.rows - 2) / Math.max(1, (grid.cols - 2) * grid.aspect));
@@ -2111,7 +2210,7 @@ var PicaAsciiWaveTank = (() => {
             continue;
           }
           const displacement = Math.abs((current[i] ?? 0) - equilibrium);
-          const coverage = Math.min(1, displacement * 5.2);
+          const coverage = Math.min(1, displacement * 4.8);
           grid.set(x, y, coverage < 0.045 ? " " : pick(ramp, coverage));
         }
       }
@@ -2134,7 +2233,7 @@ var PicaAsciiWaveTank = (() => {
         props = { ...props, ...partial };
         if (before.label !== props.label) accessibility();
         if (before.fontSize !== props.fontSize || before.fontFamily !== props.fontFamily || before.lineHeight !== props.lineHeight) grid.update(options());
-        if (!sameJson(before.obstacles, props.obstacles) || !sameJson(before.impulses, props.impulses) || before.speed !== props.speed || before.damping !== props.damping || before.seed !== props.seed) reset();
+        if (!sameJson(before.obstacles, props.obstacles) || !sameJson(before.impulses, props.impulses) || before.speed !== props.speed || before.damping !== props.damping || before.seed !== props.seed || before.preRoll !== props.preRoll) reset();
         palette.refresh();
         loop?.update({ paused: props.paused, time: props.time, fps: tankNumber(props.fps, 24, 1, 30) });
         loop?.redraw();

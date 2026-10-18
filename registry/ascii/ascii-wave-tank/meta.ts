@@ -13,8 +13,14 @@ export const meta: Meta = {
   decorative: false,
   original: true,
   palette: ["fg", "bg"],
-  capture: 1800,
+  capture: 900,
+  presets: [
+    { name: "Reflections", description: "Developed waves reflecting around one slender barrier.", props: {"preRoll": 1200, "obstacles": [{"x": 0.55, "y": 0.36, "width": 0.025, "height": 0.28}], "impulses": [{"x": 0.25, "y": 0.42, "amplitude": 1, "radius": 0.035, "time": 0, "repeat": 3200}, {"x": 0.76, "y": 0.62, "amplitude": -0.85, "radius": 0.03, "time": 450, "repeat": 3900}], "damping": 0.4, "speed": 0.26} },
+    { name: "Open water", description: "A single source in a clear tank.", props: {"preRoll": 1200, "obstacles": [], "impulses": [{"x": 0.45, "y": 0.5, "amplitude": 1, "radius": 0.035, "time": 0, "repeat": 3000}], "damping": 0.6, "speed": 0.24} },
+    { name: "Two sources", description: "Two opposing sources show wave interference.", props: {"preRoll": 1600, "obstacles": [], "impulses": [{"x": 0.25, "y": 0.5, "amplitude": 0.8, "radius": 0.025, "time": 0, "repeat": 3600}, {"x": 0.75, "y": 0.5, "amplitude": 0.8, "radius": 0.025, "time": 0, "repeat": 3600}], "damping": 0.4, "speed": 0.24} },
+  ],
   controls: {
+    preRoll: { type: "number", min: 0, max: 5000, step: 100, label: "Opening time (ms)" },
     obstacles: { type: "json" },
     impulses: { type: "json" },
     damping: { type: "number", min: 0, max: 4, step: 0.05 },

@@ -14,6 +14,16 @@ export function diffProps(defaults: Props, current: Props): Props {
   return out;
 }
 
+/** A preset resets visual settings while retaining supplied content and the user's pause choice. */
+export function presetValues(defaults: Props, current: Props, preset: Readonly<Props>): Props {
+  const content: Props = {};
+  for (const name of ["src", "label", "paused"]) {
+    const value = current[name];
+    if (value !== undefined) content[name] = value;
+  }
+  return { ...defaults, ...content, ...preset };
+}
+
 function jsxAttribute(name: string, value: PropValue): string {
   if (value === true) return name;
   if (typeof value === "string") {
