@@ -1044,14 +1044,14 @@ export interface ShaderFlowProps extends MotionProps {
 }
 
 export const defaults: ShaderFlowProps = {
-  speed: 0.2,
-  scale: 1.5,
-  bands: 14,
-  thickness: 0.08,
-  warp: 0.7,
+  speed: 0.12,
+  scale: 1.2,
+  bands: 8,
+  thickness: 0.04,
+  warp: 0.3,
   pointer: true,
-  levels: 4,
-  pixel: 2,
+  levels: 5,
+  pixel: 1,
   fps: 30,
   paused: false,
   time: null,
@@ -1092,7 +1092,7 @@ void main() {
   // holds the line to a steady width on screen instead of flooding flat stretches of the field with ink.
   float aa = max(fwidth(coord), 0.0001);
   float line = 1.0 - smoothstep(0.0, aa * (0.5 + u_thickness * 15.0), dist);
-  float density = clamp(aa * 2.2, 0.0, 1.0);
+  float density = clamp(0.3 + aa * 2.2, 0.0, 1.0);
   float fadeX = smoothstep(0.0, 0.22, min(uv.x, 1.0 - uv.x));
   float fadeY = smoothstep(0.0, 0.22, min(uv.y, 1.0 - uv.y));
   float steps = max(1.0, u_levels - 1.0);

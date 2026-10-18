@@ -12,17 +12,69 @@ npx shadcn@latest add https://picagram.dev/r/caustic-field.json
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
 
+## Presets
+
+Use these JSON props in React or as window.PICA_PROPS in HTML. The catalog applies them before copying either format.
+
+### Pool light
+
+A broad, quiet net for an open surface.
+
+```json
+{
+  "speed": 0.1,
+  "scale": 1.4,
+  "waves": 4,
+  "depth": 0.4,
+  "sharpness": 0.9,
+  "levels": 7,
+  "pixel": 1
+}
+```
+
+### Soft background
+
+Fewer marks and slower motion behind content.
+
+```json
+{
+  "speed": 0.08,
+  "scale": 1.1,
+  "waves": 4,
+  "depth": 0.3,
+  "sharpness": 0.95,
+  "levels": 8,
+  "pixel": 1
+}
+```
+
+### Close ripples
+
+A denser view of fine water filaments.
+
+```json
+{
+  "speed": 0.14,
+  "scale": 2,
+  "waves": 4,
+  "depth": 0.5,
+  "sharpness": 0.85,
+  "levels": 7,
+  "pixel": 1
+}
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `speed` | number | `0.15` | How fast the net drifts. 0 holds it still. |
-| `scale` | number | `2` | Scale of the surface the light passes through: lower is a broader net, higher is a denser one. |
-| `waves` | number | `3` | How many wave trains displace the surface, from 2 to 5. |
-| `depth` | number | `0.5` | How far the surface bends the light, from 0 (a flat surface, no caustics) to 1 (a tight net). |
-| `sharpness` | number | `0.7` | How sharply the filaments fall off, from 0 (a wider net) to 1 (hairlines). |
-| `levels` | number | `5` | Tone steps the field is dithered between: 2 is one-bit, 16 reads as nearly smooth. |
-| `pixel` | number | `2` | Size of one dither cell, in CSS pixels. |
+| `speed` | number | `0.1` | How fast the net drifts. 0 holds it still. |
+| `scale` | number | `1.4` | Scale of the surface the light passes through: lower is a broader net, higher is a denser one. |
+| `waves` | number | `4` | How many wave trains displace the surface, from 2 to 5. |
+| `depth` | number | `0.4` | How far the surface bends the light, from 0 (a flat surface, no caustics) to 1 (a tight net). |
+| `sharpness` | number | `0.9` | How sharply the filaments fall off, from 0 (a wider net) to 1 (hairlines). |
+| `levels` | number | `7` | Tone steps the field is dithered between: 2 is one-bit, 16 reads as nearly smooth. |
+| `pixel` | number | `1` | Size of one dither cell, in CSS pixels. |
 | `fps` | number | `30` | Frames per second ceiling. |
 | `paused` | boolean | `false` | Stop animating and hold the current frame. |
 | `time` | number \| null | `null` | Render exactly this animation time, in milliseconds, and do not animate. Null animates. |
@@ -1079,13 +1131,13 @@ export interface CausticFieldProps extends MotionProps {
 }
 
 export const defaults: CausticFieldProps = {
-  speed: 0.15,
-  scale: 2,
-  waves: 3,
-  depth: 0.5,
-  sharpness: 0.7,
-  levels: 5,
-  pixel: 2,
+  speed: 0.1,
+  scale: 1.4,
+  waves: 4,
+  depth: 0.4,
+  sharpness: 0.9,
+  levels: 7,
+  pixel: 1,
   fps: 30,
   paused: false,
   time: null,
@@ -1149,7 +1201,7 @@ const FRAGMENT = `${NOISE}${DITHER}${TONE}
     float fil = (1.0 - smoothstep(w - 0.35, w + 0.35, abs(det) / grad)) * fold;
     float knot = smoothstep(0.4, 0.85, fil) * (1.0 - smoothstep(0.14, 0.73, gs));
     float inside = step(det, 0.0) * step(-det, grad * 6.0);
-    float tone = max(fil * 0.65, knot);
+    float tone = max(fil * 0.38, knot * 0.7);
     tone = max(tone, inside * 0.02);
     vec4 ink = mix(u_fg, u_accent, knot);
     pica_color = pica_tone(tone, ink, u_levels - 1.0);
@@ -1755,13 +1807,13 @@ float pica_bayer8(ivec2 p) {
 
   // registry/shaders/caustic-field/core.ts
   var defaults = {
-    speed: 0.15,
-    scale: 2,
-    waves: 3,
-    depth: 0.5,
-    sharpness: 0.7,
-    levels: 5,
-    pixel: 2,
+    speed: 0.1,
+    scale: 1.4,
+    waves: 4,
+    depth: 0.4,
+    sharpness: 0.9,
+    levels: 7,
+    pixel: 1,
     fps: 30,
     paused: false,
     time: null,
@@ -1807,7 +1859,7 @@ float pica_bayer8(ivec2 p) {
     float fil = (1.0 - smoothstep(w - 0.35, w + 0.35, abs(det) / grad)) * fold;
     float knot = smoothstep(0.4, 0.85, fil) * (1.0 - smoothstep(0.14, 0.73, gs));
     float inside = step(det, 0.0) * step(-det, grad * 6.0);
-    float tone = max(fil * 0.65, knot);
+    float tone = max(fil * 0.38, knot * 0.7);
     tone = max(tone, inside * 0.02);
     vec4 ink = mix(u_fg, u_accent, knot);
     pica_color = pica_tone(tone, ink, u_levels - 1.0);

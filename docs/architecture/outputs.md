@@ -23,3 +23,7 @@ Everything the build and the verifier write. All of it is generated. `test/gener
 - **Props in.** Initial props come from `window.PICA_PROPS`. A `palette` inside them becomes `--pica-*` custom properties on the host.
 - **Props later.** Changes arrive as `pica:props` messages from the parent frame, and the ground to show as `pica:ground`.
 - **Events out.** When the page sits in a frame, each declared event goes to the parent as a `pica:event` message, carrying the event's name and detail.
+
+## Archived distribution
+
+The source registry manifest retains all components so shadcn still generates legacy install files. The build then writes a curated `public/r/registry.json` that omits archived entries, matching the agent discovery indexes. `public/catalog.json` remains the complete inventory with explicit archive metadata, and an archived component keeps its individual React, HTML, markdown and registry files.

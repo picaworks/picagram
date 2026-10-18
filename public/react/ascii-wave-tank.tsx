@@ -1030,6 +1030,8 @@ export interface WaveTankImpulse {
 export interface AsciiWaveTankProps extends MotionProps {
   /** Solid rectangular barriers in normalized interior coordinates. */
   obstacles: WaveTankObstacle[];
+  /** Simulation time before the first visible frame, in milliseconds; zero starts with the first impulses. */
+  preRoll: number;
   /** Gaussian disturbances; impulses inside a solid barrier are ignored. */
   impulses: WaveTankImpulse[];
   /** Velocity damping per second, from 0 to 4; lower values preserve reflections. */
@@ -1052,14 +1054,14 @@ export interface AsciiWaveTankProps extends MotionProps {
 
 export const defaults: AsciiWaveTankProps = {
   obstacles: [
-    { x: 0.55, y: 0.32, width: 0.055, height: 0.34 },
-    { x: 0.2, y: 0.73, width: 0.24, height: 0.045 },
+    { x: 0.55, y: 0.36, width: 0.025, height: 0.28 },
   ],
   impulses: [
-    { x: 0.17, y: 0.32, amplitude: 1.1, radius: 0.036, time: 0, repeat: 4800 },
-    { x: 0.83, y: 0.65, amplitude: -0.85, radius: 0.03, time: 620, repeat: 6100 },
+    { x: 0.25, y: 0.42, amplitude: 1, radius: 0.035, time: 0, repeat: 3200 },
+    { x: 0.76, y: 0.62, amplitude: -0.85, radius: 0.03, time: 450, repeat: 3900 },
   ],
-  damping: 0.48,
+  preRoll: 1200,
+  damping: 0.4,
   speed: 0.26,
   chars: " .:-=+*#%@",
   label: "Shallow water waves reflecting from a bounded tank and solid barriers",
@@ -1212,7 +1214,7 @@ export const mount: Mount<AsciiWaveTankProps> = (host, initial = {}) => {
 
   function frame(time: number): void {
     if (!alive) return;
-    const target = Math.floor(Math.max(0, Number.isFinite(time) ? time : 0) * TANK_HZ / 1000);
+    const target = Math.floor((Math.max(0, Number.isFinite(time) ? time : 0) + tankNumber(props.preRoll, defaults.preRoll, 0, 5000)) * TANK_HZ / 1000);
     const expectedWidth = Math.max(8, Math.min(96, grid.cols - 2));
     const expectedHeight = Math.max(8, Math.min(60, grid.rows - 2));
     const expectedAspect = Math.max(0.1, (grid.rows - 2) / Math.max(1, (grid.cols - 2) * grid.aspect));
@@ -1243,7 +1245,7 @@ export const mount: Mount<AsciiWaveTankProps> = (host, initial = {}) => {
         const i = sy * width + sx;
         if (solid[i]) { grid.set(x, y, "#"); continue; }
         const displacement = Math.abs((current[i] ?? 0) - equilibrium);
-        const coverage = Math.min(1, displacement * 5.2);
+        const coverage = Math.min(1, displacement * 4.8);
         grid.set(x, y, coverage < 0.045 ? " " : pick(ramp, coverage));
       }
     }
@@ -1269,7 +1271,7 @@ export const mount: Mount<AsciiWaveTankProps> = (host, initial = {}) => {
       if (before.label !== props.label) accessibility();
       if (before.fontSize !== props.fontSize || before.fontFamily !== props.fontFamily || before.lineHeight !== props.lineHeight) grid.update(options());
       if (!sameJson(before.obstacles, props.obstacles) || !sameJson(before.impulses, props.impulses)
-        || before.speed !== props.speed || before.damping !== props.damping || before.seed !== props.seed) reset();
+        || before.speed !== props.speed || before.damping !== props.damping || before.seed !== props.seed || before.preRoll !== props.preRoll) reset();
       palette.refresh();
       loop?.update({ paused: props.paused, time: props.time, fps: tankNumber(props.fps, 24, 1, 30) });
       loop?.redraw();

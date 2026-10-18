@@ -103,3 +103,13 @@ Complete pages use the explicit Full Sites collection in `lib/collection.ts`. Ca
 | The wordmark is 39 px and aligned with the search field, and the footer ends with the build year | `scripts/check-site.ts` |
 | The inspector collapses and restores, from the keyboard, with focus moving to the other control, and selection leaves it collapsed | `scripts/check-site.ts` |
 | At 390 by 844 the page stacks, nothing overflows sideways, and collapse and restore still work | `scripts/check-site.ts` |
+
+## Catalog curation
+
+| Invariant | Check |
+|---|---|
+| Archived components are absent from default discovery but retain their direct catalog hash, source and generated install files | `test/curation.test.ts`; `scripts/check-site.ts` |
+| Presets contain only known JSON props; their types and number ranges match the component controls | `test/meta.test.ts` |
+| Selecting a preset keeps the supplied image and accessible label, updates exported props, and permits later manual edits | `test/curation.test.ts`; `scripts/check-site.ts` |
+| The wave tank opening time is deterministic and matches a zero-opening explicit seek after update | `scripts/verify/fixtures.ts` |
+| Every named preset renders equally in React and HTML on ink and paper at desktop and phone widths | `scripts/verify/render.ts` |

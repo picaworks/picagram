@@ -12,18 +12,70 @@ npx shadcn@latest add https://picagram.dev/r/shader-flow.json
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
 
+## Presets
+
+Use these JSON props in React or as window.PICA_PROPS in HTML. The catalog applies them before copying either format.
+
+### Quiet background
+
+Open contour bands with a gentle fold.
+
+```json
+{
+  "speed": 0.12,
+  "scale": 1.2,
+  "bands": 8,
+  "thickness": 0.04,
+  "warp": 0.3,
+  "levels": 5,
+  "pixel": 1
+}
+```
+
+### Wide current
+
+Broad, slow contours with more empty ground.
+
+```json
+{
+  "speed": 0.08,
+  "scale": 0.8,
+  "bands": 6,
+  "thickness": 0.03,
+  "warp": 0.15,
+  "levels": 6,
+  "pixel": 1
+}
+```
+
+### Fine contours
+
+More lines while keeping the strokes light.
+
+```json
+{
+  "speed": 0.12,
+  "scale": 1.5,
+  "bands": 14,
+  "thickness": 0.04,
+  "warp": 0.4,
+  "levels": 5,
+  "pixel": 1
+}
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `speed` | number | `0.2` | How fast the field advects. 0 holds it still. |
-| `scale` | number | `1.5` | Size of the noise field: lower values are broad and slow, higher values are busier. |
-| `bands` | number | `14` | How many contour bands the field is cut into. |
-| `thickness` | number | `0.08` | How bold each line reads on screen, from a fine hairline to a bold rule. |
-| `warp` | number | `0.7` | How far the field folds into itself, from 0 (plain noise) to 1 (deep folds). |
+| `speed` | number | `0.12` | How fast the field advects. 0 holds it still. |
+| `scale` | number | `1.2` | Size of the noise field: lower values are broad and slow, higher values are busier. |
+| `bands` | number | `8` | How many contour bands the field is cut into. |
+| `thickness` | number | `0.04` | How bold each line reads on screen, from a fine hairline to a bold rule. |
+| `warp` | number | `0.3` | How far the field folds into itself, from 0 (plain noise) to 1 (deep folds). |
 | `pointer` | boolean | `true` | Whether the flow bends gently around the pointer. |
-| `levels` | number | `4` | Tone steps the lines are dithered between: 2 is one-bit, 16 reads as nearly smooth. |
-| `pixel` | number | `2` | Size of one dither cell, in CSS pixels. |
+| `levels` | number | `5` | Tone steps the lines are dithered between: 2 is one-bit, 16 reads as nearly smooth. |
+| `pixel` | number | `1` | Size of one dither cell, in CSS pixels. |
 | `fps` | number | `30` | Frames per second ceiling. |
 | `paused` | boolean | `false` | Stop animating and hold the current frame. |
 | `time` | number \| null | `null` | Render exactly this animation time, in milliseconds, and do not animate. Null animates. |
@@ -1082,14 +1134,14 @@ export interface ShaderFlowProps extends MotionProps {
 }
 
 export const defaults: ShaderFlowProps = {
-  speed: 0.2,
-  scale: 1.5,
-  bands: 14,
-  thickness: 0.08,
-  warp: 0.7,
+  speed: 0.12,
+  scale: 1.2,
+  bands: 8,
+  thickness: 0.04,
+  warp: 0.3,
   pointer: true,
-  levels: 4,
-  pixel: 2,
+  levels: 5,
+  pixel: 1,
   fps: 30,
   paused: false,
   time: null,
@@ -1130,7 +1182,7 @@ void main() {
   // holds the line to a steady width on screen instead of flooding flat stretches of the field with ink.
   float aa = max(fwidth(coord), 0.0001);
   float line = 1.0 - smoothstep(0.0, aa * (0.5 + u_thickness * 15.0), dist);
-  float density = clamp(aa * 2.2, 0.0, 1.0);
+  float density = clamp(0.3 + aa * 2.2, 0.0, 1.0);
   float fadeX = smoothstep(0.0, 0.22, min(uv.x, 1.0 - uv.x));
   float fadeY = smoothstep(0.0, 0.22, min(uv.y, 1.0 - uv.y));
   float steps = max(1.0, u_levels - 1.0);
@@ -1750,14 +1802,14 @@ float pica_bayer8(ivec2 p) {
 
   // registry/shaders/shader-flow/core.ts
   var defaults = {
-    speed: 0.2,
-    scale: 1.5,
-    bands: 14,
-    thickness: 0.08,
-    warp: 0.7,
+    speed: 0.12,
+    scale: 1.2,
+    bands: 8,
+    thickness: 0.04,
+    warp: 0.3,
     pointer: true,
-    levels: 4,
-    pixel: 2,
+    levels: 5,
+    pixel: 1,
     fps: 30,
     paused: false,
     time: null,
@@ -1789,7 +1841,7 @@ void main() {
   // holds the line to a steady width on screen instead of flooding flat stretches of the field with ink.
   float aa = max(fwidth(coord), 0.0001);
   float line = 1.0 - smoothstep(0.0, aa * (0.5 + u_thickness * 15.0), dist);
-  float density = clamp(aa * 2.2, 0.0, 1.0);
+  float density = clamp(0.3 + aa * 2.2, 0.0, 1.0);
   float fadeX = smoothstep(0.0, 0.22, min(uv.x, 1.0 - uv.x));
   float fadeY = smoothstep(0.0, 0.22, min(uv.y, 1.0 - uv.y));
   float steps = max(1.0, u_levels - 1.0);

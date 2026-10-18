@@ -4,7 +4,7 @@ import { CURRENT_RELEASE, matches, readRelease, type ReleaseFilter, type Categor
 import { PREVIEW_FONTS, type PreviewFont } from "@/lib/fonts";
 import type { Ground } from "@/lib/ground";
 import { useHashSlug } from "@/lib/hash";
-import { diffProps } from "@/lib/props";
+import { diffProps, presetValues } from "@/lib/props";
 import { markTheme, saveTheme, THEME_GROUND, THEME_KEY, type Theme } from "@/lib/theme";
 import { Canvas, type Reveal } from "./Canvas";
 import type { FrameWidth } from "./Frame";
@@ -25,9 +25,11 @@ function isEventMessage(data: unknown): data is { name: string; detail: unknown 
 }
 
 /** The catalog: layers, canvas, and inspector around one piece of state, the selected slug in the URL hash. */
-export function Catalog({ items }: { items: readonly CatalogItem[] }) {
-  const slugs = useMemo(() => new Set(items.map((item) => item.slug)), [items]);
+export function Catalog({ items: allItems }: { items: readonly CatalogItem[] }) {
+  const slugs = useMemo(() => new Set(allItems.map((item) => item.slug)), [allItems]);
   const [selected, setSelected, external] = useHashSlug(slugs);
+  // An archived item is included only when explicitly addressed, so old links still load their frame.
+  const items = useMemo(() => allItems.filter((entry) => !entry.archived || entry.slug === selected), [allItems, selected]);
   const [font, setFont] = useState<PreviewFont>("Collection");
   const [query, setQuery] = useState("");
   const [newOnly, setNewOnly] = useState(false);
@@ -168,6 +170,14 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
     [item, baseline],
   );
 
+  const applyPreset = useCallback((props: Readonly<Props>) => {
+    if (!item) return;
+    setOverrides((all) => ({
+      ...all,
+      [item.slug]: diffProps(baseline, presetValues(item.defaults, { ...baseline, ...all[item.slug] }, props)),
+    }));
+  }, [item, baseline]);
+
   const reset = useCallback(() => {
     if (!item) return;
     setOverrides((all) => {
@@ -271,6 +281,7 @@ export function Catalog({ items }: { items: readonly CatalogItem[] }) {
         codeOverrides={codeOverrides}
         onChange={setProp}
         onReset={reset}
+        onPreset={applyPreset}
         activeFacets={activeFacets}
         onToggleFacet={toggleFacet}
         onSearchTag={searchTag}

@@ -21,9 +21,9 @@ export interface EngravedReliefImageProps extends MotionProps {
 
 export const defaults: EngravedReliefImageProps = {
   src: "",
-  depth: 28,
-  lightAngle: -38,
-  speed: 7,
+  depth: 36,
+  lightAngle: -55,
+  speed: 4.5,
   paused: false,
   time: null,
   seed: 1,
@@ -128,8 +128,8 @@ export const mount: Mount<EngravedReliefImageProps> = (host, initial = {}) => {
         // Curved tool cuts follow luminance contours. They are fixed geometry:
         // the moving light reveals the cuts without moving them.
         const cut = Math.pow(0.5 + 0.5 * Math.cos(y * 1.16 + value * 35 + x * 0.07 + finite(props.seed, defaults.seed) * 0.19), 8);
-        heights[i] = -value * 0.82 - cut * value * 0.024;
-        tones[i] = 0.08 + value * 0.42;
+        heights[i] = -value * 0.82 - cut * value * 0.06;
+        tones[i] = Math.sqrt(value) * 0.75;
       }
     }
     normals();
@@ -190,7 +190,7 @@ export const mount: Mount<EngravedReliefImageProps> = (host, initial = {}) => {
           const value = ink[i] ?? 0;
           // Recessed faces stay dim; the wall facing the grazing light catches it.
           // Image sampling and height preparation never run inside a frame.
-          const coverage = Math.min(1, 0.04 + value * 0.10 + light * (0.34 + value * 0.62));
+          const coverage = Math.min(1, value * (0.2 + light * 0.95));
           const j = i * 4;
           pixels[j] = fg[0];
           pixels[j + 1] = fg[1];

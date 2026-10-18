@@ -2050,7 +2050,15 @@
       "meta": {
         "license": "MIT + Commons Clause",
         "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
-        "credits": []
+        "credits": [
+          {
+            "relation": "port-of",
+            "title": "Demo photograph: The Blue Marble from Apollo 17",
+            "author": "NASA Johnson Space Center / Apollo 17 crew",
+            "url": "https://svs.gsfc.nasa.gov/30613/",
+            "license": "NASA media usage guidelines"
+          }
+        ]
       }
     },
     {
@@ -3994,26 +4002,6 @@
       "files": [
         {
           "path": "public/react/culinary-notebook.tsx",
-          "type": "registry:component"
-        }
-      ],
-      "meta": {
-        "license": "MIT + Commons Clause",
-        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
-        "credits": []
-      }
-    },
-    {
-      "name": "cyberpunk-hero",
-      "type": "registry:component",
-      "title": "Cyberpunk Hero",
-      "description": "A hero that reads as a terminal held open too long, with scanlines over everything, a headline that tears in rare bursts, and readouts in the corners.",
-      "categories": [
-        "sections"
-      ],
-      "files": [
-        {
-          "path": "public/react/cyberpunk-hero.tsx",
           "type": "registry:component"
         }
       ],

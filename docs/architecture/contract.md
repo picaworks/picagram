@@ -196,3 +196,7 @@ The fields are typed in `lib/meta.ts`.
 - `still` is the frame shown under reduced motion. Choose one that reads well.
 - The same `seed` and `time` always give the same pixels. The parity check depends on it.
 - Captures use `{ time: 1200, seed: 1 }` (`CAPTURE_MOTION`), or `meta.capture` in place of the time.
+
+## Catalog lifecycle metadata
+
+`archived?: boolean` excludes a component from default discovery without deleting its source or generated files. `presets?: readonly Preset[]` supplies named, described JSON prop configurations for the catalog. Both fields are build-time metadata and add no component runtime dependency. Presets name existing props and respect their control types and ranges.

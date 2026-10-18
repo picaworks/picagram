@@ -49,6 +49,22 @@ export async function render(ctx: Ctx): Promise<void> {
       await context.close();
     }
   }
+  // Named presets are copyable public configurations, so both generated formats must agree on them.
+  for (const [index, preset] of (entry.meta.presets ?? []).entries()) {
+    const presetWidths = ctx.quick ? VIEWPORTS.slice(0, 1) : VIEWPORTS.filter((viewport) => viewport.width !== 768);
+    for (const viewport of presetWidths) {
+      for (const colorScheme of ["dark", "light"] as const) {
+        const context = await ctx.context({ viewport, colorScheme });
+        try {
+          const suffix = `${viewport.width}${colorScheme === "light" ? "-light" : ""}`;
+          const { page } = await compare(ctx, context, { props: { ...ctx.base, ...preset.props } }, `preset ${preset.name} at ${suffix}`, `preset-${index}-${suffix}`);
+          await page.close();
+        } finally {
+          await context.close();
+        }
+      }
+    }
+  }
   // Paper follows the same viewports as ink. A reviewer judging a section on a phone needs the narrow one,
   // and a component that only breaks on the light ground breaks there at both widths.
   for (const [index, viewport] of viewports.entries()) {

@@ -253,7 +253,6 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [Conservation Report](https://picagram.dev/c/conservation-report.md): A restoration case study with a condition elevation, paired intervention drawings, an evidence table, and a treatment timeline.
 - [Contact Panel](https://picagram.dev/c/contact-panel.md): A page section with a contact details list and a short message form that reports a send event.
 - [Culinary notebook](https://picagram.dev/c/culinary-notebook.md): A cookbook recipe spread with an original still-life drawing, ingredient weights, timed methods, and practical kitchen notes.
-- [Cyberpunk Hero](https://picagram.dev/c/cyberpunk-hero.md): A hero that reads as a terminal held open too long, with scanlines over everything, a headline that tears in rare bursts, and readouts in the corners.
 - [Desert Transmission](https://picagram.dev/c/desert-transmission.md): A fictional desert expedition archive with a horizon drawing, transcript bands, and field inventory.
 - [Editorial Hero](https://picagram.dev/c/editorial-hero.md): A magazine opening spread: a deck, a large headline, a measured standfirst with a drop capital, and a byline between hairlines.
 - [Ethereal Hero](https://picagram.dev/c/ethereal-hero.md): A hero that floats its copy in clear air while sparse blue noise grain rises from the ground below.

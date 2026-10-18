@@ -4864,8 +4864,100 @@
       "fg",
       "bg"
     ],
-    "capture": 1800,
+    "capture": 900,
+    "presets": [
+      {
+        "name": "Reflections",
+        "description": "Developed waves reflecting around one slender barrier.",
+        "props": {
+          "preRoll": 1200,
+          "obstacles": [
+            {
+              "x": 0.55,
+              "y": 0.36,
+              "width": 0.025,
+              "height": 0.28
+            }
+          ],
+          "impulses": [
+            {
+              "x": 0.25,
+              "y": 0.42,
+              "amplitude": 1,
+              "radius": 0.035,
+              "time": 0,
+              "repeat": 3200
+            },
+            {
+              "x": 0.76,
+              "y": 0.62,
+              "amplitude": -0.85,
+              "radius": 0.03,
+              "time": 450,
+              "repeat": 3900
+            }
+          ],
+          "damping": 0.4,
+          "speed": 0.26
+        }
+      },
+      {
+        "name": "Open water",
+        "description": "A single source in a clear tank.",
+        "props": {
+          "preRoll": 1200,
+          "obstacles": [],
+          "impulses": [
+            {
+              "x": 0.45,
+              "y": 0.5,
+              "amplitude": 1,
+              "radius": 0.035,
+              "time": 0,
+              "repeat": 3000
+            }
+          ],
+          "damping": 0.6,
+          "speed": 0.24
+        }
+      },
+      {
+        "name": "Two sources",
+        "description": "Two opposing sources show wave interference.",
+        "props": {
+          "preRoll": 1600,
+          "obstacles": [],
+          "impulses": [
+            {
+              "x": 0.25,
+              "y": 0.5,
+              "amplitude": 0.8,
+              "radius": 0.025,
+              "time": 0,
+              "repeat": 3600
+            },
+            {
+              "x": 0.75,
+              "y": 0.5,
+              "amplitude": 0.8,
+              "radius": 0.025,
+              "time": 0,
+              "repeat": 3600
+            }
+          ],
+          "damping": 0.4,
+          "speed": 0.24
+        }
+      }
+    ],
     "controls": {
+      "preRoll": {
+        "type": "number",
+        "min": 0,
+        "max": 5000,
+        "step": 100,
+        "label": "Opening time (ms)"
+      },
       "obstacles": {
         "type": "json"
       },
@@ -4924,36 +5016,31 @@
       "obstacles": [
         {
           "x": 0.55,
-          "y": 0.32,
-          "width": 0.055,
-          "height": 0.34
-        },
-        {
-          "x": 0.2,
-          "y": 0.73,
-          "width": 0.24,
-          "height": 0.045
+          "y": 0.36,
+          "width": 0.025,
+          "height": 0.28
         }
       ],
       "impulses": [
         {
-          "x": 0.17,
-          "y": 0.32,
-          "amplitude": 1.1,
-          "radius": 0.036,
+          "x": 0.25,
+          "y": 0.42,
+          "amplitude": 1,
+          "radius": 0.035,
           "time": 0,
-          "repeat": 4800
+          "repeat": 3200
         },
         {
-          "x": 0.83,
-          "y": 0.65,
+          "x": 0.76,
+          "y": 0.62,
           "amplitude": -0.85,
           "radius": 0.03,
-          "time": 620,
-          "repeat": 6100
+          "time": 450,
+          "repeat": 3900
         }
       ],
-      "damping": 0.48,
+      "preRoll": 1200,
+      "damping": 0.4,
       "speed": 0.26,
       "chars": " .:-=+*#%@",
       "label": "Shallow water waves reflecting from a bounded tank and solid barriers",
@@ -4970,6 +5057,7 @@
       "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
       "seed": "Seed for every random choice, so the same seed always draws the same frame.",
       "obstacles": "Solid rectangular barriers in normalized interior coordinates.",
+      "preRoll": "Simulation time before the first visible frame, in milliseconds; zero starts with the first impulses.",
       "impulses": "Gaussian disturbances; impulses inside a solid barrier are ignored.",
       "damping": "Velocity damping per second, from 0 to 4; lower values preserve reflections.",
       "speed": "Wave speed in tank widths per second, from 0.03 to 0.4.",
@@ -4985,6 +5073,7 @@
       "time": "number | null",
       "seed": "number",
       "obstacles": "WaveTankObstacle[]",
+      "preRoll": "number",
       "impulses": "WaveTankImpulse[]",
       "damping": "number",
       "speed": "number",
@@ -4996,7 +5085,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5879
+    "gzipBytes": 5890
   },
   {
     "slug": "ascii-waves",
@@ -11947,6 +12036,35 @@
       "accent",
       "muted"
     ],
+    "presets": [
+      {
+        "name": "Grazing light",
+        "description": "A clear carved surface with slow moving light.",
+        "props": {
+          "depth": 36,
+          "lightAngle": -55,
+          "speed": 4.5
+        }
+      },
+      {
+        "name": "Deep cut",
+        "description": "Deeper cuts and a lower, slower light.",
+        "props": {
+          "depth": 46,
+          "lightAngle": -65,
+          "speed": 3
+        }
+      },
+      {
+        "name": "Still plate",
+        "description": "A fixed light for a static image treatment.",
+        "props": {
+          "depth": 32,
+          "lightAngle": -45,
+          "speed": 0
+        }
+      }
+    ],
     "controls": {
       "src": {
         "type": "string",
@@ -11984,14 +12102,27 @@
         "label": "Tool-cut seed"
       }
     },
-    "credits": [],
+    "demo": {
+      "props": {
+        "src": "data:image/jpeg;base64,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"
+      }
+    },
+    "credits": [
+      {
+        "relation": "port-of",
+        "title": "Demo photograph: The Blue Marble from Apollo 17",
+        "author": "NASA Johnson Space Center / Apollo 17 crew",
+        "url": "https://svs.gsfc.nasa.gov/30613/",
+        "license": "NASA media usage guidelines"
+      }
+    ],
     "original": true,
     "exportName": "EngravedReliefImage",
     "defaults": {
       "src": "",
-      "depth": 28,
-      "lightAngle": -38,
-      "speed": 7,
+      "depth": 36,
+      "lightAngle": -55,
+      "speed": 4.5,
       "paused": false,
       "time": null,
       "seed": 1
@@ -12015,7 +12146,7 @@
       "speed": "number"
     },
     "events": {},
-    "gzipBytes": 4802
+    "gzipBytes": 4795
   },
   {
     "slug": "falling-sutures",
@@ -23934,6 +24065,7 @@
       "overlay"
     ],
     "wave": 9,
+    "archived": true,
     "animated": true,
     "decorative": false,
     "wraps": "content",
@@ -30620,12 +30752,54 @@
       "accent",
       "bg"
     ],
+    "presets": [
+      {
+        "name": "Pool light",
+        "description": "A broad, quiet net for an open surface.",
+        "props": {
+          "speed": 0.1,
+          "scale": 1.4,
+          "waves": 4,
+          "depth": 0.4,
+          "sharpness": 0.9,
+          "levels": 7,
+          "pixel": 1
+        }
+      },
+      {
+        "name": "Soft background",
+        "description": "Fewer marks and slower motion behind content.",
+        "props": {
+          "speed": 0.08,
+          "scale": 1.1,
+          "waves": 4,
+          "depth": 0.3,
+          "sharpness": 0.95,
+          "levels": 8,
+          "pixel": 1
+        }
+      },
+      {
+        "name": "Close ripples",
+        "description": "A denser view of fine water filaments.",
+        "props": {
+          "speed": 0.14,
+          "scale": 2,
+          "waves": 4,
+          "depth": 0.5,
+          "sharpness": 0.85,
+          "levels": 7,
+          "pixel": 1
+        }
+      }
+    ],
     "controls": {
       "speed": {
         "type": "number",
         "min": 0,
         "max": 1,
-        "step": 0.05
+        "step": 0.01,
+        "label": "Motion speed"
       },
       "scale": {
         "type": "number",
@@ -30699,13 +30873,13 @@
     "original": false,
     "exportName": "CausticField",
     "defaults": {
-      "speed": 0.15,
-      "scale": 2,
-      "waves": 3,
-      "depth": 0.5,
-      "sharpness": 0.7,
-      "levels": 5,
-      "pixel": 2,
+      "speed": 0.1,
+      "scale": 1.4,
+      "waves": 4,
+      "depth": 0.4,
+      "sharpness": 0.9,
+      "levels": 7,
+      "pixel": 1,
       "fps": 30,
       "paused": false,
       "time": null,
@@ -30738,7 +30912,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5306
+    "gzipBytes": 5310
   },
   {
     "slug": "contour-flow",
@@ -31673,12 +31847,54 @@
       "accent",
       "bg"
     ],
+    "presets": [
+      {
+        "name": "Quiet background",
+        "description": "Open contour bands with a gentle fold.",
+        "props": {
+          "speed": 0.12,
+          "scale": 1.2,
+          "bands": 8,
+          "thickness": 0.04,
+          "warp": 0.3,
+          "levels": 5,
+          "pixel": 1
+        }
+      },
+      {
+        "name": "Wide current",
+        "description": "Broad, slow contours with more empty ground.",
+        "props": {
+          "speed": 0.08,
+          "scale": 0.8,
+          "bands": 6,
+          "thickness": 0.03,
+          "warp": 0.15,
+          "levels": 6,
+          "pixel": 1
+        }
+      },
+      {
+        "name": "Fine contours",
+        "description": "More lines while keeping the strokes light.",
+        "props": {
+          "speed": 0.12,
+          "scale": 1.5,
+          "bands": 14,
+          "thickness": 0.04,
+          "warp": 0.4,
+          "levels": 5,
+          "pixel": 1
+        }
+      }
+    ],
     "controls": {
       "speed": {
         "type": "number",
         "min": 0,
         "max": 1,
-        "step": 0.05
+        "step": 0.01,
+        "label": "Motion speed"
       },
       "scale": {
         "type": "number",
@@ -31755,14 +31971,14 @@
     "original": false,
     "exportName": "ShaderFlow",
     "defaults": {
-      "speed": 0.2,
-      "scale": 1.5,
-      "bands": 14,
-      "thickness": 0.08,
-      "warp": 0.7,
+      "speed": 0.12,
+      "scale": 1.2,
+      "bands": 8,
+      "thickness": 0.04,
+      "warp": 0.3,
       "pointer": true,
-      "levels": 4,
-      "pixel": 2,
+      "levels": 5,
+      "pixel": 1,
       "fps": 30,
       "paused": false,
       "time": null,
@@ -31797,7 +32013,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5308
+    "gzipBytes": 5311
   },
   {
     "slug": "shadow-lattice",

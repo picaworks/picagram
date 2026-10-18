@@ -186,6 +186,7 @@ async function main(): Promise<void> {
   const catalog = JSON.parse(await readFile(join(ROOT, "public", "catalog.json"), "utf8")) as {
     title: string;
     slug: string;
+    archived?: boolean;
     facets: string[];
     tags: string[];
     description: string;
@@ -241,7 +242,7 @@ async function main(): Promise<void> {
 
     // Every catalog item is listed.
     const titles = await page.locator(".layers-row .layers-title").allTextContents();
-    const missing = catalog.filter((item) => !titles.includes(item.title));
+    const missing = catalog.filter((item) => !item.archived && !titles.includes(item.title));
     checks.push({ name: "every catalog item is listed", ok: missing.length === 0, detail: missing.map((m) => m.slug).join(", ") || "all present" });
 
     // Selecting a real component loads its frame.
@@ -440,7 +441,7 @@ async function main(): Promise<void> {
 
     // A facet narrows the list, and a tag, which is not a facet, is still found by the search box.
     const facet = "chart";
-    const facetCount = catalog.filter((item) => item.facets.includes(facet)).length;
+    const facetCount = catalog.filter((item) => !item.archived && item.facets.includes(facet)).length;
     await dark.locator(".layers-facets .chip", { hasText: new RegExp(`^${facet} `) }).click();
     const filtered = await dark.locator(".layers-row").count();
     const counter = ((await dark.locator(".layers-brand .label").first().textContent()) ?? "").trim();
@@ -597,6 +598,56 @@ async function main(): Promise<void> {
       ok: footer !== null && footer.text === `© ${year} Picagram` && Math.abs(footer.gap) < 1,
       detail: footer ? `${JSON.stringify(footer.text)}, ${footer.gap.toFixed(1)}px from the right edge` : "no footer",
     });
+
+    // Archive is a discovery choice, never deletion of an existing link or install file.
+    const curated = await open({ colorScheme: "dark" });
+    const legacy = catalog.filter((entry) => entry.archived);
+    const listedLegacy = await curated.locator(".layers-row .layers-title").allTextContents();
+    checks.push({ name: "archived assets are absent from default discovery", ok: legacy.length > 0 && legacy.every((entry) => !listedLegacy.includes(entry.title)), detail: legacy.map((entry) => entry.slug).join(", ") });
+    await curated.goto(`${home}#cyberpunk-hero`);
+    await curated.locator('iframe.frame-live[src="v/cyberpunk-hero.html"]').waitFor();
+    await waitUntil(async () => curated.frame({ url: /cyberpunk-hero\.html/ }) !== null);
+    const legacyFrame = curated.frame({ url: /cyberpunk-hero\.html/ });
+    const legacyReady = legacyFrame ? await legacyFrame.waitForSelector('[data-pica-ready="true"]', { state: "attached" }).then(() => true) : false;
+    checks.push({ name: "an archived hash still loads with an archive notice", ok: legacyReady && await curated.getByText("Archived. Available here for existing links and installations.", { exact: true }).isVisible(), detail: `#cyberpunk-hero ready: ${legacyReady}, notice: ${await curated.getByText("Archived. Available here for existing links and installations.", { exact: true }).isVisible()}` });
+
+    await curated.goto(`${home}#shader-flow`);
+    await curated.locator('iframe.frame-live[src="v/shader-flow.html"]').waitFor();
+    await waitUntil(async () => curated.frame({ url: /shader-flow\.html/ }) !== null);
+    const flowFrame = curated.frame({ url: /shader-flow\.html/ });
+    await flowFrame?.waitForSelector('[data-pica-ready="true"]', { state: "attached" });
+    await flowFrame?.evaluate(() => {
+      const probe = window as Window & { PICA_TEST_PROPS?: Record<string, unknown> };
+      window.addEventListener("message", (event: MessageEvent) => {
+        if (event.data?.type === "pica:props") probe.PICA_TEST_PROPS = event.data.props;
+      });
+    });
+    await curated.locator("#control-paused").check();
+    await curated.getByRole("button", { name: "Wide current", exact: true }).click();
+    const presetPosted = await waitUntil(async () => flowFrame ? flowFrame.evaluate(() => {
+      const props = (window as Window & { PICA_TEST_PROPS?: Record<string, unknown> }).PICA_TEST_PROPS;
+      return props?.bands === 6 && props.warp === 0.15 && props.paused === true;
+    }) : false);
+    const presetSnippet = await curated.locator("#panel-react pre").first().textContent();
+    const presetActive = await curated.getByRole("button", { name: "Wide current", exact: true }).getAttribute("aria-pressed");
+    const presetFrame = curated.frame({ url: /shader-flow\.html/ });
+    const presetReady = presetFrame ? await presetFrame.locator('[data-pica-ready="true"]').count() > 0 : false;
+    await curated.getByRole("tab", { name: "HTML", exact: true }).click();
+    const htmlCarriesPreset = await waitUntil(async () => {
+      const html = await curated.locator("#panel-html pre").textContent();
+      return Boolean(html?.includes('"bands":6') && html.includes('"warp":0.15'));
+    });
+    await curated.getByRole("tab", { name: "React", exact: true }).click();
+    await curated.getByLabel("bands value", { exact: true }).fill("7");
+    const customSnippet = await curated.locator("#panel-react pre").first().textContent();
+    const customActive = await curated.getByRole("button", { name: "Wide current", exact: true }).getAttribute("aria-pressed");
+    checks.push({ name: "presets update exports and allow manual adjustments", ok: presetReady && presetPosted && htmlCarriesPreset && presetActive === "true" && Boolean(presetSnippet?.includes("bands={6}") && presetSnippet.includes("warp={0.15}")) && Boolean(customSnippet?.includes("bands={7}")) && customActive === "false", detail: `frame ${presetReady}, settings and pause posted ${presetPosted}, HTML ${htmlCarriesPreset}, preset ${presetActive}, custom ${customActive}` });
+
+    await curated.goto(`${home}#engraved-relief-image`);
+    const imageBefore = await curated.locator("#control-src").inputValue();
+    await curated.getByRole("button", { name: "Deep cut", exact: true }).click();
+    const imageAfter = await curated.locator("#control-src").inputValue();
+    checks.push({ name: "image presets preserve the embedded photograph", ok: imageBefore.startsWith("data:image/jpeg;base64,") && imageBefore === imageAfter && (await curated.locator("#panel-react pre").first().textContent())?.includes("depth={46}") === true, detail: "the local photo stays selected while depth and lighting change" });
 
     // Nothing the site draws comes from anywhere else.
     const foreign = [...new Set(requested)].filter((url) => /^https?:/.test(url) && !url.startsWith(site.url));
