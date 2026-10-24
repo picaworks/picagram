@@ -12,6 +12,58 @@ npx shadcn@latest add https://picagram.dev/r/aurora.json
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
 
+## Presets
+
+Use these JSON props in React or as window.PICA_PROPS in HTML. The catalog applies them before copying either format.
+
+### Layered curtains
+
+The original layered glow with a softer ink edge on paper.
+
+```json
+{
+  "curtains": 3,
+  "intensity": 0.8,
+  "height": 0.7,
+  "rays": 0.6,
+  "folds": 0.5,
+  "pixel": 2,
+  "speed": 0.15
+}
+```
+
+### Single curtain
+
+One broad curtain with a quieter fold and finer printed grain.
+
+```json
+{
+  "curtains": 1,
+  "intensity": 0.6,
+  "height": 0.9,
+  "rays": 0.4,
+  "folds": 0.25,
+  "pixel": 1,
+  "speed": 0.1
+}
+```
+
+### Reading light
+
+Lighter layers and slower motion leave more quiet ground.
+
+```json
+{
+  "curtains": 2,
+  "intensity": 0.42,
+  "height": 0.6,
+  "rays": 0.35,
+  "folds": 0.25,
+  "pixel": 1,
+  "speed": 0.08
+}
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -1186,7 +1238,8 @@ const FRAGMENT = `${NOISE}${DITHER}${TONE}
       hem = max(hem, dim * max(rim * body, steep * lit * 1.3));
     }
     float tone = clamp(sheet * u_intensity, 0.0, 1.0);
-    float mark = smoothstep(0.38, 0.88, hem);
+    float paper = 1.0 - step(0.5, dot(u_fg.rgb, vec3(0.2126, 0.7152, 0.0722)));
+    float mark = smoothstep(0.38, 0.88, hem) * mix(1.0, 0.16, paper);
     vec4 ink = vec4(mix(u_accent.rgb, u_fg.rgb, mark), mix(u_accent.a, u_fg.a, mark));
     pica_color = pica_tone(tone, ink, u_levels - 1.0);
   }
@@ -1867,7 +1920,8 @@ float pica_bayer8(ivec2 p) {
       hem = max(hem, dim * max(rim * body, steep * lit * 1.3));
     }
     float tone = clamp(sheet * u_intensity, 0.0, 1.0);
-    float mark = smoothstep(0.38, 0.88, hem);
+    float paper = 1.0 - step(0.5, dot(u_fg.rgb, vec3(0.2126, 0.7152, 0.0722)));
+    float mark = smoothstep(0.38, 0.88, hem) * mix(1.0, 0.16, paper);
     vec4 ink = vec4(mix(u_accent.rgb, u_fg.rgb, mark), mix(u_accent.a, u_fg.a, mark));
     pica_color = pica_tone(tone, ink, u_levels - 1.0);
   }

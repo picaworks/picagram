@@ -73,3 +73,5 @@ Two grounds and six chrome tokens in `src/app/globals.css`. `--ink` and `--paper
 `meta.archived` removes an asset from ordinary browsing, including the canvas, but keeps it available when its slug is selected through a direct hash link. The inspector labels that view as archived. All generated installation files remain available. Agent discovery indexes omit archived assets; their individual markdown twins and registry entries identify their status.
 
 `meta.presets` supplies named JSON prop settings above detailed controls. A choice resets visual settings to defaults plus the preset, retains a supplied `src`, accessible `label`, and pause choice unless the preset explicitly replaces them, and uses the same live state as React and HTML exports. Metadata and per-component markdown both carry preset settings. Manual controls remain available after a preset is applied.
+
+A numeric animation time control offers Live when its default is null. Seeking pins a frame; Live restores null without resetting the other props. Numeric slider steps in the motion and materials release represent every authored default and preset exactly.

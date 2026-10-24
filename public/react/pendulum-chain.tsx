@@ -840,7 +840,7 @@ export interface PendulumChainProps extends MotionProps {
 }
 
 export const defaults: PendulumChainProps = {
-  count: 7,
+  count: 4,
   coupling: 0.65,
   amplitude: 0.8,
   period: 7,
@@ -914,7 +914,7 @@ export const mount: Mount<PendulumChainProps> = (host, initial = {}) => {
     const colors = palette.colors;
     const n = count();
     const cell = (grid.cols - 2) / n;
-    const depth = Math.max(1, Math.min(7, grid.rows - 6));
+    const depth = Math.max(1, Math.min(14, grid.rows - 6));
     const top = Math.max(0, Math.floor((grid.rows - depth - 5) / 2));
     const amplitude = pendulumClamp(props.amplitude, 0, 1);
     const seconds = t / 1000;

@@ -55,7 +55,7 @@ export function ControlField({ name, control, value, defaultValue, hint, onChang
         )}
       </div>
       {control.type === "number" && (
-        <NumberField id={id} control={control} label={label} value={value} hintId={hintId} onChange={onChange} />
+        <NumberField id={id} control={control} label={label} value={value} hintId={hintId} live={name === "time" && defaultValue === null} onChange={onChange} />
       )}
       {control.type === "string" && (
         <input
@@ -112,6 +112,7 @@ function useDraft(canonical: string): [string, (draft: string, base: string) => 
 }
 
 interface NumberFieldProps {
+  live: boolean;
   id: string;
   control: Extract<Control, { type: "number" }>;
   label: string;
@@ -120,7 +121,7 @@ interface NumberFieldProps {
   onChange: (value: PropValue) => void;
 }
 
-function NumberField({ id, control, label, value, hintId, onChange }: NumberFieldProps) {
+function NumberField({ id, control, label, value, hintId, live, onChange }: NumberFieldProps) {
   const current = typeof value === "number" ? value : null;
   const canonical = current === null ? "" : String(current);
   const [draft, setDraft] = useDraft(canonical);
@@ -153,6 +154,11 @@ function NumberField({ id, control, label, value, hintId, onChange }: NumberFiel
         onChange={(e) => onText(e.target.value)}
         onBlur={() => setDraft(canonical, canonical)}
       />
+      {live && (
+        <button type="button" className="chip" aria-label="Resume live animation" disabled={current === null} onClick={() => { setDraft("", ""); onChange(null); }}>
+          Live
+        </button>
+      )}
     </div>
   );
 }

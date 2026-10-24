@@ -11,9 +11,50 @@ export const meta: Meta = {
   animated: true,
   decorative: true,
   palette: ["fg", "accent", "bg"],
+  presets: [
+    {
+        "name": "Layered curtains",
+        "description": "The original layered glow with a softer ink edge on paper.",
+        "props": {
+            "curtains": 3,
+            "intensity": 0.8,
+            "height": 0.7,
+            "rays": 0.6,
+            "folds": 0.5,
+            "pixel": 2,
+            "speed": 0.15
+        }
+    },
+    {
+        "name": "Single curtain",
+        "description": "One broad curtain with a quieter fold and finer printed grain.",
+        "props": {
+            "curtains": 1,
+            "intensity": 0.6,
+            "height": 0.9,
+            "rays": 0.4,
+            "folds": 0.25,
+            "pixel": 1,
+            "speed": 0.1
+        }
+    },
+    {
+        "name": "Reading light",
+        "description": "Lighter layers and slower motion leave more quiet ground.",
+        "props": {
+            "curtains": 2,
+            "intensity": 0.42,
+            "height": 0.6,
+            "rays": 0.35,
+            "folds": 0.25,
+            "pixel": 1,
+            "speed": 0.08
+        }
+    }
+],
   controls: {
-    speed: { type: "number", min: 0, max: 1, step: 0.05 },
-    curtains: { type: "number", min: 2, max: 8, step: 1 },
+    speed: { type: "number", min: 0, max: 1, step: 0.01 },
+    curtains: { type: "number", min: 1, max: 8, step: 1 },
     arc: { type: "number", min: 0, max: 1, step: 0.05 },
     height: { type: "number", min: 0.2, max: 1, step: 0.05 },
     horizon: { type: "number", min: 0.4, max: 1, step: 0.05 },

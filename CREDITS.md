@@ -2,6 +2,10 @@
 
 Generated from each component's meta by `npm run build:registry`. Edit the meta, not this file.
 
+## ASCII Accordion Surface (`ascii-accordion-surface`)
+
+Original to Picagram.
+
 ## Archive tree (`ascii-archive-tree`)
 
 Original to Picagram.
@@ -26,11 +30,19 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Diffraction Screen (`ascii-diffraction-screen`)
+
+Original to Picagram.
+
 ## ASCII Exhibition Map (`ascii-exhibition-map`)
 
 Original to Picagram.
 
 ## Expedition log (`ascii-expedition-log`)
+
+Original to Picagram.
+
+## ASCII Folding Fan (`ascii-folding-fan`)
 
 Original to Picagram.
 
@@ -43,6 +55,14 @@ Original to Picagram.
 Original to Picagram.
 
 ## Garden Plan (`ascii-garden-plan`)
+
+Original to Picagram.
+
+## ASCII Gyroscope (`ascii-gyroscope`)
+
+Original to Picagram.
+
+## ASCII Harmonic Stack (`ascii-harmonic-stack`)
 
 Original to Picagram.
 
@@ -68,6 +88,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Loop Knot (`ascii-loop-knot`)
+
+Original to Picagram.
+
 ## ASCII Morph (`ascii-morph`)
 
 Original to Picagram.
@@ -77,6 +101,10 @@ Original to Picagram.
 - Technique from [Simplex noise demystified](https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf) by Stefan Gustavson (Public domain).
 
 ## ASCII Observatory Console (`ascii-observatory-console`)
+
+Original to Picagram.
+
+## ASCII Orbit Trails (`ascii-orbit-trails`)
 
 Original to Picagram.
 
@@ -100,6 +128,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Radial Dial (`ascii-radial-dial`)
+
+Original to Picagram.
+
 ## ASCII Rain (`ascii-rain`)
 
 - Technique from [Matrix digital rain](https://en.wikipedia.org/wiki/Matrix_digital_rain) by Simon Whiteley, title design for The Matrix (1999) (Cultural reference, no code).
@@ -119,6 +151,10 @@ Original to Picagram.
 ## ASCII Solid (`ascii-solid`)
 
 - Technique from [Donut math: how donut.c works](https://www.a1k0n.net/2011/07/20/donut-math.html) by Andy Sloane (Article).
+
+## ASCII Spiral Current (`ascii-spiral-current`)
+
+Original to Picagram.
 
 ## ASCII Terminal Journal (`ascii-terminal-journal`)
 
@@ -151,6 +187,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## Weather Station (`ascii-weather-station`)
+
+Original to Picagram.
+
+## ASCII Wind Tunnel (`ascii-wind-tunnel`)
 
 Original to Picagram.
 
@@ -411,7 +451,7 @@ Original to Picagram.
 
 ## Pixel Weft Image (`pixel-weft-image`)
 
-Original to Picagram.
+- Port of [Demo photograph: The Blue Marble from Apollo 17](https://svs.gsfc.nasa.gov/30613/) by NASA Johnson Space Center / Apollo 17 crew (NASA media usage guidelines).
 
 ## Pressure Print Image (`pressure-print-image`)
 
@@ -912,15 +952,39 @@ Original to Picagram.
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
 
+## Brushed Alloy (`brushed-alloy`)
+
+Original to Picagram.
+
 ## Caustic Field (`caustic-field`)
 
 - Technique from [Method of displaying optical effects within water using accumulation buffer](https://doi.org/10.1145/192161.192261) by Tomoyuki Nishita and Eihachiro Nakamae (Paper).
 - Technique from [Catastrophe Optics: Morphologies of Caustics and Their Diffraction Patterns](https://doi.org/10.1016/S0079-6638(08)70215-4) by M. V. Berry and C. Upstill (Paper).
 
+## Contour Engraving (`contour-engraving`)
+
+Original to Picagram.
+
 ## Contour Flow (`contour-flow`)
 
 - Technique from [The Relief Contour Method of Representing Topography on Maps](https://doi.org/10.2307/211219) by Kitiro Tanaka (Paper).
 - Technique from [Cartographic Relief Presentation](https://doi.org/10.1515/9783110844016) by Eduard Imhof (Book).
+
+## Cut Paper Relief (`cut-paper-relief`)
+
+Original to Picagram.
+
+## Etched Radial (`etched-radial`)
+
+Original to Picagram.
+
+## Glass Ripple Lens (`glass-ripple-lens`)
+
+Original to Picagram.
+
+## Lenticular Ridges (`lenticular-ridges`)
+
+Original to Picagram.
 
 ## Liquid Metal (`liquid-metal`)
 
@@ -933,10 +997,22 @@ Original to Picagram.
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
 
+## Orbiting Halftone (`orbiting-halftone`)
+
+Original to Picagram.
+
 ## Pixel Plasma (`pixel-plasma`)
 
 - Technique from [Plasma effect](https://en.wikipedia.org/wiki/Plasma_effect) by Wikipedia (Algorithm, no code).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
+
+## Prismatic Tiles (`prismatic-tiles`)
+
+Original to Picagram.
+
+## Quilted Surface (`quilted-surface`)
+
+Original to Picagram.
 
 ## Ripple Field (`ripple-field`)
 
@@ -952,6 +1028,10 @@ Original to Picagram.
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 
 ## Shadow Lattice (`shadow-lattice`)
+
+Original to Picagram.
+
+## Stippled Silk (`stippled-silk`)
 
 Original to Picagram.
 

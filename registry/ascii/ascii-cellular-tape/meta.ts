@@ -13,6 +13,38 @@ export const meta: Meta = {
   decorative: false,
   palette: ["fg", "bg", "accent", "muted"],
   capture: 2400,
+  presets: [
+    {
+        "name": "Compact rule 110",
+        "description": "A readable compact tape with enough rows to show the rule.",
+        "props": {
+            "rule": 110,
+            "columns": 31,
+            "generations": 24,
+            "initialCells": ""
+        }
+    },
+    {
+        "name": "Rule 30 fan",
+        "description": "One initial cell expands into an irregular triangular pattern.",
+        "props": {
+            "rule": 30,
+            "columns": 41,
+            "generations": 24,
+            "initialCells": "1"
+        }
+    },
+    {
+        "name": "Rule 90 triangle",
+        "description": "A wider tape reveals the repeated branching of rule 90.",
+        "props": {
+            "rule": 90,
+            "columns": 41,
+            "generations": 32,
+            "initialCells": "1"
+        }
+    }
+],
   controls: {
     rule: { type: "number", min: 0, max: 255, step: 1 },
     columns: { type: "number", min: 15, max: 121, step: 1 },

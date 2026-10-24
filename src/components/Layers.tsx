@@ -94,7 +94,7 @@ export function Layers(p: LayersProps) {
         <label className="label" htmlFor="catalog-release">Review batch</label>
         <select id="catalog-release" className="field" value={p.release} onChange={(e) => p.onRelease(e.target.value as ReleaseFilter)}>
           {RELEASES.map((release) => <option key={release.id} value={release.id}>{release.title}</option>)}
-          <option value="all">Both new batches</option>
+          <option value="all">All new batches</option>
         </select>
         <label className="label" htmlFor="catalog-category">Category</label>
         <select id="catalog-category" className="field" value={p.category} onChange={(e) => p.onCategory(e.target.value as Category | "all")}>

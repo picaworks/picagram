@@ -12,11 +12,54 @@ npx shadcn@latest add https://picagram.dev/r/pendulum-chain.json
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
 
+## Presets
+
+Use these JSON props in React or as window.PICA_PROPS in HTML. The catalog applies them before copying either format.
+
+### Compact exchange
+
+Four larger pendulums make the transfer easy to read.
+
+```json
+{
+  "count": 4,
+  "coupling": 0.65,
+  "amplitude": 0.8,
+  "period": 7
+}
+```
+
+### Five coupled
+
+A longer chain with stronger transfer between neighbors.
+
+```json
+{
+  "count": 5,
+  "coupling": 1.2,
+  "amplitude": 0.7,
+  "period": 8
+}
+```
+
+### Independent swings
+
+Zero coupling keeps the pendulums from exchanging energy.
+
+```json
+{
+  "count": 4,
+  "coupling": 0,
+  "amplitude": 0.75,
+  "period": 6
+}
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `count` | number | `7` | Number of linked pendulums, from 2 to 16. |
+| `count` | number | `4` | Number of linked pendulums, from 2 to 16. |
 | `coupling` | number | `0.65` | Strength of the neighbor springs; zero isolates each pendulum. |
 | `amplitude` | number | `0.8` | Maximum swing as a fraction of each fixed cell's width, from 0 to 1. |
 | `period` | number | `7` | Natural period of an isolated pendulum, in seconds. |
@@ -874,7 +917,7 @@ export interface PendulumChainProps extends MotionProps {
 }
 
 export const defaults: PendulumChainProps = {
-  count: 7,
+  count: 4,
   coupling: 0.65,
   amplitude: 0.8,
   period: 7,
@@ -948,7 +991,7 @@ export const mount: Mount<PendulumChainProps> = (host, initial = {}) => {
     const colors = palette.colors;
     const n = count();
     const cell = (grid.cols - 2) / n;
-    const depth = Math.max(1, Math.min(7, grid.rows - 6));
+    const depth = Math.max(1, Math.min(14, grid.rows - 6));
     const top = Math.max(0, Math.floor((grid.rows - depth - 5) / 2));
     const amplitude = pendulumClamp(props.amplitude, 0, 1);
     const seconds = t / 1000;
@@ -1493,7 +1536,7 @@ var PicaPendulumChain = (() => {
 
   // registry/motion/pendulum-chain/core.ts
   var defaults = {
-    count: 7,
+    count: 4,
     coupling: 0.65,
     amplitude: 0.8,
     period: 7,
@@ -1557,7 +1600,7 @@ var PicaPendulumChain = (() => {
       const colors = palette.colors;
       const n = count();
       const cell = (grid.cols - 2) / n;
-      const depth = Math.max(1, Math.min(7, grid.rows - 6));
+      const depth = Math.max(1, Math.min(14, grid.rows - 6));
       const top = Math.max(0, Math.floor((grid.rows - depth - 5) / 2));
       const amplitude = pendulumClamp(props.amplitude, 0, 1);
       const seconds = t / 1e3;

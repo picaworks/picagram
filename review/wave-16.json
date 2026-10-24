@@ -1,0 +1,102 @@
+{
+  "ascii-wind-tunnel": {
+    "decision": "keep",
+    "note": "Keep the obstacle wake as the default. Open Stream and Reading Margin deliberately trade detail for unobstructed content space. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "ascii-gyroscope": {
+    "decision": "keep",
+    "note": "Nested depth-separated wires retain an open center. The quiet preset now retains two rings. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "ascii-loop-knot": {
+    "decision": "keep",
+    "note": "A finite continuous ribbon exposes its over-under crossings. Three winding choices remain distinct on phones. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "ascii-harmonic-stack": {
+    "decision": "keep",
+    "note": "Overlapping profiles read as a coherent bank. The final chorus uses six traces and lower frequency for phone separation. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "ascii-radial-dial": {
+    "decision": "keep",
+    "note": "Broken concentric arcs keep clear spacing and a stable central opening. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "ascii-accordion-surface": {
+    "decision": "keep",
+    "note": "A finite folded sheet uses opposed glyph tones to describe each face. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "ascii-orbit-trails": {
+    "decision": "keep",
+    "note": "Short directional traces make four quiet moving marks. Sparse and wide presets deliberately leave content space. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "ascii-diffraction-screen": {
+    "decision": "keep",
+    "note": "A visible barrier and two openings give the interference bands a compositional origin. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "ascii-spiral-current": {
+    "decision": "keep",
+    "note": "Continuous broad ribbons retain their central aperture across preset widths and phone framing. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "ascii-folding-fan": {
+    "decision": "keep",
+    "note": "Finite pleats converge at one fixed hinge. Preset spread and rib counts give distinct silhouettes. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "brushed-alloy": {
+    "decision": "keep",
+    "note": "Directional grain and two broad reflection bands read as a machined surface. Palette controls are limited to visible foreground and ground. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "lenticular-ridges": {
+    "decision": "keep",
+    "note": "Repeated cylindrical relief visibly displaces a ruled field. Broad and fine presets preserve that optical identity. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "quilted-surface": {
+    "decision": "keep",
+    "note": "Padded diamond faces have coherent grazing light and recessed seams. Three cell scales remain distinct on phones. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "stippled-silk": {
+    "decision": "keep",
+    "note": "Broad bowed folds carry fine woven grain under calm grazing light. Quiet and gathered settings change the drape. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "glass-ripple-lens": {
+    "decision": "keep",
+    "note": "One offset lens bends a quiet ruled field. Smooth and rippled variants preserve a recognizable optical boundary. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "contour-engraving": {
+    "decision": "keep",
+    "note": "Recessed cuts follow a broadly folded plate. Groove normals and directional highlights describe the same surface. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "prismatic-tiles": {
+    "decision": "keep",
+    "note": "Planar bevel facets share one moving light, with a single accent facet. Three scales preserve the relief. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "orbiting-halftone": {
+    "decision": "keep",
+    "note": "A stationary dot screen records overlapping moving discs. Fine phone dots retain distinct printed coverage. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "etched-radial": {
+    "decision": "keep",
+    "note": "Offset concentric cuts and paired anisotropic highlights give the plate a clear machining center. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  },
+  "cut-paper-relief": {
+    "decision": "keep",
+    "note": "Nested finite rounded cuts frame a clear opening. Edge normals and shadows come from the same sheet stack. Integration accepted actual desktop and phone captures on ink and paper, with named presets. This is integration review; user review remains through the PR.",
+    "at": "2026-10-24T17:45:30.372332+00:00"
+  }
+}

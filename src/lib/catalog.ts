@@ -6,9 +6,10 @@ import type { Json } from "../../lib/types";
 import type { PaletteProp } from "../../lib/use-pica";
 import generated from "../../public/catalog.json";
 
-export const CURRENT_RELEASE = "components-2026-10-04";
+export const CURRENT_RELEASE = "motion-materials-2026-10-24";
 export const RELEASES = [
-  { id: CURRENT_RELEASE, title: "Reusable components" },
+  { id: CURRENT_RELEASE, title: "Motion and materials" },
+  { id: "components-2026-10-04", title: "Reusable components" },
   { id: "ascii-motion-2026-10-04", title: "ASCII, motion and immersive" },
   { id: "microsites-2026-10-04", title: "36 microsites" },
 ] as const;
@@ -67,6 +68,7 @@ const FIXTURE: CatalogItem = {
   decorative: true,
   controls: {
     count: { type: "number", min: 0, max: 10, step: 1 },
+    time: { type: "number", min: 0, max: 60000, step: 100 },
     name: { type: "string" },
     note: { type: "textarea", rows: 3 },
     on: { type: "boolean" },
@@ -82,6 +84,7 @@ const FIXTURE: CatalogItem = {
   exportName: "PicaFixture",
   defaults: {
     count: 1,
+    time: null,
     name: "hi",
     note: "line one",
     on: false,

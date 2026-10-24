@@ -12,3 +12,5 @@ How to add a plan: write it as `docs/plans/YYYY-MM-DD-<slug>.md`, get it approve
 | `2026-09-11-catalog-expansion.md` | Approved, in progress: the shell, the runtime, and 46 new components in two waves |
 | `2026-09-13-devin-fanout-expansion.md` | Approved, in progress: the verify harness, then 104 components in eleven batches |
 | `2026-10-18-calibration-refinements.md` | Implemented and verified locally: [checkpoint](../checkpoints/2026-10-18-calibration-refinements.md) |
+| `2026-10-23-review-and-ascii-wind-tunnel.md` | ASCII motion selected in chat; local implementation and expanded review |
+| `2026-10-24-motion-materials-and-refinements.md` | Approved in chat: eight refinements, twenty additions and one PR |
