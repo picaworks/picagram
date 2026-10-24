@@ -621,8 +621,8 @@ export interface AsciiCellularTapeProps extends MotionProps {
 
 export const defaults: AsciiCellularTapeProps = {
   rule: 110,
-  columns: 61,
-  generations: 32,
+  columns: 31,
+  generations: 24,
   initialCells: "",
   paused: false,
   time: null,
@@ -712,7 +712,7 @@ export const mount: Mount<AsciiCellularTapeProps> = (host, initial = {}) => {
     const inherited = Number.parseFloat(getComputedStyle(host).fontSize) || 16;
     const width = Math.max(1, bounds.width - 40);
     const height = Math.max(1, bounds.height - 40);
-    const cellCount = Math.max((rows[0]?.length ?? 61) + 7, 40);
+    const cellCount = Math.max((rows[0]?.length ?? defaults.columns) + 7, 40);
     const fontSize = Math.max(2, Math.min(inherited, width / (cellCount * 0.63), height / ((rows.length + 10) * 1.18)));
     panel.style.fontSize = `${fontSize}px`;
     heading.style.width = `${cellCount}ch`;

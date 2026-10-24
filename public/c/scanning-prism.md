@@ -12,13 +12,53 @@ npx shadcn@latest add https://picagram.dev/r/scanning-prism.json
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
 
+## Presets
+
+Use these JSON props in React or as window.PICA_PROPS in HTML. The catalog applies them before copying either format.
+
+### Clear mechanism
+
+A more legible mechanism with automatic compact placement.
+
+```json
+{
+  "speed": 0.8,
+  "opacity": 0.42,
+  "scale": 1.1
+}
+```
+
+### Quiet margins
+
+Lighter marks and slower travel around the reading area.
+
+```json
+{
+  "speed": 0.5,
+  "opacity": 0.25,
+  "scale": 0.9
+}
+```
+
+### Close study
+
+Larger details make the moving parts easier to inspect.
+
+```json
+{
+  "speed": 0.65,
+  "opacity": 0.55,
+  "scale": 1.4
+}
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `speed` | number | `1` | Motion rate multiplier, clamped from 0.2 to 2. |
-| `opacity` | number | `0.34` | Printed mark opacity, clamped from 0.1 to 0.65. |
-| `scale` | number | `1` | Mechanical detail scale, clamped from 0.6 to 1.8. |
+| `speed` | number | `0.8` | Motion rate multiplier, clamped from 0.2 to 2. |
+| `opacity` | number | `0.42` | Printed mark opacity, clamped from 0.1 to 0.65. |
+| `scale` | number | `1.1` | Mechanical detail scale, clamped from 0.6 to 1.8. |
 | `paused` | boolean | `false` | Stop animating and hold the current frame. |
 | `time` | number \| null | `null` | Render exactly this animation time, in milliseconds, and do not animate. Null animates. |
 | `seed` | number | `1` | Seed for every random choice, so the same seed always draws the same frame. |
@@ -684,7 +724,7 @@ export interface ScanningPrismProps extends MotionProps {
   scale: number;
 }
 
-export const defaults: ScanningPrismProps = { speed: 1, opacity: 0.34, scale: 1, paused: false, time: null, seed: 1 };
+export const defaults: ScanningPrismProps = { speed: 0.8, opacity: 0.42, scale: 1.1, paused: false, time: null, seed: 1 };
 
 /** An offset triangular prism translates diagonal hatch into quiet parallel optical strands. */
 export const mount: Mount<ScanningPrismProps> = (host, initial = {}) => {
@@ -710,6 +750,7 @@ export const mount: Mount<ScanningPrismProps> = (host, initial = {}) => {
     ${rules.selector} > [data-demo-copy] { position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(540px,60%); }
     ${rules.selector} > [data-demo-copy] h2 { font-size:clamp(26px,4vw,52px);line-height:1.08;font-weight:500;margin:14px 0 20px; }
     ${rules.selector} > [data-demo-copy] p { line-height:1.6;max-width:42ch; }
+    ${rules.selector}[data-pica-compact] > [data-demo-copy] { width:calc(100% - 48px);top:54%; }
     ${rules.selector} > [data-demo-copy] a { color:inherit;text-underline-offset:5px; }
   `);
   const surface = createCanvas(host, { maxDpr: 1.5, maxPixels: 1100000, css: "z-index:-1", onResize: () => motion.loop?.redraw() });
@@ -736,32 +777,38 @@ export const mount: Mount<ScanningPrismProps> = (host, initial = {}) => {
     ctx.clearRect(0, 0, w, h);
     const scale = Math.max(.6, Math.min(1.8, props.scale));
     const opacity = Math.max(.1, Math.min(.65, props.opacity));
-    const m = Math.min(248, Math.max(28, w < 600 ? w * .115 : w * .2));
+    const compact = w < 600 && h >= 400;
+    attrs.set("data-pica-compact", compact ? "" : null);
+    const m = Math.min(248, Math.max(28, w * .2));
     const phase = hashSeed(props.seed, 17) / 4294967295 * Math.PI * 2;
-    for (let side = 0; side < 2; side++) {
+    const t = ms * .00035 * Math.max(.2, Math.min(2, props.speed)) + phase;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = palette.colors.fg;
+    ctx.fillStyle = palette.colors.fg;
+    function line(x: number, y: number, x2: number, y2: number): void { ctx!.beginPath(); ctx!.moveTo(x, y); ctx!.lineTo(x2, y2); ctx!.stroke(); }
+    const sides=compact?1:2;
+    for(let side=0;side<sides;side++) {
       ctx.save();
-      ctx.translate(side ? w : 0, 0); ctx.scale(side ? -1 : 1, 1);
-      ctx.beginPath(); ctx.rect(0, 0, m, h); ctx.clip();
-      ctx.lineWidth = 1;
-      const t = ms * .00035 * Math.max(.2, Math.min(2, props.speed)) + phase + side * .9;
-      function line(x: number, y: number, x2: number, y2: number): void { ctx!.beginPath(); ctx!.moveTo(x, y); ctx!.lineTo(x2, y2); ctx!.stroke(); }
-      function polygon(points: number[][]): void { ctx!.beginPath(); for (let j = 0; j < points.length; j++) { const point = points[j]!; if (j === 0) ctx!.moveTo(point[0]!, point[1]!); else ctx!.lineTo(point[0]!, point[1]!); } ctx!.closePath(); }
-    const cy = h * (.45 + .09 * Math.sin(t * .5)), extent = Math.min(m * .75, 135 * scale);
-    const left = m * .12, right = left + extent;
-    ctx.strokeStyle = palette.colors.fg; ctx.globalAlpha = opacity * .55;
-    for (let j = -6; j < 7; j++) {
-      const y = cy + j * 14 * scale;
-      line(0, y - left * .45, left, y);
-      line(right, y + (right - left) * .08, m, y + (right - left) * .08);
-    }
-    ctx.globalAlpha = opacity * .22; ctx.fillStyle = palette.colors.fg;
-    polygon([[left, cy - extent * .7], [right, cy], [left, cy + extent * .7]]); ctx.fill();
-    ctx.globalAlpha = opacity; ctx.stroke();
-    ctx.save(); polygon([[left, cy - extent * .7], [right, cy], [left, cy + extent * .7]]); ctx.clip();
-    ctx.globalAlpha = opacity * .65;
-    for (let j = -9; j < 10; j++) line(left, cy + j * 10 * scale, right, cy + j * 10 * scale + extent * .08);
-    ctx.restore();
-      ctx.restore();
+      if(!compact){ctx.translate(side?w:0,0);ctx.scale(side?-1:1,1);}
+      const span=compact?w:m;
+      const left=compact?span*.32:span*.12;
+      const extent=compact?Math.min(span*.34,140)*Math.min(1.15,scale):Math.min(span*.7,150*scale);
+      const right=left+extent;
+      const cy=compact?Math.min(126,h*.16)+Math.sin(t*.5)*12:h*(.45+.055*Math.sin(t*.5+side*.9));
+      const gap=(compact?10:13)*Math.min(1.3,scale);
+      function triangle():void{ctx!.beginPath();ctx!.moveTo(left,cy-extent*.62);ctx!.lineTo(right,cy);ctx!.lineTo(left,cy+extent*.62);ctx!.closePath();}
+      ctx.beginPath();ctx.rect(0,compact?12:0,span,compact?232:h);ctx.clip();
+      ctx.globalAlpha=opacity*.7;
+      for(let j=-5;j<=5;j++) {
+        const y=cy+j*gap;
+        line(0,y+left*.3,left,y);
+        line(right,y+extent*.12,span,y+extent*.12+(span-right)*.16);
+      }
+      ctx.globalAlpha=opacity*.12;triangle();ctx.fill();
+      ctx.globalAlpha=opacity;ctx.stroke();
+      ctx.save();triangle();ctx.clip();ctx.globalAlpha=opacity*.8;
+      for(let j=-7;j<=7;j++)line(left,cy+j*gap,right,cy+j*gap+extent*.12);
+      ctx.restore();ctx.restore();
     }
     attrs.set("data-pica-ready", "true");
   }
@@ -1107,7 +1154,7 @@ var PicaScanningPrism = (() => {
   }
 
   // registry/effects/scanning-prism/core.ts
-  var defaults = { speed: 1, opacity: 0.34, scale: 1, paused: false, time: null, seed: 1 };
+  var defaults = { speed: 0.8, opacity: 0.42, scale: 1.1, paused: false, time: null, seed: 1 };
   var mount = (host, initial = {}) => {
     let props = { ...defaults, ...initial };
     let localPaused = props.paused;
@@ -1135,6 +1182,7 @@ var PicaScanningPrism = (() => {
     ${rules.selector} > [data-demo-copy] { position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(540px,60%); }
     ${rules.selector} > [data-demo-copy] h2 { font-size:clamp(26px,4vw,52px);line-height:1.08;font-weight:500;margin:14px 0 20px; }
     ${rules.selector} > [data-demo-copy] p { line-height:1.6;max-width:42ch; }
+    ${rules.selector}[data-pica-compact] > [data-demo-copy] { width:calc(100% - 48px);top:54%; }
     ${rules.selector} > [data-demo-copy] a { color:inherit;text-underline-offset:5px; }
   `);
     const surface = createCanvas(host, { maxDpr: 1.5, maxPixels: 11e5, css: "z-index:-1", onResize: () => motion.loop?.redraw() });
@@ -1164,52 +1212,60 @@ var PicaScanningPrism = (() => {
       ctx.clearRect(0, 0, w, h);
       const scale = Math.max(0.6, Math.min(1.8, props.scale));
       const opacity = Math.max(0.1, Math.min(0.65, props.opacity));
-      const m = Math.min(248, Math.max(28, w < 600 ? w * 0.115 : w * 0.2));
+      const compact = w < 600 && h >= 400;
+      attrs.set("data-pica-compact", compact ? "" : null);
+      const m = Math.min(248, Math.max(28, w * 0.2));
       const phase = hashSeed(props.seed, 17) / 4294967295 * Math.PI * 2;
-      for (let side = 0; side < 2; side++) {
-        let line2 = function(x, y, x2, y2) {
+      const t = ms * 35e-5 * Math.max(0.2, Math.min(2, props.speed)) + phase;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = palette.colors.fg;
+      ctx.fillStyle = palette.colors.fg;
+      function line(x, y, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+      const sides = compact ? 1 : 2;
+      for (let side = 0; side < sides; side++) {
+        let triangle2 = function() {
           ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
-        }, polygon2 = function(points) {
-          ctx.beginPath();
-          for (let j = 0; j < points.length; j++) {
-            const point = points[j];
-            if (j === 0) ctx.moveTo(point[0], point[1]);
-            else ctx.lineTo(point[0], point[1]);
-          }
+          ctx.moveTo(left, cy - extent * 0.62);
+          ctx.lineTo(right, cy);
+          ctx.lineTo(left, cy + extent * 0.62);
           ctx.closePath();
         };
-        var line = line2, polygon = polygon2;
+        var triangle = triangle2;
         ctx.save();
-        ctx.translate(side ? w : 0, 0);
-        ctx.scale(side ? -1 : 1, 1);
-        ctx.beginPath();
-        ctx.rect(0, 0, m, h);
-        ctx.clip();
-        ctx.lineWidth = 1;
-        const t = ms * 35e-5 * Math.max(0.2, Math.min(2, props.speed)) + phase + side * 0.9;
-        const cy = h * (0.45 + 0.09 * Math.sin(t * 0.5)), extent = Math.min(m * 0.75, 135 * scale);
-        const left = m * 0.12, right = left + extent;
-        ctx.strokeStyle = palette.colors.fg;
-        ctx.globalAlpha = opacity * 0.55;
-        for (let j = -6; j < 7; j++) {
-          const y = cy + j * 14 * scale;
-          line2(0, y - left * 0.45, left, y);
-          line2(right, y + (right - left) * 0.08, m, y + (right - left) * 0.08);
+        if (!compact) {
+          ctx.translate(side ? w : 0, 0);
+          ctx.scale(side ? -1 : 1, 1);
         }
-        ctx.globalAlpha = opacity * 0.22;
-        ctx.fillStyle = palette.colors.fg;
-        polygon2([[left, cy - extent * 0.7], [right, cy], [left, cy + extent * 0.7]]);
+        const span = compact ? w : m;
+        const left = compact ? span * 0.32 : span * 0.12;
+        const extent = compact ? Math.min(span * 0.34, 140) * Math.min(1.15, scale) : Math.min(span * 0.7, 150 * scale);
+        const right = left + extent;
+        const cy = compact ? Math.min(126, h * 0.16) + Math.sin(t * 0.5) * 12 : h * (0.45 + 0.055 * Math.sin(t * 0.5 + side * 0.9));
+        const gap = (compact ? 10 : 13) * Math.min(1.3, scale);
+        ctx.beginPath();
+        ctx.rect(0, compact ? 12 : 0, span, compact ? 232 : h);
+        ctx.clip();
+        ctx.globalAlpha = opacity * 0.7;
+        for (let j = -5; j <= 5; j++) {
+          const y = cy + j * gap;
+          line(0, y + left * 0.3, left, y);
+          line(right, y + extent * 0.12, span, y + extent * 0.12 + (span - right) * 0.16);
+        }
+        ctx.globalAlpha = opacity * 0.12;
+        triangle2();
         ctx.fill();
         ctx.globalAlpha = opacity;
         ctx.stroke();
         ctx.save();
-        polygon2([[left, cy - extent * 0.7], [right, cy], [left, cy + extent * 0.7]]);
+        triangle2();
         ctx.clip();
-        ctx.globalAlpha = opacity * 0.65;
-        for (let j = -9; j < 10; j++) line2(left, cy + j * 10 * scale, right, cy + j * 10 * scale + extent * 0.08);
+        ctx.globalAlpha = opacity * 0.8;
+        for (let j = -7; j <= 7; j++) line(left, cy + j * gap, right, cy + j * gap + extent * 0.12);
         ctx.restore();
         ctx.restore();
       }

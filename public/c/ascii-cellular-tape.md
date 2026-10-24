@@ -12,13 +12,56 @@ npx shadcn@latest add https://picagram.dev/r/ascii-cellular-tape.json
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
 
+## Presets
+
+Use these JSON props in React or as window.PICA_PROPS in HTML. The catalog applies them before copying either format.
+
+### Compact rule 110
+
+A readable compact tape with enough rows to show the rule.
+
+```json
+{
+  "rule": 110,
+  "columns": 31,
+  "generations": 24,
+  "initialCells": ""
+}
+```
+
+### Rule 30 fan
+
+One initial cell expands into an irregular triangular pattern.
+
+```json
+{
+  "rule": 30,
+  "columns": 41,
+  "generations": 24,
+  "initialCells": "1"
+}
+```
+
+### Rule 90 triangle
+
+A wider tape reveals the repeated branching of rule 90.
+
+```json
+{
+  "rule": 90,
+  "columns": 41,
+  "generations": 32,
+  "initialCells": "1"
+}
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `rule` | number | `110` | Elementary cellular automaton rule, from 0 to 255. |
-| `columns` | number | `61` | Number of cells in each generation, from 15 to 121. |
-| `generations` | number | `32` | Number of generations on the tape, including the initial row, from 8 to 80. |
+| `columns` | number | `31` | Number of cells in each generation, from 15 to 121. |
+| `generations` | number | `24` | Number of generations on the tape, including the initial row, from 8 to 80. |
 | `initialCells` | string | `""` | Centered initial binary pattern; an empty string creates a sparse pattern from seed. |
 | `paused` | boolean | `false` | Stop animating and hold the current frame. |
 | `time` | number \| null | `null` | Render exactly this animation time, in milliseconds, and do not animate. Null animates. |
@@ -654,8 +697,8 @@ export interface AsciiCellularTapeProps extends MotionProps {
 
 export const defaults: AsciiCellularTapeProps = {
   rule: 110,
-  columns: 61,
-  generations: 32,
+  columns: 31,
+  generations: 24,
   initialCells: "",
   paused: false,
   time: null,
@@ -745,7 +788,7 @@ export const mount: Mount<AsciiCellularTapeProps> = (host, initial = {}) => {
     const inherited = Number.parseFloat(getComputedStyle(host).fontSize) || 16;
     const width = Math.max(1, bounds.width - 40);
     const height = Math.max(1, bounds.height - 40);
-    const cellCount = Math.max((rows[0]?.length ?? 61) + 7, 40);
+    const cellCount = Math.max((rows[0]?.length ?? defaults.columns) + 7, 40);
     const fontSize = Math.max(2, Math.min(inherited, width / (cellCount * 0.63), height / ((rows.length + 10) * 1.18)));
     panel.style.fontSize = `${fontSize}px`;
     heading.style.width = `${cellCount}ch`;
@@ -1068,8 +1111,8 @@ var PicaAsciiCellularTape = (() => {
   // registry/ascii/ascii-cellular-tape/core.ts
   var defaults = {
     rule: 110,
-    columns: 61,
-    generations: 32,
+    columns: 31,
+    generations: 24,
     initialCells: "",
     paused: false,
     time: null,
@@ -1151,7 +1194,7 @@ var PicaAsciiCellularTape = (() => {
       const inherited = Number.parseFloat(getComputedStyle(host).fontSize) || 16;
       const width = Math.max(1, bounds.width - 40);
       const height = Math.max(1, bounds.height - 40);
-      const cellCount = Math.max((rows[0]?.length ?? 61) + 7, 40);
+      const cellCount = Math.max((rows[0]?.length ?? defaults.columns) + 7, 40);
       const fontSize = Math.max(2, Math.min(inherited, width / (cellCount * 0.63), height / ((rows.length + 10) * 1.18)));
       panel.style.fontSize = `${fontSize}px`;
       heading.style.width = `${cellCount}ch`;

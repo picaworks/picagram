@@ -22,8 +22,8 @@ export interface PixelWeftImageProps extends MotionProps {
 
 export const defaults: PixelWeftImageProps = {
   src: "",
-  cellSize: 20,
-  progress: 0.74,
+  cellSize: 14,
+  progress: 0.78,
   speed: 0.025,
   paused: false,
   time: null,

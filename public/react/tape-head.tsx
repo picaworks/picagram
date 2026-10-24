@@ -648,7 +648,7 @@ export interface TapeHeadProps extends MotionProps {
   scale: number;
 }
 
-export const defaults: TapeHeadProps = { speed: 1, opacity: 0.34, scale: 1, paused: false, time: null, seed: 1 };
+export const defaults: TapeHeadProps = { speed: 0.8, opacity: 0.42, scale: 1.1, paused: false, time: null, seed: 1 };
 
 /** Two turning spools carry a tape path past a slowly traversing recording head. */
 export const mount: Mount<TapeHeadProps> = (host, initial = {}) => {
@@ -674,6 +674,7 @@ export const mount: Mount<TapeHeadProps> = (host, initial = {}) => {
     ${rules.selector} > [data-demo-copy] { position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(540px,60%); }
     ${rules.selector} > [data-demo-copy] h2 { font-size:clamp(26px,4vw,52px);line-height:1.08;font-weight:500;margin:14px 0 20px; }
     ${rules.selector} > [data-demo-copy] p { line-height:1.6;max-width:42ch; }
+    ${rules.selector}[data-pica-compact] > [data-demo-copy] { width:calc(100% - 48px);top:54%; }
     ${rules.selector} > [data-demo-copy] a { color:inherit;text-underline-offset:5px; }
   `);
   const surface = createCanvas(host, { maxDpr: 1.5, maxPixels: 1100000, css: "z-index:-1", onResize: () => motion.loop?.redraw() });
@@ -700,31 +701,46 @@ export const mount: Mount<TapeHeadProps> = (host, initial = {}) => {
     ctx.clearRect(0, 0, w, h);
     const scale = Math.max(.6, Math.min(1.8, props.scale));
     const opacity = Math.max(.1, Math.min(.65, props.opacity));
-    const m = Math.min(248, Math.max(28, w < 600 ? w * .115 : w * .2));
+    const compact = w < 600 && h >= 400;
+    attrs.set("data-pica-compact", compact ? "" : null);
+    const m = Math.min(248, Math.max(28, w * .2));
     const phase = hashSeed(props.seed, 17) / 4294967295 * Math.PI * 2;
-    for (let side = 0; side < 2; side++) {
-      ctx.save();
-      ctx.translate(side ? w : 0, 0); ctx.scale(side ? -1 : 1, 1);
-      ctx.beginPath(); ctx.rect(0, 0, m, h); ctx.clip();
-      ctx.lineWidth = 1;
-      const t = ms * .00035 * Math.max(.2, Math.min(2, props.speed)) + phase + side * .9;
-      function line(x: number, y: number, x2: number, y2: number): void { ctx!.beginPath(); ctx!.moveTo(x, y); ctx!.lineTo(x2, y2); ctx!.stroke(); }
-    const cx = m * .5, r = Math.min(m * .38, 74) * Math.min(1.15, scale), cy1 = h * .24, cy2 = h * .7;
+    const t = ms * .00035 * Math.max(.2, Math.min(2, props.speed)) + phase;
+    ctx.lineWidth = 1;
     ctx.strokeStyle = palette.colors.fg;
-    for (const [cy, sign] of [[cy1, 1], [cy2, -1]]) {
-      ctx.globalAlpha = opacity * .65;
-      for (const radius of [r, r * .8, r * .23]) { ctx.beginPath(); ctx.arc(cx, cy!, radius, 0, Math.PI * 2); ctx.stroke(); }
-      ctx.save(); ctx.translate(cx, cy!); ctx.rotate(t * sign! * .4);
-      ctx.globalAlpha = opacity;
-      for (let spoke = 0; spoke < 6; spoke++) { ctx.rotate(Math.PI / 3); line(r * .3, 0, r * .7, 0); }
-      ctx.restore();
-    }
-    const headY = h * .46 + Math.sin(t * .6) * h * .035;
-    ctx.globalAlpha = opacity * .8;
-    line(cx - r, cy1, cx - r, cy2); line(cx + r, cy1, cx + r, cy2);
-    ctx.strokeRect(cx - r * .4, headY - 14, r * .8, 28);
-    line(cx - r, headY, cx - r * .4, headY); line(cx + r * .4, headY, cx + r, headY);
-    ctx.globalAlpha = opacity * .4; line(cx, cy1 + r, cx, headY - 14);
+    ctx.fillStyle = palette.colors.fg;
+    function line(x: number, y: number, x2: number, y2: number): void { ctx!.beginPath(); ctx!.moveTo(x, y); ctx!.lineTo(x2, y2); ctx!.stroke(); }
+    const sides=compact?1:2;
+    for(let side=0;side<sides;side++) {
+      ctx.save();
+      if(!compact){ctx.translate(side?w:0,0);ctx.scale(side?-1:1,1);}
+      const r=compact?Math.min(44,w*.11)*Math.min(1.15,scale):Math.min(m*.37,78)*Math.min(1.15,scale);
+      const first=compact?[w*.29,110]:[m*.5,h*.24];
+      const second=compact?[w*.71,110]:[m*.5,h*.71];
+      for(const [i,center] of [first,second].entries()) {
+        const cx=center[0]!,cy=center[1]!;
+        ctx.globalAlpha=opacity*.08;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
+        ctx.globalAlpha=opacity*.8;
+        for(const radius of [r,r*.82,r*.23]){ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.stroke();}
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(t*(i===0?1:-1)*.4+side*.9);ctx.globalAlpha=opacity;
+        for(let j=0;j<6;j++){ctx.rotate(Math.PI/3);line(r*.32,0,r*.72,0);}
+        ctx.restore();
+      }
+      ctx.globalAlpha=opacity*.85;
+      if(compact){
+        line(first[0]!,110-r,second[0]!,110-r);line(first[0]!,110+r,second[0]!,110+r);
+        const x=w*.5+Math.sin(t*.6)*10;
+        ctx.strokeRect(x-13,98,26,24);line(x,86,x,98);line(x,122,x,134);
+        ctx.globalAlpha=opacity*.6;
+        const travel=(t*.15)%1;ctx.fillRect(first[0]!+(second[0]!-first[0]!)*travel-3,108-r,6,4);
+      } else {
+        const cx=m*.5,cy1=first[1]!,cy2=second[1]!;
+        line(cx-r,cy1,cx-r,cy2);line(cx+r,cy1,cx+r,cy2);
+        const headY=h*.47+Math.sin(t*.6)*h*.035;
+        ctx.strokeRect(cx-r*.4,headY-14,r*.8,28);
+        line(cx-r,headY,cx-r*.4,headY);line(cx+r*.4,headY,cx+r,headY);
+        ctx.globalAlpha=opacity*.5;line(cx,cy1+r,cx,headY-14);
+      }
       ctx.restore();
     }
     attrs.set("data-pica-ready", "true");

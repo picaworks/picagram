@@ -2,7 +2,7 @@
 
 > A page hero that adds calls to action and a composed background behind a headline and copy.
 
-Category: sections. Tags: hero, landing, section, cta, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 9.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
+Category: sections. Tags: hero, landing, section, cta, background. Animated. Holds a still frame under prefers-reduced-motion, and stops offscreen and in hidden tabs. Size: 9.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
@@ -12,6 +12,49 @@ npx shadcn@latest add https://picagram.dev/r/hero.json
 
 Or paste one of the two files below. The React file imports only `react`. The HTML file needs nothing.
 
+## Presets
+
+Use these JSON props in React or as window.PICA_PROPS in HTML. The catalog applies them before copying either format.
+
+### Editorial mesh
+
+A quiet mesh behind a clear left-aligned introduction.
+
+```json
+{
+  "background": "mesh",
+  "align": "start",
+  "minHeight": 75,
+  "intensity": 0.32
+}
+```
+
+### Centered introduction
+
+A centered opening with restrained background strength.
+
+```json
+{
+  "background": "mesh",
+  "align": "center",
+  "minHeight": 85,
+  "intensity": 0.22
+}
+```
+
+### Text first
+
+A compact introduction on a clear ground for uninterrupted reading.
+
+```json
+{
+  "background": "none",
+  "align": "start",
+  "minHeight": 60,
+  "intensity": 0.18
+}
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -19,8 +62,8 @@ Or paste one of the two files below. The React file imports only `react`. The HT
 | `background` | "mesh" \| "noise" \| "none" | `"mesh"` | What draws behind the content: a mesh gradient, a drifting ASCII noise field, or nothing. |
 | `actions` | readonly HeroAction[] | `[{"label":"Browse components","href":"#components"},{"label":"Read the docs","href":"#docs"}]` | Calls to action, drawn as links. The first draws solid in the accent, the rest draw outline. |
 | `align` | "start" \| "center" | `"start"` | Horizontal alignment of the content column within the host. |
-| `minHeight` | number | `60` | The host's minimum height, in percent of the viewport height. |
-| `intensity` | number | `0.6` | How strongly the background shows, from 0 to 1, passed through to whichever one is mounted. |
+| `minHeight` | number | `75` | The host's minimum height, in percent of the viewport height. |
+| `intensity` | number | `0.32` | How strongly the background shows, from 0 to 1, passed through to whichever one is mounted. |
 | `paused` | boolean | `false` | Stop animating and hold the current frame. |
 | `time` | number \| null | `null` | Render exactly this animation time, in milliseconds, and do not animate. Null animates. |
 | `seed` | number | `1` | Seed for every random choice, so the same seed always draws the same frame. |
@@ -1929,8 +1972,8 @@ export const defaults: HeroProps = {
     { label: "Read the docs", href: "#docs" },
   ],
   align: "start",
-  minHeight: 60,
-  intensity: 0.6,
+  minHeight: 75,
+  intensity: 0.32,
   paused: false,
   time: null,
   seed: 1,
@@ -1967,6 +2010,7 @@ type Background =
 function mountBackground(kind: "mesh" | "noise", host: HTMLElement, p: HeroProps): Background {
   const bgLayer = layer(host, "under");
   if (kind === "mesh") return { kind, layer: bgLayer, instance: meshGradient.mount(bgLayer.el, meshProps(p)) };
+  bgLayer.el.style.opacity = String(Math.min(1, Math.max(0, p.intensity)));
   return { kind, layer: bgLayer, instance: asciiNoiseField.mount(bgLayer.el, noiseProps(p)) };
 }
 
@@ -1989,6 +2033,9 @@ function rules(selector: string, p: HeroProps): string {
     `:where(${selector}){min-height:${vh(p.minHeight)}vh}`,
     `${selector}{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:${edge};padding:clamp(1.5rem, 5vw, 4rem);gap:0.6em}`,
     `${selector} > :not([data-pica]){max-width:40rem;text-align:${textAlign}}`,
+    `${selector} > [data-hero-content] h1{font-size:clamp(2.5rem,6vw,5.25rem);line-height:1.04;letter-spacing:-0.035em;max-width:12ch;margin:0.25em 0 0.45em}`,
+    `${selector} > [data-hero-content] p{line-height:1.6;max-width:42ch;margin:0.6em 0}`,
+    `${selector} > [data-hero-content] [data-hero-kicker]{font-size:0.75em;letter-spacing:0.08em}`,
     `${selector} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;max-width:40rem;margin-top:0.6em;justify-content:${edge}}`,
     `${selector} > [data-pica-actions]:empty{display:none}`,
     `${selector} > [data-pica-actions] a{appearance:none;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.6em 1.25em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
@@ -2055,6 +2102,7 @@ export const mount: Mount<HeroProps> = (host, initial = {}) => {
           props.seed !== before.seed ||
           props.intensity !== before.intensity
         ) {
+          bg.layer.el.style.opacity = String(Math.min(1, Math.max(0, props.intensity)));
           bg.instance.update(noiseProps(props));
         }
       }
@@ -2112,7 +2160,7 @@ html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto;
 .pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
 </head>
 <body>
-<div id="pica"><h1>Components drawn in text.</h1><p>ASCII-first components for React and plain HTML.</p></div>
+<div id="pica"><article data-hero-content><p data-hero-kicker>PICAGRAM / COMPONENT LIBRARY</p><h1>Draw with less.</h1><p>Original components in text, pattern and motion. Choose a starting point, then make it your own.</p></article></div>
 <script>
 "use strict";
 var PicaHero = (() => {
@@ -3292,8 +3340,8 @@ void main() {
       { label: "Read the docs", href: "#docs" }
     ],
     align: "start",
-    minHeight: 60,
-    intensity: 0.6,
+    minHeight: 75,
+    intensity: 0.32,
     paused: false,
     time: null,
     seed: 1
@@ -3313,6 +3361,7 @@ void main() {
   function mountBackground(kind, host, p) {
     const bgLayer = layer(host, "under");
     if (kind === "mesh") return { kind, layer: bgLayer, instance: mount2(bgLayer.el, meshProps(p)) };
+    bgLayer.el.style.opacity = String(Math.min(1, Math.max(0, p.intensity)));
     return { kind, layer: bgLayer, instance: mount(bgLayer.el, noiseProps(p)) };
   }
   function destroyBackground(bg) {
@@ -3329,6 +3378,9 @@ void main() {
       `:where(${selector}){min-height:${vh(p.minHeight)}vh}`,
       `${selector}{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:${edge};padding:clamp(1.5rem, 5vw, 4rem);gap:0.6em}`,
       `${selector} > :not([data-pica]){max-width:40rem;text-align:${textAlign}}`,
+      `${selector} > [data-hero-content] h1{font-size:clamp(2.5rem,6vw,5.25rem);line-height:1.04;letter-spacing:-0.035em;max-width:12ch;margin:0.25em 0 0.45em}`,
+      `${selector} > [data-hero-content] p{line-height:1.6;max-width:42ch;margin:0.6em 0}`,
+      `${selector} > [data-hero-content] [data-hero-kicker]{font-size:0.75em;letter-spacing:0.08em}`,
       `${selector} > [data-pica-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:0.75em;max-width:40rem;margin-top:0.6em;justify-content:${edge}}`,
       `${selector} > [data-pica-actions]:empty{display:none}`,
       `${selector} > [data-pica-actions] a{appearance:none;text-decoration:none;font:inherit;font-size:0.95em;line-height:1.2;padding:0.6em 1.25em;display:inline-flex;align-items:center;border:1px solid transparent;border-radius:0;cursor:pointer}`,
@@ -3374,6 +3426,7 @@ void main() {
           }
         } else if (bg.kind === "noise") {
           if (props.paused !== before.paused || props.time !== before.time || props.seed !== before.seed || props.intensity !== before.intensity) {
+            bg.layer.el.style.opacity = String(Math.min(1, Math.max(0, props.intensity)));
             bg.instance.update(noiseProps(props));
           }
         }

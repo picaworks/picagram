@@ -21,7 +21,7 @@ import { BASE_PATH } from "./config";
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const OUT = join(ROOT, "out");
 
-const FIXTURE_DEFAULTS = { count: 1, name: "hi", note: "line one", on: false, mode: "a", tint: "#e8a020", series: [1, 2, 3], data: { a: 1 } };
+const FIXTURE_DEFAULTS = { count: 1, time: null, name: "hi", note: "line one", on: false, mode: "a", tint: "#e8a020", series: [1, 2, 3], data: { a: 1 } };
 
 const FIXTURE_HTML = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"></head><body>
@@ -287,6 +287,13 @@ async function main(): Promise<void> {
       const ok = await waitUntil(async () => (await hostAttr(frame, name)) === expected);
       checks.push({ name: `${type} control changes the frame`, ok, detail: ok ? `data-${name} is ${expected}` : `data-${name} is ${await hostAttr(frame, name)}, expected ${expected}` });
     }
+
+    // Seeking can return to live motion without clearing unrelated settings.
+    await page.getByLabel("time value", { exact: true }).fill("2400");
+    const sought = await waitUntil(async () => (await hostAttr(frame, "time")) === "2400");
+    await page.getByRole("button", { name: "Resume live animation" }).click();
+    const resumed = await waitUntil(async () => (await hostAttr(frame, "time")) === "null");
+    checks.push({ name: "time seek resumes live without resetting props", ok: sought && resumed && (await hostAttr(frame, "count")) === "7", detail: `time=${await hostAttr(frame, "time")}, count=${await hostAttr(frame, "count")}` });
 
     // The json control rejects invalid input.
     const jsonField = page.locator("#control-data");

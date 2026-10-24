@@ -1145,7 +1145,8 @@ const FRAGMENT = `${NOISE}${DITHER}${TONE}
       hem = max(hem, dim * max(rim * body, steep * lit * 1.3));
     }
     float tone = clamp(sheet * u_intensity, 0.0, 1.0);
-    float mark = smoothstep(0.38, 0.88, hem);
+    float paper = 1.0 - step(0.5, dot(u_fg.rgb, vec3(0.2126, 0.7152, 0.0722)));
+    float mark = smoothstep(0.38, 0.88, hem) * mix(1.0, 0.16, paper);
     vec4 ink = vec4(mix(u_accent.rgb, u_fg.rgb, mark), mix(u_accent.a, u_fg.a, mark));
     pica_color = pica_tone(tone, ink, u_levels - 1.0);
   }

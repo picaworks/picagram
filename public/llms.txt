@@ -6,35 +6,44 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 
 ## ASCII
 
+- [ASCII Accordion Surface](https://picagram.dev/c/ascii-accordion-surface.md): A rectangular glyph mesh tilts in perspective, with alternating density on its folded panels and one accented ridge.
 - [Archive tree](https://picagram.dev/c/ascii-archive-tree.md): An expandable archival finding aid with character branch prefixes and editable collection metadata.
 - [ASCII Binary Tide](https://picagram.dev/c/ascii-binary-tide.md): Slow analytic waves gather binary glyphs into broad density bands, with an optional clear center for reading content.
 - [Campus directory](https://picagram.dev/c/ascii-campus-directory.md): A campus guide with a character site map, department selection and accessible visiting directions.
 - [ASCII Cellular Tape](https://picagram.dev/c/ascii-cellular-tape.md): An elementary cellular automaton unfolds row by row into a numbered ASCII tape, with its rule table and current generation always visible.
 - [Circuit Board](https://picagram.dev/c/ascii-circuit-board.md): A character series circuit schematic with a selectable component inventory and readable terminal facts.
 - [Comparison Grid](https://picagram.dev/c/ascii-comparison-grid.md): An aligned character specimen matrix with selectable columns and readable material measurements.
+- [ASCII Diffraction Screen](https://picagram.dev/c/ascii-diffraction-screen.md): An analytic illustration of two narrow openings and gently breathing glyph fringes around a stable central band, using illustrative units.
 - [ASCII Exhibition Map](https://picagram.dev/c/ascii-exhibition-map.md): A floor plan drawn in box-drawing glyphs from room rectangles and doors, with a route-ordered room list that selects and fills one room.
 - [Expedition log](https://picagram.dev/c/ascii-expedition-log.md): An expedition dossier with an elevation transect, field observations and a working supply checklist.
+- [ASCII Folding Fan](https://picagram.dev/c/ascii-folding-fan.md): A finite pleated glyph fan opens gently around a fixed hinge, with alternating shaded faces and visible creases.
 - [ASCII Folio Ledger](https://picagram.dev/c/ascii-folio-ledger.md): A portfolio ledger with a character index, open project register, case disclosures and a practical contact brief.
 - [ASCII Fretboard](https://picagram.dev/c/ascii-fretboard.md): A monospace fretboard maps MIDI string tuning and root-relative scale intervals to real pitches, marking roots with brackets.
 - [Garden Plan](https://picagram.dev/c/ascii-garden-plan.md): A fixed character planting bed with seasonal layouts, crop spacing records, and practical notes.
+- [ASCII Gyroscope](https://picagram.dev/c/ascii-gyroscope.md): Three nested glyph wire rings precess around a fixed center, with dim rear arcs and one accent joint revealing their depth.
+- [ASCII Harmonic Stack](https://picagram.dev/c/ascii-harmonic-stack.md): Offset harmonic profiles drift through a measured glyph field, with overlapping silhouettes and one accented front contour.
 - [ASCII Image](https://picagram.dev/c/ascii-image.md): An image drawn as a grid of glyphs, each chosen by the ink it actually puts down in the font in use.
 - [Isometric room](https://picagram.dev/c/ascii-isometric-room.md): A fixed-cell character room elevation with a compact mobile plan, object selection and inventory facts.
 - [ASCII Library Catalog](https://picagram.dev/c/ascii-library-catalog.md): A reading collection with a character bookshelf, selectable catalogue rows, useful book notes and a curated reading route.
 - [ASCII Lissajous Scope](https://picagram.dev/c/ascii-lissajous-scope.md): Two oscillator harmonics form a measured glyph trace with equal amplitude scales, a fading persistence trail, and labeled X-phase landmarks.
 - [Loom draft](https://picagram.dev/c/ascii-loom-draft.md): A weaving draft in glyphs, where toggling a tie-up cell redraws the crossings of its woven repeat.
+- [ASCII Loop Knot](https://picagram.dev/c/ascii-loop-knot.md): One closed braille loop turns slowly in space, with clear over and under crossings.
 - [ASCII Morph](https://picagram.dev/c/ascii-morph.md): Two subjects that morph into each other and back, each cell resolving in the order its ink changes the most.
 - [ASCII Noise Field](https://picagram.dev/c/ascii-noise-field.md): A quiet field of drifting simplex noise, drawn as glyphs chosen by measured density.
 - [ASCII Observatory Console](https://picagram.dev/c/ascii-observatory-console.md): An observatory notebook with a character sky diagram, selectable observation records, a session ledger and instrument notes.
+- [ASCII Orbit Trails](https://picagram.dev/c/ascii-orbit-trails.md): A small family of glyph markers follows offset elliptical paths with short fading trails in an open field.
 - [Packet Route](https://picagram.dev/c/ascii-packet-route.md): A supplied network route drawn as a character hop map with selectable latency records and an ordered route.
 - [ASCII Piano Roll](https://picagram.dev/c/ascii-piano-roll.md): Supplied notes align by pitch and beat on a monospace grid, with duration-sized bars and accessible controlled selection.
 - [ASCII Pointer Ripple](https://picagram.dev/c/ascii-pointer-ripple.md): A glyph field of low-density noise that sends rippling rings outward from the pointer, as if the grid were water.
 - [ASCII Press Wire](https://picagram.dev/c/ascii-press-wire.md): A local wire edition with a character teletype masthead, lead dispatch, timestamped reports and transparent corrections.
 - [Process map](https://picagram.dev/c/ascii-process-map.md): A decision flow drawn in box-drawing characters, with native choices that trace the selected route.
+- [ASCII Radial Dial](https://picagram.dev/c/ascii-radial-dial.md): Broken concentric glyph rings turn at unequal slow rates around a clear opening, with staggered gaps and one accent arc.
 - [ASCII Rain](https://picagram.dev/c/ascii-rain.md): Columns of glyphs fall at their own speed, each with a bright head and a trail that fades down the measured ramp.
 - [Release room](https://picagram.dev/c/ascii-release-room.md): A software release page with a character branch graph, version selection and compatibility notes.
 - [ASCII Reveal](https://picagram.dev/c/ascii-reveal.md): Text that resolves from scrambled glyphs into its final characters, left to right.
 - [Score Strip](https://picagram.dev/c/ascii-score-strip.md): Character time tracks with selectable performance movements and a readable cue register.
 - [ASCII Solid](https://picagram.dev/c/ascii-solid.md): A torus, sphere, or cube rotated in three dimensions and shaded with the measured ramp.
+- [ASCII Spiral Current](https://picagram.dev/c/ascii-spiral-current.md): Broad interleaved glyph ribbons turn slowly around an open center, with measured density across each trace and one accented outer tip.
 - [ASCII Terminal Journal](https://picagram.dev/c/ascii-terminal-journal.md): An authored reading page with a text mode masthead, chapter links, margin observations and a field note prompt.
 - [ASCII Text](https://picagram.dev/c/ascii-text.md): A headline rastered from a display face, then redrawn as a grid of glyphs chosen by measured ink and shape.
 - [ASCII Topo](https://picagram.dev/c/ascii-topo.md): Contour lines of a slowly drifting noise height field, drawn like a topographic survey in text.
@@ -43,6 +52,7 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 - [ASCII Wave Tank](https://picagram.dev/c/ascii-wave-tank.md): A bounded shallow-water simulation uses measured ASCII density as timed impulses reflect from tank walls and supplied solid barriers.
 - [ASCII Waves](https://picagram.dev/c/ascii-waves.md): Interference between a few drifting circular wave sources, drawn as glyph density that crosses and beats.
 - [Weather Station](https://picagram.dev/c/ascii-weather-station.md): Historical weather samples with a character wind rose, seven day rainfall plot, and readable measurements.
+- [ASCII Wind Tunnel](https://picagram.dev/c/ascii-wind-tunnel.md): Analytic glyph streamlines bend around a fixed circular obstacle and curl through a drifting wake, with an optional clear center for reading content.
 - [ASCII Workshop Index](https://picagram.dev/c/ascii-workshop-index.md): An open workshop portfolio with character tool studies, a material register, a making sequence and a commission brief.
 
 ## Text mode
@@ -140,15 +150,25 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 ## Shaders
 
 - [Aurora](https://picagram.dev/c/aurora.md): Layered curtains of accent light standing on bowed lower borders, striated by vertical rays and dithered between a few tone steps on the GPU.
+- [Brushed Alloy](https://picagram.dev/c/brushed-alloy.md): Fine directional grooves on a shallow alloy plate catch two broad moving light bands, with ordered tone and a palette-based CSS fallback.
 - [Caustic Field](https://picagram.dev/c/caustic-field.md): The net of bright filaments light draws on a pool floor, refracted through a slow wave surface and dithered on the GPU.
+- [Contour Engraving](https://picagram.dev/c/contour-engraving.md): Fine parallel cuts follow a gently folded plate, revealing engraved walls and broad material folds under shifting directional light.
 - [Contour Flow](https://picagram.dev/c/contour-flow.md): Contours of a slowly drifting terrain, each line drawn light and thin where it faces the light and dark and thick where it faces away.
+- [Cut Paper Relief](https://picagram.dev/c/cut-paper-relief.md): Nested rounded paper cuts gather along the left and lower edges around a clear opening, with light and shadows derived from the same stepped surface.
+- [Etched Radial](https://picagram.dev/c/etched-radial.md): Concentric machining grooves catch slowly rotating anisotropic highlights around an offset center, with dithered material shading.
+- [Glass Ripple Lens](https://picagram.dev/c/glass-ripple-lens.md): One offset circular lens refracts a crisp ruled field, with shallow internal ripples, a directional rim highlight, and a quiet outer ground.
+- [Lenticular Ridges](https://picagram.dev/c/lenticular-ridges.md): Shallow parallel ridges refract an analytic line field while a slow grazing light reveals their curved faces, with a visible CSS fallback.
 - [Liquid Metal](https://picagram.dev/c/liquid-metal.md): Slow blobs merge and part like drops of mercury, each surface mirroring a two band horizon through summed fields and reflection mapping.
 - [Mesh Gradient](https://picagram.dev/c/mesh-gradient.md): A slow mesh of accent and ink fields, folded together by noise and dithered between a few tone steps on the GPU.
+- [Orbiting Halftone](https://picagram.dev/c/orbiting-halftone.md): Three broad tone discs drift in small unequal orbits, combining printed coverage on a fixed halftone screen with stationary dot centers.
 - [Pixel Plasma](https://picagram.dev/c/pixel-plasma.md): The demoscene plasma as a printed screen: summed sinusoids drawn as coarse square pixels and dithered between a few tone steps on the GPU.
+- [Prismatic Tiles](https://picagram.dev/c/prismatic-tiles.md): A regular field of rhombic bevel facets shares one slowly moving light, fine printed grain, and a single accent facet, with a CSS fallback.
+- [Quilted Surface](https://picagram.dev/c/quilted-surface.md): Shallow padded diamond cells catch slow grazing light, with fine recessed seams, dithered faces and a visible CSS fallback.
 - [Ripple Field](https://picagram.dev/c/ripple-field.md): Rings spread from seeded drops on a still surface, dispersing as they travel and cancelling where they cross, dithered on the GPU.
 - [Scan Beam](https://picagram.dev/c/scan-beam.md): A radar plan position display whose accent beam sweeps hairline rings and spokes, lighting seeded echoes that decay in dithered steps.
 - [Shader Flow](https://picagram.dev/c/shader-flow.md): Hairline contour bands drift through the ground like a slow current, folded by domain-warped noise on the GPU.
 - [Shadow Lattice](https://picagram.dev/c/shadow-lattice.md): A slowly moving grazing light casts coherent, dithered shadows through shallow crossed ribs, with a palette-based CSS fallback.
+- [Stippled Silk](https://picagram.dev/c/stippled-silk.md): Fine woven threads bend and compress with broad cloth folds under a slow grazing light, rendered in ordered tone with a CSS fallback.
 - [Tunnel Grid](https://picagram.dev/c/tunnel-grid.md): A slow flight down a tunnel drawn as a hairline grid, mapped by angle and inverse distance into a receding texture.
 - [Voronoi Drift](https://picagram.dev/c/voronoi-drift.md): A plane divided into territories around slowly drifting sites, each cell a flat dithered accent tone behind a fg hairline.
 

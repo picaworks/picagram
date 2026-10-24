@@ -4,6 +4,26 @@
   "homepage": "https://github.com/rishabbalak/picagram",
   "items": [
     {
+      "name": "ascii-accordion-surface",
+      "type": "registry:component",
+      "title": "ASCII Accordion Surface",
+      "description": "A rectangular glyph mesh tilts in perspective, with alternating density on its folded panels and one accented ridge.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-accordion-surface.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-archive-tree",
       "type": "registry:component",
       "title": "Archive tree",
@@ -124,6 +144,26 @@
       }
     },
     {
+      "name": "ascii-diffraction-screen",
+      "type": "registry:component",
+      "title": "ASCII Diffraction Screen",
+      "description": "An analytic illustration of two narrow openings and gently breathing glyph fringes around a stable central band, using illustrative units.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-diffraction-screen.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-exhibition-map",
       "type": "registry:component",
       "title": "ASCII Exhibition Map",
@@ -154,6 +194,26 @@
       "files": [
         {
           "path": "public/react/ascii-expedition-log.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-folding-fan",
+      "type": "registry:component",
+      "title": "ASCII Folding Fan",
+      "description": "A finite pleated glyph fan opens gently around a fixed hinge, with alternating shaded faces and visible creases.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-folding-fan.tsx",
           "type": "registry:component"
         }
       ],
@@ -214,6 +274,46 @@
       "files": [
         {
           "path": "public/react/ascii-garden-plan.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-gyroscope",
+      "type": "registry:component",
+      "title": "ASCII Gyroscope",
+      "description": "Three nested glyph wire rings precess around a fixed center, with dim rear arcs and one accent joint revealing their depth.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-gyroscope.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-harmonic-stack",
+      "type": "registry:component",
+      "title": "ASCII Harmonic Stack",
+      "description": "Offset harmonic profiles drift through a measured glyph field, with overlapping silhouettes and one accented front contour.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-harmonic-stack.tsx",
           "type": "registry:component"
         }
       ],
@@ -346,6 +446,26 @@
       }
     },
     {
+      "name": "ascii-loop-knot",
+      "type": "registry:component",
+      "title": "ASCII Loop Knot",
+      "description": "One closed braille loop turns slowly in space, with clear over and under crossings.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-loop-knot.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-morph",
       "type": "registry:component",
       "title": "ASCII Morph",
@@ -404,6 +524,26 @@
       "files": [
         {
           "path": "public/react/ascii-observatory-console.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-orbit-trails",
+      "type": "registry:component",
+      "title": "ASCII Orbit Trails",
+      "description": "A small family of glyph markers follows offset elliptical paths with short fading trails in an open field.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-orbit-trails.tsx",
           "type": "registry:component"
         }
       ],
@@ -512,6 +652,26 @@
       "files": [
         {
           "path": "public/react/ascii-process-map.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-radial-dial",
+      "type": "registry:component",
+      "title": "ASCII Radial Dial",
+      "description": "Broken concentric glyph rings turn at unequal slow rates around a clear opening, with staggered gaps and one accent arc.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-radial-dial.tsx",
           "type": "registry:component"
         }
       ],
@@ -635,6 +795,26 @@
             "license": "Article"
           }
         ]
+      }
+    },
+    {
+      "name": "ascii-spiral-current",
+      "type": "registry:component",
+      "title": "ASCII Spiral Current",
+      "description": "Broad interleaved glyph ribbons turn slowly around an open center, with measured density across each trace and one accented outer tip.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-spiral-current.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -826,6 +1006,26 @@
       "files": [
         {
           "path": "public/react/ascii-weather-station.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-wind-tunnel",
+      "type": "registry:component",
+      "title": "ASCII Wind Tunnel",
+      "description": "Analytic glyph streamlines bend around a fixed circular obstacle and curl through a drifting wake, with an optional clear center for reading content.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-wind-tunnel.tsx",
           "type": "registry:component"
         }
       ],
@@ -2445,7 +2645,15 @@
       "meta": {
         "license": "MIT + Commons Clause",
         "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
-        "credits": []
+        "credits": [
+          {
+            "relation": "port-of",
+            "title": "Demo photograph: The Blue Marble from Apollo 17",
+            "author": "NASA Johnson Space Center / Apollo 17 crew",
+            "url": "https://svs.gsfc.nasa.gov/30613/",
+            "license": "NASA media usage guidelines"
+          }
+        ]
       }
     },
     {
@@ -5058,6 +5266,26 @@
       }
     },
     {
+      "name": "brushed-alloy",
+      "type": "registry:component",
+      "title": "Brushed Alloy",
+      "description": "Fine directional grooves on a shallow alloy plate catch two broad moving light bands, with ordered tone and a palette-based CSS fallback.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/brushed-alloy.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "caustic-field",
       "type": "registry:component",
       "title": "Caustic Field",
@@ -5093,6 +5321,26 @@
       }
     },
     {
+      "name": "contour-engraving",
+      "type": "registry:component",
+      "title": "Contour Engraving",
+      "description": "Fine parallel cuts follow a gently folded plate, revealing engraved walls and broad material folds under shifting directional light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/contour-engraving.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "contour-flow",
       "type": "registry:component",
       "title": "Contour Flow",
@@ -5125,6 +5373,86 @@
             "license": "Book"
           }
         ]
+      }
+    },
+    {
+      "name": "cut-paper-relief",
+      "type": "registry:component",
+      "title": "Cut Paper Relief",
+      "description": "Nested rounded paper cuts gather along the left and lower edges around a clear opening, with light and shadows derived from the same stepped surface.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/cut-paper-relief.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "etched-radial",
+      "type": "registry:component",
+      "title": "Etched Radial",
+      "description": "Concentric machining grooves catch slowly rotating anisotropic highlights around an offset center, with dithered material shading.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/etched-radial.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "glass-ripple-lens",
+      "type": "registry:component",
+      "title": "Glass Ripple Lens",
+      "description": "One offset circular lens refracts a crisp ruled field, with shallow internal ripples, a directional rim highlight, and a quiet outer ground.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/glass-ripple-lens.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "lenticular-ridges",
+      "type": "registry:component",
+      "title": "Lenticular Ridges",
+      "description": "Shallow parallel ridges refract an analytic line field while a slow grazing light reveals their curved faces, with a visible CSS fallback.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/lenticular-ridges.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -5205,6 +5533,26 @@
       }
     },
     {
+      "name": "orbiting-halftone",
+      "type": "registry:component",
+      "title": "Orbiting Halftone",
+      "description": "Three broad tone discs drift in small unequal orbits, combining printed coverage on a fixed halftone screen with stationary dot centers.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/orbiting-halftone.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "pixel-plasma",
       "type": "registry:component",
       "title": "Pixel Plasma",
@@ -5237,6 +5585,46 @@
             "license": "Algorithm, no code"
           }
         ]
+      }
+    },
+    {
+      "name": "prismatic-tiles",
+      "type": "registry:component",
+      "title": "Prismatic Tiles",
+      "description": "A regular field of rhombic bevel facets shares one slowly moving light, fine printed grain, and a single accent facet, with a CSS fallback.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/prismatic-tiles.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "quilted-surface",
+      "type": "registry:component",
+      "title": "Quilted Surface",
+      "description": "Shallow padded diamond cells catch slow grazing light, with fine recessed seams, dithered faces and a visible CSS fallback.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/quilted-surface.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -5341,6 +5729,26 @@
       "files": [
         {
           "path": "public/react/shadow-lattice.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "stippled-silk",
+      "type": "registry:component",
+      "title": "Stippled Silk",
+      "description": "Fine woven threads bend and compress with broad cloth folds under a slow grazing light, rendered in ordered tone with a CSS fallback.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/stippled-silk.tsx",
           "type": "registry:component"
         }
       ],

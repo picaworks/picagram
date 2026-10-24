@@ -6,6 +6,35 @@ export const meta: Meta = {
   tags: ["material", "geometric", "motion"], facets: ["animated", "background", "interactive", "canvas"],
   wave: 14, release: "ascii-motion-2026-10-04", animated: true, decorative: true,
   wraps: "content", original: true, credits: [], palette: ["fg"],
+  presets: [
+    {
+        "name": "Clear mechanism",
+        "description": "A more legible mechanism with automatic compact placement.",
+        "props": {
+            "speed": 0.8,
+            "opacity": 0.42,
+            "scale": 1.1
+        }
+    },
+    {
+        "name": "Quiet margins",
+        "description": "Lighter marks and slower travel around the reading area.",
+        "props": {
+            "speed": 0.5,
+            "opacity": 0.25,
+            "scale": 0.9
+        }
+    },
+    {
+        "name": "Close study",
+        "description": "Larger details make the moving parts easier to inspect.",
+        "props": {
+            "speed": 0.65,
+            "opacity": 0.55,
+            "scale": 1.4
+        }
+    }
+],
   controls: {
     speed: { type: "number", min: 0.2, max: 2, step: 0.1 },
     opacity: { type: "number", min: 0.1, max: 0.65, step: 0.05 },
