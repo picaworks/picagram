@@ -28,6 +28,10 @@ describe("standalone first mount", () => {
 });
 
 describe("release filters", () => {
+  it("selects the current kinetic studies batch", () => {
+    expect(CURRENT_RELEASE).toBe("kinetic-studies-2026-10-24");
+    expect(readRelease(CURRENT_RELEASE)).toBe(CURRENT_RELEASE);
+  });
   const item: CatalogItem = { ...items[0]!, slug: "test-section", title: "Forum Rome", description: "Civic exhibition.", release: CURRENT_RELEASE, category: "sections", facets: ["static", "text"], tags: ["rome"] };
   it("composes batch, search, facets and category", () => {
     expect(matches(item, "rome", ["text"], true, "sections")).toBe(true);
@@ -88,18 +92,21 @@ describe("ASCII and motion release inventory", () => {
   });
 });
 
-describe("motion and materials release inventory", () => {
+describe.each([
+  { release: "motion-materials-2026-10-24", wave: 16 },
+  { release: "kinetic-studies-2026-10-24", wave: 17 },
+] as const)("motion release inventory $release", ({ release, wave }) => {
   it("publishes twenty distinct designs with an even ASCII and shader split", async () => {
     const entries = await loadAll();
-    const batch = entries.filter((entry) => entry.meta.release === "motion-materials-2026-10-24");
-    expect(CURRENT_RELEASE).toBe("motion-materials-2026-10-24");
+    const batch = entries.filter((entry) => entry.meta.release === release);
+    expect(readRelease(release)).toBe(release);
     expect(batch).toHaveLength(20);
     expect(new Set(batch.map((entry) => entry.meta.slug)).size).toBe(20);
     expect(batch.filter((entry) => entry.meta.category === "ascii")).toHaveLength(10);
     expect(batch.filter((entry) => entry.meta.category === "shaders")).toHaveLength(10);
-    expect(batch.every((entry) => entry.meta.wave === 16 && entry.meta.animated)).toBe(true);
+    expect(batch.every((entry) => entry.meta.wave === wave && entry.meta.animated)).toBe(true);
     expect(batch.every((entry) => (entry.meta.presets?.length ?? 0) === 3)).toBe(true);
-    expect(batch.every((entry) => inRelease(entry.meta, CURRENT_RELEASE))).toBe(true);
+    expect(batch.every((entry) => inRelease(entry.meta, release))).toBe(true);
     for (const entry of batch) {
       for (const [name, control] of Object.entries(entry.meta.controls)) {
         if (control.type !== "number") continue;

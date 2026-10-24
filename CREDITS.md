@@ -10,7 +10,15 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Balance Mobile (`ascii-balance-mobile`)
+
+Original to Picagram.
+
 ## ASCII Binary Tide (`ascii-binary-tide`)
+
+Original to Picagram.
+
+## ASCII Braided Cords (`ascii-braided-cords`)
 
 Original to Picagram.
 
@@ -19,6 +27,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## ASCII Cellular Tape (`ascii-cellular-tape`)
+
+Original to Picagram.
+
+## ASCII Chain Drive (`ascii-chain-drive`)
 
 Original to Picagram.
 
@@ -31,6 +43,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## ASCII Diffraction Screen (`ascii-diffraction-screen`)
+
+Original to Picagram.
+
+## ASCII Elastic Membrane (`ascii-elastic-membrane`)
 
 Original to Picagram.
 
@@ -58,11 +74,19 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Glyph Carousel (`ascii-glyph-carousel`)
+
+Original to Picagram.
+
 ## ASCII Gyroscope (`ascii-gyroscope`)
 
 Original to Picagram.
 
 ## ASCII Harmonic Stack (`ascii-harmonic-stack`)
+
+Original to Picagram.
+
+## ASCII Helix Ladder (`ascii-helix-ladder`)
 
 Original to Picagram.
 
@@ -80,6 +104,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Linkage Rosette (`ascii-linkage-rosette`)
+
+Original to Picagram.
+
 ## ASCII Lissajous Scope (`ascii-lissajous-scope`)
 
 Original to Picagram.
@@ -89,6 +117,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## ASCII Loop Knot (`ascii-loop-knot`)
+
+Original to Picagram.
+
+## ASCII Mobius Band (`ascii-mobius-band`)
 
 Original to Picagram.
 
@@ -148,11 +180,19 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Slat Canopy (`ascii-slat-canopy`)
+
+Original to Picagram.
+
 ## ASCII Solid (`ascii-solid`)
 
 - Technique from [Donut math: how donut.c works](https://www.a1k0n.net/2011/07/20/donut-math.html) by Andy Sloane (Article).
 
 ## ASCII Spiral Current (`ascii-spiral-current`)
+
+Original to Picagram.
+
+## ASCII String Modes (`ascii-string-modes`)
 
 Original to Picagram.
 
@@ -961,6 +1001,10 @@ Original to Picagram.
 - Technique from [Method of displaying optical effects within water using accumulation buffer](https://doi.org/10.1145/192161.192261) by Tomoyuki Nishita and Eihachiro Nakamae (Paper).
 - Technique from [Catastrophe Optics: Morphologies of Caustics and Their Diffraction Patterns](https://doi.org/10.1016/S0079-6638(08)70215-4) by M. V. Berry and C. Upstill (Paper).
 
+## Chainmail Weave (`chainmail-weave`)
+
+Original to Picagram.
+
 ## Contour Engraving (`contour-engraving`)
 
 Original to Picagram.
@@ -974,11 +1018,35 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Deckled Paper (`deckled-paper`)
+
+Original to Picagram.
+
+## End Grain (`end-grain`)
+
+Original to Picagram.
+
 ## Etched Radial (`etched-radial`)
 
 Original to Picagram.
 
+## Fluted Shell (`fluted-shell`)
+
+Original to Picagram.
+
+## Fluted Tunnel (`fluted-tunnel`)
+
+Original to Picagram.
+
+## Frosted Block (`frosted-block`)
+
+Original to Picagram.
+
 ## Glass Ripple Lens (`glass-ripple-lens`)
+
+Original to Picagram.
+
+## Hammered Foil (`hammered-foil`)
 
 Original to Picagram.
 
@@ -998,6 +1066,10 @@ Original to Picagram.
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
 
 ## Orbiting Halftone (`orbiting-halftone`)
+
+Original to Picagram.
+
+## Perforated Screen (`perforated-screen`)
 
 Original to Picagram.
 
@@ -1032,6 +1104,14 @@ Original to Picagram.
 Original to Picagram.
 
 ## Stippled Silk (`stippled-silk`)
+
+Original to Picagram.
+
+## Stratified Stone (`stratified-stone`)
+
+Original to Picagram.
+
+## Terraced Blocks (`terraced-blocks`)
 
 Original to Picagram.
 

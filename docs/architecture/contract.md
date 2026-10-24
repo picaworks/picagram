@@ -121,7 +121,7 @@ Components draw with four tokens, which only `lib/palette.ts` reads.
 
 | Module | Use it for |
 |---|---|
-| `lib/glyph-grid.ts` | A monospace cell grid with `set`, `write`, `clear`, and `flush`. `cellWidth` and `cellHeight` map pointers and layout onto cells, and `measureCell` measures without a grid. |
+| `lib/glyph-grid.ts` | A monospace cell grid with `set`, `write`, `clear`, and `flush`. `cellWidth` and `cellHeight` map pointers and layout onto cells, and `measureCell` measures without a grid. Canvas grids can opt into `fixedCells` to position each glyph separately and fit font fallback glyphs into the measured cell. |
 | `lib/font.ts` | `GRID_FONT`, the default monospace stack. |
 | `lib/ramp.ts` | `measureRamp` and `pick` for tone from measured ink; `measureShapes` and `matchShape` for sub-cell shape. |
 | `lib/blocks.ts` | Braille (`brailleDot`, `braille`) and block glyphs (`quadrant`, `lowerEighth`, `leftEighth`, `shade`). |

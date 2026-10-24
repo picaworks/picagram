@@ -145,7 +145,7 @@
       "fontSize": "number"
     },
     "events": {},
-    "gzipBytes": 5433
+    "gzipBytes": 5479
   },
   {
     "slug": "ascii-archive-tree",
@@ -277,6 +277,159 @@
     "gzipBytes": 2986
   },
   {
+    "slug": "ascii-balance-mobile",
+    "title": "ASCII Balance Mobile",
+    "category": "ascii",
+    "description": "An asymmetric suspended mobile carries shaded counterweights on connected rods, with vertical hangers and restrained coupled sways.",
+    "tags": [
+      "mobile",
+      "balance",
+      "suspension",
+      "counterweight",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "levels": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Rod levels"
+      },
+      "spread": {
+        "type": "number",
+        "min": 0.7,
+        "max": 1.25,
+        "step": 0.05,
+        "label": "Horizontal spread"
+      },
+      "sway": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "label": "Sway strength"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Sway speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Paused"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Three balances",
+        "description": "Three connected rod levels carry an alternating chain of small counterweights.",
+        "props": {
+          "levels": 3,
+          "spread": 1,
+          "sway": 0.65,
+          "speed": 0.6,
+          "fontSize": 14,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Open duet",
+        "description": "Two broad rod levels expose their vertical hangers and the fixed top suspension.",
+        "props": {
+          "levels": 2,
+          "spread": 1.15,
+          "sway": 0.8,
+          "speed": 0.45,
+          "fontSize": 14,
+          "seed": 3
+        }
+      },
+      {
+        "name": "Quiet cascade",
+        "description": "Four closer rod levels pass a modest sway through a longer asymmetric cascade.",
+        "props": {
+          "levels": 4,
+          "spread": 0.85,
+          "sway": 0.5,
+          "speed": 0.7,
+          "fontSize": 16,
+          "seed": 4
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiBalanceMobile",
+    "defaults": {
+      "levels": 3,
+      "spread": 1,
+      "sway": 0.65,
+      "speed": 0.6,
+      "fontSize": 14,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "levels": "Number of connected rod levels, from 2 to 4.",
+      "spread": "Horizontal rod span multiplier, from 0.7 to 1.25.",
+      "sway": "Strength of the coupled rod tilts, from 0 to 1.",
+      "speed": "Rate of the restrained sway cycle, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 12 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "levels": "number",
+      "spread": "number",
+      "sway": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4955
+  },
+  {
     "slug": "ascii-binary-tide",
     "title": "ASCII Binary Tide",
     "category": "ascii",
@@ -406,7 +559,160 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4885
+    "gzipBytes": 4940
+  },
+  {
+    "slug": "ascii-braided-cords",
+    "title": "ASCII Braided Cords",
+    "category": "ascii",
+    "description": "Three finite shaded glyph cords braid vertically, leaving clear depth gaps as their crossings travel downward.",
+    "tags": [
+      "braid",
+      "cords",
+      "strands",
+      "depth",
+      "glyphs",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "crossings": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 1,
+        "label": "Crossing frequency"
+      },
+      "spread": {
+        "type": "number",
+        "min": 0.6,
+        "max": 1.3,
+        "step": 0.05,
+        "label": "Cord spread"
+      },
+      "thickness": {
+        "type": "number",
+        "min": 0.7,
+        "max": 1.4,
+        "step": 0.05,
+        "label": "Cord thickness"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Travel speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause motion"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Open braid",
+        "description": "Three evenly shaded cords make broad crossings at a calm pace.",
+        "props": {
+          "crossings": 3,
+          "spread": 1,
+          "thickness": 1,
+          "speed": 0.65,
+          "fontSize": 14,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Loose plait",
+        "description": "Two long crossing repeats leave room between thicker, widely separated cords.",
+        "props": {
+          "crossings": 2,
+          "spread": 1.2,
+          "thickness": 1.2,
+          "speed": 0.4,
+          "fontSize": 14,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Close weave",
+        "description": "Five crossing repeats draw a narrower braid with fine strands and distinct underpasses.",
+        "props": {
+          "crossings": 5,
+          "spread": 0.7,
+          "thickness": 0.8,
+          "speed": 0.8,
+          "fontSize": 12,
+          "seed": 9
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiBraidedCords",
+    "defaults": {
+      "crossings": 3,
+      "spread": 1,
+      "thickness": 1,
+      "speed": 0.65,
+      "fontSize": 14,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "crossings": "Braid crossing frequency along the finite cords, from 2 to 6.",
+      "spread": "Horizontal separation of the three cords, from 0.6 to 1.3.",
+      "thickness": "Shaded cord radius, from 0.7 to 1.4.",
+      "speed": "Downward crossing travel rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 12 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "crossings": "number",
+      "spread": "number",
+      "thickness": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4805
   },
   {
     "slug": "ascii-campus-directory",
@@ -644,6 +950,159 @@
     },
     "events": {},
     "gzipBytes": 3592
+  },
+  {
+    "slug": "ascii-chain-drive",
+    "title": "ASCII Chain Drive",
+    "category": "ascii",
+    "description": "A closed chain of discrete glyph links drives two unequal toothed sprockets through straight connecting runs.",
+    "tags": [
+      "chain",
+      "sprockets",
+      "mechanism",
+      "links",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "ratio": {
+        "type": "number",
+        "min": 1.2,
+        "max": 2.2,
+        "step": 0.05,
+        "label": "Sprocket radius ratio"
+      },
+      "links": {
+        "type": "number",
+        "min": 24,
+        "max": 56,
+        "step": 1,
+        "label": "Chain links"
+      },
+      "tension": {
+        "type": "number",
+        "min": 0.5,
+        "max": 1.5,
+        "step": 0.05,
+        "label": "Chain tension and axle spacing"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Drive speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause motion"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Steady drive",
+        "description": "Thirty-six links travel around a medium ratio pair with clear straight runs.",
+        "props": {
+          "ratio": 1.6,
+          "links": 36,
+          "tension": 1,
+          "speed": 0.7,
+          "fontSize": 14,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Close coupling",
+        "description": "Similar wheel sizes and a shorter axle spacing make a compact, coarse chain loop.",
+        "props": {
+          "ratio": 1.25,
+          "links": 28,
+          "tension": 0.55,
+          "speed": 0.5,
+          "fontSize": 16,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Reduction stage",
+        "description": "A smaller driven sprocket turns faster within a longer, finer chain path.",
+        "props": {
+          "ratio": 2.1,
+          "links": 48,
+          "tension": 1.4,
+          "speed": 0.9,
+          "fontSize": 12,
+          "seed": 9
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiChainDrive",
+    "defaults": {
+      "ratio": 1.6,
+      "links": 36,
+      "tension": 1,
+      "speed": 0.7,
+      "fontSize": 14,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "ratio": "Large to small sprocket radius ratio, from 1.2 to 2.2.",
+      "links": "Number of discrete links on the closed chain, from 24 to 56.",
+      "tension": "Axle separation that stretches the straight runs, from 0.5 to 1.5.",
+      "speed": "Clockwise chain travel rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 12 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "ratio": "number",
+      "links": "number",
+      "tension": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4826
   },
   {
     "slug": "ascii-circuit-board",
@@ -1108,7 +1567,162 @@
       "fontSize": "number"
     },
     "events": {},
-    "gzipBytes": 4704
+    "gzipBytes": 4745
+  },
+  {
+    "slug": "ascii-elastic-membrane",
+    "title": "ASCII Elastic Membrane",
+    "category": "ascii",
+    "description": "A finite rectangular glyph lattice carries smooth standing modes in an oblique view while its edges stay pinned.",
+    "tags": [
+      "membrane",
+      "mesh",
+      "standing-wave",
+      "elastic",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "mode": {
+        "type": "select",
+        "options": [
+          "single",
+          "cross",
+          "paired"
+        ],
+        "label": "Standing mode"
+      },
+      "amplitude": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.6,
+        "step": 0.05,
+        "label": "Displacement"
+      },
+      "tilt": {
+        "type": "number",
+        "min": 20,
+        "max": 60,
+        "step": 1,
+        "label": "View tilt"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Oscillation speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Paused"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Central swell",
+        "description": "One broad antinode rises and settles within four stationary edges.",
+        "props": {
+          "mode": "single",
+          "amplitude": 0.4,
+          "tilt": 38,
+          "speed": 0.6,
+          "fontSize": 14,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Four lobes",
+        "description": "Crossed standing modes bend the lattice into four alternating shallow lobes.",
+        "props": {
+          "mode": "cross",
+          "amplitude": 0.3,
+          "tilt": 32,
+          "speed": 0.5,
+          "fontSize": 14,
+          "seed": 2
+        }
+      },
+      {
+        "name": "Coupled pair",
+        "description": "Two neighboring lobes exchange height with a small secondary mode across the sheet.",
+        "props": {
+          "mode": "paired",
+          "amplitude": 0.45,
+          "tilt": 45,
+          "speed": 0.7,
+          "fontSize": 16,
+          "seed": 4
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiElasticMembrane",
+    "defaults": {
+      "mode": "single",
+      "amplitude": 0.4,
+      "tilt": 38,
+      "speed": 0.6,
+      "fontSize": 14,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "mode": "Standing mode: one central swell, four lobes, or a coupled pair.",
+      "amplitude": "Maximum surface displacement relative to the mesh size, from 0.1 to 0.6.",
+      "tilt": "Resting view tilt in degrees, from 20 to 60.",
+      "speed": "Rate of the standing oscillation, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 12 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "mode": "\"single\" | \"cross\" | \"paired\"",
+      "amplitude": "number",
+      "tilt": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4229
   },
   {
     "slug": "ascii-exhibition-map",
@@ -1342,7 +1956,7 @@
         "detail": "number"
       }
     },
-    "gzipBytes": 5558
+    "gzipBytes": 5557
   },
   {
     "slug": "ascii-expedition-log",
@@ -1606,7 +2220,7 @@
       "fontSize": "number"
     },
     "events": {},
-    "gzipBytes": 4983
+    "gzipBytes": 5029
   },
   {
     "slug": "ascii-folio-ledger",
@@ -2070,6 +2684,158 @@
     "gzipBytes": 3732
   },
   {
+    "slug": "ascii-glyph-carousel",
+    "title": "ASCII Glyph Carousel",
+    "category": "ascii",
+    "description": "Upright word panels circle in perspective, with readable front text and dimmer rear panels hidden by nearer faces.",
+    "tags": [
+      "carousel",
+      "words",
+      "panels",
+      "perspective",
+      "text",
+      "animated"
+    ],
+    "facets": [
+      "animated",
+      "text"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": false,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "text": {
+        "type": "textarea",
+        "rows": 3,
+        "label": "Short words separated by spaces"
+      },
+      "panels": {
+        "type": "number",
+        "min": 3,
+        "max": 8,
+        "step": 1,
+        "label": "Upright panels"
+      },
+      "spread": {
+        "type": "number",
+        "min": 0.4,
+        "max": 1,
+        "step": 0.05,
+        "label": "Carousel spread"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Rotation speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 24,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause carousel"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Four word orbit",
+        "description": "Four short words occupy broad upright panels around a slow, open orbit.",
+        "props": {
+          "text": "FORM TYPE GRID MOVE",
+          "panels": 4,
+          "spread": 0.95,
+          "speed": 0.7,
+          "fontSize": 20,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Three clear faces",
+        "description": "Three larger word faces give the front panel room and make rear occlusion clear.",
+        "props": {
+          "text": "READ MAKE PLAY",
+          "panels": 3,
+          "spread": 1,
+          "speed": 0.5,
+          "fontSize": 22,
+          "seed": 2
+        }
+      },
+      {
+        "name": "Six word circuit",
+        "description": "Six compact panels carry a denser sequence while keeping each word upright.",
+        "props": {
+          "text": "INK DOT LINE CELL TYPE FORM",
+          "panels": 6,
+          "spread": 1,
+          "speed": 0.85,
+          "fontSize": 16,
+          "seed": 1
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiGlyphCarousel",
+    "defaults": {
+      "text": "FORM TYPE GRID MOVE",
+      "panels": 4,
+      "spread": 0.95,
+      "speed": 0.7,
+      "fontSize": 20,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "text": "Space separated short words. Up to twelve glyphs per word are displayed.",
+      "panels": "Number of upright panels around the carousel, from 3 to 8.",
+      "spread": "Horizontal orbit radius relative to available space, from 0.4 to 1.",
+      "speed": "Rate of the horizontal carousel rotation, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 24."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "text": "string",
+      "panels": "number",
+      "spread": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4267
+  },
+  {
     "slug": "ascii-gyroscope",
     "title": "ASCII Gyroscope",
     "category": "ascii",
@@ -2202,7 +2968,7 @@
       "fontSize": "number"
     },
     "events": {},
-    "gzipBytes": 4296
+    "gzipBytes": 4340
   },
   {
     "slug": "ascii-harmonic-stack",
@@ -2350,7 +3116,160 @@
       "fontSize": "number"
     },
     "events": {},
-    "gzipBytes": 4891
+    "gzipBytes": 4937
+  },
+  {
+    "slug": "ascii-helix-ladder",
+    "title": "ASCII Helix Ladder",
+    "category": "ascii",
+    "description": "Two continuous braille strands rotate around evenly spaced rungs, with a fine rear edge and a heavier near edge.",
+    "tags": [
+      "helix",
+      "ladder",
+      "braille",
+      "rotation",
+      "depth",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "turns": {
+        "type": "number",
+        "min": 0.75,
+        "max": 3,
+        "step": 0.25,
+        "label": "Complete turns"
+      },
+      "radius": {
+        "type": "number",
+        "min": 0.4,
+        "max": 1,
+        "step": 0.05,
+        "label": "Strand radius"
+      },
+      "rungs": {
+        "type": "number",
+        "min": 8,
+        "max": 28,
+        "step": 1,
+        "label": "Connecting rungs"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Rotation speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause rotation"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Open spiral",
+        "description": "One and a half turns with clear gaps between seventeen connecting rungs.",
+        "props": {
+          "turns": 1.5,
+          "radius": 0.8,
+          "rungs": 17,
+          "speed": 0.7,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Broad ladder",
+        "description": "One broad turn and twelve rungs make the connected structure easy to follow.",
+        "props": {
+          "turns": 1,
+          "radius": 1,
+          "rungs": 12,
+          "speed": 0.45,
+          "fontSize": 16,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Close winding",
+        "description": "Two and a quarter narrow turns hold twenty two rungs in a taller winding silhouette.",
+        "props": {
+          "turns": 2.25,
+          "radius": 0.6,
+          "rungs": 22,
+          "speed": 0.85,
+          "fontSize": 14,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiHelixLadder",
+    "defaults": {
+      "turns": 1.5,
+      "radius": 0.8,
+      "rungs": 17,
+      "speed": 0.7,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "turns": "Complete revolutions along the finite ladder, from 0.75 to 3.",
+      "radius": "Strand radius relative to available width, from 0.4 to 1.",
+      "rungs": "Number of evenly spaced rungs, including both ends, from 8 to 28.",
+      "speed": "Rotation rate about the vertical axis, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "turns": "number",
+      "radius": "number",
+      "rungs": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 3950
   },
   {
     "slug": "ascii-image",
@@ -2487,7 +3406,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 5015
+    "gzipBytes": 5065
   },
   {
     "slug": "ascii-isometric-room",
@@ -2727,6 +3646,159 @@
     "gzipBytes": 3907
   },
   {
+    "slug": "ascii-linkage-rosette",
+    "title": "ASCII Linkage Rosette",
+    "category": "ascii",
+    "description": "Radial chains of hinged diamonds open and close together around a small stationary hub.",
+    "tags": [
+      "linkage",
+      "rosette",
+      "hinge",
+      "diamond",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "arms": {
+        "type": "number",
+        "min": 4,
+        "max": 10,
+        "step": 1,
+        "label": "Radial arms"
+      },
+      "opening": {
+        "type": "number",
+        "min": 0.25,
+        "max": 1,
+        "step": 0.05,
+        "label": "Hinge opening"
+      },
+      "reach": {
+        "type": "number",
+        "min": 0.5,
+        "max": 1,
+        "step": 0.05,
+        "label": "Link reach"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Opening cycle speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause linkage"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Sixfold linkage",
+        "description": "Six long diamond chains articulate around the fixed hub with a broad shared opening.",
+        "props": {
+          "arms": 6,
+          "opening": 0.9,
+          "reach": 0.95,
+          "speed": 0.65,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Four wide hinges",
+        "description": "Four open arms emphasize the fixed link lengths and paired diamonds.",
+        "props": {
+          "arms": 4,
+          "opening": 1,
+          "reach": 1,
+          "speed": 0.45,
+          "fontSize": 16,
+          "seed": 3
+        }
+      },
+      {
+        "name": "Fine radial crown",
+        "description": "Nine narrower arms form a dense radial assembly with distinct shared tip joints.",
+        "props": {
+          "arms": 9,
+          "opening": 0.85,
+          "reach": 1,
+          "speed": 0.85,
+          "fontSize": 14,
+          "seed": 5
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiLinkageRosette",
+    "defaults": {
+      "arms": 6,
+      "opening": 0.9,
+      "reach": 0.95,
+      "speed": 0.65,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "arms": "Number of articulated radial arms, from 4 to 10.",
+      "opening": "Maximum hinge opening relative to the arm spacing, from 0.25 to 1.",
+      "reach": "Link length relative to available rosette radius, from 0.5 to 1.",
+      "speed": "Rate of the shared opening and closing cycle, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "arms": "number",
+      "opening": "number",
+      "reach": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4055
+  },
+  {
     "slug": "ascii-lissajous-scope",
     "title": "ASCII Lissajous Scope",
     "category": "ascii",
@@ -2849,7 +3921,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5748
+    "gzipBytes": 5796
   },
   {
     "slug": "ascii-loom-draft",
@@ -3083,7 +4155,7 @@
         "detail": "string[]"
       }
     },
-    "gzipBytes": 4516
+    "gzipBytes": 4567
   },
   {
     "slug": "ascii-loop-knot",
@@ -3212,7 +4284,140 @@
       "fontSize": "number"
     },
     "events": {},
-    "gzipBytes": 4253
+    "gzipBytes": 4299
+  },
+  {
+    "slug": "ascii-mobius-band",
+    "title": "ASCII Mobius Band",
+    "category": "ascii",
+    "description": "A broad shaded glyph ribbon turns in three dimensions, revealing one continuous half twist around an open center.",
+    "tags": [
+      "mobius",
+      "ribbon",
+      "surface",
+      "shading",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "width": {
+        "type": "number",
+        "min": 0.25,
+        "max": 0.6,
+        "step": 0.05
+      },
+      "tilt": {
+        "type": "number",
+        "min": 15,
+        "max": 65,
+        "step": 1
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 12,
+        "max": 20,
+        "step": 1
+      },
+      "paused": {
+        "type": "boolean"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1
+      }
+    },
+    "presets": [
+      {
+        "name": "Open ribbon",
+        "description": "A broad band shows its half twist and a generous open center at a calm turning rate.",
+        "props": {
+          "width": 0.45,
+          "tilt": 42,
+          "speed": 0.6,
+          "fontSize": 14,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Deep fold",
+        "description": "A wider ribbon and oblique view emphasize the shaded overlap of the continuous surface.",
+        "props": {
+          "width": 0.55,
+          "tilt": 55,
+          "speed": 0.4,
+          "fontSize": 14,
+          "seed": 3
+        }
+      },
+      {
+        "name": "Airy loop",
+        "description": "A narrower strip opens the center and makes the single twist easy to follow.",
+        "props": {
+          "width": 0.3,
+          "tilt": 25,
+          "speed": 0.75,
+          "fontSize": 16,
+          "seed": 5
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiMobiusBand",
+    "defaults": {
+      "width": 0.45,
+      "tilt": 42,
+      "speed": 0.6,
+      "fontSize": 14,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "width": "Half width of the continuous ribbon, from 0.25 to 0.6.",
+      "tilt": "Resting view tilt in degrees, from 15 to 65.",
+      "speed": "Rate of the slow three dimensional turn, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 12 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "width": "number",
+      "tilt": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 5128
   },
   {
     "slug": "ascii-morph",
@@ -3344,7 +4549,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5985
+    "gzipBytes": 6033
   },
   {
     "slug": "ascii-noise-field",
@@ -3482,7 +4687,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4727
+    "gzipBytes": 4774
   },
   {
     "slug": "ascii-observatory-console",
@@ -3763,7 +4968,7 @@
       "fontSize": "number"
     },
     "events": {},
-    "gzipBytes": 5087
+    "gzipBytes": 5132
   },
   {
     "slug": "ascii-packet-route",
@@ -4289,7 +5494,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5177
+    "gzipBytes": 5224
   },
   {
     "slug": "ascii-press-wire",
@@ -4581,7 +5786,7 @@
         "detail": "number"
       }
     },
-    "gzipBytes": 4858
+    "gzipBytes": 4860
   },
   {
     "slug": "ascii-radial-dial",
@@ -4728,7 +5933,7 @@
       "fontSize": "number"
     },
     "events": {},
-    "gzipBytes": 4215
+    "gzipBytes": 4263
   },
   {
     "slug": "ascii-rain",
@@ -4857,7 +6062,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4261
+    "gzipBytes": 4309
   },
   {
     "slug": "ascii-release-room",
@@ -5299,6 +6504,159 @@
     "gzipBytes": 3415
   },
   {
+    "slug": "ascii-slat-canopy",
+    "title": "ASCII Slat Canopy",
+    "category": "ascii",
+    "description": "Parallel curved slats tilt in a finite open vault, joined by two eaves and a sparse crown rail.",
+    "tags": [
+      "canopy",
+      "vault",
+      "ribs",
+      "architecture",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "ribs": {
+        "type": "number",
+        "min": 4,
+        "max": 12,
+        "step": 1,
+        "label": "Structural ribs"
+      },
+      "arch": {
+        "type": "number",
+        "min": 0.5,
+        "max": 1.6,
+        "step": 0.05,
+        "label": "Vault height"
+      },
+      "tilt": {
+        "type": "number",
+        "min": -20,
+        "max": 30,
+        "step": 1,
+        "label": "Rib tilt in degrees"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Rocking speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause motion"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Open pavilion",
+        "description": "Seven double-edged ribs describe a medium vault with small offset tilts.",
+        "props": {
+          "ribs": 7,
+          "arch": 1.05,
+          "tilt": 10,
+          "speed": 0.7,
+          "fontSize": 14,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Low arcade",
+        "description": "Ten close ribs form a shallow canopy with a nearly upright resting angle.",
+        "props": {
+          "ribs": 10,
+          "arch": 0.8,
+          "tilt": 4,
+          "speed": 0.5,
+          "fontSize": 12,
+          "seed": 4
+        }
+      },
+      {
+        "name": "High shelter",
+        "description": "Five tall arches leave broad open bays beneath a more pronounced slat tilt.",
+        "props": {
+          "ribs": 5,
+          "arch": 1.4,
+          "tilt": 22,
+          "speed": 0.85,
+          "fontSize": 16,
+          "seed": 9
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiSlatCanopy",
+    "defaults": {
+      "ribs": 7,
+      "arch": 1.05,
+      "tilt": 10,
+      "speed": 0.7,
+      "fontSize": 14,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "ribs": "Number of parallel curved structural ribs, from 4 to 12.",
+      "arch": "Height of the open vault relative to its span, from 0.5 to 1.6.",
+      "tilt": "Resting rigid rib tilt in degrees, from -20 to 30.",
+      "speed": "Rate of the offset rib rocking, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 12 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "ribs": "number",
+      "arch": "number",
+      "tilt": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4453
+  },
+  {
     "slug": "ascii-solid",
     "title": "ASCII Solid",
     "category": "ascii",
@@ -5411,7 +6769,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4582
+    "gzipBytes": 4627
   },
   {
     "slug": "ascii-spiral-current",
@@ -5558,7 +6916,160 @@
       "fontSize": "number"
     },
     "events": {},
-    "gzipBytes": 4893
+    "gzipBytes": 4941
+  },
+  {
+    "slug": "ascii-string-modes",
+    "title": "ASCII String Modes",
+    "category": "ascii",
+    "description": "Three separated strings oscillate between fixed anchors, with consecutive standing modes, stationary nodes and sparse preceding traces.",
+    "tags": [
+      "string",
+      "harmonic",
+      "standing-wave",
+      "nodes",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "harmonic": {
+        "type": "number",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "First harmonic"
+      },
+      "amplitude": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.4,
+        "step": 0.05,
+        "label": "Displacement"
+      },
+      "spacing": {
+        "type": "number",
+        "min": 0.5,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Vertical separation"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Oscillation speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Paused"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "First harmonics",
+        "description": "The first three modes show one, two and three lobes between the same fixed endpoints.",
+        "props": {
+          "harmonic": 1,
+          "amplitude": 0.3,
+          "spacing": 0.65,
+          "speed": 0.6,
+          "fontSize": 14,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Quiet overtones",
+        "description": "Modes three through five carry shallow oscillations with clear stationary nodes.",
+        "props": {
+          "harmonic": 3,
+          "amplitude": 0.2,
+          "spacing": 0.7,
+          "speed": 0.4,
+          "fontSize": 14,
+          "seed": 3
+        }
+      },
+      {
+        "name": "Wide excursion",
+        "description": "Three low modes use more vertical space while the anchors and dotted baselines remain fixed.",
+        "props": {
+          "harmonic": 1,
+          "amplitude": 0.4,
+          "spacing": 0.6,
+          "speed": 0.5,
+          "fontSize": 16,
+          "seed": 5
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiStringModes",
+    "defaults": {
+      "harmonic": 1,
+      "amplitude": 0.3,
+      "spacing": 0.65,
+      "speed": 0.6,
+      "fontSize": 14,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "harmonic": "First harmonic of three consecutive standing modes, from 1 to 4.",
+      "amplitude": "Displacement as a fraction of the separation between strings, from 0.1 to 0.4.",
+      "spacing": "Fraction of the available height spanned by the three baselines, from 0.5 to 0.8.",
+      "speed": "Rate of the analytic standing oscillation, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 12 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "harmonic": "number",
+      "amplitude": "number",
+      "spacing": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 3995
   },
   {
     "slug": "ascii-terminal-journal",
@@ -5794,7 +7305,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 5074
+    "gzipBytes": 5122
   },
   {
     "slug": "ascii-topo",
@@ -5907,7 +7418,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4416
+    "gzipBytes": 4460
   },
   {
     "slug": "ascii-tree-rings",
@@ -6005,7 +7516,7 @@
       "selectedYear": "number | null"
     },
     "events": {},
-    "gzipBytes": 4278
+    "gzipBytes": 4323
   },
   {
     "slug": "ascii-video",
@@ -6155,7 +7666,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5749
+    "gzipBytes": 5792
   },
   {
     "slug": "ascii-wave-tank",
@@ -6402,7 +7913,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5890
+    "gzipBytes": 5942
   },
   {
     "slug": "ascii-waves",
@@ -6533,7 +8044,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4211
+    "gzipBytes": 4257
   },
   {
     "slug": "ascii-weather-station",
@@ -6933,7 +8444,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 5807
+    "gzipBytes": 5849
   },
   {
     "slug": "ascii-workshop-index",
@@ -7174,7 +8685,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5171
+    "gzipBytes": 5215
   },
   {
     "slug": "box-plot",
@@ -7405,7 +8916,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 6666
+    "gzipBytes": 6712
   },
   {
     "slug": "bullet-chart",
@@ -7555,7 +9066,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5575
+    "gzipBytes": 5621
   },
   {
     "slug": "candlestick-chart",
@@ -7870,7 +9381,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5867
+    "gzipBytes": 5904
   },
   {
     "slug": "chord-diagram",
@@ -8044,7 +9555,7 @@
         "detail": "number"
       }
     },
-    "gzipBytes": 7571
+    "gzipBytes": 7612
   },
   {
     "slug": "dendrogram",
@@ -8357,7 +9868,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5242
+    "gzipBytes": 5288
   },
   {
     "slug": "fan-chart",
@@ -8559,7 +10070,7 @@
       "look": "\"glyph\" | \"svg\""
     },
     "events": {},
-    "gzipBytes": 7619
+    "gzipBytes": 7667
   },
   {
     "slug": "gauge-chart",
@@ -8681,7 +10192,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5610
+    "gzipBytes": 5657
   },
   {
     "slug": "heatmap",
@@ -8903,7 +10414,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5464
+    "gzipBytes": 5503
   },
   {
     "slug": "horizon-chart",
@@ -9109,7 +10620,7 @@
       "label": "string"
     },
     "events": {},
-    "gzipBytes": 6827
+    "gzipBytes": 6873
   },
   {
     "slug": "kanban-board",
@@ -9418,7 +10929,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5819
+    "gzipBytes": 5865
   },
   {
     "slug": "lollipop-chart",
@@ -9578,7 +11089,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5770
+    "gzipBytes": 5817
   },
   {
     "slug": "parallel-coordinate-plot",
@@ -9787,7 +11298,7 @@
         "detail": "string"
       }
     },
-    "gzipBytes": 7029
+    "gzipBytes": 7076
   },
   {
     "slug": "radar-chart",
@@ -9943,7 +11454,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5872
+    "gzipBytes": 5916
   },
   {
     "slug": "scatter-plot",
@@ -10211,7 +11722,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 6187
+    "gzipBytes": 6236
   },
   {
     "slug": "slope-chart",
@@ -10366,7 +11877,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 7087
+    "gzipBytes": 7138
   },
   {
     "slug": "streamgraph",
@@ -10600,7 +12111,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 7647
+    "gzipBytes": 7694
   },
   {
     "slug": "ternary-plot",
@@ -10765,7 +12276,7 @@
         "detail": "string"
       }
     },
-    "gzipBytes": 5980
+    "gzipBytes": 6023
   },
   {
     "slug": "timeline-chart",
@@ -10920,7 +12431,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5911
+    "gzipBytes": 5950
   },
   {
     "slug": "waterfall-chart",
@@ -11051,7 +12562,7 @@
       "fontFamily": "string"
     },
     "events": {},
-    "gzipBytes": 5727
+    "gzipBytes": 5768
   },
   {
     "slug": "dither-contours",
@@ -21394,7 +22905,7 @@
       "label": "string"
     },
     "events": {},
-    "gzipBytes": 4322
+    "gzipBytes": 4371
   },
   {
     "slug": "scroll-ruler",
@@ -21721,7 +23232,7 @@
       "label": "string"
     },
     "events": {},
-    "gzipBytes": 5112
+    "gzipBytes": 5160
   },
   {
     "slug": "brick-lattice",
@@ -24049,7 +25560,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 8629
+    "gzipBytes": 8677
   },
   {
     "slug": "bohemian-hero",
@@ -27486,7 +28997,7 @@
       "intensity": "number"
     },
     "events": {},
-    "gzipBytes": 9351
+    "gzipBytes": 9400
   },
   {
     "slug": "homeward-voyage",
@@ -29718,7 +31229,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 7742
+    "gzipBytes": 7781
   },
   {
     "slug": "polar-expedition",
@@ -31935,7 +33446,7 @@
       "minHeight": "number"
     },
     "events": {},
-    "gzipBytes": 4542
+    "gzipBytes": 4589
   },
   {
     "slug": "wabi-sabi-hero",
@@ -32836,6 +34347,163 @@
     "gzipBytes": 5310
   },
   {
+    "slug": "chainmail-weave",
+    "title": "Chainmail Weave",
+    "category": "shaders",
+    "description": "A staggered field of curved metallic rings alternates front and rear crossings beneath a single slow moving light.",
+    "tags": [
+      "chainmail",
+      "rings",
+      "metal",
+      "weave",
+      "occlusion",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "rings": {
+        "type": "number",
+        "min": 6,
+        "max": 20,
+        "step": 1,
+        "label": "Ring density"
+      },
+      "gauge": {
+        "type": "number",
+        "min": 0.055,
+        "max": 0.15,
+        "step": 0.005,
+        "label": "Wire gauge"
+      },
+      "lean": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Ring lean"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Ink coverage"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Paused"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 120000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1,
+        "label": "Light seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Linked mail",
+        "description": "Moderate ring density and alternating lean reveal a regular sequence of curved crossings.",
+        "props": {
+          "rings": 12,
+          "gauge": 0.09,
+          "lean": 0.45,
+          "speed": 0.6,
+          "intensity": 0.65,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Heavy links",
+        "description": "Broad, thick rings make the front and rear arcs prominent under a slower light.",
+        "props": {
+          "rings": 8,
+          "gauge": 0.13,
+          "lean": 0.6,
+          "speed": 0.4,
+          "intensity": 0.6,
+          "seed": 3
+        }
+      },
+      {
+        "name": "Fine mesh",
+        "description": "Close thin rings form a quieter shallow weave with restrained metallic highlights.",
+        "props": {
+          "rings": 18,
+          "gauge": 0.065,
+          "lean": 0.3,
+          "speed": 0.7,
+          "intensity": 0.55,
+          "seed": 5
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "ChainmailWeave",
+    "defaults": {
+      "rings": 12,
+      "gauge": 0.09,
+      "lean": 0.45,
+      "speed": 0.6,
+      "intensity": 0.65,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "rings": "Ring pitches across the shorter view dimension, from 6 to 20.",
+      "gauge": "Wire radius relative to a ring pitch, from 0.055 to 0.15.",
+      "lean": "Alternating ring plane tilt in radians, from 0.2 to 0.8.",
+      "speed": "Rate of the single moving light, from 0 to 2.",
+      "intensity": "Overall palette ink coverage, from 0.2 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "rings": "number",
+      "gauge": "number",
+      "lean": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5767
+  },
+  {
     "slug": "contour-engraving",
     "title": "Contour Engraving",
     "category": "shaders",
@@ -33302,6 +34970,320 @@
     "gzipBytes": 5478
   },
   {
+    "slug": "deckled-paper",
+    "title": "Deckled Paper",
+    "category": "shaders",
+    "description": "One finite deckle-edged sheet holds fine irregular fibers and a shallow bowed face under slow grazing light.",
+    "tags": [
+      "paper",
+      "deckle",
+      "fibers",
+      "bow",
+      "grazing-light",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "fiber": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1.5,
+        "step": 0.05,
+        "label": "Fiber strength"
+      },
+      "bow": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1.5,
+        "step": 0.05,
+        "label": "Sheet bow"
+      },
+      "edge": {
+        "type": "number",
+        "min": 1,
+        "max": 10,
+        "step": 0.5,
+        "label": "Deckle roughness in pixels"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Grazing light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Paper fiber seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Handmade sheet",
+        "description": "A medium bow and locally rough edge reveal fine sparse paper fibers.",
+        "props": {
+          "fiber": 0.75,
+          "bow": 0.9,
+          "edge": 4,
+          "speed": 0.7,
+          "intensity": 0.65,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Cotton rag",
+        "description": "Stronger fibers and a rougher boundary sit on a gently bowed sheet.",
+        "props": {
+          "fiber": 1.25,
+          "bow": 0.55,
+          "edge": 7,
+          "speed": 0.5,
+          "intensity": 0.7,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Pressed leaf",
+        "description": "A finer edge and quieter fibers expose the broad shallow face under moving light.",
+        "props": {
+          "fiber": 0.4,
+          "bow": 1.2,
+          "edge": 2,
+          "speed": 0.85,
+          "intensity": 0.55,
+          "seed": 9
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "DeckledPaper",
+    "defaults": {
+      "fiber": 0.75,
+      "bow": 0.9,
+      "edge": 4,
+      "speed": 0.7,
+      "intensity": 0.65,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "fiber": "Strength of fine irregular paper fibers, from 0.2 to 1.5.",
+      "bow": "Shallow face bow relative to sheet size, from 0.2 to 1.5.",
+      "edge": "Local deckle edge roughness in CSS pixels, from 1 to 10.",
+      "speed": "Rate of the grazing directional light, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.2 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "fiber": "number",
+      "bow": "number",
+      "edge": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5742
+  },
+  {
+    "slug": "end-grain",
+    "title": "End Grain",
+    "category": "shaders",
+    "description": "Uneven organic growth rings surround an off-center pith, with narrow medullary rays and matte relief under calm grazing light.",
+    "tags": [
+      "wood",
+      "end-grain",
+      "growth-rings",
+      "medullary-rays",
+      "organic",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "rings": {
+        "type": "number",
+        "min": 16,
+        "max": 48,
+        "step": 1,
+        "label": "Growth ring density"
+      },
+      "irregularity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Organic irregularity"
+      },
+      "relief": {
+        "type": "number",
+        "min": 0.15,
+        "max": 1.2,
+        "step": 0.05,
+        "label": "Cut relief"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Ink coverage"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Paused"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 120000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1,
+        "label": "Growth seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Cut timber",
+        "description": "Uneven rings and a few fine radial rays reveal the matte surface of an off-center cut.",
+        "props": {
+          "rings": 30,
+          "irregularity": 0.7,
+          "relief": 0.75,
+          "speed": 0.6,
+          "intensity": 0.65,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Broad growth",
+        "description": "Sixteen widely spaced growth periods expose stronger variations in the fixed organic rings.",
+        "props": {
+          "rings": 16,
+          "irregularity": 0.8,
+          "relief": 0.6,
+          "speed": 0.45,
+          "intensity": 0.6,
+          "seed": 3
+        }
+      },
+      {
+        "name": "Fine hardwood",
+        "description": "Close irregular growth cuts form a quieter detailed surface with shallow matte relief.",
+        "props": {
+          "rings": 42,
+          "irregularity": 0.9,
+          "relief": 0.5,
+          "speed": 0.7,
+          "intensity": 0.55,
+          "seed": 5
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "EndGrain",
+    "defaults": {
+      "rings": 30,
+      "irregularity": 0.7,
+      "relief": 0.75,
+      "speed": 0.6,
+      "intensity": 0.65,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "rings": "Growth periods per shorter view dimension, from 16 to 48.",
+      "irregularity": "Fixed angular distortion and spacing variation, from 0.2 to 1.",
+      "relief": "Depth of the growth cuts and medullary rays, from 0.15 to 1.2.",
+      "speed": "Rate of the calm grazing light, from 0 to 2.",
+      "intensity": "Overall palette ink coverage, from 0.2 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "rings": "number",
+      "irregularity": "number",
+      "relief": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5877
+  },
+  {
     "slug": "etched-radial",
     "title": "Etched Radial",
     "category": "shaders",
@@ -33446,6 +35428,477 @@
     },
     "events": {},
     "gzipBytes": 5543
+  },
+  {
+    "slug": "fluted-shell",
+    "title": "Fluted Shell",
+    "category": "shaders",
+    "description": "A bounded concave shell carries radial flutes and a scalloped rim above a fixed hinge under slowly moving light.",
+    "tags": [
+      "shell",
+      "fan",
+      "flutes",
+      "scalloped",
+      "concavity",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "flutes": {
+        "type": "number",
+        "min": 6,
+        "max": 24,
+        "step": 1,
+        "label": "Radial flutes"
+      },
+      "concavity": {
+        "type": "number",
+        "min": 0.25,
+        "max": 1.5,
+        "step": 0.05,
+        "label": "Bowl concavity"
+      },
+      "spread": {
+        "type": "number",
+        "min": 80,
+        "max": 140,
+        "step": 5,
+        "label": "Fan spread in degrees"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Directional light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 9999,
+        "step": 1,
+        "label": "Light and grain seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Quiet scallop",
+        "description": "Thirteen flutes cross a balanced concave fan with a restrained scalloped rim.",
+        "props": {
+          "flutes": 13,
+          "concavity": 1,
+          "spread": 110,
+          "speed": 0.6,
+          "intensity": 0.65,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Broad shallow shell",
+        "description": "Nine broad flutes open into a wider, shallower bowl with a clear fixed hinge.",
+        "props": {
+          "flutes": 9,
+          "concavity": 0.55,
+          "spread": 135,
+          "speed": 0.45,
+          "intensity": 0.6,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Narrow deep fan",
+        "description": "Eighteen close flutes reveal deeper concavity in a taller, narrower shell.",
+        "props": {
+          "flutes": 18,
+          "concavity": 1.35,
+          "spread": 90,
+          "speed": 0.8,
+          "intensity": 0.7,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "FlutedShell",
+    "defaults": {
+      "flutes": 13,
+      "concavity": 1,
+      "spread": 110,
+      "speed": 0.6,
+      "intensity": 0.65,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "flutes": "Number of radial flute crests across the fan, from 6 to 24.",
+      "concavity": "Depth of the shell bowl relative to its radius, from 0.25 to 1.5.",
+      "spread": "Full fan opening in degrees, from 80 to 140.",
+      "speed": "Rate of the moving directional light, from 0 to 2.",
+      "intensity": "Overall palette ink coverage, from 0.2 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "flutes": "number",
+      "concavity": "number",
+      "spread": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5776
+  },
+  {
+    "slug": "fluted-tunnel",
+    "title": "Fluted Tunnel",
+    "category": "shaders",
+    "description": "A finite near lip frames continuous fluted walls and receding chamber joins around an open far aperture under slow grazing light.",
+    "tags": [
+      "tunnel",
+      "flutes",
+      "chamber",
+      "aperture",
+      "grazing-light",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "flutes": {
+        "type": "number",
+        "min": 8,
+        "max": 32,
+        "step": 1,
+        "label": "Wall flutes"
+      },
+      "depth": {
+        "type": "number",
+        "min": 2,
+        "max": 6,
+        "step": 0.25,
+        "label": "Chamber depth"
+      },
+      "aperture": {
+        "type": "number",
+        "min": 0.12,
+        "max": 0.38,
+        "step": 0.01,
+        "label": "Far aperture"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Ink coverage"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Paused"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 120000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 0,
+        "max": 9999,
+        "step": 1,
+        "label": "Light seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Deep chamber",
+        "description": "A bounded near rim and four compressed chamber joins reveal depth between eighteen rounded flutes and an open far throat.",
+        "props": {
+          "flutes": 18,
+          "depth": 3.5,
+          "aperture": 0.22,
+          "speed": 0.6,
+          "intensity": 0.65,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Broad vault",
+        "description": "Ten broad flutes connect the visible near lip to a wider aperture through a shallower joined chamber.",
+        "props": {
+          "flutes": 10,
+          "depth": 2.5,
+          "aperture": 0.32,
+          "speed": 0.45,
+          "intensity": 0.55,
+          "seed": 3
+        }
+      },
+      {
+        "name": "Narrow throat",
+        "description": "Twenty-eight close flutes and receding circumferential joins lead from a visible mouth toward a small far aperture.",
+        "props": {
+          "flutes": 28,
+          "depth": 5,
+          "aperture": 0.15,
+          "speed": 0.7,
+          "intensity": 0.7,
+          "seed": 5
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "FlutedTunnel",
+    "defaults": {
+      "flutes": 18,
+      "depth": 3.5,
+      "aperture": 0.22,
+      "speed": 0.6,
+      "intensity": 0.65,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "flutes": "Number of continuous longitudinal wall flutes, from 8 to 32.",
+      "depth": "Axial chamber length beyond the near opening, from 2 to 6.",
+      "aperture": "Projected far aperture radius relative to the shorter view dimension, from 0.12 to 0.38.",
+      "speed": "Rate of the moving grazing light, from 0 to 2.",
+      "intensity": "Overall palette ink coverage, from 0.2 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "flutes": "number",
+      "depth": "number",
+      "aperture": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6181
+  },
+  {
+    "slug": "frosted-block",
+    "title": "Frosted Block",
+    "category": "shaders",
+    "description": "A finite bevelled glass slab refracts crisp lines through a lightly grained face under slowly moving directional light.",
+    "tags": [
+      "glass",
+      "slab",
+      "bevel",
+      "refraction",
+      "grain",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "width": {
+        "type": "number",
+        "min": 0.45,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Slab width"
+      },
+      "bevel": {
+        "type": "number",
+        "min": 0.015,
+        "max": 0.09,
+        "step": 0.005,
+        "label": "Bevel width"
+      },
+      "refraction": {
+        "type": "number",
+        "min": 0,
+        "max": 1.5,
+        "step": 0.05,
+        "label": "Line refraction"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Light and line drift"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause material"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 9999,
+        "step": 1,
+        "label": "Grain and orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Quiet frosted slab",
+        "description": "A broad slab bends the line field at a modest bevel with restrained grain and highlights.",
+        "props": {
+          "width": 0.75,
+          "bevel": 0.04,
+          "refraction": 0.8,
+          "speed": 0.6,
+          "intensity": 0.65,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Deep cut edge",
+        "description": "A wider bevel and stronger refraction reveal the continuous change from edge to face.",
+        "props": {
+          "width": 0.7,
+          "bevel": 0.075,
+          "refraction": 1.3,
+          "speed": 0.45,
+          "intensity": 0.75,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Thin glass plate",
+        "description": "A smaller plate uses a fine bevel and slight displacement for a quieter material study.",
+        "props": {
+          "width": 0.55,
+          "bevel": 0.02,
+          "refraction": 0.4,
+          "speed": 0.8,
+          "intensity": 0.5,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "FrostedBlock",
+    "defaults": {
+      "width": 0.75,
+      "bevel": 0.04,
+      "refraction": 0.8,
+      "speed": 0.6,
+      "intensity": 0.65,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "width": "Slab width relative to the shorter host side, from 0.45 to 0.8.",
+      "bevel": "Bevel width relative to the shorter host side, from 0.015 to 0.09.",
+      "refraction": "Geometric displacement of the line field through the slab, from 0 to 1.5.",
+      "speed": "Drift and directional light rate, from 0 to 2.",
+      "intensity": "Overall palette ink coverage, from 0.2 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "width": "number",
+      "bevel": "number",
+      "refraction": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5744
   },
   {
     "slug": "glass-ripple-lens",
@@ -33597,6 +36050,163 @@
     },
     "events": {},
     "gzipBytes": 5587
+  },
+  {
+    "slug": "hammered-foil",
+    "title": "Hammered Foil",
+    "category": "shaders",
+    "description": "Irregular rounded hammer depressions catch a broad directional reflection across a shallow metallic sheet.",
+    "tags": [
+      "foil",
+      "hammered",
+      "metal",
+      "depressions",
+      "reflection",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "dentSize": {
+        "type": "number",
+        "min": 36,
+        "max": 140,
+        "step": 1,
+        "label": "Depression spacing in pixels"
+      },
+      "depth": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.65,
+        "step": 0.05,
+        "label": "Hammer depth"
+      },
+      "roughness": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Reflection roughness"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Light sweep speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Dimple arrangement seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Soft hammered sheet",
+        "description": "Medium rounded depressions hold a quiet, broad metallic reflection.",
+        "props": {
+          "dentSize": 76,
+          "depth": 0.3,
+          "roughness": 0.65,
+          "speed": 0.65,
+          "intensity": 0.6,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Deep handwork",
+        "description": "Larger depressions expose deeper sloping walls under a more focused reflection.",
+        "props": {
+          "dentSize": 112,
+          "depth": 0.55,
+          "roughness": 0.4,
+          "speed": 0.45,
+          "intensity": 0.75,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine foil",
+        "description": "Small shallow marks spread a subdued reflection across a finely hammered surface.",
+        "props": {
+          "dentSize": 48,
+          "depth": 0.15,
+          "roughness": 0.9,
+          "speed": 0.8,
+          "intensity": 0.45,
+          "seed": 9
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "HammeredFoil",
+    "defaults": {
+      "dentSize": 76,
+      "depth": 0.3,
+      "roughness": 0.65,
+      "speed": 0.65,
+      "intensity": 0.6,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "dentSize": "Typical hammer depression spacing in CSS pixels, from 36 to 140.",
+      "depth": "Depression depth relative to its spacing, from 0.1 to 0.65.",
+      "roughness": "Broadness and irregularity of the metallic reflection, from 0.2 to 1.",
+      "speed": "Rate of the broad directional light sweep, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.2 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "dentSize": "number",
+      "depth": "number",
+      "roughness": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5540
   },
   {
     "slug": "lenticular-ridges",
@@ -34207,6 +36817,163 @@
     },
     "events": {},
     "gzipBytes": 5562
+  },
+  {
+    "slug": "perforated-screen",
+    "title": "Perforated Screen",
+    "category": "shaders",
+    "description": "Staggered round holes expose a lower receiving plane beneath a shallow metal sheet, with cylindrical rims and aligned moving shadows.",
+    "tags": [
+      "perforated",
+      "screen",
+      "holes",
+      "metal",
+      "cast-shadow",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "pitch": {
+        "type": "number",
+        "min": 36,
+        "max": 120,
+        "step": 1,
+        "label": "Hole spacing in pixels"
+      },
+      "aperture": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.7,
+        "step": 0.05,
+        "label": "Hole diameter ratio"
+      },
+      "thickness": {
+        "type": "number",
+        "min": 2,
+        "max": 14,
+        "step": 1,
+        "label": "Metal thickness in pixels"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Light orbit speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Initial light direction seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Punched sheet",
+        "description": "Medium staggered apertures reveal short cylindrical walls and a clearly separated lower plane.",
+        "props": {
+          "pitch": 64,
+          "aperture": 0.55,
+          "thickness": 6,
+          "speed": 0.65,
+          "intensity": 0.65,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Open grille",
+        "description": "Larger apertures and thin metal expose more of the coherent moving light pattern below.",
+        "props": {
+          "pitch": 88,
+          "aperture": 0.7,
+          "thickness": 3,
+          "speed": 0.5,
+          "intensity": 0.6,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Heavy gauge",
+        "description": "Close smaller openings make the thick cylindrical rims and grazing cast shadows prominent.",
+        "props": {
+          "pitch": 44,
+          "aperture": 0.4,
+          "thickness": 11,
+          "speed": 0.85,
+          "intensity": 0.75,
+          "seed": 9
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "PerforatedScreen",
+    "defaults": {
+      "pitch": 64,
+      "aperture": 0.55,
+      "thickness": 6,
+      "speed": 0.65,
+      "intensity": 0.65,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "pitch": "Staggered hole spacing in CSS pixels, from 36 to 120.",
+      "aperture": "Hole diameter as a fraction of spacing, from 0.3 to 0.7.",
+      "thickness": "Metal sheet thickness in CSS pixels, from 2 to 14.",
+      "speed": "Rate of the single directional light orbit, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.2 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "pitch": "number",
+      "aperture": "number",
+      "thickness": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5890
   },
   {
     "slug": "pixel-plasma",
@@ -35374,6 +38141,320 @@
     "gzipBytes": 5400
   },
   {
+    "slug": "stratified-stone",
+    "title": "Stratified Stone",
+    "category": "shaders",
+    "description": "Broad stacked sediment faces and bevelled edges reveal a finite stone slab, with displaced bedding across a subordinate fault under grazing light.",
+    "tags": [
+      "stone",
+      "sediment",
+      "strata",
+      "fault",
+      "relief",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "strata": {
+        "type": "number",
+        "min": 3,
+        "max": 12,
+        "step": 1,
+        "label": "Broad sediment strata"
+      },
+      "relief": {
+        "type": "number",
+        "min": 0.15,
+        "max": 1.5,
+        "step": 0.05,
+        "label": "Stone relief height"
+      },
+      "fracture": {
+        "type": "number",
+        "min": 0,
+        "max": 1.5,
+        "step": 0.05,
+        "label": "Angular fault throw"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Directional light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.25,
+        "max": 0.85,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 9999,
+        "step": 1,
+        "label": "Bedding and grain seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Quiet bedding",
+        "description": "Six broad mineral layers expose their stepped risers across a small displaced seam and bevelled stone edge.",
+        "props": {
+          "strata": 6,
+          "relief": 0.85,
+          "fracture": 0.8,
+          "speed": 0.55,
+          "intensity": 0.6,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Exposed fault",
+        "description": "Four deep sediment faces show a larger bedding displacement while the broad stone relief remains dominant.",
+        "props": {
+          "strata": 4,
+          "relief": 1.3,
+          "fracture": 1.3,
+          "speed": 0.4,
+          "intensity": 0.65,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Shallow sediment",
+        "description": "Nine shallow mineral layers retain visible bedding, stable fine grain and a smaller fault throw.",
+        "props": {
+          "strata": 9,
+          "relief": 0.5,
+          "fracture": 0.35,
+          "speed": 0.8,
+          "intensity": 0.5,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "StratifiedStone",
+    "defaults": {
+      "strata": 6,
+      "relief": 0.85,
+      "fracture": 0.8,
+      "speed": 0.55,
+      "intensity": 0.6,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "strata": "Broad sediment layer count across the shorter host side, from 3 to 12.",
+      "relief": "Height of the stepped stone relief, from 0.15 to 1.5.",
+      "fracture": "Throw of the fixed fault and angular bedding breaks, from 0 to 1.5.",
+      "speed": "Rate of the moving directional light, from 0 to 2.",
+      "intensity": "Overall palette ink coverage, from 0.25 to 0.85."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "strata": "number",
+      "relief": "number",
+      "fracture": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5811
+  },
+  {
+    "slug": "terraced-blocks",
+    "title": "Terraced Blocks",
+    "category": "shaders",
+    "description": "Finite staggered rectangular plateaus descend toward one clear opening, with beveled faces and shadows cast by their actual heights.",
+    "tags": [
+      "terraces",
+      "blocks",
+      "plateaus",
+      "bevels",
+      "cast-shadow",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "background",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 17,
+    "release": "kinetic-studies-2026-10-24",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "tiers": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Terrace tiers"
+      },
+      "depth": {
+        "type": "number",
+        "min": 0.3,
+        "max": 1.5,
+        "step": 0.05,
+        "label": "Step height"
+      },
+      "stagger": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "label": "Plateau stagger"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Light orbit speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Initial light direction seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Reading court",
+        "description": "Three medium-height tiers frame a clear central opening with alternating plateau joints.",
+        "props": {
+          "tiers": 3,
+          "depth": 0.8,
+          "stagger": 0.6,
+          "speed": 0.65,
+          "intensity": 0.65,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Low terraces",
+        "description": "Two shallow tiers leave broad, quiet plateaus around the opening.",
+        "props": {
+          "tiers": 2,
+          "depth": 0.4,
+          "stagger": 0.35,
+          "speed": 0.5,
+          "intensity": 0.55,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Stepped enclosure",
+        "description": "Four taller tiers reveal narrow bevels and longer coherent shadows between the blocks.",
+        "props": {
+          "tiers": 4,
+          "depth": 1.15,
+          "stagger": 0.85,
+          "speed": 0.85,
+          "intensity": 0.75,
+          "seed": 9
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "TerracedBlocks",
+    "defaults": {
+      "tiers": 3,
+      "depth": 0.8,
+      "stagger": 0.6,
+      "speed": 0.65,
+      "intensity": 0.65,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "tiers": "Number of finite plateau tiers around the reading opening, from 2 to 4.",
+      "depth": "Height of each terrace step relative to the shorter side, from 0.3 to 1.5.",
+      "stagger": "Alternating offset of neighboring rectangular plateaus, from 0 to 1.",
+      "speed": "Rate of the directional light orbit, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.2 to 1."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "tiers": "number",
+      "depth": "number",
+      "stagger": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5846
+  },
+  {
     "slug": "tunnel-grid",
     "title": "Tunnel Grid",
     "category": "shaders",
@@ -35752,7 +38833,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 3472
+    "gzipBytes": 3518
   },
   {
     "slug": "ascii-loader",
@@ -36140,7 +39221,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 3482
+    "gzipBytes": 3526
   },
   {
     "slug": "block-image",
@@ -36267,7 +39348,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 4677
+    "gzipBytes": 4722
   },
   {
     "slug": "braille-image",
@@ -36401,7 +39482,7 @@
       "lineHeight": "number"
     },
     "events": {},
-    "gzipBytes": 4634
+    "gzipBytes": 4682
   },
   {
     "slug": "accordion",
@@ -40599,7 +43680,7 @@
       "fps": "number"
     },
     "events": {},
-    "gzipBytes": 4108
+    "gzipBytes": 4155
   },
   {
     "slug": "slider",

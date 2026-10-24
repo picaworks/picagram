@@ -1,0 +1,102 @@
+{
+  "ascii-mobius-band": {
+    "decision": "keep",
+    "note": "Continuous half twist and clear aperture, with flat and upright silhouettes. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "ascii-braided-cords": {
+    "decision": "keep",
+    "note": "Connected over and under crossings with clearly different braid spacing. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "ascii-helix-ladder": {
+    "decision": "keep",
+    "note": "Connected strands and rungs; measured font fallback clipping repaired with fixed cells. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "ascii-elastic-membrane": {
+    "decision": "keep",
+    "note": "Finite standing wave lattice; complete pinned perimeter after fixed cell repair. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "ascii-slat-canopy": {
+    "decision": "keep",
+    "note": "Separated curved slats retain a finite canopy and useful gaps on phones. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "ascii-linkage-rosette": {
+    "decision": "keep",
+    "note": "Connected radial links retain a coherent opening and distinct arm counts. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "ascii-string-modes": {
+    "decision": "keep",
+    "note": "Legible mode numbers and both fixed endpoint caps after fixed cell repair. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "ascii-chain-drive": {
+    "decision": "keep",
+    "note": "Complete chain loop and meshing sprockets; full links fit after fixed cell repair. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "ascii-glyph-carousel": {
+    "decision": "keep",
+    "note": "Readable labeled cards remain depth separated, with distinct card counts. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "ascii-balance-mobile": {
+    "decision": "keep",
+    "note": "Connected hanging tree and balanced weights retain quiet space. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "hammered-foil": {
+    "decision": "keep",
+    "note": "Rounded hammered depressions and grazing light establish foil; signed power arithmetic repaired. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "frosted-block": {
+    "decision": "keep",
+    "note": "Background grid warps through a finite translucent block with shaped edges. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "fluted-tunnel": {
+    "decision": "keep",
+    "note": "Independent revision adds a bounded near lip, joined receding walls and an open far aperture. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "deckled-paper": {
+    "decision": "keep",
+    "note": "Irregular paper edges, fibers and relief stay distinct across fine and rough presets. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "fluted-shell": {
+    "decision": "keep",
+    "note": "Continuous shell flutes and scalloped silhouette remain recognizable on phones. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "chainmail-weave": {
+    "decision": "keep",
+    "note": "Interlocked raised links establish woven metal, with clear size differences. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "perforated-screen": {
+    "decision": "keep",
+    "note": "Thick hole rims and repeated perforations give the screen a readable material surface. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "stratified-stone": {
+    "decision": "keep",
+    "note": "Independent revision strengthens broad stepped bedding and makes the displaced fault subordinate. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "end-grain": {
+    "decision": "keep",
+    "note": "Growth rings and radial checks establish end grain; broad and fine spacing remain quiet. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  },
+  "terraced-blocks": {
+    "decision": "keep",
+    "note": "Stepped solid faces and a clear central opening remain contained at phone width. Integration inspected actual default and preset captures on ink and paper at desktop and phone widths. Parent acceptance is for PR review, not a claim of user approval.",
+    "at": "2026-10-24T19:20:47.156093+00:00"
+  }
+}

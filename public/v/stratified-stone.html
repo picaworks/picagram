@@ -1,0 +1,690 @@
+<!doctype html>
+<!--
+  Pica · Stratified Stone · stratified-stone
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Stratified Stone · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaStratifiedStone = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/shaders/stratified-stone/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+  function layer(host, where, tag = "div") {
+    const el = document.createElement(tag);
+    el.setAttribute("data-pica", "");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:${where === "under" ? -1 : 1}`;
+    const styles = {};
+    if (getComputedStyle(host).position === "static") styles.position = "relative";
+    if (where === "under") styles.isolation = "isolate";
+    const restore = styleHost(host, styles);
+    if (where === "under") host.prepend(el);
+    else host.append(el);
+    return {
+      el,
+      remove() {
+        el.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/gl.ts
+  var FULLSCREEN_VERTEX = `#version 300 es
+void main() {
+  vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}
+`;
+  var SHADER_PRELUDE = `#version 300 es
+precision highp float;
+precision highp int;
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform float u_seed;
+uniform vec2 u_pointer;
+uniform vec4 u_fg;
+uniform vec4 u_bg;
+uniform vec4 u_accent;
+uniform vec4 u_muted;
+out vec4 pica_color;
+uint pica_hash(uvec2 v) {
+  v = v * 1664525u + 1013904223u;
+  v.x += v.y * 1664525u;
+  v.y += v.x * 1664525u;
+  v ^= v >> 16u;
+  v.x += v.y * 1664525u;
+  v.y += v.x * 1664525u;
+  v ^= v >> 16u;
+  return v.x ^ v.y;
+}
+float pica_random(vec2 cell) {
+  uvec2 c = uvec2(ivec2(floor(cell)));
+  return float(pica_hash(c + uvec2(uint(u_seed) * 747796405u, uint(u_seed)))) / 4294967296.0;
+}
+`;
+  var WRAP_SECONDS = 3600;
+  var MAX_PIXELS = 2e6;
+  function toVectors(colors) {
+    const vec = (color) => parseColor(color).map((channel) => channel / 255);
+    return { fg: vec(colors.fg), bg: vec(colors.bg), accent: vec(colors.accent), muted: vec(colors.muted) };
+  }
+  function compileStage(gl, type, source) {
+    const shader = gl.createShader(type);
+    if (!shader) return null;
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader;
+    if (!gl.isContextLost()) console.error(`Pica shader did not compile: ${gl.getShaderInfoLog(shader) ?? ""}`);
+    gl.deleteShader(shader);
+    return null;
+  }
+  function createShader(host, options) {
+    const { fragment, fallback, onInvalidate } = options;
+    const values = new Map([["u_pointer", [-1, -1]], ...Object.entries(options.uniforms ?? {})]);
+    const surface = createCanvas(host, {
+      maxDpr: options.maxDpr ?? 1.5,
+      maxPixels: MAX_PIXELS,
+      css: options.css ?? "",
+      onResize: () => onInvalidate()
+    });
+    const canvas = surface.canvas;
+    let colors = { fg: [], bg: [], accent: [], muted: [] };
+    const palette = watchPalette(host, (next) => {
+      colors = toVectors(next);
+      onInvalidate();
+    });
+    colors = toVectors(palette.colors);
+    const gl = canvas.getContext("webgl2", {
+      alpha: true,
+      antialias: false,
+      depth: false,
+      stencil: false,
+      premultipliedAlpha: false,
+      preserveDrawingBuffer: false,
+      powerPreference: "low-power"
+    });
+    let program = null;
+    let locations = /* @__PURE__ */ new Map();
+    let lost = false;
+    function build() {
+      program = null;
+      if (!gl || gl.isContextLost()) return false;
+      const vertex = compileStage(gl, gl.VERTEX_SHADER, FULLSCREEN_VERTEX);
+      const pixel = compileStage(gl, gl.FRAGMENT_SHADER, SHADER_PRELUDE + fragment);
+      if (!vertex || !pixel) return false;
+      const linked = gl.createProgram();
+      gl.attachShader(linked, vertex);
+      gl.attachShader(linked, pixel);
+      gl.linkProgram(linked);
+      gl.deleteShader(vertex);
+      gl.deleteShader(pixel);
+      if (!gl.getProgramParameter(linked, gl.LINK_STATUS)) {
+        if (!gl.isContextLost()) console.error(`Pica shader did not link: ${gl.getProgramInfoLog(linked) ?? ""}`);
+        gl.deleteProgram(linked);
+        return false;
+      }
+      program = linked;
+      locations = /* @__PURE__ */ new Map();
+      gl.disable(gl.DITHER);
+      return true;
+    }
+    function upload(context, linked, name, value) {
+      let location = locations.get(name);
+      if (location === void 0) {
+        location = context.getUniformLocation(linked, name);
+        locations.set(name, location);
+      }
+      if (!location) return;
+      if (typeof value === "number") context.uniform1f(location, value);
+      else if (value.length === 2) context.uniform2f(location, value[0] ?? 0, value[1] ?? 0);
+      else if (value.length === 3) context.uniform3f(location, value[0] ?? 0, value[1] ?? 0, value[2] ?? 0);
+      else if (value.length === 4) context.uniform4f(location, value[0] ?? 0, value[1] ?? 0, value[2] ?? 0, value[3] ?? 0);
+      else context.uniform1fv(location, new Float32Array(value));
+    }
+    let ok = build();
+    canvas.style.background = ok ? "" : fallback;
+    const onLost = (event) => {
+      event.preventDefault();
+      lost = true;
+    };
+    const onRestored = () => {
+      lost = false;
+      ok = build();
+      canvas.style.background = ok ? "" : fallback;
+      onInvalidate();
+    };
+    canvas.addEventListener("webglcontextlost", onLost);
+    canvas.addEventListener("webglcontextrestored", onRestored);
+    return {
+      get ok() {
+        return ok;
+      },
+      set(name, value) {
+        values.set(name, value);
+      },
+      draw(t) {
+        if (!ok || lost || !gl || !program) return;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.useProgram(program);
+        upload(gl, program, "u_resolution", [canvas.width, canvas.height]);
+        upload(gl, program, "u_time", t / 1e3 % WRAP_SECONDS);
+        upload(gl, program, "u_fg", colors.fg);
+        upload(gl, program, "u_bg", colors.bg);
+        upload(gl, program, "u_accent", colors.accent);
+        upload(gl, program, "u_muted", colors.muted);
+        for (const [name, value] of values) upload(gl, program, name, value);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      },
+      destroy() {
+        canvas.removeEventListener("webglcontextlost", onLost);
+        canvas.removeEventListener("webglcontextrestored", onRestored);
+        palette.destroy();
+        if (gl && !gl.isContextLost()) gl.getExtension("WEBGL_lose_context")?.loseContext();
+        surface.destroy();
+      }
+    };
+  }
+
+  // lib/glsl.ts
+  var TONE = `
+vec4 pica_tone(float tone, vec4 ink, float levels) {
+  float steps = max(1.0, levels);
+  float q = floor(clamp(tone, 0.0, 1.0) * steps + pica_bayer8(ivec2(gl_FragCoord.xy))) / steps;
+  float amount = clamp(q, 0.0, 1.0) * ink.a;
+  float onto = u_bg.a * (1.0 - amount);
+  float alpha = amount + onto;
+  return vec4((ink.rgb * amount + u_bg.rgb * onto) / max(alpha, 0.0001), alpha);
+}
+`;
+  var DITHER = `
+float pica_bayer8(ivec2 p) {
+  int x = p.x & 7;
+  int y = p.y & 7;
+  int a = x ^ y;
+  int v = ((a & 1) << 5) | ((y & 1) << 4) | ((a & 2) << 2) | ((y & 2) << 1) | ((a & 4) >> 1) | ((y & 4) >> 2);
+  return (float(v) + 0.5) / 64.0;
+}
+`;
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // registry/shaders/stratified-stone/core.ts
+  var defaults = {
+    strata: 6,
+    relief: 0.85,
+    fracture: 0.8,
+    speed: 0.55,
+    intensity: 0.6,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var STONE_FRAGMENT = `${DITHER}${TONE}
+  uniform vec2 u_css_size;
+  uniform float u_strata;
+  uniform float u_relief;
+  uniform float u_fracture;
+  uniform float u_speed;
+  uniform float u_intensity;
+
+  // Sediment risers and their exact slopes follow the same displaced bedding.
+  vec4 stoneRelief(vec2 p) {
+    float a = -0.32 + pica_random(vec2(3.0, 1.0)) * 0.18;
+    float b = 0.15 + pica_random(vec2(7.0, 2.0)) * 0.2;
+    float tilt = -0.16 + pica_random(vec2(1.0, 4.0)) * 0.12;
+    float bedding = p.y + tilt * p.x + u_fracture * (0.055 * abs(p.x - a) - 0.07 * abs(p.x - b));
+    vec2 beddingGradient = vec2(tilt + u_fracture * (0.055 * sign(p.x - a) - 0.07 * sign(p.x - b)), 1.0);
+    float faultCoordinate = p.x + 0.22 * p.y + u_fracture * (0.025 * abs(p.y + 0.16) - 0.018 * abs(p.y - 0.23)) - 0.07;
+    vec2 faultDirection = vec2(1.0, 0.22 + u_fracture * (0.025 * sign(p.y + 0.16) - 0.018 * sign(p.y - 0.23)));
+    float faultT = clamp((faultCoordinate + 0.024) / 0.048, 0.0, 1.0);
+    float fault = faultT * faultT * (3.0 - 2.0 * faultT);
+    vec2 faultGradient = faultDirection * (6.0 * faultT * (1.0 - faultT) / 0.048);
+    bedding += u_fracture * 0.055 * fault;
+    beddingGradient += u_fracture * 0.055 * faultGradient;
+    float coordinate = bedding * u_strata;
+    float band = floor(coordinate);
+    float f = fract(coordinate);
+    float current = pica_random(vec2(band, 11.0));
+    float next = pica_random(vec2(band + 1.0, 11.0));
+    float t = clamp((f - 0.7) / 0.28, 0.0, 1.0);
+    float stepHeight = t * t * (3.0 - 2.0 * t);
+    float stepSlope = 6.0 * t * (1.0 - t) / 0.28;
+    float rise = 0.26 + (next - current) * 0.045;
+    float height = (band * 0.26 + current * 0.045 + stepHeight * rise) / u_strata;
+    height += f * (1.0 - f) * 0.018;
+    float slope = stepSlope * rise + (1.0 - 2.0 * f) * 0.018 * u_strata;
+    float mineral = mix(current, next, stepHeight);
+    return vec4(height * u_relief, slope * beddingGradient * u_relief, mineral);
+  }
+
+  void main() {
+    float shortSide = max(1.0, min(u_css_size.x, u_css_size.y));
+    vec2 aspect = u_css_size / shortSide;
+    vec2 p = (gl_FragCoord.xy / u_resolution - 0.5) * aspect;
+    vec2 bounds = aspect * 0.44;
+    vec2 sides = abs(p) - bounds;
+    float edge = max(sides.x, sides.y);
+    vec2 edgeDirection = sides.x > sides.y ? vec2(sign(p.x), 0.0) : vec2(0.0, sign(p.y));
+    float corner = (abs(p.x) + abs(p.y) - bounds.x - bounds.y + 0.018) * 0.7071068;
+    if (corner > edge) { edge = corner; edgeDirection = sign(p) * 0.7071068; }
+    if (edge > 0.0) {
+      pica_color = pica_tone(0.0, u_fg, 8.0);
+      return;
+    }
+    vec4 material = stoneRelief(p);
+    float bevelT = clamp((edge + 0.018) / 0.018, 0.0, 1.0);
+    vec2 bevelSlope = -0.025 * u_relief * 6.0 * bevelT * (1.0 - bevelT) / 0.018 * edgeDirection;
+    vec3 normal = normalize(vec3(-(material.yz + bevelSlope), 1.0));
+    float phase = 0.95 + pica_random(vec2(8.0, 5.0)) * 0.3 + u_time * u_speed * 0.28;
+    float elevation = 0.18 + 0.16 * cos(phase * 0.8);
+    vec3 light = normalize(vec3(cos(phase), sin(phase), elevation));
+    float diffuse = max(0.0, dot(normal, light));
+    float grain = pica_random(floor(p * shortSide * 0.65));
+    float tone = (0.065 + material.w * 0.17 + diffuse * 0.29 + grain * 0.025) * u_intensity;
+    pica_color = pica_tone(tone, u_fg, 8.0);
+  }
+`;
+  var STONE_FALLBACK = [
+    `repeating-linear-gradient(var(--ss-angle),color-mix(in srgb,${cssVar("fg")} 12%,transparent) 0 calc(var(--ss-pitch) * .66),color-mix(in srgb,${cssVar("fg")} var(--ss-ink),transparent) calc(var(--ss-pitch) * .72) calc(var(--ss-pitch) * .91),color-mix(in srgb,${cssVar("fg")} 6%,transparent) calc(var(--ss-pitch) * .96) var(--ss-pitch))`,
+    `linear-gradient(105deg,transparent 43%,color-mix(in srgb,${cssVar("fg")} var(--ss-fault),transparent) 46%,transparent 49%)`,
+    cssVar("bg")
+  ].join(",");
+  function stoneBound(value, fallback, min, max) {
+    return Math.min(max, Math.max(min, Number.isFinite(value) ? value : fallback));
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    let alive = true;
+    let loop = null;
+    const attributes = hostAttributes(host);
+    attributes.set("aria-hidden", "true");
+    attributes.set("role", null);
+    attributes.set("aria-label", null);
+    const restore = styleHost(host, { "background-color": cssVar("bg") });
+    const drawing = layer(host, "under");
+    drawing.el.style.clipPath = "inset(6% round 2px)";
+    const uniforms = () => ({
+      u_css_size: [Math.max(1, host.clientWidth), Math.max(1, host.clientHeight)],
+      u_strata: Math.round(stoneBound(props.strata, 6, 3, 12)),
+      u_relief: stoneBound(props.relief, 0.85, 0.15, 1.5),
+      u_fracture: stoneBound(props.fracture, 0.8, 0, 1.5),
+      u_speed: stoneBound(props.speed, 0.55, 0, 2),
+      u_intensity: stoneBound(props.intensity, 0.6, 0.25, 0.85),
+      u_seed: Math.floor(stoneBound(props.seed, 1, 1, 9999))
+    });
+    function fallback() {
+      const shortSide = Math.max(1, Math.min(host.clientWidth, host.clientHeight));
+      drawing.el.style.setProperty("--ss-pitch", `${shortSide / Math.round(stoneBound(props.strata, 6, 3, 12))}px`);
+      drawing.el.style.setProperty("--ss-angle", `${174 + stoneBound(props.fracture, 0.8, 0, 1.5) * 4}deg`);
+      drawing.el.style.setProperty("--ss-fault", `${Math.round(stoneBound(props.fracture, 0.8, 0, 1.5) * 3)}%`);
+      drawing.el.style.setProperty("--ss-ink", `${Math.round(stoneBound(props.intensity, 0.6, 0.25, 0.85) * (28 + stoneBound(props.relief, 0.85, 0.15, 1.5) * 16))}%`);
+    }
+    fallback();
+    const shader = createShader(drawing.el, {
+      fragment: STONE_FRAGMENT,
+      fallback: STONE_FALLBACK,
+      uniforms: uniforms(),
+      maxDpr: 1,
+      css: "image-rendering:pixelated",
+      onInvalidate: () => {
+        if (!alive) return;
+        fallback();
+        shader.set("u_css_size", [Math.max(1, host.clientWidth), Math.max(1, host.clientHeight)]);
+        loop?.redraw();
+      }
+    });
+    function frame(time) {
+      if (!alive) return;
+      shader.draw(time);
+      attributes.set("data-pica-ready", "true");
+    }
+    loop = createLoop({ el: host, fps: 24, paused: props.paused, time: props.time, still: 1200, frame });
+    return {
+      update(next) {
+        if (!alive) return;
+        props = { ...props, ...next };
+        fallback();
+        for (const [name, value] of Object.entries(uniforms())) shader.set(name, value);
+        loop?.update({ paused: props.paused, time: props.time });
+        loop?.redraw();
+      },
+      destroy() {
+        if (!alive) return;
+        alive = false;
+        loop?.destroy();
+        shader.destroy();
+        drawing.remove();
+        restore();
+        attributes.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaStratifiedStone.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

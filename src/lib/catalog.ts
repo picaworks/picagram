@@ -6,9 +6,10 @@ import type { Json } from "../../lib/types";
 import type { PaletteProp } from "../../lib/use-pica";
 import generated from "../../public/catalog.json";
 
-export const CURRENT_RELEASE = "motion-materials-2026-10-24";
+export const CURRENT_RELEASE = "kinetic-studies-2026-10-24";
 export const RELEASES = [
-  { id: CURRENT_RELEASE, title: "Motion and materials" },
+  { id: CURRENT_RELEASE, title: "Kinetic studies" },
+  { id: "motion-materials-2026-10-24", title: "Motion and materials" },
   { id: "components-2026-10-04", title: "Reusable components" },
   { id: "ascii-motion-2026-10-04", title: "ASCII, motion and immersive" },
   { id: "microsites-2026-10-04", title: "36 microsites" },

@@ -2,7 +2,7 @@
 
 > Points from JSON on two linear axes, with highlighted points labeled directly beside them and an optional fit line.
 
-Category: data. Tags: chart, scatter, svg, glyph grid, data table, regression. Static. Size: 6.0 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
+Category: data. Tags: chart, scatter, svg, glyph grid, data table, regression. Static. Size: 6.1 KB gzipped, runtime included. License: MIT + Commons Clause, https://github.com/rishabbalak/picagram/blob/main/LICENSE.md.
 
 ## Install
 
@@ -726,6 +726,8 @@ interface GridOptions {
   renderer: "dom" | "canvas" | "auto";
   /** Glyph color. Empty uses --pica-fg, and failing that the host's inherited color. */
   color: string;
+  /** Canvas only: position and fit each glyph to its cell when fallback fonts have unequal advances. */
+  fixedCells?: boolean;
 }
 
 /** Above this many cells, "auto" paints to a canvas instead of text rows. */
@@ -890,6 +892,15 @@ function createGrid(host: HTMLElement, options: GridOptions, onLayout: () => voi
       shown[y] = key;
       const top = y * cellH;
       context.clearRect(0, top, width, cellH);
+      if (opts.fixedCells) {
+        for (let x = 0; x < cols; x++) {
+          const glyph = cells[start + x] ?? " ";
+          if (glyph === " ") continue;
+          context.fillStyle = tints[start + x] ?? ink;
+          context.fillText(glyph, x * cellW, top + cellH / 2, cellW);
+        }
+        continue;
+      }
       if (!tinted) {
         context.fillStyle = ink;
         context.fillText(text, 0, top + cellH / 2);
@@ -2095,6 +2106,15 @@ var PicaScatterPlot = (() => {
         shown[y] = key;
         const top = y * cellH;
         context.clearRect(0, top, width, cellH);
+        if (opts.fixedCells) {
+          for (let x2 = 0; x2 < cols; x2++) {
+            const glyph = cells[start + x2] ?? " ";
+            if (glyph === " ") continue;
+            context.fillStyle = tints[start + x2] ?? ink;
+            context.fillText(glyph, x2 * cellW, top + cellH / 2, cellW);
+          }
+          continue;
+        }
         if (!tinted) {
           context.fillStyle = ink;
           context.fillText(text, 0, top + cellH / 2);
