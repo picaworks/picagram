@@ -44,6 +44,26 @@
       }
     },
     {
+      "name": "ascii-balance-mobile",
+      "type": "registry:component",
+      "title": "ASCII Balance Mobile",
+      "description": "An asymmetric suspended mobile carries shaded counterweights on connected rods, with vertical hangers and restrained coupled sways.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-balance-mobile.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-binary-tide",
       "type": "registry:component",
       "title": "ASCII Binary Tide",
@@ -54,6 +74,26 @@
       "files": [
         {
           "path": "public/react/ascii-binary-tide.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-braided-cords",
+      "type": "registry:component",
+      "title": "ASCII Braided Cords",
+      "description": "Three finite shaded glyph cords braid vertically, leaving clear depth gaps as their crossings travel downward.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-braided-cords.tsx",
           "type": "registry:component"
         }
       ],
@@ -94,6 +134,26 @@
       "files": [
         {
           "path": "public/react/ascii-cellular-tape.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-chain-drive",
+      "type": "registry:component",
+      "title": "ASCII Chain Drive",
+      "description": "A closed chain of discrete glyph links drives two unequal toothed sprockets through straight connecting runs.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-chain-drive.tsx",
           "type": "registry:component"
         }
       ],
@@ -154,6 +214,26 @@
       "files": [
         {
           "path": "public/react/ascii-diffraction-screen.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-elastic-membrane",
+      "type": "registry:component",
+      "title": "ASCII Elastic Membrane",
+      "description": "A finite rectangular glyph lattice carries smooth standing modes in an oblique view while its edges stay pinned.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-elastic-membrane.tsx",
           "type": "registry:component"
         }
       ],
@@ -284,6 +364,26 @@
       }
     },
     {
+      "name": "ascii-glyph-carousel",
+      "type": "registry:component",
+      "title": "ASCII Glyph Carousel",
+      "description": "Upright word panels circle in perspective, with readable front text and dimmer rear panels hidden by nearer faces.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-glyph-carousel.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-gyroscope",
       "type": "registry:component",
       "title": "ASCII Gyroscope",
@@ -314,6 +414,26 @@
       "files": [
         {
           "path": "public/react/ascii-harmonic-stack.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-helix-ladder",
+      "type": "registry:component",
+      "title": "ASCII Helix Ladder",
+      "description": "Two continuous braille strands rotate around evenly spaced rungs, with a fine rear edge and a heavier near edge.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-helix-ladder.tsx",
           "type": "registry:component"
         }
       ],
@@ -406,6 +526,26 @@
       }
     },
     {
+      "name": "ascii-linkage-rosette",
+      "type": "registry:component",
+      "title": "ASCII Linkage Rosette",
+      "description": "Radial chains of hinged diamonds open and close together around a small stationary hub.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-linkage-rosette.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-lissajous-scope",
       "type": "registry:component",
       "title": "ASCII Lissajous Scope",
@@ -456,6 +596,26 @@
       "files": [
         {
           "path": "public/react/ascii-loop-knot.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-mobius-band",
+      "type": "registry:component",
+      "title": "ASCII Mobius Band",
+      "description": "A broad shaded glyph ribbon turns in three dimensions, revealing one continuous half twist around an open center.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-mobius-band.tsx",
           "type": "registry:component"
         }
       ],
@@ -770,6 +930,26 @@
       }
     },
     {
+      "name": "ascii-slat-canopy",
+      "type": "registry:component",
+      "title": "ASCII Slat Canopy",
+      "description": "Parallel curved slats tilt in a finite open vault, joined by two eaves and a sparse crown rail.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-slat-canopy.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-solid",
       "type": "registry:component",
       "title": "ASCII Solid",
@@ -808,6 +988,26 @@
       "files": [
         {
           "path": "public/react/ascii-spiral-current.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-string-modes",
+      "type": "registry:component",
+      "title": "ASCII String Modes",
+      "description": "Three separated strings oscillate between fixed anchors, with consecutive standing modes, stationary nodes and sparse preceding traces.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-string-modes.tsx",
           "type": "registry:component"
         }
       ],
@@ -5342,6 +5542,26 @@
       }
     },
     {
+      "name": "chainmail-weave",
+      "type": "registry:component",
+      "title": "Chainmail Weave",
+      "description": "A staggered field of curved metallic rings alternates front and rear crossings beneath a single slow moving light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/chainmail-weave.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "contour-engraving",
       "type": "registry:component",
       "title": "Contour Engraving",
@@ -5417,6 +5637,46 @@
       }
     },
     {
+      "name": "deckled-paper",
+      "type": "registry:component",
+      "title": "Deckled Paper",
+      "description": "One finite deckle-edged sheet holds fine irregular fibers and a shallow bowed face under slow grazing light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/deckled-paper.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "end-grain",
+      "type": "registry:component",
+      "title": "End Grain",
+      "description": "Uneven organic growth rings surround an off-center pith, with narrow medullary rays and matte relief under calm grazing light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/end-grain.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "etched-radial",
       "type": "registry:component",
       "title": "Etched Radial",
@@ -5437,6 +5697,66 @@
       }
     },
     {
+      "name": "fluted-shell",
+      "type": "registry:component",
+      "title": "Fluted Shell",
+      "description": "A bounded concave shell carries radial flutes and a scalloped rim above a fixed hinge under slowly moving light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/fluted-shell.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "fluted-tunnel",
+      "type": "registry:component",
+      "title": "Fluted Tunnel",
+      "description": "A finite near lip frames continuous fluted walls and receding chamber joins around an open far aperture under slow grazing light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/fluted-tunnel.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "frosted-block",
+      "type": "registry:component",
+      "title": "Frosted Block",
+      "description": "A finite bevelled glass slab refracts crisp lines through a lightly grained face under slowly moving directional light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/frosted-block.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "glass-ripple-lens",
       "type": "registry:component",
       "title": "Glass Ripple Lens",
@@ -5447,6 +5767,26 @@
       "files": [
         {
           "path": "public/react/glass-ripple-lens.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "hammered-foil",
+      "type": "registry:component",
+      "title": "Hammered Foil",
+      "description": "Irregular rounded hammer depressions catch a broad directional reflection across a shallow metallic sheet.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/hammered-foil.tsx",
           "type": "registry:component"
         }
       ],
@@ -5564,6 +5904,26 @@
       "files": [
         {
           "path": "public/react/orbiting-halftone.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "perforated-screen",
+      "type": "registry:component",
+      "title": "Perforated Screen",
+      "description": "Staggered round holes expose a lower receiving plane beneath a shallow metal sheet, with cylindrical rims and aligned moving shadows.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/perforated-screen.tsx",
           "type": "registry:component"
         }
       ],
@@ -5770,6 +6130,46 @@
       "files": [
         {
           "path": "public/react/stippled-silk.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "stratified-stone",
+      "type": "registry:component",
+      "title": "Stratified Stone",
+      "description": "Broad stacked sediment faces and bevelled edges reveal a finite stone slab, with displaced bedding across a subordinate fault under grazing light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/stratified-stone.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "terraced-blocks",
+      "type": "registry:component",
+      "title": "Terraced Blocks",
+      "description": "Finite staggered rectangular plateaus descend toward one clear opening, with beveled faces and shadows cast by their actual heights.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/terraced-blocks.tsx",
           "type": "registry:component"
         }
       ],
