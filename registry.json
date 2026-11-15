@@ -3475,6 +3475,46 @@
       }
     },
     {
+      "name": "apron-taxi",
+      "type": "registry:component",
+      "title": "Apron Taxi",
+      "description": "A chunky airplane follows a broad taxi loop past an open hangar and runway holding strip.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/apron-taxi.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "arcade-courtyard",
+      "type": "registry:component",
+      "title": "Arcade Courtyard",
+      "description": "Open stepped arcades surround a broad court where two calm streams spill from a raised fountain bowl into a lower basin.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/arcade-courtyard.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "archive-aisle",
       "type": "registry:component",
       "title": "Archive aisle",
@@ -3485,6 +3525,46 @@
       "files": [
         {
           "path": "public/react/archive-aisle.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "canal-lock",
+      "type": "registry:component",
+      "title": "Canal Lock",
+      "description": "A compact canal boat rises and falls with the chamber water between two closed pairs of heavy lock gates.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/canal-lock.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "canal-row",
+      "type": "registry:component",
+      "title": "Canal Row",
+      "description": "A rigid footbridge lifts between masonry landings above an open canal, unequal townhouse rows and a still waiting boat.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/canal-row.tsx",
           "type": "registry:component"
         }
       ],
@@ -3523,6 +3603,46 @@
       }
     },
     {
+      "name": "container-wharf",
+      "type": "registry:component",
+      "title": "Container Wharf",
+      "description": "A portal crane lifts one broad container between a moored cargo barge and a dock cradle.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/container-wharf.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "elliott-bay-ferry-pier",
+      "type": "registry:component",
+      "title": "Elliott Bay Ferry Pier",
+      "description": "A low double ended ferry glides through clear berth water beside a pile supported passenger shelter and landing ramp.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/elliott-bay-ferry-pier.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "exhibit-constellation",
       "type": "registry:component",
       "title": "Exhibit constellation",
@@ -3553,6 +3673,26 @@
       "files": [
         {
           "path": "public/react/folded-atlas.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "freight-siding",
+      "type": "registry:component",
+      "title": "Freight Siding",
+      "description": "A small locomotive and coupled freight wagons shunt along a rail spur between a loading canopy and an open weighing pad.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/freight-siding.tsx",
           "type": "registry:component"
         }
       ],
@@ -3608,6 +3748,26 @@
             "license": "Article"
           }
         ]
+      }
+    },
+    {
+      "name": "lake-union-float-homes",
+      "type": "registry:component",
+      "title": "Lake Union Float Homes",
+      "description": "Low floating homes share timber walks, deck gardens and a hinged shore gangway above a broad open inlet.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/lake-union-float-homes.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -3706,6 +3866,266 @@
       }
     },
     {
+      "name": "pixel-basalt-crater",
+      "type": "registry:component",
+      "title": "Basalt Crater",
+      "description": "Broken basalt shoulders expose a deep lava well where three broad crust rafts circulate through a connected channel.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-basalt-crater.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pixel-dune-slipface",
+      "type": "registry:component",
+      "title": "Dune Slipface",
+      "description": "A low broad dune carries short dry sand releases across a quiet slipface into a contained receiving apron.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-dune-slipface.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pixel-fern-log",
+      "type": "registry:component",
+      "title": "Fern Log",
+      "description": "A large curled snail follows the bark of a hollow fallen log between broad, still fern fans.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-fern-log.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pixel-hanging-waterfall",
+      "type": "registry:component",
+      "title": "Hanging Waterfall",
+      "description": "A broad stepped stream spills over split rock strata into a shallow plunge basin and open outlet.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-hanging-waterfall.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pixel-lily-pond",
+      "type": "registry:component",
+      "title": "Lily Pond",
+      "description": "A large fish circles broad lily pads and a low cupped lotus in a shallow pond cut into a grassy tile.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-lily-pond.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pixel-terraced-garden",
+      "type": "registry:component",
+      "title": "Terraced Garden",
+      "description": "Broad crop clumps alternate with bare soil and connected irrigation rills across three deep hillside terraces.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-terraced-garden.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pixel-tidal-shelf",
+      "type": "registry:component",
+      "title": "Tidal Shelf",
+      "description": "One connected tide enters coastal cuts, fills exposed pool margins and drains beneath a dry rock ridge.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-tidal-shelf.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "pixel-wind-grove",
+      "type": "registry:component",
+      "title": "Wind Grove",
+      "description": "Uneven foliage clusters sway on attached branches above exposed roots, a hollow stump and a finite island.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/pixel-wind-grove.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ridge-cableway",
+      "type": "registry:component",
+      "title": "Ridge Cableway",
+      "description": "An upright glazed cabin travels on an attached hanger between two hillside terminals along a continuous haul cable.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/ridge-cableway.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "rotary-assembly",
+      "type": "registry:component",
+      "title": "Rotary Assembly",
+      "description": "Four fixed workpieces index around a broad rotary table, pausing beneath a supported assembly press.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/rotary-assembly.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "seattle-market-garden",
+      "type": "registry:component",
+      "title": "Seattle Market Garden",
+      "description": "Open produce stalls and broad cultivated beds share an urban parcel beneath one slowly rolling cloth awning.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/seattle-market-garden.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "seattle-rain-terrace",
+      "type": "registry:component",
+      "title": "Seattle Rain Terrace",
+      "description": "Narrow hillside houses, exposed retaining terraces and a public stair shelter beneath sparse pixel rain.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/seattle-rain-terrace.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "shop-lane",
+      "type": "registry:component",
+      "title": "Shop Lane",
+      "description": "A broad timber screen slides into a visible wall pocket, revealing a counter beside a winding lane of deep roofed shops.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/shop-lane.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "strata-stack",
       "type": "registry:component",
       "title": "Strata Stack",
@@ -3716,6 +4136,26 @@
       "files": [
         {
           "path": "public/react/strata-stack.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "terrace-waterworks",
+      "type": "registry:component",
+      "title": "Terrace Waterworks",
+      "description": "A submerged radial rake turns beneath a fixed bridge in a round settling tank linked to a pump house and outlet basin.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/terrace-waterworks.tsx",
           "type": "registry:component"
         }
       ],
@@ -3754,6 +4194,26 @@
       }
     },
     {
+      "name": "tram-corner",
+      "type": "registry:component",
+      "title": "Tram Corner",
+      "description": "A substantial double cab tram follows curved rails past a masonry shop corner, sheltered stop and overhead supports.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/tram-corner.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "watershed-walk",
       "type": "registry:component",
       "title": "Watershed walk",
@@ -3764,6 +4224,26 @@
       "files": [
         {
           "path": "public/react/watershed-walk.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "wind-station",
+      "type": "registry:component",
+      "title": "Wind Station",
+      "description": "A broad three blade turbine turns above a tapered mast, connected transformer pad and compact service building.",
+      "categories": [
+        "immersive"
+      ],
+      "files": [
+        {
+          "path": "public/react/wind-station.tsx",
           "type": "registry:component"
         }
       ],

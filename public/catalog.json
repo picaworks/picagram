@@ -21376,6 +21376,253 @@
     "gzipBytes": 3474
   },
   {
+    "slug": "apron-taxi",
+    "title": "Apron Taxi",
+    "category": "immersive",
+    "description": "A chunky airplane follows a broad taxi loop past an open hangar and runway holding strip.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "airplane",
+      "airfield"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "oval",
+          "triangle",
+          "kidney"
+        ],
+        "label": "Airfield layout"
+      },
+      "aircraft": {
+        "type": "select",
+        "options": [
+          "prop",
+          "commuter"
+        ],
+        "label": "Aircraft"
+      },
+      "lapSeconds": {
+        "type": "number",
+        "min": 16,
+        "max": 40,
+        "step": 1,
+        "label": "Circuit seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Club apron",
+        "description": "A club plane circles a broad oval beside a low hangar and forward parking spur.",
+        "props": {
+          "layout": "oval",
+          "aircraft": "prop",
+          "lapSeconds": 28
+        }
+      },
+      {
+        "name": "Regional corner",
+        "description": "A twin engine commuter follows three rounded corners past a long hangar and corner parking apron.",
+        "props": {
+          "layout": "triangle",
+          "aircraft": "commuter",
+          "lapSeconds": 36
+        }
+      },
+      {
+        "name": "Hillside strip",
+        "description": "Two unequal lobes wrap a pinched island, with the hangar and parking spur beside the inner bend.",
+        "props": {
+          "layout": "kidney",
+          "aircraft": "prop",
+          "lapSeconds": 24
+        }
+      }
+    ],
+    "exportName": "ApronTaxi",
+    "defaults": {
+      "layout": "oval",
+      "aircraft": "prop",
+      "lapSeconds": 28,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Shape of the circuit and arrangement of the airfield.",
+      "aircraft": "Short club airplane or a longer twin engine commuter.",
+      "lapSeconds": "Seconds per circuit, including the brief runway hold."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"oval\" | \"triangle\" | \"kidney\"",
+      "aircraft": "\"prop\" | \"commuter\"",
+      "lapSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6479
+  },
+  {
+    "slug": "arcade-courtyard",
+    "title": "Arcade Courtyard",
+    "category": "immersive",
+    "description": "Open stepped arcades surround a broad court where two calm streams spill from a raised fountain bowl into a lower basin.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "arcade",
+      "courtyard",
+      "fountain"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "u-court",
+          "split-court",
+          "tower-court"
+        ],
+        "label": "Court layout"
+      },
+      "archBays": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Open arch bays"
+      },
+      "gardenCover": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "label": "Planted edge area"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause streams"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Stream phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Open Court",
+        "description": "Three low wings and four open bays frame the fountain's broad forecourt.",
+        "props": {
+          "layout": "u-court",
+          "archBays": 4,
+          "gardenCover": 0.25
+        }
+      },
+      {
+        "name": "Two Levels",
+        "description": "A wide stair descends from an upper arcade court to the lower fountain.",
+        "props": {
+          "layout": "split-court",
+          "archBays": 3,
+          "gardenCover": 0.5
+        }
+      },
+      {
+        "name": "Corner Tower",
+        "description": "A taller masonry corner anchors two short wings opening diagonally.",
+        "props": {
+          "layout": "tower-court",
+          "archBays": 2,
+          "gardenCover": 0.7
+        }
+      }
+    ],
+    "exportName": "ArcadeCourtyard",
+    "defaults": {
+      "layout": "u-court",
+      "archBays": 4,
+      "gardenCover": 0.25,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Relationship between open court, arcade wings and exterior stair.",
+      "archBays": "Open arch bays along the main wing, from two to four.",
+      "gardenCover": "Planted edge area, preserving the broad central court."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"u-court\" | \"split-court\" | \"tower-court\"",
+      "archBays": "number",
+      "gardenCover": "number"
+    },
+    "events": {},
+    "gzipBytes": 6612
+  },
+  {
     "slug": "archive-aisle",
     "title": "Archive aisle",
     "category": "immersive",
@@ -21742,6 +21989,252 @@
     "gzipBytes": 7765
   },
   {
+    "slug": "canal-lock",
+    "title": "Canal Lock",
+    "category": "immersive",
+    "description": "A compact canal boat rises and falls with the chamber water between two closed pairs of heavy lock gates.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "canal",
+      "water"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "setting": {
+        "type": "select",
+        "options": [
+          "embankment",
+          "stone-cut",
+          "side-basin"
+        ],
+        "label": "Lock setting"
+      },
+      "lift": {
+        "type": "number",
+        "min": 6,
+        "max": 14,
+        "step": 1,
+        "label": "Water lift"
+      },
+      "cycleSeconds": {
+        "type": "number",
+        "min": 18,
+        "max": 40,
+        "step": 1,
+        "label": "Cycle seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Towpath lock",
+        "description": "A broad low embankment carries a parallel path and a hut near the lower gates.",
+        "props": {
+          "setting": "embankment",
+          "lift": 6,
+          "cycleSeconds": 26
+        }
+      },
+      {
+        "name": "Stone cutting",
+        "description": "Tall stone banks expose the full lift beneath a narrow upper terrace and keeper's hut.",
+        "props": {
+          "setting": "stone-cut",
+          "lift": 14,
+          "cycleSeconds": 36
+        }
+      },
+      {
+        "name": "Basin lock",
+        "description": "A connected side basin, L shaped towpath and corner retaining wall widen the upper approach.",
+        "props": {
+          "setting": "side-basin",
+          "lift": 10,
+          "cycleSeconds": 30
+        }
+      }
+    ],
+    "exportName": "CanalLock",
+    "defaults": {
+      "setting": "embankment",
+      "lift": 6,
+      "cycleSeconds": 26,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "setting": "Embankment, deep stone cutting or a connected side basin.",
+      "lift": "Difference between the fixed upper and lower water levels.",
+      "cycleSeconds": "Seconds for filling, draining and both brief level dwells."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "setting": "\"embankment\"|\"stone-cut\"|\"side-basin\"",
+      "lift": "number",
+      "cycleSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6107
+  },
+  {
+    "slug": "canal-row",
+    "title": "Canal Row",
+    "category": "immersive",
+    "description": "A rigid footbridge lifts between masonry landings above an open canal, unequal townhouse rows and a still waiting boat.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "canal",
+      "bridge",
+      "townhouses"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "parallel",
+          "corner",
+          "court"
+        ],
+        "label": "Canal layout"
+      },
+      "houses": {
+        "type": "number",
+        "min": 3,
+        "max": 5,
+        "step": 1,
+        "label": "Townhouses"
+      },
+      "opening": {
+        "type": "number",
+        "min": 0.35,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Maximum bridge lift"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause bridge"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Bridge phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Row Banks",
+        "description": "Staggered unequal rows frame a long open channel and foreground bridge.",
+        "props": {
+          "layout": "parallel",
+          "houses": 3,
+          "opening": 0.5
+        }
+      },
+      {
+        "name": "Corner Basin",
+        "description": "An L shaped inlet and angled bank connect two offset townhouse groups.",
+        "props": {
+          "layout": "corner",
+          "houses": 4,
+          "opening": 0.7
+        }
+      },
+      {
+        "name": "Water Court",
+        "description": "Two short wings and a rear row frame a wider court behind the bridge throat.",
+        "props": {
+          "layout": "court",
+          "houses": 5,
+          "opening": 0.4
+        }
+      }
+    ],
+    "exportName": "CanalRow",
+    "defaults": {
+      "layout": "parallel",
+      "houses": 3,
+      "opening": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Shape of the banks, basin and unequal townhouse rows.",
+      "houses": "Deep townhouses, from three to five.",
+      "opening": "Maximum bridge lift as a fraction of a right angle."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"parallel\" | \"corner\" | \"court\"",
+      "houses": "number",
+      "opening": "number"
+    },
+    "events": {},
+    "gzipBytes": 6635
+  },
+  {
     "slug": "city-grid",
     "title": "City Grid",
     "category": "immersive",
@@ -21867,6 +22360,252 @@
     },
     "events": {},
     "gzipBytes": 4855
+  },
+  {
+    "slug": "container-wharf",
+    "title": "Container Wharf",
+    "category": "immersive",
+    "description": "A portal crane lifts one broad container between a moored cargo barge and a dock cradle.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "crane",
+      "harbor"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "berth": {
+        "type": "select",
+        "options": [
+          "straight",
+          "finger",
+          "corner"
+        ],
+        "label": "Berth layout"
+      },
+      "stackHeight": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Stack height"
+      },
+      "cycleSeconds": {
+        "type": "number",
+        "min": 16,
+        "max": 36,
+        "step": 1,
+        "label": "Cycle seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "River quay",
+        "description": "A long shore edge and parallel barge face a low depot and single container stacks.",
+        "props": {
+          "berth": "straight",
+          "stackHeight": 1,
+          "cycleSeconds": 24
+        }
+      },
+      {
+        "name": "Finger berth",
+        "description": "A narrow pier projects beside the barge, with a wider depot behind the crane.",
+        "props": {
+          "berth": "finger",
+          "stackHeight": 2,
+          "cycleSeconds": 28
+        }
+      },
+      {
+        "name": "Inner harbor",
+        "description": "An L shaped quay wraps the water pocket while tall stacks occupy the long arm.",
+        "props": {
+          "berth": "corner",
+          "stackHeight": 3,
+          "cycleSeconds": 32
+        }
+      }
+    ],
+    "exportName": "ContainerWharf",
+    "defaults": {
+      "berth": "straight",
+      "stackHeight": 1,
+      "cycleSeconds": 24,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "berth": "Shoreline, vessel orientation and crane foundation arrangement.",
+      "stackHeight": "Number of containers in each background stack.",
+      "cycleSeconds": "Seconds for the complete outward and return handling cycle."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "berth": "\"straight\" | \"finger\" | \"corner\"",
+      "stackHeight": "number",
+      "cycleSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6372
+  },
+  {
+    "slug": "elliott-bay-ferry-pier",
+    "title": "Elliott Bay Ferry Pier",
+    "category": "immersive",
+    "description": "A low double ended ferry glides through clear berth water beside a pile supported passenger shelter and landing ramp.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "ferry",
+      "pier",
+      "seattle"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "finger",
+          "seawall",
+          "fork"
+        ],
+        "label": "Pier layout"
+      },
+      "berthLength": {
+        "type": "number",
+        "min": 3,
+        "max": 5,
+        "step": 1,
+        "label": "Structural bays"
+      },
+      "waterLevel": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "label": "Water level"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause ferry"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Route phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Long Finger",
+        "description": "A narrow five bay pier projects from a compact passenger forecourt.",
+        "props": {
+          "layout": "finger",
+          "berthLength": 5,
+          "waterLevel": 0.45
+        }
+      },
+      {
+        "name": "Seawall Landing",
+        "description": "An L shaped masonry shore encloses a shallow side berth.",
+        "props": {
+          "layout": "seawall",
+          "berthLength": 4,
+          "waterLevel": 0.75
+        }
+      },
+      {
+        "name": "Forked Slip",
+        "description": "A Y shaped walk surrounds two slips below the waiting shelter.",
+        "props": {
+          "layout": "fork",
+          "berthLength": 3,
+          "waterLevel": 0.25
+        }
+      }
+    ],
+    "exportName": "ElliottBayFerryPier",
+    "defaults": {
+      "layout": "finger",
+      "berthLength": 5,
+      "waterLevel": 0.45,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Pier and shoreline arrangement around the clear ferry corridor.",
+      "berthLength": "Structural bays supporting the landing, from three to five.",
+      "waterLevel": "Water height, changing exposed piles and the landing ramp slope."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"finger\" | \"seawall\" | \"fork\"",
+      "berthLength": "number",
+      "waterLevel": "number"
+    },
+    "events": {},
+    "gzipBytes": 6319
   },
   {
     "slug": "exhibit-constellation",
@@ -22629,6 +23368,125 @@
     "gzipBytes": 5199
   },
   {
+    "slug": "freight-siding",
+    "title": "Freight Siding",
+    "category": "immersive",
+    "description": "A small locomotive and coupled freight wagons shunt along a rail spur between a loading canopy and an open weighing pad.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "railway",
+      "freight"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "track": {
+        "type": "select",
+        "options": [
+          "straight",
+          "elbow",
+          "fork"
+        ],
+        "label": "Track layout"
+      },
+      "wagons": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Wagons"
+      },
+      "shuntSeconds": {
+        "type": "number",
+        "min": 16,
+        "max": 36,
+        "step": 1,
+        "label": "Shunt seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Mill spur",
+        "description": "Three broad wagons follow a long straight rail bed past a low loading canopy.",
+        "props": {
+          "track": "straight",
+          "wagons": 3,
+          "shuntSeconds": 30
+        }
+      },
+      {
+        "name": "Warehouse bend",
+        "description": "Two wagons round a generous quarter turn beside an L shaped retaining bank.",
+        "props": {
+          "track": "elbow",
+          "wagons": 2,
+          "shuntSeconds": 26
+        }
+      },
+      {
+        "name": "Depot throat",
+        "description": "A short train works the selected arm of a connected fork beside a buffered spare track.",
+        "props": {
+          "track": "fork",
+          "wagons": 1,
+          "shuntSeconds": 22
+        }
+      }
+    ],
+    "exportName": "FreightSiding",
+    "defaults": {
+      "track": "straight",
+      "wagons": 3,
+      "shuntSeconds": 30,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "track": "Straight spur, broad warehouse bend or connected depot fork.",
+      "wagons": "Coupled freight wagons behind the single locomotive.",
+      "shuntSeconds": "Seconds for both shunting trips and their full stops."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "track": "\"straight\"|\"elbow\"|\"fork\"",
+      "wagons": "number",
+      "shuntSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6811
+  },
+  {
     "slug": "geodesic-shell",
     "title": "Geodesic Shell",
     "category": "immersive",
@@ -22929,6 +23787,133 @@
     },
     "events": {},
     "gzipBytes": 3530
+  },
+  {
+    "slug": "lake-union-float-homes",
+    "title": "Lake Union Float Homes",
+    "category": "immersive",
+    "description": "Low floating homes share timber walks, deck gardens and a hinged shore gangway above a broad open inlet.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "floating-homes",
+      "lake",
+      "seattle"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "comb",
+          "inlet",
+          "islands"
+        ],
+        "label": "Neighborhood layout"
+      },
+      "homes": {
+        "type": "number",
+        "min": 3,
+        "max": 5,
+        "step": 1,
+        "label": "Floating homes"
+      },
+      "gardenCover": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "label": "Garden coverage"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause swell"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Swell phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Dock Comb",
+        "description": "Three staggered fingers leave the shared walking spine exposed.",
+        "props": {
+          "layout": "comb",
+          "homes": 3,
+          "gardenCover": 0.35
+        }
+      },
+      {
+        "name": "Sheltered Inlet",
+        "description": "Four inward facing homes enclose a broad central water pocket.",
+        "props": {
+          "layout": "inlet",
+          "homes": 4,
+          "gardenCover": 0.7
+        }
+      },
+      {
+        "name": "Two Islands",
+        "description": "Two homes and three homes share unequal platforms linked by a narrow walk.",
+        "props": {
+          "layout": "islands",
+          "homes": 5,
+          "gardenCover": 0.5
+        }
+      }
+    ],
+    "exportName": "LakeUnionFloatHomes",
+    "defaults": {
+      "layout": "comb",
+      "homes": 3,
+      "gardenCover": 0.35,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Arrangement of connected decks around the open inlet.",
+      "homes": "Floating homes, from three to five.",
+      "gardenCover": "Fraction of each garden bed occupied by planting."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"comb\" | \"inlet\" | \"islands\"",
+      "homes": "number",
+      "gardenCover": "number"
+    },
+    "events": {},
+    "gzipBytes": 6505
   },
   {
     "slug": "memory-palace",
@@ -23822,6 +24807,1640 @@
     "gzipBytes": 5207
   },
   {
+    "slug": "pixel-basalt-crater",
+    "title": "Basalt Crater",
+    "category": "immersive",
+    "description": "Broken basalt shoulders expose a deep lava well where three broad crust rafts circulate through a connected channel.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "crater",
+      "basalt",
+      "lava"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "openCone",
+          "twinRim",
+          "fissure"
+        ],
+        "label": "Crater arrangement"
+      },
+      "wellSpan": {
+        "type": "number",
+        "min": 0.25,
+        "max": 0.5,
+        "step": 0.05,
+        "label": "Lava well span"
+      },
+      "convectionSeconds": {
+        "type": "number",
+        "min": 18,
+        "max": 40,
+        "step": 1,
+        "label": "Convection circuit seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause circulation"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 40000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Circulation phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Open Cone",
+        "description": "A tall round cone opens toward the viewer above the circulating well.",
+        "props": {
+          "layout": "openCone",
+          "wellSpan": 0.4,
+          "convectionSeconds": 26
+        }
+      },
+      {
+        "name": "Twin Rim",
+        "description": "Unequal rear and front shoulders enclose one broad elongated lava well.",
+        "props": {
+          "layout": "twinRim",
+          "wellSpan": 0.45,
+          "convectionSeconds": 30
+        }
+      },
+      {
+        "name": "Fissure",
+        "description": "Two jagged plates frame a narrow vent and a stretched convection oval.",
+        "props": {
+          "layout": "fissure",
+          "wellSpan": 0.4,
+          "convectionSeconds": 22
+        }
+      }
+    ],
+    "exportName": "PixelBasaltCrater",
+    "defaults": {
+      "layout": "openCone",
+      "wellSpan": 0.4,
+      "convectionSeconds": 26,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Broken cone, unequal enclosing shoulders or a long narrow vent.",
+      "wellSpan": "Width of the contained lava well relative to the basalt tile.",
+      "convectionSeconds": "Seconds for the three crust rafts to complete one circuit."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"openCone\" | \"twinRim\" | \"fissure\"",
+      "wellSpan": "number",
+      "convectionSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 5998
+  },
+  {
+    "slug": "pixel-dune-slipface",
+    "title": "Dune Slipface",
+    "category": "immersive",
+    "description": "A low broad dune carries short dry sand releases across a quiet slipface into a contained receiving apron.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "dune",
+      "sand",
+      "desert"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "crescent",
+          "saddle",
+          "ridge"
+        ],
+        "label": "Dune arrangement"
+      },
+      "crestHeight": {
+        "type": "number",
+        "min": 0.45,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Crest height"
+      },
+      "releaseSeconds": {
+        "type": "number",
+        "min": 7,
+        "max": 16,
+        "step": 1,
+        "label": "Release interval seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause sand"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 32000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Release phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Crescent",
+        "description": "Two low forward horns shelter a broad central slipface and landing hollow.",
+        "props": {
+          "layout": "crescent",
+          "crestHeight": 0.65,
+          "releaseSeconds": 10
+        }
+      },
+      {
+        "name": "Saddle",
+        "description": "Unequal rounded peaks share a low saddle beside the taller peak's short sand releases.",
+        "props": {
+          "layout": "saddle",
+          "crestHeight": 0.75,
+          "releaseSeconds": 12
+        }
+      },
+      {
+        "name": "Ridge",
+        "description": "A long diagonal crest carries a broad lee face and short offset sand releases.",
+        "props": {
+          "layout": "ridge",
+          "crestHeight": 0.6,
+          "releaseSeconds": 8
+        }
+      }
+    ],
+    "exportName": "PixelDuneSlipface",
+    "defaults": {
+      "layout": "crescent",
+      "crestHeight": 0.65,
+      "releaseSeconds": 10,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Curved horns, two unequal peaks or a long diagonal knife edge.",
+      "crestHeight": "Crest height relative to the available vertical space.",
+      "releaseSeconds": "Seconds between coherent small sand releases."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"crescent\" | \"saddle\" | \"ridge\"",
+      "crestHeight": "number",
+      "releaseSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6324
+  },
+  {
+    "slug": "pixel-fern-log",
+    "title": "Fern Log",
+    "category": "immersive",
+    "description": "A large curled snail follows the bark of a hollow fallen log between broad, still fern fans.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "fern",
+      "log",
+      "snail"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "hollow",
+          "bridge",
+          "split"
+        ],
+        "label": "Log arrangement"
+      },
+      "fernSpan": {
+        "type": "number",
+        "min": 0.35,
+        "max": 0.7,
+        "step": 0.05,
+        "label": "Fern span"
+      },
+      "crawlSeconds": {
+        "type": "number",
+        "min": 24,
+        "max": 50,
+        "step": 1,
+        "label": "Crawl cycle seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause snail"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 50000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Trail phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Hollow",
+        "description": "An irregular open trunk and broad rooted fern fronds frame the upper snail trail.",
+        "props": {
+          "layout": "hollow",
+          "fernSpan": 0.5,
+          "crawlSeconds": 32
+        }
+      },
+      {
+        "name": "Bridge",
+        "description": "The suspended trunk crosses a dry gully between two raised soil banks.",
+        "props": {
+          "layout": "bridge",
+          "fernSpan": 0.45,
+          "crawlSeconds": 28
+        }
+      },
+      {
+        "name": "Split",
+        "description": "Two angled lengths keep a continuous bark trail around a fern-filled joint.",
+        "props": {
+          "layout": "split",
+          "fernSpan": 0.4,
+          "crawlSeconds": 38
+        }
+      }
+    ],
+    "exportName": "PixelFernLog",
+    "defaults": {
+      "layout": "hollow",
+      "fernSpan": 0.5,
+      "crawlSeconds": 32,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Hollow trunk, suspended bridge or two connected broken lengths.",
+      "fernSpan": "Width of the attached fern fans relative to the soil tile.",
+      "crawlSeconds": "Seconds for the complete visible and occluded snail trail."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"hollow\" | \"bridge\" | \"split\"",
+      "fernSpan": "number",
+      "crawlSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 7090
+  },
+  {
+    "slug": "pixel-hanging-waterfall",
+    "title": "Hanging Waterfall",
+    "category": "immersive",
+    "description": "A broad stepped stream spills over split rock strata into a shallow plunge basin and open outlet.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "waterfall",
+      "water",
+      "rock"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "overhang",
+          "split",
+          "stairs"
+        ],
+        "label": "Cascade arrangement"
+      },
+      "dropHeight": {
+        "type": "number",
+        "min": 0.45,
+        "max": 0.85,
+        "step": 0.05,
+        "label": "Drop height"
+      },
+      "flow": {
+        "type": "number",
+        "min": 0.25,
+        "max": 1,
+        "step": 0.05,
+        "label": "Water flow"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause water"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Water phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Overhang",
+        "description": "A single high curtain hangs over an open rock recess.",
+        "props": {
+          "layout": "overhang",
+          "dropHeight": 0.75,
+          "flow": 0.75
+        }
+      },
+      {
+        "name": "Split",
+        "description": "A central tooth divides the upper stream into two receiving falls.",
+        "props": {
+          "layout": "split",
+          "dropHeight": 0.8,
+          "flow": 0.85
+        }
+      },
+      {
+        "name": "Stairs",
+        "description": "Three broad shelves carry a physically connected zigzag cascade.",
+        "props": {
+          "layout": "stairs",
+          "dropHeight": 0.65,
+          "flow": 0.65
+        }
+      }
+    ],
+    "exportName": "PixelHangingWaterfall",
+    "defaults": {
+      "layout": "overhang",
+      "dropHeight": 0.75,
+      "flow": 0.75,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Rock and channel arrangement for the connected cascade.",
+      "dropHeight": "Drop as a fraction of the available vertical scene.",
+      "flow": "Width and speed of the water, preserving a continuous stream."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"overhang\" | \"split\" | \"stairs\"",
+      "dropHeight": "number",
+      "flow": "number"
+    },
+    "events": {},
+    "gzipBytes": 6301
+  },
+  {
+    "slug": "pixel-lily-pond",
+    "title": "Lily Pond",
+    "category": "immersive",
+    "description": "A large fish circles broad lily pads and a low cupped lotus in a shallow pond cut into a grassy tile.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "pond",
+      "fish",
+      "lotus"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "cove",
+          "island",
+          "crescent"
+        ],
+        "label": "Pond arrangement"
+      },
+      "lilyCover": {
+        "type": "number",
+        "min": 0.15,
+        "max": 0.45,
+        "step": 0.05,
+        "label": "Lily coverage"
+      },
+      "swimPace": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Swimming pace"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause swimming"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 30000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Route phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Cove",
+        "description": "A sheltered lotus bank opens onto a broad foreground circuit.",
+        "props": {
+          "layout": "cove",
+          "lilyCover": 0.3,
+          "swimPace": 0.5
+        }
+      },
+      {
+        "name": "Island",
+        "description": "A grassy central island divides the water into an outer swimming loop.",
+        "props": {
+          "layout": "island",
+          "lilyCover": 0.25,
+          "swimPace": 0.4
+        }
+      },
+      {
+        "name": "Crescent",
+        "description": "A raised peninsula holds two sheltered tips beside a long return route.",
+        "props": {
+          "layout": "crescent",
+          "lilyCover": 0.35,
+          "swimPace": 0.6
+        }
+      }
+    ],
+    "exportName": "PixelLilyPond",
+    "defaults": {
+      "layout": "cove",
+      "lilyCover": 0.3,
+      "swimPace": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Arrangement of the pond, island and raised banks.",
+      "lilyCover": "Coverage of the sheltered pads, kept away from the swimming lane.",
+      "swimPace": "Swimming pace, from a 28 second circuit to a 10 second circuit."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"cove\" | \"island\" | \"crescent\"",
+      "lilyCover": "number",
+      "swimPace": "number"
+    },
+    "events": {},
+    "gzipBytes": 6394
+  },
+  {
+    "slug": "pixel-terraced-garden",
+    "title": "Terraced Garden",
+    "category": "immersive",
+    "description": "Broad crop clumps alternate with bare soil and connected irrigation rills across three deep hillside terraces.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "garden",
+      "terraces",
+      "irrigation"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "fan",
+          "switchback",
+          "bowl"
+        ],
+        "label": "Terrace arrangement"
+      },
+      "planting": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.7,
+        "step": 0.05,
+        "label": "Planted soil coverage"
+      },
+      "flow": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Irrigation flow"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause irrigation"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Water phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Fan",
+        "description": "A descending central feeder branches across three spreading crop terraces.",
+        "props": {
+          "layout": "fan",
+          "planting": 0.5,
+          "flow": 0.5
+        }
+      },
+      {
+        "name": "Switchback",
+        "description": "Long planted shelves send water around alternating ends before each drop.",
+        "props": {
+          "layout": "switchback",
+          "planting": 0.6,
+          "flow": 0.65
+        }
+      },
+      {
+        "name": "Bowl",
+        "description": "Nested horseshoe beds wrap a central catch basin and share aligned spill notches.",
+        "props": {
+          "layout": "bowl",
+          "planting": 0.45,
+          "flow": 0.4
+        }
+      }
+    ],
+    "exportName": "PixelTerracedGarden",
+    "defaults": {
+      "layout": "fan",
+      "planting": 0.5,
+      "flow": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Curved fan, alternating straight rills or nested horseshoe beds.",
+      "planting": "Broad planted portions of the soil strips, preserving spill gaps.",
+      "flow": "Thickness and pace of the connected irrigation marks."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"fan\" | \"switchback\" | \"bowl\"",
+      "planting": "number",
+      "flow": "number"
+    },
+    "events": {},
+    "gzipBytes": 6521
+  },
+  {
+    "slug": "pixel-tidal-shelf",
+    "title": "Tidal Shelf",
+    "category": "immersive",
+    "description": "One connected tide enters coastal cuts, fills exposed pool margins and drains beneath a dry rock ridge.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "tide",
+      "coast",
+      "pools"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "channels",
+          "basins",
+          "arch"
+        ],
+        "label": "Coastal arrangement"
+      },
+      "tideRange": {
+        "type": "number",
+        "min": 0.15,
+        "max": 0.55,
+        "step": 0.05,
+        "label": "Tidal range"
+      },
+      "cycleSeconds": {
+        "type": "number",
+        "min": 12,
+        "max": 30,
+        "step": 1,
+        "label": "Tide cycle seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause tide"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 30000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Tide phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Channels",
+        "description": "Two inland cuts share a low junction and an open seaward edge.",
+        "props": {
+          "layout": "channels",
+          "tideRange": 0.4,
+          "cycleSeconds": 18
+        }
+      },
+      {
+        "name": "Basins",
+        "description": "Two round pools fill through narrow notches beside a dry saddle.",
+        "props": {
+          "layout": "basins",
+          "tideRange": 0.5,
+          "cycleSeconds": 22
+        }
+      },
+      {
+        "name": "Arch",
+        "description": "A thick raised bridge crosses the inlet to one broad rear pool.",
+        "props": {
+          "layout": "arch",
+          "tideRange": 0.35,
+          "cycleSeconds": 16
+        }
+      }
+    ],
+    "exportName": "PixelTidalShelf",
+    "defaults": {
+      "layout": "channels",
+      "tideRange": 0.4,
+      "cycleSeconds": 18,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Connected coastal cuts, separate basins or a bridged inlet.",
+      "tideRange": "Vertical tidal range relative to the rock step height.",
+      "cycleSeconds": "Seconds for one complete rise and drainage."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"channels\" | \"basins\" | \"arch\"",
+      "tideRange": "number",
+      "cycleSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6268
+  },
+  {
+    "slug": "pixel-wind-grove",
+    "title": "Wind Grove",
+    "category": "immersive",
+    "description": "Uneven foliage clusters sway on attached branches above exposed roots, a hollow stump and a finite island.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "trees",
+      "wind"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "splitCedar",
+          "leaningPine",
+          "rootArch"
+        ],
+        "label": "Tree arrangement"
+      },
+      "crownSpan": {
+        "type": "number",
+        "min": 0.55,
+        "max": 0.85,
+        "step": 0.05,
+        "label": "Crown span"
+      },
+      "wind": {
+        "type": "number",
+        "min": 0.15,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Wind strength"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause wind"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Wind phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Split Cedar",
+        "description": "Unequal high crowns leave a broad opening above the low stump.",
+        "props": {
+          "layout": "splitCedar",
+          "crownSpan": 0.75,
+          "wind": 0.45
+        }
+      },
+      {
+        "name": "Leaning Pine",
+        "description": "Three horizontal boughs climb a leaning trunk opposite a short companion.",
+        "props": {
+          "layout": "leaningPine",
+          "crownSpan": 0.7,
+          "wind": 0.5
+        }
+      },
+      {
+        "name": "Root Arch",
+        "description": "A low crown spans two exposed roots and the hollow beneath them.",
+        "props": {
+          "layout": "rootArch",
+          "crownSpan": 0.8,
+          "wind": 0.35
+        }
+      }
+    ],
+    "exportName": "PixelWindGrove",
+    "defaults": {
+      "layout": "splitCedar",
+      "crownSpan": 0.75,
+      "wind": 0.45,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Arrangement of the old tree, its roots and its smaller companion.",
+      "crownSpan": "Crown width as a fraction of the finite root plate.",
+      "wind": "Restrained displacement of the upper boughs in the shared wind."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"splitCedar\" | \"leaningPine\" | \"rootArch\"",
+      "crownSpan": "number",
+      "wind": "number"
+    },
+    "events": {},
+    "gzipBytes": 6266
+  },
+  {
+    "slug": "ridge-cableway",
+    "title": "Ridge Cableway",
+    "category": "immersive",
+    "description": "An upright glazed cabin travels on an attached hanger between two hillside terminals along a continuous haul cable.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "cableway",
+      "transport"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "route": {
+        "type": "select",
+        "options": [
+          "ridge",
+          "gully",
+          "terrace"
+        ],
+        "label": "Cable route"
+      },
+      "rise": {
+        "type": "number",
+        "min": 14,
+        "max": 30,
+        "step": 1,
+        "label": "Station rise"
+      },
+      "tripSeconds": {
+        "type": "number",
+        "min": 12,
+        "max": 28,
+        "step": 1,
+        "label": "Round trip seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Ridge lift",
+        "description": "A steep single cable span rises beside a wedge shaped hill and exposed retained rock face.",
+        "props": {
+          "route": "ridge",
+          "rise": 30,
+          "tripSeconds": 26
+        }
+      },
+      {
+        "name": "Gully crossing",
+        "description": "Two broad banks frame a deep cut, with a stout support above the approach to the upper terminal.",
+        "props": {
+          "route": "gully",
+          "rise": 14,
+          "tripSeconds": 24
+        }
+      },
+      {
+        "name": "Terrace connector",
+        "description": "Two built retaining terraces and exposed terminals frame a short industrial link.",
+        "props": {
+          "route": "terrace",
+          "rise": 20,
+          "tripSeconds": 18
+        }
+      }
+    ],
+    "exportName": "RidgeCableway",
+    "defaults": {
+      "route": "ridge",
+      "rise": 30,
+      "tripSeconds": 26,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "route": "Ridge span, supported gully crossing or terraced bank link.",
+      "rise": "Elevation gained by the upper terminal while the lower remains fixed.",
+      "tripSeconds": "Seconds for both journeys and the brief terminal dwells."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "route": "\"ridge\"|\"gully\"|\"terrace\"",
+      "rise": "number",
+      "tripSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6365
+  },
+  {
+    "slug": "rotary-assembly",
+    "title": "Rotary Assembly",
+    "category": "immersive",
+    "description": "Four fixed workpieces index around a broad rotary table, pausing beneath a supported assembly press.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "factory",
+      "assembly"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "floorplan": {
+        "type": "select",
+        "options": [
+          "corner",
+          "horseshoe",
+          "island"
+        ],
+        "label": "Workshop floorplan"
+      },
+      "tableRadius": {
+        "type": "number",
+        "min": 18,
+        "max": 28,
+        "step": 1,
+        "label": "Table radius"
+      },
+      "cycleSeconds": {
+        "type": "number",
+        "min": 6,
+        "max": 14,
+        "step": 1,
+        "label": "Cycle seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Corner shop",
+        "description": "A compact table and rear press sit between two wall ends, a side bench and a goods rack.",
+        "props": {
+          "floorplan": "corner",
+          "tableRadius": 18,
+          "cycleSeconds": 10
+        }
+      },
+      {
+        "name": "Production bay",
+        "description": "Three low walls frame a larger table, side mounted press and separated input and output benches.",
+        "props": {
+          "floorplan": "horseshoe",
+          "tableRadius": 24,
+          "cycleSeconds": 12
+        }
+      },
+      {
+        "name": "Open machine island",
+        "description": "An open chamfered platform holds the broad table, freestanding cabinet and separated service benches.",
+        "props": {
+          "floorplan": "island",
+          "tableRadius": 28,
+          "cycleSeconds": 14
+        }
+      }
+    ],
+    "exportName": "RotaryAssembly",
+    "defaults": {
+      "floorplan": "corner",
+      "tableRadius": 18,
+      "cycleSeconds": 10,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "floorplan": "Workshop walls, service furniture and press station arrangement.",
+      "tableRadius": "Radius of the indexing table in scene units.",
+      "cycleSeconds": "Seconds for one quarter turn and one complete press stroke."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "floorplan": "\"corner\"|\"horseshoe\"|\"island\"",
+      "tableRadius": "number",
+      "cycleSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6241
+  },
+  {
+    "slug": "seattle-market-garden",
+    "title": "Seattle Market Garden",
+    "category": "immersive",
+    "description": "Open produce stalls and broad cultivated beds share an urban parcel beneath one slowly rolling cloth awning.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "market",
+      "garden",
+      "seattle"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "stair-market",
+          "garden-court",
+          "roof-market"
+        ],
+        "label": "Market layout"
+      },
+      "stallBays": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Stall bays"
+      },
+      "gardenBeds": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Growing beds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause awning"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Awning phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Market Steps",
+        "description": "Three stalls line the lower edge of an exposed stair to a cultivated terrace.",
+        "props": {
+          "layout": "stair-market",
+          "stallBays": 3,
+          "gardenBeds": 2
+        }
+      },
+      {
+        "name": "Garden Court",
+        "description": "An L shaped shed frames three beds and a broad open working entrance.",
+        "props": {
+          "layout": "garden-court",
+          "stallBays": 4,
+          "gardenBeds": 3
+        }
+      },
+      {
+        "name": "Roof Market",
+        "description": "Two market roof layers frame an open gallery beneath a raised garden and exterior stair landing.",
+        "props": {
+          "layout": "roof-market",
+          "stallBays": 2,
+          "gardenBeds": 2
+        }
+      }
+    ],
+    "exportName": "SeattleMarketGarden",
+    "defaults": {
+      "layout": "stair-market",
+      "stallBays": 3,
+      "gardenBeds": 2,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Relationship between the market, garden and exterior stair.",
+      "stallBays": "Open produce stalls, from two to four structural bays.",
+      "gardenBeds": "Broad raised growing beds with continuous working aisles."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"stair-market\" | \"garden-court\" | \"roof-market\"",
+      "stallBays": "number",
+      "gardenBeds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6545
+  },
+  {
+    "slug": "seattle-rain-terrace",
+    "title": "Seattle Rain Terrace",
+    "category": "immersive",
+    "description": "Narrow hillside houses, exposed retaining terraces and a public stair shelter beneath sparse pixel rain.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "seattle",
+      "rain",
+      "terraces"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "stair-canyon",
+          "hairpin",
+          "corner-terraces"
+        ],
+        "label": "Street layout"
+      },
+      "rise": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Terrain levels"
+      },
+      "rain": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "label": "Rain density"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause rain"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 10000,
+        "step": 100,
+        "label": "Animation time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Rain seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Stair Canyon",
+        "description": "Two offset house rows enclose a continuous central stair.",
+        "props": {
+          "layout": "stair-canyon",
+          "rise": 3,
+          "rain": 0.35
+        }
+      },
+      {
+        "name": "Hairpin Street",
+        "description": "Alternating road bends surround a planted wedge below outer houses.",
+        "props": {
+          "layout": "hairpin",
+          "rise": 4,
+          "rain": 0.65
+        }
+      },
+      {
+        "name": "Corner Terraces",
+        "description": "Broad garden platforms turn a corner beside a connecting stair.",
+        "props": {
+          "layout": "corner-terraces",
+          "rise": 2,
+          "rain": 0.2
+        }
+      }
+    ],
+    "exportName": "SeattleRainTerrace",
+    "defaults": {
+      "layout": "stair-canyon",
+      "rise": 3,
+      "rain": 0.35,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Arrangement of houses, roads and public stairs.",
+      "rise": "Distinct terrain levels, from two to four.",
+      "rain": "Rain density, with zero producing a dry scene."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"stair-canyon\" | \"hairpin\" | \"corner-terraces\"",
+      "rise": "number",
+      "rain": "number"
+    },
+    "events": {},
+    "gzipBytes": 6588
+  },
+  {
+    "slug": "shop-lane",
+    "title": "Shop Lane",
+    "category": "immersive",
+    "description": "A broad timber screen slides into a visible wall pocket, revealing a counter beside a winding lane of deep roofed shops.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "shops",
+      "lane",
+      "screen"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "dogleg",
+          "gate-court",
+          "bridge-lane"
+        ],
+        "label": "Lane layout"
+      },
+      "frontages": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Shop frontages"
+      },
+      "canopyDepth": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 1,
+        "label": "Canopy beam bays"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause screen"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 20000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Screen phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Dogleg Lane",
+        "description": "Unequal deep shops turn an open lane around the low near storefront.",
+        "props": {
+          "layout": "dogleg",
+          "frontages": 3,
+          "canopyDepth": 1
+        }
+      },
+      {
+        "name": "Gate Court",
+        "description": "An entrance beam frames a forecourt before the lane narrows between high roofs.",
+        "props": {
+          "layout": "gate-court",
+          "frontages": 4,
+          "canopyDepth": 2
+        }
+      },
+      {
+        "name": "Upper Passage",
+        "description": "An enclosed rear passage spans an open lane beside an exposed exterior stair.",
+        "props": {
+          "layout": "bridge-lane",
+          "frontages": 2,
+          "canopyDepth": 0
+        }
+      }
+    ],
+    "exportName": "ShopLane",
+    "defaults": {
+      "layout": "dogleg",
+      "frontages": 3,
+      "canopyDepth": 1,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Arrangement of deep shops around a continuous walking lane.",
+      "frontages": "Distinct shop fronts, from two to four.",
+      "canopyDepth": "Zero to two overhead beam bays projecting from the shop eaves."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"dogleg\" | \"gate-court\" | \"bridge-lane\"",
+      "frontages": "number",
+      "canopyDepth": "number"
+    },
+    "events": {},
+    "gzipBytes": 6866
+  },
+  {
     "slug": "strata-stack",
     "title": "Strata Stack",
     "category": "immersive",
@@ -23978,6 +26597,125 @@
     "gzipBytes": 4860
   },
   {
+    "slug": "terrace-waterworks",
+    "title": "Terrace Waterworks",
+    "category": "immersive",
+    "description": "A submerged radial rake turns beneath a fixed bridge in a round settling tank linked to a pump house and outlet basin.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "waterworks",
+      "infrastructure"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "arrangement": {
+        "type": "select",
+        "options": [
+          "terraced",
+          "split-bank",
+          "compact"
+        ],
+        "label": "Works arrangement"
+      },
+      "tankRadius": {
+        "type": "number",
+        "min": 20,
+        "max": 30,
+        "step": 1,
+        "label": "Tank radius"
+      },
+      "turnSeconds": {
+        "type": "number",
+        "min": 20,
+        "max": 50,
+        "step": 1,
+        "label": "Rake turn seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Hillside works",
+        "description": "Three stepped plinths descend from the pump house through the tank to a separate low outlet basin.",
+        "props": {
+          "arrangement": "terraced",
+          "tankRadius": 26,
+          "turnSeconds": 40
+        }
+      },
+      {
+        "name": "Canal intake",
+        "description": "A long open service channel divides the pump bank from the settling tank beneath a supported pipe bridge.",
+        "props": {
+          "arrangement": "split-bank",
+          "tankRadius": 30,
+          "turnSeconds": 48
+        }
+      },
+      {
+        "name": "Town utility",
+        "description": "A compact utility platform holds a front tank, raised rear basin and a pump house in its clipped corner.",
+        "props": {
+          "arrangement": "compact",
+          "tankRadius": 20,
+          "turnSeconds": 30
+        }
+      }
+    ],
+    "exportName": "TerraceWaterworks",
+    "defaults": {
+      "arrangement": "terraced",
+      "tankRadius": 26,
+      "turnSeconds": 40,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "arrangement": "Stepped works, divided canal bank or compact utility platform.",
+      "tankRadius": "Radius of the round settling tank in scene units.",
+      "turnSeconds": "Seconds for one full attached rake revolution."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "arrangement": "\"terraced\"|\"split-bank\"|\"compact\"",
+      "tankRadius": "number",
+      "turnSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6478
+  },
+  {
     "slug": "terrain-field",
     "title": "Terrain Field",
     "category": "immersive",
@@ -24120,6 +26858,133 @@
     },
     "events": {},
     "gzipBytes": 3964
+  },
+  {
+    "slug": "tram-corner",
+    "title": "Tram Corner",
+    "category": "immersive",
+    "description": "A substantial double cab tram follows curved rails past a masonry shop corner, sheltered stop and overhead supports.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "tram",
+      "rail",
+      "neighborhood"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "layout": {
+        "type": "select",
+        "options": [
+          "corner-bend",
+          "square-loop-edge",
+          "raised-crossing"
+        ],
+        "label": "Rail layout"
+      },
+      "carriages": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 1,
+        "label": "Connected carriages"
+      },
+      "blockHeight": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Block storeys"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause tram"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 24000,
+        "step": 100,
+        "label": "Fixed time"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Route phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Shop Corner",
+        "description": "An L shaped block holds the inside of a broad street level rail bend.",
+        "props": {
+          "layout": "corner-bend",
+          "carriages": 1,
+          "blockHeight": 3
+        }
+      },
+      {
+        "name": "Square Edge",
+        "description": "Two articulated bodies follow a shallow arc beside a triangular public square.",
+        "props": {
+          "layout": "square-loop-edge",
+          "carriages": 2,
+          "blockHeight": 2
+        }
+      },
+      {
+        "name": "Raised Crossing",
+        "description": "A short viaduct crosses a lower lane beside an exposed station stair.",
+        "props": {
+          "layout": "raised-crossing",
+          "carriages": 1,
+          "blockHeight": 1
+        }
+      }
+    ],
+    "exportName": "TramCorner",
+    "defaults": {
+      "layout": "corner-bend",
+      "carriages": 1,
+      "blockHeight": 3,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "layout": "Arrangement of rail bend, corner block and passenger stop.",
+      "carriages": "One or two physically coupled tram bodies.",
+      "blockHeight": "Masonry block storeys, from one to three."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "layout": "\"corner-bend\" | \"square-loop-edge\" | \"raised-crossing\"",
+      "carriages": "number",
+      "blockHeight": "number"
+    },
+    "events": {},
+    "gzipBytes": 6978
   },
   {
     "slug": "watershed-walk",
@@ -24368,6 +27233,125 @@
     },
     "events": {},
     "gzipBytes": 7266
+  },
+  {
+    "slug": "wind-station",
+    "title": "Wind Station",
+    "category": "immersive",
+    "description": "A broad three blade turbine turns above a tapered mast, connected transformer pad and compact service building.",
+    "tags": [
+      "pixel",
+      "isometric",
+      "wind",
+      "energy"
+    ],
+    "facets": [
+      "animated",
+      "canvas"
+    ],
+    "wave": 19,
+    "release": "pixel-worlds-2026-11-15",
+    "animated": true,
+    "decorative": true,
+    "original": true,
+    "credits": [],
+    "palette": [
+      "fg",
+      "bg",
+      "accent"
+    ],
+    "controls": {
+      "site": {
+        "type": "select",
+        "options": [
+          "ridge",
+          "coastal",
+          "service-yard"
+        ],
+        "label": "Energy site"
+      },
+      "bladeRadius": {
+        "type": "number",
+        "min": 18,
+        "max": 28,
+        "step": 1,
+        "label": "Blade radius"
+      },
+      "turnSeconds": {
+        "type": "number",
+        "min": 10,
+        "max": 24,
+        "step": 1,
+        "label": "Rotor seconds"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Ridge turbine",
+        "description": "A tall mast stands on a tapered ridge above the transformer shelf and descending surface conduit.",
+        "props": {
+          "site": "ridge",
+          "bladeRadius": 28,
+          "turnSeconds": 20
+        }
+      },
+      {
+        "name": "Harbor power",
+        "description": "A broad concrete peninsula and sea wall hold the turbine, transformer and service hut.",
+        "props": {
+          "site": "coastal",
+          "bladeRadius": 24,
+          "turnSeconds": 18
+        }
+      },
+      {
+        "name": "Utility yard",
+        "description": "A flat paved yard separates the turbine from an L shaped fenced transformer pad and service hut.",
+        "props": {
+          "site": "service-yard",
+          "bladeRadius": 18,
+          "turnSeconds": 14
+        }
+      }
+    ],
+    "exportName": "WindStation",
+    "defaults": {
+      "site": "ridge",
+      "bladeRadius": 28,
+      "turnSeconds": 20,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "site": "Raised ridge, concrete coastal peninsula or flat utility yard.",
+      "bladeRadius": "Radius of the rigid three blade rotor in scene units.",
+      "turnSeconds": "Seconds for one constant speed rotor revolution."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "site": "\"ridge\"|\"coastal\"|\"service-yard\"",
+      "bladeRadius": "number",
+      "turnSeconds": "number"
+    },
+    "events": {},
+    "gzipBytes": 6688
   },
   {
     "slug": "world-map",

@@ -16,3 +16,4 @@ How to add a plan: write it as `docs/plans/YYYY-MM-DD-<slug>.md`, get it approve
 | `2026-10-24-motion-materials-and-refinements.md` | Approved in chat: eight refinements, twenty additions and one PR |
 | `2026-10-24-kinetic-studies.md` | Approved in chat: twenty additions with isolated authors and integration review |
 | `2026-11-14-mechanisms-surfaces.md` | Requested in chat: twenty four additions with isolated authors and integration review |
+| `2026-11-15-pixel-worlds.md` | Requested in chat: twenty four original pixel worlds across nature, cities and infrastructure, with isolated authors and integration review |

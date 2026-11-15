@@ -368,19 +368,43 @@ Install any component with `npx shadcn@latest add https://picagram.dev/r/<slug>.
 
 ## Immersive
 
+- [Apron Taxi](https://picagram.dev/c/apron-taxi.md): A chunky airplane follows a broad taxi loop past an open hangar and runway holding strip.
+- [Arcade Courtyard](https://picagram.dev/c/arcade-courtyard.md): Open stepped arcades surround a broad court where two calm streams spill from a raised fountain bowl into a lower basin.
 - [Archive aisle](https://picagram.dev/c/archive-aisle.md): A one-point archive aisle on canvas whose camera walks to each collection's bay, with numbered markers, a register and a readable detail.
+- [Canal Lock](https://picagram.dev/c/canal-lock.md): A compact canal boat rises and falls with the chamber water between two closed pairs of heavy lock gates.
+- [Canal Row](https://picagram.dev/c/canal-row.md): A rigid footbridge lifts between masonry landings above an open canal, unequal townhouse rows and a still waiting boat.
 - [City Grid](https://picagram.dev/c/city-grid.md): A seeded city of blocks on a street grid, seen from above at a fixed tilt and panning slowly past.
+- [Container Wharf](https://picagram.dev/c/container-wharf.md): A portal crane lifts one broad container between a moored cargo barge and a dock cradle.
+- [Elliott Bay Ferry Pier](https://picagram.dev/c/elliott-bay-ferry-pier.md): A low double ended ferry glides through clear berth water beside a pile supported passenger shelter and landing ramp.
 - [Exhibit constellation](https://picagram.dev/c/exhibit-constellation.md): An open artefact board with thematic paths, connected objects and readable exhibition records.
 - [Folded Atlas](https://picagram.dev/c/folded-atlas.md): Supplied polygon panels form a connected accordion atlas with projected hinges, accessible panel buttons, and independent selected content.
+- [Freight Siding](https://picagram.dev/c/freight-siding.md): A small locomotive and coupled freight wagons shunt along a rail spur between a loading canopy and an open weighing pad.
 - [Geodesic Shell](https://picagram.dev/c/geodesic-shell.md): A subdivided icosahedral dome maps supplied panel records to selectable facets, with camera controls and accessible panel buttons.
 - [Globe](https://picagram.dev/c/globe.md): A dotted globe that turns slowly on a tilted axis, with named places marked on its surface.
+- [Lake Union Float Homes](https://picagram.dev/c/lake-union-float-homes.md): Low floating homes share timber walks, deck gardens and a hinged shore gangway above a broad open inlet.
 - [Memory palace](https://picagram.dev/c/memory-palace.md): A museum room plan with spatial selection, object stories and a linear visiting register.
 - [Orbit View](https://picagram.dev/c/orbit-view.md): The Earth's limb seen from a spacecraft, with dotted land below the horizon and a stepped dithered atmosphere.
 - [Paper theatre](https://picagram.dev/c/paper-theatre.md): An original paper stage with an act program, chapter cues and company notes.
 - [Perspective Maze](https://picagram.dev/c/perspective-maze.md): A supplied wall grid becomes a perspective viewport with collision-safe navigation, native controls, and a text-map fallback.
+- [Basalt Crater](https://picagram.dev/c/pixel-basalt-crater.md): Broken basalt shoulders expose a deep lava well where three broad crust rafts circulate through a connected channel.
+- [Dune Slipface](https://picagram.dev/c/pixel-dune-slipface.md): A low broad dune carries short dry sand releases across a quiet slipface into a contained receiving apron.
+- [Fern Log](https://picagram.dev/c/pixel-fern-log.md): A large curled snail follows the bark of a hollow fallen log between broad, still fern fans.
+- [Hanging Waterfall](https://picagram.dev/c/pixel-hanging-waterfall.md): A broad stepped stream spills over split rock strata into a shallow plunge basin and open outlet.
+- [Lily Pond](https://picagram.dev/c/pixel-lily-pond.md): A large fish circles broad lily pads and a low cupped lotus in a shallow pond cut into a grassy tile.
+- [Terraced Garden](https://picagram.dev/c/pixel-terraced-garden.md): Broad crop clumps alternate with bare soil and connected irrigation rills across three deep hillside terraces.
+- [Tidal Shelf](https://picagram.dev/c/pixel-tidal-shelf.md): One connected tide enters coastal cuts, fills exposed pool margins and drains beneath a dry rock ridge.
+- [Wind Grove](https://picagram.dev/c/pixel-wind-grove.md): Uneven foliage clusters sway on attached branches above exposed roots, a hollow stump and a finite island.
+- [Ridge Cableway](https://picagram.dev/c/ridge-cableway.md): An upright glazed cabin travels on an attached hanger between two hillside terminals along a continuous haul cable.
+- [Rotary Assembly](https://picagram.dev/c/rotary-assembly.md): Four fixed workpieces index around a broad rotary table, pausing beneath a supported assembly press.
+- [Seattle Market Garden](https://picagram.dev/c/seattle-market-garden.md): Open produce stalls and broad cultivated beds share an urban parcel beneath one slowly rolling cloth awning.
+- [Seattle Rain Terrace](https://picagram.dev/c/seattle-rain-terrace.md): Narrow hillside houses, exposed retaining terraces and a public stair shelter beneath sparse pixel rain.
+- [Shop Lane](https://picagram.dev/c/shop-lane.md): A broad timber screen slides into a visible wall pocket, revealing a counter beside a winding lane of deep roofed shops.
 - [Strata Stack](https://picagram.dev/c/strata-stack.md): Supplied geological thicknesses form an exploded stack with adjustable gaps, three views, and accessible layer selection.
+- [Terrace Waterworks](https://picagram.dev/c/terrace-waterworks.md): A submerged radial rake turns beneath a fixed bridge in a round settling tank linked to a pump house and outlet basin.
 - [Terrain Field](https://picagram.dev/c/terrain-field.md): A landscape of profile lines that drift toward the viewer, each ridge hiding the rows behind it.
+- [Tram Corner](https://picagram.dev/c/tram-corner.md): A substantial double cab tram follows curved rails past a masonry shop corner, sheltered stop and overhead supports.
 - [Watershed walk](https://picagram.dev/c/watershed-walk.md): A watershed section with connected field stations, supplied observations and a linear walking route.
+- [Wind Station](https://picagram.dev/c/wind-station.md): A broad three blade turbine turns above a tapered mast, connected transformer pad and compact service building.
 - [World Map](https://picagram.dev/c/world-map.md): A world map on the Equal Earth projection, its land an even grid of dots with named places marked.
 
 ## Optional

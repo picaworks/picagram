@@ -611,7 +611,23 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Apron Taxi (`apron-taxi`)
+
+Original to Picagram.
+
+## Arcade Courtyard (`arcade-courtyard`)
+
+Original to Picagram.
+
 ## Archive aisle (`archive-aisle`)
+
+Original to Picagram.
+
+## Canal Lock (`canal-lock`)
+
+Original to Picagram.
+
+## Canal Row (`canal-row`)
 
 Original to Picagram.
 
@@ -619,11 +635,23 @@ Original to Picagram.
 
 - Technique from [Procedural modeling of cities](https://doi.org/10.1145/383259.383292) by Yoav I. H. Parish and Pascal Müller (Paper).
 
+## Container Wharf (`container-wharf`)
+
+Original to Picagram.
+
+## Elliott Bay Ferry Pier (`elliott-bay-ferry-pier`)
+
+Original to Picagram.
+
 ## Exhibit constellation (`exhibit-constellation`)
 
 Original to Picagram.
 
 ## Folded Atlas (`folded-atlas`)
+
+Original to Picagram.
+
+## Freight Siding (`freight-siding`)
 
 Original to Picagram.
 
@@ -634,6 +662,10 @@ Original to Picagram.
 ## Globe (`globe`)
 
 - Technique from [Evenly distributing points on a sphere](https://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/) by Martin Roberts (Article).
+
+## Lake Union Float Homes (`lake-union-float-homes`)
+
+Original to Picagram.
 
 ## Memory palace (`memory-palace`)
 
@@ -652,7 +684,63 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Basalt Crater (`pixel-basalt-crater`)
+
+Original to Picagram.
+
+## Dune Slipface (`pixel-dune-slipface`)
+
+Original to Picagram.
+
+## Fern Log (`pixel-fern-log`)
+
+Original to Picagram.
+
+## Hanging Waterfall (`pixel-hanging-waterfall`)
+
+Original to Picagram.
+
+## Lily Pond (`pixel-lily-pond`)
+
+Original to Picagram.
+
+## Terraced Garden (`pixel-terraced-garden`)
+
+Original to Picagram.
+
+## Tidal Shelf (`pixel-tidal-shelf`)
+
+Original to Picagram.
+
+## Wind Grove (`pixel-wind-grove`)
+
+Original to Picagram.
+
+## Ridge Cableway (`ridge-cableway`)
+
+Original to Picagram.
+
+## Rotary Assembly (`rotary-assembly`)
+
+Original to Picagram.
+
+## Seattle Market Garden (`seattle-market-garden`)
+
+Original to Picagram.
+
+## Seattle Rain Terrace (`seattle-rain-terrace`)
+
+Original to Picagram.
+
+## Shop Lane (`shop-lane`)
+
+Original to Picagram.
+
 ## Strata Stack (`strata-stack`)
+
+Original to Picagram.
+
+## Terrace Waterworks (`terrace-waterworks`)
 
 Original to Picagram.
 
@@ -660,7 +748,15 @@ Original to Picagram.
 
 - Technique from [A Two-Space Solution to the Hidden Line Problem for Plotting Functions of Two Variables](https://doi.org/10.1109/T-C.1973.223597) by T. J. Wright (Paper).
 
+## Tram Corner (`tram-corner`)
+
+Original to Picagram.
+
 ## Watershed walk (`watershed-walk`)
+
+Original to Picagram.
+
+## Wind Station (`wind-station`)
 
 Original to Picagram.
 

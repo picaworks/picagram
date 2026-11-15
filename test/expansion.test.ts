@@ -28,8 +28,8 @@ describe("standalone first mount", () => {
 });
 
 describe("release filters", () => {
-  it("selects the current mechanisms and surfaces batch", () => {
-    expect(CURRENT_RELEASE).toBe("mechanisms-surfaces-2026-11-14");
+  it("selects the current pixel worlds batch", () => {
+    expect(CURRENT_RELEASE).toBe("pixel-worlds-2026-11-15");
     expect(readRelease(CURRENT_RELEASE)).toBe(CURRENT_RELEASE);
   });
   const item: CatalogItem = { ...items[0]!, slug: "test-section", title: "Forum Rome", description: "Civic exhibition.", release: CURRENT_RELEASE, category: "sections", facets: ["static", "text"], tags: ["rome"] };
@@ -109,6 +109,40 @@ describe.each([
     expect(batch.every((entry) => (entry.meta.presets?.length ?? 0) === 3)).toBe(true);
     expect(batch.every((entry) => inRelease(entry.meta, release))).toBe(true);
     for (const entry of batch) {
+      for (const [name, control] of Object.entries(entry.meta.controls)) {
+        if (control.type !== "number") continue;
+        const values = [entry.defaults[name], ...(entry.meta.presets ?? []).map((preset) => preset.props[name])];
+        for (const value of values) {
+          if (typeof value !== "number") continue;
+          const steps = (value - control.min) / control.step;
+          expect(Math.abs(steps - Math.round(steps)), `${entry.meta.slug}.${name}=${value} fits its slider`).toBeLessThan(0.00001);
+        }
+      }
+    }
+  });
+});
+
+describe("pixel worlds release inventory", () => {
+  it("publishes twenty four original worlds with distinct structural presets and usable controls", async () => {
+    const entries = await loadAll();
+    const batch = entries.filter((entry) => entry.meta.release === "pixel-worlds-2026-11-15");
+    expect(readRelease("pixel-worlds-2026-11-15")).toBe("pixel-worlds-2026-11-15");
+    expect(batch).toHaveLength(24);
+    expect(new Set(batch.map((entry) => entry.meta.slug)).size).toBe(24);
+    for (const entry of batch) {
+      expect(entry.meta.wave).toBe(19);
+      expect(entry.meta.category).toBe("immersive");
+      expect(entry.meta.facets).toEqual(["animated", "canvas"]);
+      expect(entry.meta.original).toBe(true);
+      expect(entry.meta.credits).toEqual([]);
+      expect(entry.meta.animated && entry.meta.decorative).toBe(true);
+      expect(entry.defaults.paused).toBe(false);
+      expect(entry.defaults.time).toBeNull();
+      expect(entry.meta.controls.paused?.type).toBe("boolean");
+      expect(entry.meta.presets).toHaveLength(3);
+      const structure = Object.entries(entry.meta.controls).find(([, control]) => control.type === "select" && control.options.length === 3)?.[0];
+      expect(structure, `${entry.meta.slug} exposes its arrangement`).toBeDefined();
+      expect(new Set(entry.meta.presets?.map((preset) => preset.props[structure!])).size, entry.meta.slug).toBe(3);
       for (const [name, control] of Object.entries(entry.meta.controls)) {
         if (control.type !== "number") continue;
         const values = [entry.defaults[name], ...(entry.meta.presets ?? []).map((preset) => preset.props[name])];
