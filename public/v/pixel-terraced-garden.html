@@ -1,0 +1,730 @@
+<!doctype html>
+<!--
+  Pica · Terraced Garden · pixel-terraced-garden
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Terraced Garden · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaPixelTerracedGarden = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/immersive/pixel-terraced-garden/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/dither.ts
+  function bayerMatrix(size) {
+    let m = [0];
+    let n = 1;
+    while (n < size) {
+      const next = new Array(4 * n * n).fill(0);
+      for (let y = 0; y < n; y++) {
+        for (let x = 0; x < n; x++) {
+          const v = 4 * (m[y * n + x] ?? 0);
+          next[y * 2 * n + x] = v;
+          next[y * 2 * n + x + n] = v + 2;
+          next[(y + n) * 2 * n + x] = v + 3;
+          next[(y + n) * 2 * n + x + n] = v + 1;
+        }
+      }
+      m = next;
+      n *= 2;
+    }
+    const out = new Float32Array(size * size);
+    for (let i = 0; i < out.length; i++) out[i] = ((m[i] ?? 0) + 0.5) / (size * size);
+    return out;
+  }
+  var bayerCache = /* @__PURE__ */ new Map();
+  function bayerAt(size, x, y) {
+    let m = bayerCache.get(size);
+    if (!m) {
+      m = bayerMatrix(size);
+      bayerCache.set(size, m);
+    }
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return m[my * size + mx] ?? 0.5;
+  }
+  var KERNELS = {
+    "floyd-steinberg": [[1, 0, 7 / 16], [-1, 1, 3 / 16], [0, 1, 5 / 16], [1, 1, 1 / 16]],
+    // Atkinson spreads three quarters of the error, which keeps highlights and shadows cleaner.
+    atkinson: [[1, 0, 1 / 8], [2, 0, 1 / 8], [-1, 1, 1 / 8], [0, 1, 1 / 8], [1, 1, 1 / 8], [0, 2, 1 / 8]]
+  };
+
+  // lib/pixel-scene.ts
+  var pixelSceneLight = [-0.65, 0.35, 1];
+  var pixelSceneClamp = (n, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, n));
+  var pixelSceneFinite = (p) => p.every(Number.isFinite);
+  var pixelSceneCross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  var pixelSceneSub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  var pixelSceneUnit = (p) => {
+    const length = Math.hypot(...p) || 1;
+    return [p[0] / length, p[1] / length, p[2] / length];
+  };
+  function pixelPrism(out, footprint, bottom, height, paint = {}) {
+    if (footprint.length < 3 || !Number.isFinite(bottom) || !Number.isFinite(height) || height <= 0 || footprint.some((p) => !p.every(Number.isFinite))) return;
+    const low = footprint.map(([x, y]) => [x, y, bottom]);
+    const high = footprint.map(([x, y]) => [x, y, bottom + height]);
+    out.push({ ...paint, points: [...low].reverse() }, { ...paint, points: high });
+    for (let i = 0; i < low.length; i++) {
+      const j = (i + 1) % low.length;
+      out.push({ ...paint, points: [low[i], low[j], high[j], high[i]] });
+    }
+  }
+  function createPixelScene(canvas) {
+    const context = canvas.getContext("2d");
+    if (!context) return { draw() {
+    } };
+    let width = 0, height = 0, image;
+    let depth = new Float64Array(0), baseDepth = new Float64Array(0);
+    let basePixels = new Uint8ClampedArray(0);
+    let cachedFaces, cachedView = "", paletteKey = "";
+    let inks;
+    let yawCos = 1, yawSin = 0, elevCos = 1, elevSin = 0, scale = 1, offsetX = 0, offsetY = 0;
+    let center = [0, 0, 0], ground = 0, epsilon = 1e-5, receiverTolerance = 4e-5, lightInk = true;
+    function project(p) {
+      const x = p[0] - center[0], y = p[1] - center[1], z = p[2] - center[2];
+      const along = x * yawSin + y * yawCos;
+      return [(x * yawCos - y * yawSin) * scale + offsetX, (along * elevSin - z * elevCos) * scale + offsetY, along * elevCos + z * elevSin];
+    }
+    function put(x, y, z, ink, amount, shadow = false, edge = false) {
+      if (x < 0 || y < 0 || x >= width || y >= height || !Number.isFinite(z)) return;
+      const index = y * width + x, previous = depth[index];
+      if (z < previous - 1e-9 || !edge && z <= previous + 1e-9) return;
+      if (shadow && (!Number.isFinite(previous) || Math.abs(z - previous) > receiverTolerance)) return;
+      const data = image.data, i = index * 4;
+      if (shadow) {
+        const priorAlpha = data[i + 3] / 255;
+        const source = lightInk ? inks.bg : inks.fg;
+        const weight = lightInk ? 0.38 : 0.18;
+        const sourceAlpha = source[3] / 255;
+        const alpha2 = lightInk ? priorAlpha * (1 - weight) + sourceAlpha * weight : sourceAlpha * weight + priorAlpha * (1 - sourceAlpha * weight);
+        for (let channel = 0; channel < 3; channel++) {
+          const priorWeight = lightInk ? priorAlpha * (1 - weight) : priorAlpha * (1 - sourceAlpha * weight);
+          data[i + channel] = alpha2 ? (data[i + channel] * priorWeight + source[channel] * sourceAlpha * weight) / alpha2 : 0;
+        }
+        data[i + 3] = alpha2 * 255;
+        depth[index] = z;
+        return;
+      }
+      const quantized = pixelSceneClamp((Math.floor(amount * 16) + (bayerAt(2, x, y) < amount * 16 % 1 ? 1 : 0)) / 16);
+      const bg = inks.bg, alpha = ink[3] / 255 * quantized, backgroundAlpha = bg[3] / 255;
+      const resultAlpha = alpha + backgroundAlpha * (1 - alpha);
+      for (let channel = 0; channel < 3; channel++) {
+        data[i + channel] = resultAlpha ? (ink[channel] * alpha + bg[channel] * backgroundAlpha * (1 - alpha)) / resultAlpha : 0;
+      }
+      data[i + 3] = resultAlpha * 255;
+      depth[index] = Math.max(z, previous);
+    }
+    function triangle(a, b, c, ink, amount, shadow) {
+      const area = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+      if (!Number.isFinite(area) || Math.abs(area) < 1e-9) return;
+      const left = Math.max(0, Math.floor(Math.min(a[0], b[0], c[0])));
+      const right = Math.min(width - 1, Math.ceil(Math.max(a[0], b[0], c[0])));
+      const top = Math.max(0, Math.floor(Math.min(a[1], b[1], c[1])));
+      const bottom = Math.min(height - 1, Math.ceil(Math.max(a[1], b[1], c[1])));
+      for (let y = top; y <= bottom; y++) for (let x = left; x <= right; x++) {
+        const px = x + 0.5, py = y + 0.5;
+        const wa = ((b[0] - px) * (c[1] - py) - (b[1] - py) * (c[0] - px)) / area;
+        const wb = ((c[0] - px) * (a[1] - py) - (c[1] - py) * (a[0] - px)) / area;
+        const wc = 1 - wa - wb;
+        if (wa >= -1e-9 && wb >= -1e-9 && wc >= -1e-9) put(x, y, wa * a[2] + wb * b[2] + wc * c[2], ink, amount, shadow);
+      }
+    }
+    function perimeter(a, b, ink, tone) {
+      const dx = b[0] - a[0], dy = b[1] - a[1];
+      let low = 0, high = 1;
+      for (const [p, q] of [[-dx, a[0]], [dx, width - 1 - a[0]], [-dy, a[1]], [dy, height - 1 - a[1]]]) {
+        if (p === 0) {
+          if (q < 0) return;
+        } else if (p < 0) low = Math.max(low, q / p);
+        else high = Math.min(high, q / p);
+      }
+      if (low > high) return;
+      const steps = Math.max(1, Math.ceil(Math.max(Math.abs(dx), Math.abs(dy)) * (high - low)));
+      for (let i = 0; i <= steps; i++) {
+        const t = low + (high - low) * i / steps;
+        put(Math.round(a[0] + dx * t), Math.round(a[1] + dy * t), a[2] + (b[2] - a[2]) * t, ink, tone, false, true);
+      }
+    }
+    function faces(input, shadow = false, floorOnly = false) {
+      for (const face of input) {
+        if (face.points.length < 3 || face.points.some((p) => !pixelSceneFinite(p))) continue;
+        if (shadow && (!face.shadow || !face.points.some((p) => p[2] > ground + epsilon))) continue;
+        const floor = face.points.every((p) => Math.abs(p[2] - ground) < epsilon);
+        if (floorOnly && !floor) continue;
+        const points = face.points.map((p) => project(shadow ? [p[0] - pixelSceneLight[0] * Math.max(0, p[2] - ground), p[1] - pixelSceneLight[1] * Math.max(0, p[2] - ground), ground + epsilon] : p));
+        if (points.some((p) => !pixelSceneFinite(p))) continue;
+        let normal = [0, 0, 0];
+        for (let i = 1; i < face.points.length - 1 && Math.hypot(...normal) < 1e-10; i++) normal = pixelSceneCross(pixelSceneSub(face.points[i], face.points[0]), pixelSceneSub(face.points[i + 1], face.points[0]));
+        normal = pixelSceneUnit(normal);
+        const facing = normal[0] * yawSin * elevCos + normal[1] * yawCos * elevCos + normal[2] * elevSin;
+        const light = pixelSceneClamp((normal[0] * pixelSceneLight[0] + normal[1] * pixelSceneLight[1] + normal[2]) * (facing < 0 ? -1 : 1) / Math.hypot(...pixelSceneLight));
+        const tone = pixelSceneClamp(Number.isFinite(face.tone ?? 1) ? face.tone ?? 1 : 1);
+        const amount = shadow ? 0 : tone * (lightInk ? 0.72 + light * 0.24 : 0.94 - light * 0.2) * (floor ? 0.58 : 1);
+        const ink = shadow ? inks.fg : inks[face.ink ?? "fg"];
+        for (let i = 1; i < points.length - 1; i++) triangle(points[0], points[i], points[i + 1], ink, amount, shadow);
+        if (!shadow && !floorOnly && face.edge) for (let i = 0; i < points.length; i++) perimeter(points[i], points[(i + 1) % points.length], ink, tone);
+      }
+    }
+    return {
+      draw(staticFaces, movingFaces, colors, view) {
+        const nextWidth = canvas.width, nextHeight = canvas.height;
+        if (nextWidth < 1 || nextHeight < 1) return;
+        if (width !== nextWidth || height !== nextHeight) {
+          width = nextWidth;
+          height = nextHeight;
+          image = context.createImageData(width, height);
+          depth = new Float64Array(width * height);
+          baseDepth = new Float64Array(width * height);
+          basePixels = new Uint8ClampedArray(width * height * 4);
+          cachedFaces = void 0;
+        }
+        const nextPalette = JSON.stringify([colors.fg, colors.bg, colors.accent, colors.muted]);
+        if (paletteKey !== nextPalette) {
+          paletteKey = nextPalette;
+          inks = { fg: parseColor(colors.fg), bg: parseColor(colors.bg), accent: parseColor(colors.accent), muted: parseColor(colors.muted) };
+          const groundLuminance = inks.bg[3] ? inks.bg[0] * 0.2126 + inks.bg[1] * 0.7152 + inks.bg[2] * 0.0722 : 127.5;
+          lightInk = inks.fg[0] * 0.2126 + inks.fg[1] * 0.7152 + inks.fg[2] * 0.0722 >= groundLuminance;
+          cachedFaces = void 0;
+        }
+        const viewKey = JSON.stringify([view.bounds, view.ground ?? 0, view.yaw ?? 45, view.elevation ?? 30]);
+        if (cachedFaces !== staticFaces || cachedView !== viewKey) {
+          cachedView = viewKey;
+          const yaw = (view.yaw ?? 45) * Math.PI / 180, elevation = (view.elevation ?? 30) * Math.PI / 180;
+          yawCos = Math.cos(yaw);
+          yawSin = Math.sin(yaw);
+          elevCos = Math.cos(elevation);
+          elevSin = Math.sin(elevation);
+          center = [0, 1, 2].map((i) => (view.bounds[0][i] + view.bounds[1][i]) / 2);
+          ground = view.ground ?? 0;
+          epsilon = Math.max(1e-6, Math.hypot(...pixelSceneSub(view.bounds[1], view.bounds[0])) * 1e-5);
+          receiverTolerance = epsilon * 4 / Math.max(1e-3, Math.abs(elevSin));
+          scale = 1;
+          offsetX = 0;
+          offsetY = 0;
+          const corners = [];
+          for (let i = 0; i < 8; i++) corners.push(project([view.bounds[i & 1 ? 1 : 0][0], view.bounds[i & 2 ? 1 : 0][1], view.bounds[i & 4 ? 1 : 0][2]]));
+          const left = Math.min(...corners.map((p) => p[0])), right = Math.max(...corners.map((p) => p[0]));
+          const top = Math.min(...corners.map((p) => p[1])), bottom = Math.max(...corners.map((p) => p[1]));
+          scale = Math.min(width * 0.88 / Math.max(1e-8, right - left), height * 0.88 / Math.max(1e-8, bottom - top));
+          offsetX = width / 2 - (left + right) * scale / 2;
+          offsetY = height / 2 - (top + bottom) * scale / 2;
+          const data = image.data;
+          for (let i = 0; i < data.length; i += 4) {
+            data[i] = inks.bg[0];
+            data[i + 1] = inks.bg[1];
+            data[i + 2] = inks.bg[2];
+            data[i + 3] = inks.bg[3];
+          }
+          depth.fill(-Infinity);
+          faces(staticFaces, false, true);
+          faces(staticFaces, true);
+          faces(staticFaces);
+          basePixels.set(data);
+          baseDepth.set(depth);
+          cachedFaces = staticFaces;
+        }
+        image.data.set(basePixels);
+        depth.set(baseDepth);
+        faces(movingFaces, true);
+        faces(movingFaces);
+        context.putImageData(image, 0, 0);
+      }
+    };
+  }
+
+  // registry/immersive/pixel-terraced-garden/core.ts
+  var defaults = { layout: "fan", planting: 0.5, flow: 0.5, paused: false, time: null, seed: 1 };
+  var gardenView = { bounds: [[-6.6, -5, -1], [6.6, 5, 6.2]], ground: 0.5 };
+  function gardenStrip(out, a, b, side, width, tone) {
+    const p = (v, s) => [v[0] + side[0] * s * width / 2, v[1] + side[1] * s * width / 2, v[2]];
+    out.push({ points: [p(a, -1), p(a, 1), p(b, 1), p(b, -1)], ink: "accent", tone });
+  }
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const attrs = hostAttributes(host);
+    attrs.set("role", null);
+    attrs.set("aria-label", null);
+    attrs.set("aria-hidden", "true");
+    const surface = createCanvas(host, { autoSize: false, css: "image-rendering:pixelated", onResize: () => {
+      resize();
+      loop.redraw();
+    } });
+    const renderer = createPixelScene(surface.canvas);
+    const palette = watchPalette(host, () => loop.redraw());
+    let staticFaces = [];
+    let rills = [];
+    let destroyed = false;
+    function resize() {
+      const w = surface.cssWidth, h = surface.cssHeight, scale = Math.max(3, Math.ceil(w / 360), Math.ceil(h / 300));
+      surface.canvas.width = Math.max(1, Math.floor(w / scale));
+      surface.canvas.height = Math.max(1, Math.floor(h / scale));
+      Object.assign(surface.canvas.style, { width: `${surface.canvas.width * scale}px`, height: `${surface.canvas.height * scale}px`, left: `${Math.floor((w - surface.canvas.width * scale) / 2)}px`, top: `${Math.floor((h - surface.canvas.height * scale) / 2)}px`, right: "auto", bottom: "auto" });
+    }
+    function rebuild() {
+      staticFaces = [];
+      rills = [];
+      const planting = Math.max(0.3, Math.min(0.7, props.planting));
+      const width = 0.24 + Math.max(0.2, Math.min(0.8, props.flow)) * 0.34;
+      const ellipse = (x, y, rx, ry) => Array.from({ length: 8 }, (_, i) => [x + Math.cos(i * Math.PI / 4) * rx, y + Math.sin(i * Math.PI / 4) * ry]);
+      const bed = (points, z) => {
+        pixelPrism(staticFaces, points, 0.5, z - 0.5, { tone: 0.46 });
+        staticFaces.push({ points: points.map(([x, y]) => [x, y, z + 0.055]), tone: 0.24 });
+      };
+      const crop = (x, y, z, w) => {
+        pixelPrism(staticFaces, [[x - 0.065, y - 0.04], [x + 0.065, y - 0.04], [x, y + 0.07]], z + 0.06, 0.22, { tone: 0.52 });
+        for (let i = 0; i < 3; i++) {
+          const a = -Math.PI / 2 + i * Math.PI * 2 / 3, c = Math.cos(a), s = Math.sin(a);
+          const leaf = (along, across, h) => [
+            x + w * 0.49 * (c * along - s * across),
+            y + 0.36 * (s * along + c * across),
+            z + h
+          ];
+          const root = leaf(0, 0, 0.17), tip = leaf(1, 0, 0.23);
+          const left = leaf(0.52, -0.55, 0.15), right = leaf(0.52, 0.55, 0.15);
+          const fold = leaf(0.5, 0, 0.57);
+          staticFaces.push(
+            { points: [root, left, fold], tone: 0.69 },
+            { points: [left, tip, fold], tone: 0.69 },
+            { points: [root, fold, right], tone: 0.4 },
+            { points: [fold, tip, right], tone: 0.4 }
+          );
+        }
+      };
+      const rill = (points) => {
+        let length = 0;
+        const segments = [];
+        for (let i = 1; i < points.length; i++) {
+          const a = points[i - 1], b = points[i], dx = b[0] - a[0], dy = b[1] - a[1], dz = b[2] - a[2], flat = Math.hypot(dx, dy);
+          const side = Math.abs(dz) > flat ? [1, 0, 0] : [-dy / Math.max(1e-3, flat), dx / Math.max(1e-3, flat), 0];
+          const size = Math.hypot(dx, dy, dz);
+          gardenStrip(staticFaces, a, b, side, width, 0.62);
+          if (Math.abs(dz) < 0.1) for (const sign of [-1, 1]) {
+            const edge = (p, extra) => [p[0] + side[0] * sign * (width / 2 + extra), p[1] + side[1] * sign * (width / 2 + extra), p[2] + 0.035];
+            staticFaces.push({ points: [edge(a, 0), edge(b, 0), edge(b, 0.09), edge(a, 0.09)], tone: 0.48 });
+          }
+          segments.push({ a, b, side, start: length, length: size });
+          length += size;
+        }
+        rills.push({ segments, length });
+      };
+      const reservoir = (x, y, z) => {
+        pixelPrism(staticFaces, ellipse(x, y, 0.9, 0.62), z - 0.15, 0.21, { tone: 0.59 });
+        pixelPrism(staticFaces, ellipse(x, y, 0.7, 0.43), z + 0.065, 0.025, { ink: "accent", tone: 0.78 });
+      };
+      const catchBasin = (x, y) => {
+        pixelPrism(staticFaces, ellipse(x, y, 1.05, 0.65), 0.5, 0.14, { tone: 0.52 });
+        pixelPrism(staticFaces, ellipse(x, y, 0.86, 0.48), 0.65, 0.025, { ink: "accent", tone: 0.72 });
+      };
+      pixelPrism(staticFaces, [[-6, -3.5], [-4.8, -4.4], [4.8, -4.4], [6, -3], [6, 3.5], [4.8, 4.5], [-4.8, 4.5], [-6, 3]], -0.8, 1.3, { tone: 0.24 });
+      if (props.layout === "bowl") {
+        for (let tier = 0; tier < 3; tier++) {
+          const r = 5 - tier, z = 4.5 - tier * 1.5;
+          for (let i = 0; i < 6; i++) {
+            const a = i * Math.PI / 6, b = (i + 1) * Math.PI / 6;
+            const p = (radius, angle) => [Math.cos(angle) * radius, 1 - Math.sin(angle) * radius];
+            bed([p(r, a), p(r, b), p(r - 1, b), p(r - 1, a)], z);
+          }
+          const channel = [];
+          for (let i = 0; i <= 8; i++) {
+            const a = Math.PI - i * Math.PI / 8;
+            channel.push([Math.cos(a) * (r - 0.22), 1 - Math.sin(a) * (r - 0.22), z + 0.09]);
+          }
+          rill(channel);
+          for (const a of [0.58, 1.57, 2.56]) crop(Math.cos(a) * (r - 0.65), 1 - Math.sin(a) * (r - 0.65), z, planting * 1.65);
+        }
+        reservoir(-4.8, 1, 4.5);
+        rill([[-4.8, 1, 4.59], [-4, 1, 4.59], [-3.98, 1, 3.09], [-3, 1, 3.09], [-2.98, 1, 1.59], [-2, 1, 1.59], [-1.98, 1, 0.68], [0, 1, 0.68]]);
+        catchBasin(0, 1);
+      } else if (props.layout === "switchback") {
+        for (let tier = 0; tier < 3; tier++) {
+          const y = -3.25 + tier * 2.2, z = 4.5 - tier * 1.5, shift = (tier - 1) * 0.35;
+          bed([[shift - 4.3, y], [shift + 4.3, y], [shift + 4.3, y + 2.05], [shift - 4.3, y + 2.05]], z);
+          for (const x of [-1.8, 1.8]) crop(x, y + 0.8, z, planting * 3.5);
+        }
+        reservoir(-3.3, -1.65, 4.5);
+        rill([[-3.3, -1.65, 4.59], [3.3, -1.15, 4.59], [3.3, -1.04, 3.09], [3.3, 1.05, 3.09], [-3.3, 1.05, 3.09], [-3.3, 1.16, 1.59], [-3.3, 3.25, 1.59], [3.3, 3.25, 1.59], [3.3, 3.36, 0.68], [3.3, 3.8, 0.68]]);
+        catchBasin(3.3, 3.8);
+      } else {
+        for (let tier = 0; tier < 3; tier++) {
+          const y = -3.35 + tier * 2.2, z = 4.5 - tier * 1.5, w = 3 + tier;
+          bed([[-w + 0.8, y], [w - 0.8, y], [w, y + 1.5], [w - 0.6, y + 2.1], [-w + 0.6, y + 2.1], [-w, y + 1.5]], z);
+          for (const side of [-1, 1]) {
+            crop(side * w * 0.56, y + 0.65, z, planting * w * 0.7);
+            rill([[0, y + 1.35, z + 0.09], [side * w * 0.72, y + 1.55, z + 0.09]]);
+          }
+        }
+        reservoir(0, -2.95, 4.5);
+        rill([[0, -2.95, 4.59], [0, -1.2, 4.59], [0, -1.12, 3.09], [0, 1, 3.09], [0, 1.08, 1.59], [0, 3.2, 1.59], [0, 3.28, 0.68], [0, 3.8, 0.68]]);
+        catchBasin(0, 3.8);
+      }
+    }
+    function draw(t) {
+      const moving = [];
+      const flow = Math.max(0.2, Math.min(0.8, props.flow));
+      const phase = t / 1e3 * (0.75 + flow * 1.2) + (Math.max(1, Math.min(99, props.seed)) - 1) * 0.13;
+      for (const rill of rills) {
+        const count = Math.max(2, Math.ceil(rill.length / 1.8));
+        for (let i = 0; i < count; i++) {
+          const distance = (phase + i * rill.length / count) % rill.length;
+          const segment = rill.segments.find((s) => distance >= s.start && distance < s.start + s.length);
+          if (!segment) continue;
+          const u = (distance - segment.start) / segment.length, v = Math.min(1, u + 0.45 / segment.length);
+          const at = (f) => [segment.a[0] + (segment.b[0] - segment.a[0]) * f, segment.a[1] + (segment.b[1] - segment.a[1]) * f + 0.012, segment.a[2] + (segment.b[2] - segment.a[2]) * f + 0.018];
+          gardenStrip(moving, at(u), at(v), segment.side, 0.18 + flow * 0.25, 0.98);
+        }
+      }
+      renderer.draw(staticFaces, moving, palette.colors, gardenView);
+      attrs.set("data-pica-ready", "true");
+    }
+    resize();
+    rebuild();
+    const loop = createLoop({ el: host, fps: 12, paused: props.paused, time: props.time, still: 1200, frame: draw });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.layout !== before.layout || props.planting !== before.planting || props.flow !== before.flow) rebuild();
+        palette.refresh();
+        loop.update({ paused: props.paused, time: props.time });
+        loop.redraw();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        loop.destroy();
+        palette.destroy();
+        surface.destroy();
+        attrs.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaPixelTerracedGarden.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>

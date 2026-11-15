@@ -4,7 +4,7 @@ Four layers. Each depends only on the ones above it.
 
 | Layer | Where | Depends on | Job |
 |---|---|---|---|
-| Runtime | `lib/` | nothing | the grid, ramps, loop, sampling, palette, events, host ownership, canvases, WebGL2 shaders, chart scales, and seeded randomness |
+| Runtime | `lib/` | nothing | the grid, ramps, loop, sampling, palette, events, host ownership, canvases, pixel scenes, WebGL2 shaders, chart scales, and seeded randomness |
 | Components | `registry/<category>/<slug>/` | `lib/`, plus `react` for wrappers; sections also compose other cores | one core, one wrapper, and one meta per component |
 | Build | `scripts/` | the two layers above, esbuild, the shadcn CLI | generates both shapes, the registry, the markdown twins, llms.txt, and the catalog, and verifies them in a browser |
 | Site | `src/` | the generated catalog | the static catalog people browse, with a live frame per component |

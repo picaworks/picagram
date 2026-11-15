@@ -1,0 +1,747 @@
+<!doctype html>
+<!--
+  Pica · Shop Lane · shop-lane
+  MIT + Commons Clause · https://github.com/rishabbalak/picagram/blob/main/LICENSE.md
+  Docs and credits: https://github.com/rishabbalak/picagram
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Shop Lane · Pica</title>
+<style>:root { --pica-accent: #13C4A3; }
+html, body { margin: 0; height: 100%; background: #0a0a0a; color: #f1f1ef; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+@media (prefers-color-scheme: light) { html:not([data-ground]), html:not([data-ground]) body { background: #f1f1ef; color: #0a0a0a; } }
+html[data-ground="paper"], html[data-ground="paper"] body { background: #f1f1ef; color: #0a0a0a; }
+html[data-ground="checker"] body { background: repeating-conic-gradient(#161616 0% 25%, #0a0a0a 0% 50%) 50% / 24px 24px; }
+#pica { width: 100%; height: 100%; }
+html[data-stage="flow"] #pica, html[data-stage="flow"] #root > * { height: auto; min-height: 100vh; }
+.pica-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 3.2vw, 40px); }
+.pica-stage #pica { width: auto; height: auto; }
+.pica-stage span#pica, .pica-stage div#pica { display: inline-block; }</style>
+</head>
+<body>
+<div id="pica"></div>
+<script>
+"use strict";
+var PicaShopLane = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // registry/immersive/shop-lane/core.ts
+  var core_exports = {};
+  __export(core_exports, {
+    defaults: () => defaults,
+    mount: () => mount
+  });
+
+  // lib/host.ts
+  var unstyled = /* @__PURE__ */ new WeakMap();
+  function styleHost(host, styles) {
+    if (!unstyled.has(host)) unstyled.set(host, !host.hasAttribute("style"));
+    const before = Object.keys(styles).map(
+      (name) => [name, host.style.getPropertyValue(name), host.style.getPropertyPriority(name)]
+    );
+    for (const [name, value] of Object.entries(styles)) host.style.setProperty(name, value);
+    let restored = false;
+    return () => {
+      if (restored) return;
+      restored = true;
+      for (const [name, value, priority] of before) {
+        if (value) host.style.setProperty(name, value, priority);
+        else host.style.removeProperty(name);
+      }
+      if (host.style.length === 0 && unstyled.get(host)) host.removeAttribute("style");
+    };
+  }
+  function hostAttributes(host) {
+    const original = /* @__PURE__ */ new Map();
+    const apply = (name, value) => {
+      if (value === null) host.removeAttribute(name);
+      else host.setAttribute(name, value);
+    };
+    return {
+      set(name, value) {
+        if (!original.has(name)) original.set(name, host.getAttribute(name));
+        apply(name, value);
+      },
+      restore() {
+        for (const [name, value] of original) apply(name, value);
+        original.clear();
+      }
+    };
+  }
+
+  // lib/canvas.ts
+  function createCanvas(host, options = {}) {
+    const { maxDpr = 2, maxPixels = Number.POSITIVE_INFINITY, autoSize = true, css = "", onResize } = options;
+    const restore = styleHost(
+      host,
+      getComputedStyle(host).position === "static" ? { position: "relative", overflow: "hidden" } : { overflow: "hidden" }
+    );
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("data-pica", "");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = `position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;${css}`;
+    host.appendChild(canvas);
+    let cssWidth = -1;
+    let cssHeight = -1;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    function measure() {
+      const w = host.clientWidth;
+      const h = host.clientHeight;
+      if (w === cssWidth && h === cssHeight) return false;
+      cssWidth = w;
+      cssHeight = h;
+      dpr = Math.min(globalThis.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (Math.max(1, w) * Math.max(1, h))));
+      if (autoSize) {
+        width = Math.max(1, Math.round(w * dpr));
+        height = Math.max(1, Math.round(h * dpr));
+        canvas.width = width;
+        canvas.height = height;
+      }
+      return true;
+    }
+    measure();
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(() => {
+      if (measure()) onResize?.(cssWidth, cssHeight);
+    }) : null;
+    observer?.observe(host);
+    return {
+      canvas,
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get dpr() {
+        return dpr;
+      },
+      get cssWidth() {
+        return cssWidth;
+      },
+      get cssHeight() {
+        return cssHeight;
+      },
+      destroy() {
+        observer?.disconnect();
+        canvas.remove();
+        restore();
+      }
+    };
+  }
+
+  // lib/loop.ts
+  var MAX_STEP_MS = 100;
+  function createLoop(options) {
+    const { el, frame } = options;
+    let state = { paused: options.paused, time: options.time, fps: options.fps, still: options.still };
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    let onScreen = true;
+    let tabVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    const motionQuery = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+    let reduced = motionQuery?.matches ?? false;
+    const animating = () => !state.paused && state.time === null && !reduced && onScreen && tabVisible;
+    const heldTime = () => state.time !== null ? state.time : reduced ? state.still : t;
+    function tick(now) {
+      raf = 0;
+      if (!animating()) return;
+      if (last === 0) last = now;
+      const elapsed = now - last;
+      if (elapsed >= 1e3 / Math.max(1, state.fps) - 1) {
+        t += Math.min(elapsed, MAX_STEP_MS);
+        last = now;
+        frame(t, reduced);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function sync(drawHeld) {
+      const go = animating();
+      if (go && raf === 0) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      } else if (!go && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (!go && drawHeld) frame(heldTime(), reduced);
+    }
+    const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      onScreen = entry ? entry.isIntersecting : true;
+      sync(false);
+    }) : null;
+    observer?.observe(el);
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      sync(false);
+    };
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", onVisibility);
+    const onMotion = () => {
+      reduced = motionQuery?.matches ?? false;
+      sync(true);
+    };
+    motionQuery?.addEventListener("change", onMotion);
+    frame(heldTime(), reduced);
+    sync(false);
+    return {
+      update(next) {
+        const timeChanged = next.time !== void 0 && next.time !== state.time;
+        state = { ...state, ...next };
+        if (state.time !== null) t = state.time;
+        sync(timeChanged || next.paused !== void 0 || next.still !== void 0);
+      },
+      redraw() {
+        frame(heldTime(), reduced);
+      },
+      get reduced() {
+        return reduced;
+      },
+      destroy() {
+        if (raf !== 0) cancelAnimationFrame(raf);
+        raf = 0;
+        observer?.disconnect();
+        if (typeof document !== "undefined") document.removeEventListener("visibilitychange", onVisibility);
+        motionQuery?.removeEventListener("change", onMotion);
+      }
+    };
+  }
+
+  // lib/palette.ts
+  var TOKENS = ["fg", "bg", "accent", "muted"];
+  var TOKEN_FALLBACK = {
+    fg: "currentColor",
+    bg: "transparent",
+    accent: "#13C4A3",
+    muted: "color-mix(in srgb, var(--pica-fg, currentColor) 65%, transparent)"
+  };
+  function cssVar(token) {
+    return `var(--pica-${token}, ${TOKEN_FALLBACK[token]})`;
+  }
+  var PROBE_EVENTS = ["transitionrun", "transitionstart", "transitionend", "transitioncancel"];
+  function createProbe(host) {
+    const probe = document.createElement("span");
+    probe.setAttribute("data-pica", "");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = [
+      "position:absolute",
+      "width:0",
+      "height:0",
+      "overflow:hidden",
+      "visibility:hidden",
+      "pointer-events:none",
+      `color:${cssVar("fg")}`,
+      `background-color:${cssVar("bg")}`,
+      `border-top:0 solid ${cssVar("accent")}`,
+      `outline:0 solid ${cssVar("muted")}`,
+      // A 1 ms transition turns any change to a token into a transitionend event, which watchPalette hears.
+      "transition:color 1ms,background-color 1ms,border-top-color 1ms,outline-color 1ms"
+    ].join(";");
+    host.appendChild(probe);
+    return probe;
+  }
+  function probeColors(probe) {
+    const style = getComputedStyle(probe);
+    return { fg: style.color, bg: style.backgroundColor, accent: style.borderTopColor, muted: style.outlineColor };
+  }
+  function watchPalette(host, onChange) {
+    const probe = createProbe(host);
+    let colors = probeColors(probe);
+    function refresh() {
+      const next = probeColors(probe);
+      const differs = TOKENS.some((token) => next[token] !== colors[token]);
+      colors = next;
+      return differs;
+    }
+    const onEvent = (event) => {
+      event.stopPropagation();
+      if (event.type === "transitionend" && refresh()) onChange(colors);
+    };
+    for (const type of PROBE_EVENTS) probe.addEventListener(type, onEvent);
+    return {
+      get colors() {
+        return colors;
+      },
+      refresh,
+      destroy() {
+        for (const type of PROBE_EVENTS) probe.removeEventListener(type, onEvent);
+        probe.remove();
+      }
+    };
+  }
+
+  // lib/color.ts
+  var colorProbe;
+  function parseColor(color) {
+    if (colorProbe === void 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      colorProbe = canvas.getContext("2d", { willReadFrequently: true });
+    }
+    if (!colorProbe) return [0, 0, 0, 0];
+    colorProbe.clearRect(0, 0, 1, 1);
+    colorProbe.fillStyle = "rgba(0, 0, 0, 0)";
+    colorProbe.fillStyle = color;
+    colorProbe.fillRect(0, 0, 1, 1);
+    const d = colorProbe.getImageData(0, 0, 1, 1).data;
+    return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, d[3] ?? 0];
+  }
+
+  // lib/dither.ts
+  function bayerMatrix(size) {
+    let m = [0];
+    let n = 1;
+    while (n < size) {
+      const next = new Array(4 * n * n).fill(0);
+      for (let y = 0; y < n; y++) {
+        for (let x = 0; x < n; x++) {
+          const v = 4 * (m[y * n + x] ?? 0);
+          next[y * 2 * n + x] = v;
+          next[y * 2 * n + x + n] = v + 2;
+          next[(y + n) * 2 * n + x] = v + 3;
+          next[(y + n) * 2 * n + x + n] = v + 1;
+        }
+      }
+      m = next;
+      n *= 2;
+    }
+    const out = new Float32Array(size * size);
+    for (let i = 0; i < out.length; i++) out[i] = ((m[i] ?? 0) + 0.5) / (size * size);
+    return out;
+  }
+  var bayerCache = /* @__PURE__ */ new Map();
+  function bayerAt(size, x, y) {
+    let m = bayerCache.get(size);
+    if (!m) {
+      m = bayerMatrix(size);
+      bayerCache.set(size, m);
+    }
+    const mx = (x % size + size) % size;
+    const my = (y % size + size) % size;
+    return m[my * size + mx] ?? 0.5;
+  }
+  var KERNELS = {
+    "floyd-steinberg": [[1, 0, 7 / 16], [-1, 1, 3 / 16], [0, 1, 5 / 16], [1, 1, 1 / 16]],
+    // Atkinson spreads three quarters of the error, which keeps highlights and shadows cleaner.
+    atkinson: [[1, 0, 1 / 8], [2, 0, 1 / 8], [-1, 1, 1 / 8], [0, 1, 1 / 8], [1, 1, 1 / 8], [0, 2, 1 / 8]]
+  };
+
+  // lib/pixel-scene.ts
+  var pixelSceneLight = [-0.65, 0.35, 1];
+  var pixelSceneClamp = (n, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, n));
+  var pixelSceneFinite = (p) => p.every(Number.isFinite);
+  var pixelSceneCross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  var pixelSceneSub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  var pixelSceneUnit = (p) => {
+    const length = Math.hypot(...p) || 1;
+    return [p[0] / length, p[1] / length, p[2] / length];
+  };
+  var pixelSceneSides = (sides) => Math.round(pixelSceneClamp(Number.isFinite(sides) ? sides : 8, 6, 12));
+  function pixelBox(out, min, size, paint = {}) {
+    if (!pixelSceneFinite(min) || !pixelSceneFinite(size) || size.some((n) => n <= 0)) return;
+    const p = [];
+    for (const [x, y, z] of [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]]) {
+      p.push([min[0] + (x ?? 0) * size[0], min[1] + (y ?? 0) * size[1], min[2] + (z ?? 0) * size[2]]);
+    }
+    for (const ring of [[3, 2, 1, 0], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]]) {
+      out.push({ ...paint, points: ring.map((i) => p[i]) });
+    }
+  }
+  function pixelPrism(out, footprint, bottom, height, paint = {}) {
+    if (footprint.length < 3 || !Number.isFinite(bottom) || !Number.isFinite(height) || height <= 0 || footprint.some((p) => !p.every(Number.isFinite))) return;
+    const low = footprint.map(([x, y]) => [x, y, bottom]);
+    const high = footprint.map(([x, y]) => [x, y, bottom + height]);
+    out.push({ ...paint, points: [...low].reverse() }, { ...paint, points: high });
+    for (let i = 0; i < low.length; i++) {
+      const j = (i + 1) % low.length;
+      out.push({ ...paint, points: [low[i], low[j], high[j], high[i]] });
+    }
+  }
+  function pixelRod(out, from, to, radius, paint = {}, sides = 8) {
+    if (!pixelSceneFinite(from) || !pixelSceneFinite(to) || !Number.isFinite(radius) || radius <= 0 || Math.hypot(...pixelSceneSub(to, from)) < 1e-10) return;
+    const axis = pixelSceneUnit(pixelSceneSub(to, from));
+    const u = pixelSceneUnit(pixelSceneCross(axis, Math.abs(axis[2]) < 0.9 ? [0, 0, 1] : [0, 1, 0]));
+    const v = pixelSceneCross(axis, u);
+    const count = pixelSceneSides(sides);
+    const rings = [from, to].map((center) => Array.from({ length: count }, (_, i) => {
+      const angle = i / count * Math.PI * 2;
+      return [0, 1, 2].map((j) => center[j] + radius * (u[j] * Math.cos(angle) + v[j] * Math.sin(angle)));
+    }));
+    const low = rings[0], high = rings[1];
+    out.push({ ...paint, points: [...low].reverse() }, { ...paint, points: high });
+    for (let i = 0; i < count; i++) out.push({ ...paint, points: [low[i], low[(i + 1) % count], high[(i + 1) % count], high[i]] });
+  }
+  function createPixelScene(canvas) {
+    const context = canvas.getContext("2d");
+    if (!context) return { draw() {
+    } };
+    let width = 0, height = 0, image;
+    let depth = new Float64Array(0), baseDepth = new Float64Array(0);
+    let basePixels = new Uint8ClampedArray(0);
+    let cachedFaces, cachedView = "", paletteKey = "";
+    let inks;
+    let yawCos = 1, yawSin = 0, elevCos = 1, elevSin = 0, scale = 1, offsetX = 0, offsetY = 0;
+    let center = [0, 0, 0], ground = 0, epsilon = 1e-5, receiverTolerance = 4e-5, lightInk = true;
+    function project(p) {
+      const x = p[0] - center[0], y = p[1] - center[1], z = p[2] - center[2];
+      const along = x * yawSin + y * yawCos;
+      return [(x * yawCos - y * yawSin) * scale + offsetX, (along * elevSin - z * elevCos) * scale + offsetY, along * elevCos + z * elevSin];
+    }
+    function put(x, y, z, ink, amount, shadow = false, edge = false) {
+      if (x < 0 || y < 0 || x >= width || y >= height || !Number.isFinite(z)) return;
+      const index = y * width + x, previous = depth[index];
+      if (z < previous - 1e-9 || !edge && z <= previous + 1e-9) return;
+      if (shadow && (!Number.isFinite(previous) || Math.abs(z - previous) > receiverTolerance)) return;
+      const data = image.data, i = index * 4;
+      if (shadow) {
+        const priorAlpha = data[i + 3] / 255;
+        const source = lightInk ? inks.bg : inks.fg;
+        const weight = lightInk ? 0.38 : 0.18;
+        const sourceAlpha = source[3] / 255;
+        const alpha2 = lightInk ? priorAlpha * (1 - weight) + sourceAlpha * weight : sourceAlpha * weight + priorAlpha * (1 - sourceAlpha * weight);
+        for (let channel = 0; channel < 3; channel++) {
+          const priorWeight = lightInk ? priorAlpha * (1 - weight) : priorAlpha * (1 - sourceAlpha * weight);
+          data[i + channel] = alpha2 ? (data[i + channel] * priorWeight + source[channel] * sourceAlpha * weight) / alpha2 : 0;
+        }
+        data[i + 3] = alpha2 * 255;
+        depth[index] = z;
+        return;
+      }
+      const quantized = pixelSceneClamp((Math.floor(amount * 16) + (bayerAt(2, x, y) < amount * 16 % 1 ? 1 : 0)) / 16);
+      const bg = inks.bg, alpha = ink[3] / 255 * quantized, backgroundAlpha = bg[3] / 255;
+      const resultAlpha = alpha + backgroundAlpha * (1 - alpha);
+      for (let channel = 0; channel < 3; channel++) {
+        data[i + channel] = resultAlpha ? (ink[channel] * alpha + bg[channel] * backgroundAlpha * (1 - alpha)) / resultAlpha : 0;
+      }
+      data[i + 3] = resultAlpha * 255;
+      depth[index] = Math.max(z, previous);
+    }
+    function triangle(a, b, c, ink, amount, shadow) {
+      const area = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+      if (!Number.isFinite(area) || Math.abs(area) < 1e-9) return;
+      const left = Math.max(0, Math.floor(Math.min(a[0], b[0], c[0])));
+      const right = Math.min(width - 1, Math.ceil(Math.max(a[0], b[0], c[0])));
+      const top = Math.max(0, Math.floor(Math.min(a[1], b[1], c[1])));
+      const bottom = Math.min(height - 1, Math.ceil(Math.max(a[1], b[1], c[1])));
+      for (let y = top; y <= bottom; y++) for (let x = left; x <= right; x++) {
+        const px = x + 0.5, py = y + 0.5;
+        const wa = ((b[0] - px) * (c[1] - py) - (b[1] - py) * (c[0] - px)) / area;
+        const wb = ((c[0] - px) * (a[1] - py) - (c[1] - py) * (a[0] - px)) / area;
+        const wc = 1 - wa - wb;
+        if (wa >= -1e-9 && wb >= -1e-9 && wc >= -1e-9) put(x, y, wa * a[2] + wb * b[2] + wc * c[2], ink, amount, shadow);
+      }
+    }
+    function perimeter(a, b, ink, tone) {
+      const dx = b[0] - a[0], dy = b[1] - a[1];
+      let low = 0, high = 1;
+      for (const [p, q] of [[-dx, a[0]], [dx, width - 1 - a[0]], [-dy, a[1]], [dy, height - 1 - a[1]]]) {
+        if (p === 0) {
+          if (q < 0) return;
+        } else if (p < 0) low = Math.max(low, q / p);
+        else high = Math.min(high, q / p);
+      }
+      if (low > high) return;
+      const steps = Math.max(1, Math.ceil(Math.max(Math.abs(dx), Math.abs(dy)) * (high - low)));
+      for (let i = 0; i <= steps; i++) {
+        const t = low + (high - low) * i / steps;
+        put(Math.round(a[0] + dx * t), Math.round(a[1] + dy * t), a[2] + (b[2] - a[2]) * t, ink, tone, false, true);
+      }
+    }
+    function faces(input, shadow = false, floorOnly = false) {
+      for (const face of input) {
+        if (face.points.length < 3 || face.points.some((p) => !pixelSceneFinite(p))) continue;
+        if (shadow && (!face.shadow || !face.points.some((p) => p[2] > ground + epsilon))) continue;
+        const floor = face.points.every((p) => Math.abs(p[2] - ground) < epsilon);
+        if (floorOnly && !floor) continue;
+        const points = face.points.map((p) => project(shadow ? [p[0] - pixelSceneLight[0] * Math.max(0, p[2] - ground), p[1] - pixelSceneLight[1] * Math.max(0, p[2] - ground), ground + epsilon] : p));
+        if (points.some((p) => !pixelSceneFinite(p))) continue;
+        let normal = [0, 0, 0];
+        for (let i = 1; i < face.points.length - 1 && Math.hypot(...normal) < 1e-10; i++) normal = pixelSceneCross(pixelSceneSub(face.points[i], face.points[0]), pixelSceneSub(face.points[i + 1], face.points[0]));
+        normal = pixelSceneUnit(normal);
+        const facing = normal[0] * yawSin * elevCos + normal[1] * yawCos * elevCos + normal[2] * elevSin;
+        const light = pixelSceneClamp((normal[0] * pixelSceneLight[0] + normal[1] * pixelSceneLight[1] + normal[2]) * (facing < 0 ? -1 : 1) / Math.hypot(...pixelSceneLight));
+        const tone = pixelSceneClamp(Number.isFinite(face.tone ?? 1) ? face.tone ?? 1 : 1);
+        const amount = shadow ? 0 : tone * (lightInk ? 0.72 + light * 0.24 : 0.94 - light * 0.2) * (floor ? 0.58 : 1);
+        const ink = shadow ? inks.fg : inks[face.ink ?? "fg"];
+        for (let i = 1; i < points.length - 1; i++) triangle(points[0], points[i], points[i + 1], ink, amount, shadow);
+        if (!shadow && !floorOnly && face.edge) for (let i = 0; i < points.length; i++) perimeter(points[i], points[(i + 1) % points.length], ink, tone);
+      }
+    }
+    return {
+      draw(staticFaces, movingFaces, colors, view) {
+        const nextWidth = canvas.width, nextHeight = canvas.height;
+        if (nextWidth < 1 || nextHeight < 1) return;
+        if (width !== nextWidth || height !== nextHeight) {
+          width = nextWidth;
+          height = nextHeight;
+          image = context.createImageData(width, height);
+          depth = new Float64Array(width * height);
+          baseDepth = new Float64Array(width * height);
+          basePixels = new Uint8ClampedArray(width * height * 4);
+          cachedFaces = void 0;
+        }
+        const nextPalette = JSON.stringify([colors.fg, colors.bg, colors.accent, colors.muted]);
+        if (paletteKey !== nextPalette) {
+          paletteKey = nextPalette;
+          inks = { fg: parseColor(colors.fg), bg: parseColor(colors.bg), accent: parseColor(colors.accent), muted: parseColor(colors.muted) };
+          const groundLuminance = inks.bg[3] ? inks.bg[0] * 0.2126 + inks.bg[1] * 0.7152 + inks.bg[2] * 0.0722 : 127.5;
+          lightInk = inks.fg[0] * 0.2126 + inks.fg[1] * 0.7152 + inks.fg[2] * 0.0722 >= groundLuminance;
+          cachedFaces = void 0;
+        }
+        const viewKey = JSON.stringify([view.bounds, view.ground ?? 0, view.yaw ?? 45, view.elevation ?? 30]);
+        if (cachedFaces !== staticFaces || cachedView !== viewKey) {
+          cachedView = viewKey;
+          const yaw = (view.yaw ?? 45) * Math.PI / 180, elevation = (view.elevation ?? 30) * Math.PI / 180;
+          yawCos = Math.cos(yaw);
+          yawSin = Math.sin(yaw);
+          elevCos = Math.cos(elevation);
+          elevSin = Math.sin(elevation);
+          center = [0, 1, 2].map((i) => (view.bounds[0][i] + view.bounds[1][i]) / 2);
+          ground = view.ground ?? 0;
+          epsilon = Math.max(1e-6, Math.hypot(...pixelSceneSub(view.bounds[1], view.bounds[0])) * 1e-5);
+          receiverTolerance = epsilon * 4 / Math.max(1e-3, Math.abs(elevSin));
+          scale = 1;
+          offsetX = 0;
+          offsetY = 0;
+          const corners = [];
+          for (let i = 0; i < 8; i++) corners.push(project([view.bounds[i & 1 ? 1 : 0][0], view.bounds[i & 2 ? 1 : 0][1], view.bounds[i & 4 ? 1 : 0][2]]));
+          const left = Math.min(...corners.map((p) => p[0])), right = Math.max(...corners.map((p) => p[0]));
+          const top = Math.min(...corners.map((p) => p[1])), bottom = Math.max(...corners.map((p) => p[1]));
+          scale = Math.min(width * 0.88 / Math.max(1e-8, right - left), height * 0.88 / Math.max(1e-8, bottom - top));
+          offsetX = width / 2 - (left + right) * scale / 2;
+          offsetY = height / 2 - (top + bottom) * scale / 2;
+          const data = image.data;
+          for (let i = 0; i < data.length; i += 4) {
+            data[i] = inks.bg[0];
+            data[i + 1] = inks.bg[1];
+            data[i + 2] = inks.bg[2];
+            data[i + 3] = inks.bg[3];
+          }
+          depth.fill(-Infinity);
+          faces(staticFaces, false, true);
+          faces(staticFaces, true);
+          faces(staticFaces);
+          basePixels.set(data);
+          baseDepth.set(depth);
+          cachedFaces = staticFaces;
+        }
+        image.data.set(basePixels);
+        depth.set(baseDepth);
+        faces(movingFaces, true);
+        faces(movingFaces);
+        context.putImageData(image, 0, 0);
+      }
+    };
+  }
+
+  // registry/immersive/shop-lane/core.ts
+  var defaults = {
+    layout: "dogleg",
+    frontages: 3,
+    canopyDepth: 1,
+    paused: false,
+    time: null,
+    seed: 1
+  };
+  var shopLaneView = { bounds: [[-5.9, -5.1, -0.8], [6.3, 5, 5.9]], yaw: 45, elevation: 30 };
+  var mount = (host, initial = {}) => {
+    let props = { ...defaults, ...initial };
+    const attrs = hostAttributes(host);
+    attrs.set("role", null);
+    attrs.set("aria-label", null);
+    attrs.set("aria-hidden", "true");
+    attrs.set("data-pica-ready", host.getAttribute("data-pica-ready"));
+    let fixed = [];
+    let screen = [];
+    let destroyed = false;
+    const surface = createCanvas(host, { autoSize: false, css: "image-rendering:pixelated", onResize: () => {
+      resize();
+      loop.redraw();
+    } });
+    const scene = createPixelScene(surface.canvas);
+    const palette = watchPalette(host, () => loop.redraw());
+    function resize() {
+      const w = surface.cssWidth, h = surface.cssHeight;
+      const scale = Math.max(3, Math.ceil(w / 360), Math.ceil(h / 300));
+      const c = surface.canvas;
+      c.width = Math.max(1, Math.floor(w / scale));
+      c.height = Math.max(1, Math.floor(h / scale));
+      Object.assign(c.style, { width: `${c.width * scale}px`, height: `${c.height * scale}px`, left: `${Math.floor((w - c.width * scale) / 2)}px`, top: `${Math.floor((h - c.height * scale) / 2)}px`, right: "auto", bottom: "auto" });
+    }
+    function box(x, y, z, w, d, h, tone = 0.6) {
+      pixelBox(fixed, [x, y, z], [w, d, h], { tone, edge: true });
+    }
+    function shop(x, y, w, d, h, clerestory = false) {
+      box(x, y, 0.5, w, d, h, 0.58);
+      const z = h + 0.5;
+      if (clerestory) {
+        box(x - 0.12, y - 0.12, z, w + 0.24, d + 0.24, 0.15, 0.85);
+        box(x + 0.3, y + 0.3, z + 0.15, w - 0.6, d - 0.6, 0.45, 0.5);
+        box(x + 0.17, y + 0.2, z + 0.6, w - 0.34, d - 0.4, 0.13, 0.85);
+      } else fixed.push(
+        { points: [[x - 0.12, y - 0.12, z], [x + w / 2, y - 0.12, z + 0.8], [x + w / 2, y + d + 0.12, z + 0.8], [x - 0.12, y + d + 0.12, z]], tone: 0.85, edge: true },
+        { points: [[x + w / 2, y - 0.12, z + 0.8], [x + w + 0.12, y - 0.12, z], [x + w + 0.12, y + d + 0.12, z], [x + w / 2, y + d + 0.12, z + 0.8]], tone: 0.52, edge: true },
+        { points: [[x - 0.12, y + d + 0.12, z], [x + w + 0.12, y + d + 0.12, z], [x + w / 2, y + d + 0.12, z + 0.8]], tone: 0.68 },
+        { points: [[x - 0.12, y - 0.12, z], [x + w + 0.12, y - 0.12, z], [x + w / 2, y - 0.12, z + 0.8]], tone: 0.68 }
+      );
+      fixed.push(
+        { points: [[x + 0.3, y + d + 0.015, 0.5], [x + 0.95, y + d + 0.015, 0.5], [x + 0.95, y + d + 0.015, 1.9], [x + 0.3, y + d + 0.015, 1.9]], tone: 0.18 },
+        { points: [[x + 1.15, y + d + 0.015, 1], [x + w - 0.2, y + d + 0.015, 1], [x + w - 0.2, y + d + 0.015, 2.1], [x + 1.15, y + d + 0.015, 2.1]], tone: 0.25 },
+        { points: [[x + w + 0.015, y + 0.4, 1.4], [x + w + 0.015, y + d - 0.35, 1.4], [x + w + 0.015, y + d - 0.35, 2.2], [x + w + 0.015, y + 0.4, 2.2]], tone: 0.22 }
+      );
+    }
+    function bicycle() {
+      for (const cx of [3.15, 4.25]) for (let i = 0; i < 8; i++) {
+        const a = i * Math.PI / 4, b = (i + 1) * Math.PI / 4;
+        const p = (r, t) => [cx + r * Math.cos(t), 3.9, 0.86 + r * Math.sin(t)];
+        fixed.push({ points: [p(0.36, a), p(0.36, b), p(0.29, b), p(0.29, a)], tone: 0.8 });
+      }
+      const rod = (a, b) => pixelRod(fixed, a, b, 0.045, { tone: 0.75 }, 4);
+      rod([3.15, 3.9, 0.86], [3.55, 3.9, 1.32]);
+      rod([3.55, 3.9, 1.32], [3.75, 3.9, 0.86]);
+      rod([3.75, 3.9, 0.86], [3.15, 3.9, 0.86]);
+      rod([3.55, 3.9, 1.32], [4.1, 3.9, 1.35]);
+      rod([4.1, 3.9, 1.35], [4.25, 3.9, 0.86]);
+      rod([3.43, 3.9, 1.4], [3.74, 3.9, 1.4]);
+      rod([4.06, 3.9, 1.35], [4.02, 3.9, 1.6]);
+    }
+    function rebuild() {
+      fixed = [];
+      screen = [];
+      const count = Math.max(2, Math.min(4, Math.round(props.frontages)));
+      const depth = Math.max(0, Math.min(2, Math.round(props.canopyDepth)));
+      const bridge = props.layout === "bridge-lane";
+      const gate = props.layout === "gate-court";
+      pixelPrism(fixed, [[-5.5, -4.7], [5.6, -4.7], [6, -3.7], [6, 4.3], [4.8, 4.7], [-5.5, 4.7]], -0.65, 1.15, { tone: 0.23 });
+      box(-5.2, 2.32, 0.51, 8.1, 1.3, 0.025, 0.4);
+      box(1.5, -4.5, 0.51, 1.8, 6.82, 0.025, 0.4);
+      box(-5, -0.3, 0.5, 6.4, 0.18, 2.15, 0.3);
+      box(-5, -0.3, 0.5, 0.22, 2.3, 2.15, 0.65);
+      box(1.18, -0.3, 0.5, 0.22, 2.3, 2.15, 0.65);
+      box(-5, -0.3, 0.5, 6.4, 2.3, 0.08, 0.35);
+      box(-5.15, -0.45, 2.65, 6.7, 2.65, 0.17, 0.8);
+      box(-4.65, 1.37, 0.58, 2.55, 0.45, 0.67, 0.64);
+      box(-4.72, 1.32, 1.25, 2.69, 0.58, 0.12, 0.92);
+      box(-4.45, 0.05, 0.58, 0.45, 0.35, 1.4, 0.48);
+      box(-3.55, 0.05, 0.58, 0.9, 0.35, 1.15, 0.54);
+      box(-1.68, 2.2, 0.58, 3.08, 0.16, 1.94, 0.56);
+      box(1.25, 1.96, 0.58, 0.15, 0.4, 1.94, 0.7);
+      box(-1.8, 2.17, 0.55, 0.12, 0.23, 2.02, 0.84);
+      box(-4.85, 2.04, 0.54, 6.25, 0.15, 0.1, 0.85);
+      box(-4.85, 2.04, 2.48, 6.25, 0.15, 0.1, 0.85);
+      for (let i = 0; i < 3; i++) box(-1.45 + i * 0.9, 2.365, 0.78, 0.035, 0.015, 1.55, 0.36);
+      shop(-5, -4.5, 3.2, 3.2, bridge ? 2.6 : 3, false);
+      if (count > 2) shop(3.35, bridge ? -4.55 : -3.5, 2.25, bridge ? 1.25 : gate ? 4.8 : 4.1, 3.15, true);
+      if (count > 3) shop(-0.35, -4.6, 1.85, bridge ? 1.45 : 1.6, 2.8, false);
+      if (bridge) {
+        box(3.35, -3.1, 0.5, 2.15, 1.8, 2.6, 0.5);
+        box(-1.8, -2.9, 3.1, 5.3, 1.2, 1.03, 0.57);
+        box(-1.95, -3.02, 4.13, 5.6, 1.44, 0.18, 0.82);
+        fixed.push({ points: [[-1.25, -1.685, 3.4], [2.8, -1.685, 3.4], [2.8, -1.685, 3.82], [-1.25, -1.685, 3.82]], tone: 0.22 });
+        for (let i = 0; i < 8; i++) box(4.25, 2.2 - i * 0.5, 0.5, 1.1, 0.5, 2.6 * (i + 1) / 8, 0.63);
+      } else {
+        for (let i = 0; i < 8; i++) box(-1.7, -0.8 - i * 0.5, 0.5, 1.1, 0.5, 2.1 * (i + 1) / 8, 0.63);
+        box(-1.95, -4.6, 2.45, 1.35, 0.3, 0.15, 0.7);
+        fixed.push({ points: [[-1.785, -4.35, 2.6], [-1.785, -3.95, 2.6], [-1.785, -3.95, 3.45], [-1.785, -4.35, 3.45]], tone: 0.2 });
+      }
+      if (gate) {
+        box(-3.8, 4, 0.5, 0.22, 0.22, 2.35, 0.7);
+        box(4.7, 4, 0.5, 0.22, 0.22, 2.35, 0.7);
+        box(-3.95, 3.92, 2.85, 8.95, 0.38, 0.25, 0.8);
+      }
+      for (let i = 0; i < depth; i++) {
+        const y = 2.45 + i * 0.4;
+        box(-4.9, y, 2.56, 6.35, 0.12, 0.12, 0.75);
+        for (const x of [-4.85, 1.35]) box(x, 1.95, 2.56, 0.12, y - 1.8, 0.12, 0.72);
+      }
+      box(-5.1, 3, 0.5, 1.1, 0.65, 0.3, 0.55);
+      box(-4.98, 3.12, 0.8, 0.86, 0.4, 0.4, 0.72);
+      bicycle();
+      pixelBox(screen, [-4.65, 2.08, 0.64], [2.85, 0.08, 1.79], { ink: "accent", tone: 0.78, edge: true });
+      for (let i = 0; i < 4; i++) pixelBox(screen, [-4.45 + i * 0.72, 2.17, 0.64], [0.07, 0.035, 1.79], { tone: 0.65 });
+      for (const z of [0.64, 2.34]) pixelBox(screen, [-4.65, 2.17, z], [2.85, 0.035, 0.09], { tone: 0.8 });
+      pixelBox(screen, [-2.03, 2.21, 1.25], [0.08, 0.06, 0.36], { tone: 0.9 });
+    }
+    function draw(t) {
+      const phase = ((t / 1e3 + 1.3 + (Math.max(1, Math.min(99, props.seed)) - 1) * 0.16) % 10 + 10) % 10;
+      const travel = phase < 4.6 ? phase / 4.6 : phase < 5 ? 1 : phase < 9.6 ? 1 - (phase - 5) / 4.6 : 0;
+      const offset = travel * 2.98;
+      const moving = screen.map((f) => ({ ...f, points: f.points.map(([x, y, z]) => [x + offset, y, z]) }));
+      scene.draw(fixed, moving, palette.colors, shopLaneView);
+      attrs.set("data-pica-ready", "true");
+    }
+    resize();
+    rebuild();
+    const loop = createLoop({ el: host, fps: 12, paused: props.paused, time: props.time, still: 1200, frame: draw });
+    return {
+      update(next) {
+        const before = props;
+        props = { ...props, ...next };
+        if (props.layout !== before.layout || props.frontages !== before.frontages || props.canopyDepth !== before.canopyDepth) rebuild();
+        palette.refresh();
+        loop.update({ paused: props.paused, time: props.time });
+        loop.redraw();
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        loop.destroy();
+        palette.destroy();
+        surface.destroy();
+        attrs.restore();
+      }
+    };
+  };
+  return __toCommonJS(core_exports);
+})();
+
+(function () {
+  var host = document.getElementById("pica");
+  function take(props) {
+    var data = {};
+    for (var key in props) {
+      if (key !== "palette") data[key] = props[key];
+    }
+    var palette = props.palette || {};
+    for (var token in palette) {
+      if (palette[token]) host.style.setProperty("--pica-" + token, palette[token]);
+      else host.style.removeProperty("--pica-" + token);
+    }
+    return data;
+  }
+  var initial = Object.assign({}, {}, window.PICA_PROPS || {});
+  var instance = PicaShopLane.mount(host, take(initial));
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data) return;
+    if (event.data.type === "pica:props") instance.update(take(event.data.props));
+    if (event.data.type === "pica:ground") {
+      document.documentElement.setAttribute("data-ground", event.data.ground);
+      instance.update({});
+    }
+  });
+})();
+</script>
+</body>
+</html>
