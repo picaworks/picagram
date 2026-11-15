@@ -14,6 +14,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Bellows (`ascii-bellows`)
+
+Original to Picagram.
+
 ## ASCII Binary Tide (`ascii-binary-tide`)
 
 Original to Picagram.
@@ -22,7 +26,15 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Cam Follower (`ascii-cam-follower`)
+
+Original to Picagram.
+
 ## Campus directory (`ascii-campus-directory`)
+
+Original to Picagram.
+
+## ASCII Catenary Net (`ascii-catenary-net`)
 
 Original to Picagram.
 
@@ -54,6 +66,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Expanding Truss (`ascii-expanding-truss`)
+
+Original to Picagram.
+
 ## Expedition log (`ascii-expedition-log`)
 
 Original to Picagram.
@@ -71,6 +87,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## Garden Plan (`ascii-garden-plan`)
+
+Original to Picagram.
+
+## ASCII Gear Train (`ascii-gear-train`)
 
 Original to Picagram.
 
@@ -101,6 +121,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## ASCII Library Catalog (`ascii-library-catalog`)
+
+Original to Picagram.
+
+## ASCII Lift Bridge (`ascii-lift-bridge`)
 
 Original to Picagram.
 
@@ -140,6 +164,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Orrery (`ascii-orrery`)
+
+Original to Picagram.
+
 ## Packet Route (`ascii-packet-route`)
 
 Original to Picagram.
@@ -176,7 +204,23 @@ Original to Picagram.
 
 Original to Picagram.
 
+## ASCII Rolling Cube (`ascii-rolling-cube`)
+
+Original to Picagram.
+
+## ASCII Scissor Lift (`ascii-scissor-lift`)
+
+Original to Picagram.
+
 ## Score Strip (`ascii-score-strip`)
+
+Original to Picagram.
+
+## ASCII Screw Conveyor (`ascii-screw-conveyor`)
+
+Original to Picagram.
+
+## ASCII Shuttle Loom (`ascii-shuttle-loom`)
 
 Original to Picagram.
 
@@ -193,6 +237,10 @@ Original to Picagram.
 Original to Picagram.
 
 ## ASCII String Modes (`ascii-string-modes`)
+
+Original to Picagram.
+
+## ASCII Tension Sail (`ascii-tension-sail`)
 
 Original to Picagram.
 
@@ -992,6 +1040,10 @@ Original to Picagram.
 - Technique from [Improving Noise](https://mrl.cs.nyu.edu/~perlin/paper445.pdf) by Ken Perlin (Paper).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
 
+## Braided Cable (`braided-cable`)
+
+Original to Picagram.
+
 ## Brushed Alloy (`brushed-alloy`)
 
 Original to Picagram.
@@ -1005,6 +1057,10 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Chiseled Slate (`chiseled-slate`)
+
+Original to Picagram.
+
 ## Contour Engraving (`contour-engraving`)
 
 Original to Picagram.
@@ -1013,6 +1069,10 @@ Original to Picagram.
 
 - Technique from [The Relief Contour Method of Representing Topography on Maps](https://doi.org/10.2307/211219) by Kitiro Tanaka (Paper).
 - Technique from [Cartographic Relief Presentation](https://doi.org/10.1515/9783110844016) by Eduard Imhof (Book).
+
+## Crazed Ceramic (`crazed-ceramic`)
+
+Original to Picagram.
 
 ## Cut Paper Relief (`cut-paper-relief`)
 
@@ -1030,11 +1090,19 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Faceted Crystal (`faceted-crystal`)
+
+Original to Picagram.
+
 ## Fluted Shell (`fluted-shell`)
 
 Original to Picagram.
 
 ## Fluted Tunnel (`fluted-tunnel`)
+
+Original to Picagram.
+
+## Folded Vellum (`folded-vellum`)
 
 Original to Picagram.
 
@@ -1047,6 +1115,14 @@ Original to Picagram.
 Original to Picagram.
 
 ## Hammered Foil (`hammered-foil`)
+
+Original to Picagram.
+
+## Honeycomb Core (`honeycomb-core`)
+
+Original to Picagram.
+
+## Knurled Drum (`knurled-drum`)
 
 Original to Picagram.
 
@@ -1078,6 +1154,10 @@ Original to Picagram.
 - Technique from [Plasma effect](https://en.wikipedia.org/wiki/Plasma_effect) by Wikipedia (Algorithm, no code).
 - Technique from [Ordered dithering](https://en.wikipedia.org/wiki/Ordered_dithering) by Wikipedia (Algorithm, no code).
 
+## Porcelain Relief (`porcelain-relief`)
+
+Original to Picagram.
+
 ## Prismatic Tiles (`prismatic-tiles`)
 
 Original to Picagram.
@@ -1086,9 +1166,21 @@ Original to Picagram.
 
 Original to Picagram.
 
+## Ribbed Glass (`ribbed-glass`)
+
+Original to Picagram.
+
 ## Ripple Field (`ripple-field`)
 
 - Technique from [Simulating Ocean Water](https://jtessen.people.clemson.edu/reports/papers_files/coursenotes2004.pdf) by Jerry Tessendorf (Course notes).
+
+## Sand Ripples (`sand-ripples`)
+
+Original to Picagram.
+
+## Satin Ribbon (`satin-ribbon`)
+
+Original to Picagram.
 
 ## Scan Beam (`scan-beam`)
 
@@ -1118,6 +1210,10 @@ Original to Picagram.
 ## Tunnel Grid (`tunnel-grid`)
 
 - Technique from [Survey of Texture Mapping](https://doi.org/10.1109/MCG.1986.276672) by Paul S. Heckbert (Paper).
+
+## Twill Weave (`twill-weave`)
+
+Original to Picagram.
 
 ## Voronoi Drift (`voronoi-drift`)
 

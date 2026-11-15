@@ -15,3 +15,4 @@ How to add a plan: write it as `docs/plans/YYYY-MM-DD-<slug>.md`, get it approve
 | `2026-10-23-review-and-ascii-wind-tunnel.md` | ASCII motion selected in chat; local implementation and expanded review |
 | `2026-10-24-motion-materials-and-refinements.md` | Approved in chat: eight refinements, twenty additions and one PR |
 | `2026-10-24-kinetic-studies.md` | Approved in chat: twenty additions with isolated authors and integration review |
+| `2026-11-14-mechanisms-surfaces.md` | Requested in chat: twenty four additions with isolated authors and integration review |

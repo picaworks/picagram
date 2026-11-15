@@ -430,6 +430,159 @@
     "gzipBytes": 4955
   },
   {
+    "slug": "ascii-bellows",
+    "title": "ASCII Bellows",
+    "category": "ascii",
+    "description": "A finite pleated bellows expands between two square end plates, with alternating measured face densities and straight corner ribs preserving its depth.",
+    "tags": [
+      "bellows",
+      "accordion",
+      "pleats",
+      "braille",
+      "volume",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "folds": {
+        "type": "number",
+        "min": 6,
+        "max": 14,
+        "step": 1,
+        "label": "Accordion folds"
+      },
+      "compression": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Resting compression"
+      },
+      "travel": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.25,
+        "step": 0.05,
+        "label": "Expansion travel"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Expansion cycle speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause bellows"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "View and starting phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Workshop bellows",
+        "description": "Nine connected folds breathe through a moderate travel between braced square end plates.",
+        "props": {
+          "folds": 9,
+          "compression": 0.5,
+          "travel": 0.15,
+          "speed": 0.65,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Open pleats",
+        "description": "Six widely spaced folds reveal the alternating faces through a longer expansion cycle.",
+        "props": {
+          "folds": 6,
+          "compression": 0.3,
+          "travel": 0.25,
+          "speed": 0.5,
+          "fontSize": 16,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Close concertina",
+        "description": "Fourteen tightly packed folds hold a compact volume with shorter and slower travel.",
+        "props": {
+          "folds": 14,
+          "compression": 0.7,
+          "travel": 0.1,
+          "speed": 0.4,
+          "fontSize": 14,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiBellows",
+    "defaults": {
+      "folds": 9,
+      "compression": 0.5,
+      "travel": 0.15,
+      "speed": 0.65,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "folds": "Complete accordion folds between the square plates, from 6 to 14.",
+      "compression": "Compression of the resting bellows length, from 0.3 to 0.75.",
+      "travel": "Expansion and compression travel relative to resting length, from 0.1 to 0.25.",
+      "speed": "Rate of the expansion cycle, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "folds": "number",
+      "compression": "number",
+      "travel": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 5558
+  },
+  {
     "slug": "ascii-binary-tide",
     "title": "ASCII Binary Tide",
     "category": "ascii",
@@ -715,6 +868,160 @@
     "gzipBytes": 4805
   },
   {
+    "slug": "ascii-cam-follower",
+    "title": "ASCII Cam Follower",
+    "category": "ascii",
+    "description": "A finite braille cam lifts a tangent roller and vertical follower through a fixed guide, compressing a return spring above its moving collar.",
+    "tags": [
+      "cam",
+      "roller",
+      "follower",
+      "spring",
+      "braille",
+      "mechanism",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "eccentricity": {
+        "type": "number",
+        "min": 0.15,
+        "max": 0.4,
+        "step": 0.05,
+        "label": "Cam lift amplitude"
+      },
+      "lobes": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "label": "Lift lobes"
+      },
+      "springTurns": {
+        "type": "number",
+        "min": 5,
+        "max": 9,
+        "step": 1,
+        "label": "Return spring turns"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Cam rotation speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause cam follower"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting cam orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Single lift",
+        "description": "One eccentric lobe raises a seven turn spring once per slow revolution.",
+        "props": {
+          "eccentricity": 0.25,
+          "lobes": 1,
+          "springTurns": 7,
+          "speed": 0.7,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Twin rise",
+        "description": "Two broad lobes repeat a higher lift against a visibly open five turn spring.",
+        "props": {
+          "eccentricity": 0.35,
+          "lobes": 2,
+          "springTurns": 5,
+          "speed": 0.5,
+          "fontSize": 16,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Three gentle strokes",
+        "description": "Three shallow lobes cycle a fine nine turn return spring with a smaller vertical stroke.",
+        "props": {
+          "eccentricity": 0.15,
+          "lobes": 3,
+          "springTurns": 9,
+          "speed": 0.85,
+          "fontSize": 14,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiCamFollower",
+    "defaults": {
+      "eccentricity": 0.25,
+      "lobes": 1,
+      "springTurns": 7,
+      "speed": 0.7,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "eccentricity": "Radial lift amplitude of the cam, from 0.15 to 0.4.",
+      "lobes": "Lift lobes on each full cam revolution, from 1 to 3.",
+      "springTurns": "Visible turns in the connected return spring, from 5 to 9.",
+      "speed": "Cam rotation rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "eccentricity": "number",
+      "lobes": "number",
+      "springTurns": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4682
+  },
+  {
     "slug": "ascii-campus-directory",
     "title": "Campus directory",
     "category": "ascii",
@@ -827,6 +1134,159 @@
     },
     "events": {},
     "gzipBytes": 3447
+  },
+  {
+    "slug": "ascii-catenary-net",
+    "title": "ASCII Catenary Net",
+    "category": "ascii",
+    "description": "Curved braille cables and transverse ties form a finite hanging net between two upright posts, with fixed attachment rings and a low travelling wave.",
+    "tags": [
+      "catenary",
+      "hammock",
+      "net",
+      "braille",
+      "tension",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "sag": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.6,
+        "step": 0.05,
+        "label": "Cable sag"
+      },
+      "strands": {
+        "type": "number",
+        "min": 5,
+        "max": 10,
+        "step": 1,
+        "label": "Longitudinal cables"
+      },
+      "sway": {
+        "type": "number",
+        "min": 0.05,
+        "max": 0.2,
+        "step": 0.05,
+        "label": "Tension wave amplitude"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Tension wave speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause tension wave"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Net orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Suspended mesh",
+        "description": "Seven cables hang at a moderate depth as a small wave travels through their tied center.",
+        "props": {
+          "sag": 0.4,
+          "strands": 7,
+          "sway": 0.1,
+          "speed": 0.75,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Taut crossing",
+        "description": "Five shallow cables leave generous openings between ties, with a quieter and slower wave.",
+        "props": {
+          "sag": 0.25,
+          "strands": 5,
+          "sway": 0.05,
+          "speed": 0.5,
+          "fontSize": 16,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Deep sling",
+        "description": "Nine cables form a deeper hammock with a more visible travelling tension wave.",
+        "props": {
+          "sag": 0.55,
+          "strands": 9,
+          "sway": 0.15,
+          "speed": 0.9,
+          "fontSize": 14,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiCatenaryNet",
+    "defaults": {
+      "sag": 0.4,
+      "strands": 7,
+      "sway": 0.1,
+      "speed": 0.75,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "sag": "Depth of the hanging cables relative to their span, from 0.2 to 0.6.",
+      "strands": "Longitudinal cables joined by transverse ties, from 5 to 10.",
+      "sway": "Amplitude of the travelling tension wave, from 0.05 to 0.2.",
+      "speed": "Rate of the travelling wave, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "sag": "number",
+      "strands": "number",
+      "sway": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4392
   },
   {
     "slug": "ascii-cellular-tape",
@@ -1959,6 +2419,159 @@
     "gzipBytes": 5557
   },
   {
+    "slug": "ascii-expanding-truss",
+    "title": "ASCII Expanding Truss",
+    "category": "ascii",
+    "description": "A finite circular truss opens through continuous crossed bars, with fine rear links, shared end pins and sliding crossing pins in short slots.",
+    "tags": [
+      "truss",
+      "scissor",
+      "hinge",
+      "deployment",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "segments": {
+        "type": "number",
+        "min": 8,
+        "max": 16,
+        "step": 1,
+        "label": "Scissor units"
+      },
+      "opening": {
+        "type": "number",
+        "min": 0.35,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Mean deployment"
+      },
+      "travel": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.3,
+        "step": 0.05,
+        "label": "Deployment excursion"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Deployment speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause linkage"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Ten unit deployment",
+        "description": "Ten paired units make a broad aperture with clearly separated hinged motion.",
+        "props": {
+          "segments": 10,
+          "opening": 0.55,
+          "travel": 0.3,
+          "speed": 0.75,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Open armature",
+        "description": "Eight widely spaced units keep a large aperture and a restrained excursion.",
+        "props": {
+          "segments": 8,
+          "opening": 0.75,
+          "travel": 0.15,
+          "speed": 0.5,
+          "fontSize": 16,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Close instrument",
+        "description": "Fourteen short scissor units show a denser ring with a smaller open center.",
+        "props": {
+          "segments": 14,
+          "opening": 0.4,
+          "travel": 0.2,
+          "speed": 0.85,
+          "fontSize": 14,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiExpandingTruss",
+    "defaults": {
+      "segments": 10,
+      "opening": 0.55,
+      "travel": 0.3,
+      "speed": 0.75,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "segments": "Connected scissor units around the aperture, from 8 to 16.",
+      "opening": "Mean deployment of the hinged ring, from 0.35 to 0.8.",
+      "travel": "Full deployment excursion around the mean, from 0.1 to 0.3.",
+      "speed": "Opening and closing rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "segments": "number",
+      "opening": "number",
+      "travel": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4682
+  },
+  {
     "slug": "ascii-expedition-log",
     "title": "Expedition log",
     "category": "ascii",
@@ -2682,6 +3295,159 @@
       }
     },
     "gzipBytes": 3732
+  },
+  {
+    "slug": "ascii-gear-train",
+    "title": "ASCII Gear Train",
+    "category": "ascii",
+    "description": "Three finite spur gears share one tooth pitch and counterrotate at their tooth count ratios, with open spokes and fixed hub bearings.",
+    "tags": [
+      "gears",
+      "spur",
+      "braille",
+      "mechanism",
+      "rotation",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "teeth": {
+        "type": "number",
+        "min": 10,
+        "max": 18,
+        "step": 1,
+        "label": "Outer gear teeth"
+      },
+      "ratio": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 0.1,
+        "label": "Center tooth count ratio"
+      },
+      "spread": {
+        "type": "number",
+        "min": 0.6,
+        "max": 1,
+        "step": 0.05,
+        "label": "Train opening"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Drive rotation speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause gear train"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Balanced train",
+        "description": "Twelve tooth outer gears drive an eighteen tooth center gear in a gently bent arrangement.",
+        "props": {
+          "teeth": 12,
+          "ratio": 1.5,
+          "spread": 0.8,
+          "speed": 0.75,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Coarse reduction",
+        "description": "Ten broad teeth drive a center gear twice their size, making each meshing tooth easy to follow.",
+        "props": {
+          "teeth": 10,
+          "ratio": 2,
+          "spread": 0.65,
+          "speed": 0.5,
+          "fontSize": 16,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine equal gears",
+        "description": "Three equal eighteen tooth gears form an open train with finer, evenly sized teeth.",
+        "props": {
+          "teeth": 18,
+          "ratio": 1,
+          "spread": 0.95,
+          "speed": 0.9,
+          "fontSize": 14,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiGearTrain",
+    "defaults": {
+      "teeth": 12,
+      "ratio": 1.5,
+      "spread": 0.8,
+      "speed": 0.75,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "teeth": "Whole teeth on each outer gear, from 10 to 18.",
+      "ratio": "Center gear tooth multiplier, rounded to whole teeth, from 1 to 2.",
+      "spread": "Opening of the bent gear train, from 0.6 to 1.",
+      "speed": "Drive gear rotation rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "teeth": "number",
+      "ratio": "number",
+      "spread": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4802
   },
   {
     "slug": "ascii-glyph-carousel",
@@ -3644,6 +4410,159 @@
       }
     },
     "gzipBytes": 3907
+  },
+  {
+    "slug": "ascii-lift-bridge",
+    "title": "ASCII Lift Bridge",
+    "category": "ascii",
+    "description": "Two rigid bascule leaves meet over a quiet channel, then open about fixed hinge bearings between braced towers and straight tension links.",
+    "tags": [
+      "bridge",
+      "bascule",
+      "hinge",
+      "mechanism",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "opening": {
+        "type": "number",
+        "min": 15,
+        "max": 65,
+        "step": 5,
+        "label": "Maximum opening angle"
+      },
+      "travel": {
+        "type": "number",
+        "min": 10,
+        "max": 30,
+        "step": 1,
+        "label": "Cycle percent per moving stroke"
+      },
+      "towerHeight": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.6,
+        "step": 0.05,
+        "label": "Tower height"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Bridge cycle speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause bridge"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting cycle seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Harbor passage",
+        "description": "Balanced towers support a broad opening, with distinct moving strokes and short open and closed holds.",
+        "props": {
+          "opening": 50,
+          "travel": 24,
+          "towerHeight": 0.45,
+          "speed": 0.7,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Low channel",
+        "description": "Short towers and a shallow opening give the bridge a low profile with longer, gentler moving strokes.",
+        "props": {
+          "opening": 30,
+          "travel": 30,
+          "towerHeight": 0.3,
+          "speed": 0.5,
+          "fontSize": 18,
+          "seed": 4
+        }
+      },
+      {
+        "name": "High clearance",
+        "description": "Tall braced towers frame two steeply raised leaves, leaving the central water channel clearly open.",
+        "props": {
+          "opening": 65,
+          "travel": 18,
+          "towerHeight": 0.6,
+          "speed": 0.85,
+          "fontSize": 14,
+          "seed": 2
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiLiftBridge",
+    "defaults": {
+      "opening": 50,
+      "travel": 24,
+      "towerHeight": 0.45,
+      "speed": 0.7,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "opening": "Maximum leaf opening angle in degrees, from 15 to 65.",
+      "travel": "Percentage of each cycle used by each opening or closing stroke, from 10 to 30.",
+      "towerHeight": "Tower height relative to the full closed span, from 0.3 to 0.6.",
+      "speed": "Complete bridge cycle rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "opening": "number",
+      "travel": "number",
+      "towerHeight": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4435
   },
   {
     "slug": "ascii-linkage-rosette",
@@ -4969,6 +5888,159 @@
     },
     "events": {},
     "gzipBytes": 5132
+  },
+  {
+    "slug": "ascii-orrery",
+    "title": "ASCII Orrery",
+    "category": "ascii",
+    "description": "Planet beads travel at separate rates on radial arms around a shared sun, inside finite inclined orbital rails with a fine rear edge.",
+    "tags": [
+      "orrery",
+      "planets",
+      "orbit",
+      "mechanical",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "orbits": {
+        "type": "number",
+        "min": 3,
+        "max": 6,
+        "step": 1,
+        "label": "Orbital rails"
+      },
+      "tilt": {
+        "type": "number",
+        "min": 20,
+        "max": 65,
+        "step": 5,
+        "label": "Plane inclination"
+      },
+      "spread": {
+        "type": "number",
+        "min": 0.55,
+        "max": 1,
+        "step": 0.05,
+        "label": "Assembly spread"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Planet speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause planets"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Four planet clockwork",
+        "description": "Four evenly spaced rails and a clear inclination show each planet attached to the central sun.",
+        "props": {
+          "orbits": 4,
+          "tilt": 50,
+          "spread": 0.85,
+          "speed": 0.75,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Open armature",
+        "description": "Three broad rails expose long support arms in a gently inclined plane.",
+        "props": {
+          "orbits": 3,
+          "tilt": 30,
+          "spread": 0.9,
+          "speed": 0.5,
+          "fontSize": 16,
+          "seed": 7
+        }
+      },
+      {
+        "name": "Six planet instrument",
+        "description": "Six closer rails form a flattened mechanical assembly with distinct travelling beads.",
+        "props": {
+          "orbits": 6,
+          "tilt": 60,
+          "spread": 1,
+          "speed": 0.9,
+          "fontSize": 14,
+          "seed": 12
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiOrrery",
+    "defaults": {
+      "orbits": 4,
+      "tilt": 50,
+      "spread": 0.85,
+      "speed": 0.75,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "orbits": "Circular rails sharing the central sun, from 3 to 6.",
+      "tilt": "Inclination of the orbital plane in degrees, from 20 to 65.",
+      "spread": "Assembly size within the available margins, from 0.55 to 1.",
+      "speed": "Planet travel rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "orbits": "number",
+      "tilt": "number",
+      "spread": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4506
   },
   {
     "slug": "ascii-packet-route",
@@ -6300,6 +7372,312 @@
     "gzipBytes": 2080
   },
   {
+    "slug": "ascii-rolling-cube",
+    "title": "ASCII Rolling Cube",
+    "category": "ascii",
+    "description": "One solid cube turns through shaded glyph faces with crisp braille edges above a short baseline and an offset contact marker.",
+    "tags": [
+      "cube",
+      "solid",
+      "shading",
+      "rotation",
+      "glyph",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "size": {
+        "type": "number",
+        "min": 0.5,
+        "max": 0.85,
+        "step": 0.05,
+        "label": "Cube size"
+      },
+      "tumble": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Secondary axis tumble"
+      },
+      "density": {
+        "type": "number",
+        "min": 0.5,
+        "max": 1,
+        "step": 0.05,
+        "label": "Face ink density"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Rolling speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause cube"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Balanced study",
+        "description": "A large cube shows distinct measured face tones with an even, calm roll.",
+        "props": {
+          "size": 0.8,
+          "tumble": 0.5,
+          "density": 0.85,
+          "speed": 0.7,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Light drafting",
+        "description": "A smaller, lightly inked cube turns mostly around its primary axis above a compact baseline.",
+        "props": {
+          "size": 0.65,
+          "tumble": 0.25,
+          "density": 0.6,
+          "speed": 0.45,
+          "fontSize": 14,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Dense tumble",
+        "description": "A broad, darker cube reveals more secondary axis motion while retaining every corner.",
+        "props": {
+          "size": 0.85,
+          "tumble": 0.75,
+          "density": 1,
+          "speed": 0.85,
+          "fontSize": 14,
+          "seed": 8
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiRollingCube",
+    "defaults": {
+      "size": 0.8,
+      "tumble": 0.5,
+      "density": 0.85,
+      "speed": 0.7,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "size": "Cube size within a rotation safe envelope, from 0.5 to 0.85.",
+      "tumble": "Secondary axis rotation and lean, from 0.2 to 0.8.",
+      "density": "Measured face ink strength, from 0.5 to 1.",
+      "speed": "Continuous rotation rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 12 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "size": "number",
+      "tumble": "number",
+      "density": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 5016
+  },
+  {
+    "slug": "ascii-scissor-lift",
+    "title": "ASCII Scissor Lift",
+    "category": "ascii",
+    "description": "Equal-length crossed bars raise a solid load on a level platform, with visible pivots, a sliding foot and a fixed wheeled base.",
+    "tags": [
+      "scissor",
+      "lift",
+      "pantograph",
+      "mechanism",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "stages": {
+        "type": "number",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "label": "Connected stages"
+      },
+      "extension": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.85,
+        "step": 0.01,
+        "label": "Mid-cycle extension"
+      },
+      "travel": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.35,
+        "step": 0.01,
+        "label": "Lift travel"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Lift speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause lift"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Warehouse rise",
+        "description": "Three connected stages carry one compact load through a broad, steady lift cycle.",
+        "props": {
+          "stages": 3,
+          "extension": 0.56,
+          "travel": 0.28,
+          "speed": 0.75,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Low loading",
+        "description": "Two low stages and larger glyphs show the moving foot clearly beside the fixed pivot.",
+        "props": {
+          "stages": 2,
+          "extension": 0.4,
+          "travel": 0.2,
+          "speed": 0.55,
+          "fontSize": 18,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Tall reach",
+        "description": "Four upright stages lift the level platform high above a compact wheeled chassis.",
+        "props": {
+          "stages": 4,
+          "extension": 0.7,
+          "travel": 0.24,
+          "speed": 0.6,
+          "fontSize": 14,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiScissorLift",
+    "defaults": {
+      "stages": 3,
+      "extension": 0.56,
+      "travel": 0.28,
+      "speed": 0.75,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "stages": "Number of connected equal-length X stages, from 2 to 4.",
+      "extension": "Mid-cycle stage height as a fraction of bar length, from 0.3 to 0.85.",
+      "travel": "Peak-to-peak extension travel, from 0.1 to 0.35, limited near full extension.",
+      "speed": "Lift cycle rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "stages": "number",
+      "extension": "number",
+      "travel": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4241
+  },
+  {
     "slug": "ascii-score-strip",
     "title": "Score Strip",
     "category": "ascii",
@@ -6502,6 +7880,312 @@
       }
     },
     "gzipBytes": 3415
+  },
+  {
+    "slug": "ascii-screw-conveyor",
+    "title": "ASCII Screw Conveyor",
+    "category": "ascii",
+    "description": "Broad continuous screw flights turn around a diagonal shaft between two bearing blocks, carrying three tiny solid loads inside a lower trough.",
+    "tags": [
+      "screw",
+      "conveyor",
+      "auger",
+      "mechanism",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "turns": {
+        "type": "number",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "label": "Complete flights"
+      },
+      "pitch": {
+        "type": "number",
+        "min": 0.7,
+        "max": 1.3,
+        "step": 0.05,
+        "label": "Flight spacing"
+      },
+      "angle": {
+        "type": "number",
+        "min": 15,
+        "max": 65,
+        "step": 1,
+        "label": "Shaft angle"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Conveyor speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause conveyor"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting rotation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Workshop feed",
+        "description": "Three broad flights turn at a gentle diagonal while three small loads move along the lower trough.",
+        "props": {
+          "turns": 3,
+          "pitch": 1,
+          "angle": 35,
+          "speed": 0.7,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Wide flights",
+        "description": "Two widely spaced turns expose the shaft and broad radial sheets at a shallow loading angle.",
+        "props": {
+          "turns": 2,
+          "pitch": 1.25,
+          "angle": 20,
+          "speed": 0.5,
+          "fontSize": 18,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Uphill grain",
+        "description": "Five closely spaced flights form a taller conveyor with a steep shaft and compact payload marks.",
+        "props": {
+          "turns": 5,
+          "pitch": 0.75,
+          "angle": 60,
+          "speed": 0.85,
+          "fontSize": 14,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiScrewConveyor",
+    "defaults": {
+      "turns": 3,
+      "pitch": 1,
+      "angle": 35,
+      "speed": 0.7,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "turns": "Complete flights along the finite shaft, from 2 to 5.",
+      "pitch": "Axial spacing between flights in screw diameters, from 0.7 to 1.3.",
+      "angle": "Upward shaft angle in degrees, from 15 to 65.",
+      "speed": "Rotation and material transport rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "turns": "number",
+      "pitch": "number",
+      "angle": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4403
+  },
+  {
+    "slug": "ascii-shuttle-loom",
+    "title": "ASCII Shuttle Loom",
+    "category": "ascii",
+    "description": "A finite upright loom lifts alternating warp banks as one shuttle passes through its working shed above a continuously fed woven strip.",
+    "tags": [
+      "loom",
+      "shuttle",
+      "warp",
+      "weft",
+      "weaving",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "threads": {
+        "type": "number",
+        "min": 10,
+        "max": 22,
+        "step": 1,
+        "label": "Warp threads"
+      },
+      "cloth": {
+        "type": "number",
+        "min": 0.25,
+        "max": 0.55,
+        "step": 0.05,
+        "label": "Woven strip height"
+      },
+      "shed": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.3,
+        "step": 0.05,
+        "label": "Raised shed depth"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Weaving speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause weaving"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting shuttle phase seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Plain weaving",
+        "description": "Sixteen warp threads and a short cloth strip leave a clear active weaving area.",
+        "props": {
+          "threads": 16,
+          "cloth": 0.35,
+          "shed": 0.2,
+          "speed": 0.75,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Open shed",
+        "description": "Ten widely spaced threads and a deep shed expose the shuttle and its working thread.",
+        "props": {
+          "threads": 10,
+          "cloth": 0.3,
+          "shed": 0.3,
+          "speed": 0.55,
+          "fontSize": 16,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine cloth",
+        "description": "Twenty two warp threads feed a longer woven strip below a narrower working shed.",
+        "props": {
+          "threads": 22,
+          "cloth": 0.5,
+          "shed": 0.15,
+          "speed": 0.9,
+          "fontSize": 14,
+          "seed": 3
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiShuttleLoom",
+    "defaults": {
+      "threads": 16,
+      "cloth": 0.35,
+      "shed": 0.2,
+      "speed": 0.75,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "threads": "Evenly spaced warp threads inside the frame, from 10 to 22.",
+      "cloth": "Woven strip height relative to the working frame, from 0.25 to 0.55.",
+      "shed": "Raised shed depth relative to the working frame, from 0.1 to 0.3.",
+      "speed": "Shuttle and cloth feed rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "threads": "number",
+      "cloth": "number",
+      "shed": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4471
   },
   {
     "slug": "ascii-slat-canopy",
@@ -7070,6 +8754,159 @@
     },
     "events": {},
     "gzipBytes": 3995
+  },
+  {
+    "slug": "ascii-tension-sail",
+    "title": "ASCII Tension Sail",
+    "category": "ascii",
+    "description": "A finite triangular textile saddle stretches between three visible anchors, with bowed edges, a denser near corner and a gentle interior breeze.",
+    "tags": [
+      "sail",
+      "textile",
+      "saddle",
+      "tension",
+      "braille",
+      "animated"
+    ],
+    "facets": [
+      "animated"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "curve": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.65,
+        "step": 0.05,
+        "label": "Saddle curvature"
+      },
+      "mesh": {
+        "type": "number",
+        "min": 7,
+        "max": 13,
+        "step": 1,
+        "label": "Textile divisions"
+      },
+      "breeze": {
+        "type": "number",
+        "min": 0.05,
+        "max": 0.2,
+        "step": 0.01,
+        "label": "Breeze displacement"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Breeze speed"
+      },
+      "fontSize": {
+        "type": "number",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Glyph size"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause breeze"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Sail orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Harbor canopy",
+        "description": "A balanced triangular saddle carries ten mesh divisions and a calm breeze between three fixed tethers.",
+        "props": {
+          "curve": 0.45,
+          "mesh": 10,
+          "breeze": 0.12,
+          "speed": 0.7,
+          "fontSize": 16,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Quiet awning",
+        "description": "A shallow sail with seven broad mesh divisions reveals its three bowed edges and corner rings.",
+        "props": {
+          "curve": 0.25,
+          "mesh": 7,
+          "breeze": 0.06,
+          "speed": 0.45,
+          "fontSize": 18,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Deep tension",
+        "description": "Stronger saddle curvature and thirteen textile divisions emphasize the dense front corner in a steady breeze.",
+        "props": {
+          "curve": 0.6,
+          "mesh": 13,
+          "breeze": 0.16,
+          "speed": 0.85,
+          "fontSize": 14,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "AsciiTensionSail",
+    "defaults": {
+      "curve": 0.45,
+      "mesh": 10,
+      "breeze": 0.12,
+      "speed": 0.7,
+      "fontSize": 16,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "curve": "Curvature of the finite saddle and its bowed edges, from 0.2 to 0.65.",
+      "mesh": "Number of textile divisions in each mesh direction, from 7 to 13.",
+      "breeze": "Interior breeze displacement relative to the sail, from 0.05 to 0.2.",
+      "speed": "Breeze travel rate, from 0 to 2.",
+      "fontSize": "Fixed monospace glyph size in CSS pixels, from 14 to 20."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "curve": "number",
+      "mesh": "number",
+      "breeze": "number",
+      "speed": "number",
+      "fontSize": "number"
+    },
+    "events": {},
+    "gzipBytes": 4646
   },
   {
     "slug": "ascii-terminal-journal",
@@ -34007,6 +35844,162 @@
     "gzipBytes": 5741
   },
   {
+    "slug": "braided-cable",
+    "title": "Braided Cable",
+    "category": "shaders",
+    "description": "A finite S shaped cable carries cylindrical braid bundles through visible over and under crossings, with recessed seams and one restrained moving light.",
+    "tags": [
+      "braid",
+      "cable",
+      "rope",
+      "cylinder",
+      "crossings",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "strands": {
+        "type": "number",
+        "min": 3,
+        "max": 5,
+        "step": 1,
+        "label": "Cylindrical bundles"
+      },
+      "crossings": {
+        "type": "number",
+        "min": 4,
+        "max": 9,
+        "step": 1,
+        "label": "Half twists along cable"
+      },
+      "width": {
+        "type": "number",
+        "min": 0.18,
+        "max": 0.35,
+        "step": 0.01,
+        "label": "Cable diameter"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Torsion and light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Material ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause cable"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting braid orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Three bundle cord",
+        "description": "Three broad bundles exchange depth through six half twists along a gentle S bend.",
+        "props": {
+          "strands": 3,
+          "crossings": 6,
+          "width": 0.26,
+          "speed": 0.65,
+          "intensity": 0.55,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Fine five strand braid",
+        "description": "Five narrower bundles and nine half twists produce a finer and more closely interlaced cable.",
+        "props": {
+          "strands": 5,
+          "crossings": 9,
+          "width": 0.22,
+          "speed": 0.5,
+          "intensity": 0.5,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Broad open braid",
+        "description": "Four thick bundles make four open half twists with a slightly stronger matte light.",
+        "props": {
+          "strands": 4,
+          "crossings": 4,
+          "width": 0.35,
+          "speed": 0.45,
+          "intensity": 0.6,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "BraidedCable",
+    "defaults": {
+      "strands": 3,
+      "crossings": 6,
+      "width": 0.26,
+      "speed": 0.65,
+      "intensity": 0.55,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "strands": "Cylindrical bundles around the cable core, from 3 to 5.",
+      "crossings": "Half twists along each finite bundle, from 4 to 9.",
+      "width": "Overall cable diameter relative to the short host dimension, from 0.18 to 0.35.",
+      "speed": "Slow torsion and directional light sweep rate, from 0 to 2.",
+      "intensity": "Foreground material ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "strands": "number",
+      "crossings": "number",
+      "width": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 5894
+  },
+  {
     "slug": "brushed-alloy",
     "title": "Brushed Alloy",
     "category": "shaders",
@@ -34504,6 +36497,162 @@
     "gzipBytes": 5767
   },
   {
+    "slug": "chiseled-slate",
+    "title": "Chiseled Slate",
+    "category": "shaders",
+    "description": "Unequal chisel pockets expose planar walls and flat floors on a finite slate slab, with a broken edge and quiet mineral grain under slow raking light.",
+    "tags": [
+      "slate",
+      "stone",
+      "chisel",
+      "planar",
+      "relief",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "cuts": {
+        "type": "number",
+        "min": 5,
+        "max": 12,
+        "step": 1,
+        "label": "Finite chisel cuts"
+      },
+      "depth": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Carved depth"
+      },
+      "direction": {
+        "type": "number",
+        "min": 15,
+        "max": 70,
+        "step": 5,
+        "label": "Chisel direction"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Raking light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Tool mark arrangement seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Mason study",
+        "description": "Eight unequal angled pockets expose flat cut planes among broad quiet slate regions.",
+        "props": {
+          "cuts": 8,
+          "depth": 0.5,
+          "direction": 45,
+          "speed": 0.65,
+          "intensity": 0.5,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Deep roughing",
+        "description": "Five deep, shallow-angle tool strikes emphasize their planar walls and the chipped outer edge.",
+        "props": {
+          "cuts": 5,
+          "depth": 0.75,
+          "direction": 25,
+          "speed": 0.45,
+          "intensity": 0.6,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine dressing",
+        "description": "Twelve lighter, steeper cuts leave a quieter dressed surface with fine mineral grain.",
+        "props": {
+          "cuts": 12,
+          "depth": 0.3,
+          "direction": 65,
+          "speed": 0.8,
+          "intensity": 0.4,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "ChiseledSlate",
+    "defaults": {
+      "cuts": 8,
+      "depth": 0.5,
+      "direction": 45,
+      "speed": 0.65,
+      "intensity": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "cuts": "Number of finite angular tool cuts, from 5 to 12.",
+      "depth": "Carved depth relative to each cut width, from 0.2 to 0.8.",
+      "direction": "Dominant chisel direction in degrees, from 15 to 70.",
+      "speed": "Raking light sweep rate, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "cuts": "number",
+      "depth": "number",
+      "direction": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6818
+  },
+  {
     "slug": "contour-engraving",
     "title": "Contour Engraving",
     "category": "shaders",
@@ -34819,6 +36968,162 @@
     },
     "events": {},
     "gzipBytes": 5166
+  },
+  {
+    "slug": "crazed-ceramic",
+    "title": "Crazed Ceramic",
+    "category": "shaders",
+    "description": "Asymmetric fracture flanks, recessed crack cores and raised glaze lips interrupt a quiet continuous ceramic relief under one grazing reflection.",
+    "tags": [
+      "ceramic",
+      "glaze",
+      "cracks",
+      "relief",
+      "material",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "cellSize": {
+        "type": "number",
+        "min": 36,
+        "max": 110,
+        "step": 1,
+        "label": "Fracture spacing in pixels"
+      },
+      "crackWidth": {
+        "type": "number",
+        "min": 0.4,
+        "max": 2,
+        "step": 0.1,
+        "label": "Crack groove half-width"
+      },
+      "glaze": {
+        "type": "number",
+        "min": 0.25,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Glaze polish"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Grazing light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Fracture arrangement seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Quiet studio glaze",
+        "description": "Fine medium-spaced grooves interrupt a restrained polished ceramic surface and its rounded bevel.",
+        "props": {
+          "cellSize": 70,
+          "crackWidth": 1,
+          "glaze": 0.55,
+          "speed": 0.65,
+          "intensity": 0.5,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Antique crazing",
+        "description": "Broader fractures and a softer glaze reveal the recessed network and occasional wider junctions.",
+        "props": {
+          "cellSize": 94,
+          "crackWidth": 1.6,
+          "glaze": 0.3,
+          "speed": 0.45,
+          "intensity": 0.6,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine porcelain",
+        "description": "A close hairline network sits beneath a sharper, quieter glaze reflection.",
+        "props": {
+          "cellSize": 44,
+          "crackWidth": 0.6,
+          "glaze": 0.75,
+          "speed": 0.8,
+          "intensity": 0.4,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "CrazedCeramic",
+    "defaults": {
+      "cellSize": 70,
+      "crackWidth": 1,
+      "glaze": 0.55,
+      "speed": 0.65,
+      "intensity": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "cellSize": "Typical glaze fracture spacing in CSS pixels, from 36 to 110.",
+      "crackWidth": "Half-width of a recessed crack groove in CSS pixels, from 0.4 to 2.",
+      "glaze": "Glaze polish and reflection sharpness, from 0.25 to 0.8.",
+      "speed": "Grazing light sweep rate, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "cellSize": "number",
+      "crackWidth": "number",
+      "glaze": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6741
   },
   {
     "slug": "cut-paper-relief",
@@ -35430,6 +37735,162 @@
     "gzipBytes": 5543
   },
   {
+    "slug": "faceted-crystal",
+    "title": "Faceted Crystal",
+    "category": "shaders",
+    "description": "A finite crystal lozenge refracts a few reference rules through its continuous table, with connected crown and pavilion facets.",
+    "tags": [
+      "crystal",
+      "lozenge",
+      "facets",
+      "refraction",
+      "transparent",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "facets": {
+        "type": "number",
+        "min": 6,
+        "max": 12,
+        "step": 2,
+        "label": "Facets per cut ring"
+      },
+      "bevel": {
+        "type": "number",
+        "min": 0.1,
+        "max": 0.3,
+        "step": 0.05,
+        "label": "Crown and girdle bevel"
+      },
+      "refraction": {
+        "type": "number",
+        "min": 0.15,
+        "max": 0.5,
+        "step": 0.05,
+        "label": "Solid refraction"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Crystal rotation speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause crystal"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting solid orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Eight face lozenge",
+        "description": "Eight balanced crown facets frame a transparent table and a clear bevelled girdle.",
+        "props": {
+          "facets": 8,
+          "bevel": 0.2,
+          "refraction": 0.3,
+          "speed": 0.7,
+          "intensity": 0.55,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Broad six cut",
+        "description": "Six broad planes and a wider crown cut expose a simple symmetric solid.",
+        "props": {
+          "facets": 6,
+          "bevel": 0.25,
+          "refraction": 0.2,
+          "speed": 0.5,
+          "intensity": 0.5,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine refracting crown",
+        "description": "Twelve narrower facets surround a lighter bevel with stronger transmitted reference rules.",
+        "props": {
+          "facets": 12,
+          "bevel": 0.15,
+          "refraction": 0.45,
+          "speed": 0.85,
+          "intensity": 0.65,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "FacetedCrystal",
+    "defaults": {
+      "facets": 8,
+      "bevel": 0.2,
+      "refraction": 0.3,
+      "speed": 0.7,
+      "intensity": 0.55,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "facets": "Symmetric facets around each cut ring, either 6, 8, 10 or 12.",
+      "bevel": "Crown cut and girdle width, from 0.1 to 0.3.",
+      "refraction": "Refraction strength through the solid, from 0.15 to 0.5.",
+      "speed": "Gentle solid rotation rate, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "facets": "number",
+      "bevel": "number",
+      "refraction": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6949
+  },
+  {
     "slug": "fluted-shell",
     "title": "Fluted Shell",
     "category": "shaders",
@@ -35742,6 +38203,162 @@
     },
     "events": {},
     "gzipBytes": 6181
+  },
+  {
+    "slug": "folded-vellum",
+    "title": "Folded Vellum",
+    "category": "shaders",
+    "description": "One finite accordion sheet carries quiet printed rules through translucent panel overlaps, with connected creases and diffuse paper lighting.",
+    "tags": [
+      "vellum",
+      "paper",
+      "accordion",
+      "folds",
+      "translucent",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "panels": {
+        "type": "number",
+        "min": 4,
+        "max": 8,
+        "step": 2,
+        "label": "Accordion panels"
+      },
+      "fold": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.65,
+        "step": 0.05,
+        "label": "Crease depth"
+      },
+      "translucency": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Panel transmission"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Diffuse light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Sheet orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Six panel tracing sheet",
+        "description": "Six medium folds reveal quiet ruled layers through a translucent sheet.",
+        "props": {
+          "panels": 6,
+          "fold": 0.45,
+          "translucency": 0.65,
+          "speed": 0.65,
+          "intensity": 0.55,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Open letter fold",
+        "description": "Four shallow panels spread a lighter sheet with broad open faces.",
+        "props": {
+          "panels": 4,
+          "fold": 0.25,
+          "translucency": 0.75,
+          "speed": 0.45,
+          "intensity": 0.45,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Close archival concertina",
+        "description": "Eight deeper folds create stronger overlapping layers while retaining thin paper edges.",
+        "props": {
+          "panels": 8,
+          "fold": 0.6,
+          "translucency": 0.45,
+          "speed": 0.75,
+          "intensity": 0.65,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "FoldedVellum",
+    "defaults": {
+      "panels": 6,
+      "fold": 0.45,
+      "translucency": 0.65,
+      "speed": 0.65,
+      "intensity": 0.55,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "panels": "Connected accordion panels, either 4, 6 or 8.",
+      "fold": "Fixed fold depth along the connected sheet, from 0.2 to 0.65.",
+      "translucency": "Transmission through each thin panel, from 0.3 to 0.8.",
+      "speed": "Rate of the single diffuse light sweep, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "panels": "number",
+      "fold": "number",
+      "translucency": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6208
   },
   {
     "slug": "frosted-block",
@@ -36207,6 +38824,318 @@
     },
     "events": {},
     "gzipBytes": 5540
+  },
+  {
+    "slug": "honeycomb-core",
+    "title": "Honeycomb Core",
+    "category": "shaders",
+    "description": "A finite stepped slab exposes thick open hexagonal cells, front web rims and shaded interior walls beneath one slow directional light.",
+    "tags": [
+      "honeycomb",
+      "hexagon",
+      "core",
+      "cells",
+      "material",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "cellSize": {
+        "type": "number",
+        "min": 30,
+        "max": 80,
+        "step": 1,
+        "label": "Cell width in pixels"
+      },
+      "depth": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.7,
+        "step": 0.05,
+        "label": "Open cell depth"
+      },
+      "wall": {
+        "type": "number",
+        "min": 0.08,
+        "max": 0.2,
+        "step": 0.01,
+        "label": "Front web thickness"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Directional light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Panel orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Structural sample",
+        "description": "Medium cells and a clear open depth reveal the front web and six sided interiors.",
+        "props": {
+          "cellSize": 54,
+          "depth": 0.5,
+          "wall": 0.12,
+          "speed": 0.65,
+          "intensity": 0.55,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Fine light core",
+        "description": "Smaller shallow cells leave a fine, lightly inked open structure.",
+        "props": {
+          "cellSize": 34,
+          "depth": 0.3,
+          "wall": 0.09,
+          "speed": 0.5,
+          "intensity": 0.45,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Deep heavy web",
+        "description": "Large deep cells expose broad inner walls beneath a thicker front web.",
+        "props": {
+          "cellSize": 76,
+          "depth": 0.65,
+          "wall": 0.18,
+          "speed": 0.75,
+          "intensity": 0.65,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "HoneycombCore",
+    "defaults": {
+      "cellSize": 54,
+      "depth": 0.5,
+      "wall": 0.12,
+      "speed": 0.65,
+      "intensity": 0.55,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "cellSize": "Approximate width across each hexagonal cell in CSS pixels, from 30 to 80.",
+      "depth": "Open cell depth relative to its radius, from 0.2 to 0.7.",
+      "wall": "Front web thickness relative to the cell radius, from 0.08 to 0.2.",
+      "speed": "Rate of the directional light sweep, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "cellSize": "number",
+      "depth": "number",
+      "wall": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6705
+  },
+  {
+    "slug": "knurled-drum",
+    "title": "Knurled Drum",
+    "category": "shaders",
+    "description": "A finite cylindrical drum turns raised diamond facets under one grazing light, bounded by plain machined rings and a visible end face.",
+    "tags": [
+      "metal",
+      "cylinder",
+      "knurl",
+      "diamond",
+      "facets",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "pitch": {
+        "type": "number",
+        "min": 16,
+        "max": 48,
+        "step": 1,
+        "label": "Diamond spacing in pixels"
+      },
+      "relief": {
+        "type": "number",
+        "min": 0.15,
+        "max": 0.6,
+        "step": 0.05,
+        "label": "Raised facet relief"
+      },
+      "angle": {
+        "type": "number",
+        "min": 10,
+        "max": 55,
+        "step": 5,
+        "label": "Crossing groove angle"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Drum rotation speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause drum"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Starting drum orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Workshop grip",
+        "description": "Medium diamond facets catch a quiet reflection between two plain end rings.",
+        "props": {
+          "pitch": 28,
+          "relief": 0.4,
+          "angle": 35,
+          "speed": 0.7,
+          "intensity": 0.55,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Fine cross cut",
+        "description": "Small shallow diamonds form a finer grip with balanced diagonal grooves.",
+        "props": {
+          "pitch": 18,
+          "relief": 0.25,
+          "angle": 45,
+          "speed": 0.5,
+          "intensity": 0.45,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Coarse facets",
+        "description": "Large raised diamonds stretch along the drum and expose broader sloping faces.",
+        "props": {
+          "pitch": 42,
+          "relief": 0.55,
+          "angle": 25,
+          "speed": 0.8,
+          "intensity": 0.65,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "KnurledDrum",
+    "defaults": {
+      "pitch": 28,
+      "relief": 0.4,
+      "angle": 35,
+      "speed": 0.7,
+      "intensity": 0.55,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "pitch": "Typical diamond spacing in CSS pixels, from 16 to 48.",
+      "relief": "Raised facet depth relative to the diamond spacing, from 0.15 to 0.6.",
+      "angle": "Crossing groove angle along the cylinder in degrees, from 10 to 55.",
+      "speed": "Rotation rate around the drum axis, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "pitch": "number",
+      "relief": "number",
+      "angle": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6541
   },
   {
     "slug": "lenticular-ridges",
@@ -37106,6 +40035,162 @@
     "gzipBytes": 4793
   },
   {
+    "slug": "porcelain-relief",
+    "title": "Porcelain Relief",
+    "category": "shaders",
+    "description": "A solid raised medallion of stepped rings and fine radial flutes sits on a square porcelain plaque beneath slow directional light.",
+    "tags": [
+      "porcelain",
+      "medallion",
+      "terraces",
+      "flutes",
+      "relief",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "rings": {
+        "type": "number",
+        "min": 3,
+        "max": 7,
+        "step": 1,
+        "label": "Raised terraces"
+      },
+      "relief": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.7,
+        "step": 0.05,
+        "label": "Molding height"
+      },
+      "flutes": {
+        "type": "number",
+        "min": 12,
+        "max": 28,
+        "step": 2,
+        "label": "Radial flutes"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Directional light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Medallion orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Classical medallion",
+        "description": "Five raised terraced shoulders and twenty quiet flutes lead to a solid central porcelain boss.",
+        "props": {
+          "rings": 5,
+          "relief": 0.45,
+          "flutes": 20,
+          "speed": 0.65,
+          "intensity": 0.5,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Bold molding",
+        "description": "Three broad, deeper terraces expose their sloping risers and cast shadows across the lower molding.",
+        "props": {
+          "rings": 3,
+          "relief": 0.65,
+          "flutes": 12,
+          "speed": 0.45,
+          "intensity": 0.6,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine fanwork",
+        "description": "Seven closely spaced raised terraces carry twenty eight quiet flutes around a solid porcelain center.",
+        "props": {
+          "rings": 7,
+          "relief": 0.3,
+          "flutes": 28,
+          "speed": 0.8,
+          "intensity": 0.4,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "PorcelainRelief",
+    "defaults": {
+      "rings": 5,
+      "relief": 0.45,
+      "flutes": 20,
+      "speed": 0.65,
+      "intensity": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "rings": "Number of concentric raised terraces, from 3 to 7.",
+      "relief": "Height of the raised molding relative to its radius, from 0.2 to 0.7.",
+      "flutes": "Number of quiet radial flutes around the terraces, from 12 to 28.",
+      "speed": "Directional light sweep rate, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "rings": "number",
+      "relief": "number",
+      "flutes": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6986
+  },
+  {
     "slug": "prismatic-tiles",
     "title": "Prismatic Tiles",
     "category": "shaders",
@@ -37402,6 +40487,162 @@
     "gzipBytes": 5518
   },
   {
+    "slug": "ribbed-glass",
+    "title": "Ribbed Glass",
+    "category": "shaders",
+    "description": "Broad cylindrical ribs refract a fixed tilted line grid through a finite thick glass slab, with a rolled bevel and a restrained moving reflection.",
+    "tags": [
+      "glass",
+      "ribs",
+      "refraction",
+      "cylindrical",
+      "material",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "ribs": {
+        "type": "number",
+        "min": 6,
+        "max": 18,
+        "step": 1,
+        "label": "Cylindrical ribs"
+      },
+      "depth": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.65,
+        "step": 0.05,
+        "label": "Rib relief depth"
+      },
+      "refraction": {
+        "type": "number",
+        "min": 0.15,
+        "max": 0.5,
+        "step": 0.05,
+        "label": "Index above air"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Reflection sweep speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause reflection"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Pane orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Fluted pane",
+        "description": "Ten rounded glass ribs carry a broad reflection and turning valleys above a quiet locally bent grid.",
+        "props": {
+          "ribs": 10,
+          "depth": 0.45,
+          "refraction": 0.35,
+          "speed": 0.65,
+          "intensity": 0.5,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Broad casting",
+        "description": "Six deep cylindrical ribs expose broad curved faces, a rolled edge and a transparent lens effect.",
+        "props": {
+          "ribs": 6,
+          "depth": 0.6,
+          "refraction": 0.45,
+          "speed": 0.45,
+          "intensity": 0.55,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine reeding",
+        "description": "Sixteen finer rounded ribs show a restrained repeated curvature while gently bending the underlay.",
+        "props": {
+          "ribs": 16,
+          "depth": 0.25,
+          "refraction": 0.2,
+          "speed": 0.85,
+          "intensity": 0.4,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "RibbedGlass",
+    "defaults": {
+      "ribs": 10,
+      "depth": 0.45,
+      "refraction": 0.35,
+      "speed": 0.65,
+      "intensity": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "ribs": "Number of broad vertical cylindrical ribs across the slab, from 6 to 18.",
+      "depth": "Cylindrical rib relief relative to its pitch, from 0.2 to 0.65.",
+      "refraction": "Refractive index above air, from 0.15 to 0.5.",
+      "speed": "Specular light sweep rate, from 0 to 2.",
+      "intensity": "Overall foreground ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "ribs": "number",
+      "depth": "number",
+      "refraction": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6577
+  },
+  {
     "slug": "ripple-field",
     "title": "Ripple Field",
     "category": "shaders",
@@ -37554,6 +40795,318 @@
     },
     "events": {},
     "gzipBytes": 5181
+  },
+  {
+    "slug": "sand-ripples",
+    "title": "Sand Ripples",
+    "category": "shaders",
+    "description": "A finite low dune patch carries asymmetric windward rises, short sheltered faces and fine sand grain under one slow grazing light.",
+    "tags": [
+      "sand",
+      "dune",
+      "ripples",
+      "wind",
+      "grain",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "spacing": {
+        "type": "number",
+        "min": 25,
+        "max": 70,
+        "step": 1,
+        "label": "Crest spacing in pixels"
+      },
+      "relief": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.7,
+        "step": 0.05,
+        "label": "Ripple relief"
+      },
+      "wind": {
+        "type": "number",
+        "min": 10,
+        "max": 60,
+        "step": 1,
+        "label": "Wind direction in degrees"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Light and crest drift speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Sand ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause sand ripples"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Crest and grain arrangement seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Wind carved patch",
+        "description": "Medium crests bend gently across a low mound, with long rises and short sheltered faces.",
+        "props": {
+          "spacing": 44,
+          "relief": 0.45,
+          "wind": 28,
+          "speed": 0.65,
+          "intensity": 0.5,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Broad lee ridges",
+        "description": "Widely spaced high ridges expose deeper sheltered troughs under a slower crosswind light.",
+        "props": {
+          "spacing": 70,
+          "relief": 0.65,
+          "wind": 46,
+          "speed": 0.45,
+          "intensity": 0.6,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine shore ripples",
+        "description": "Close shallow crests and restrained grain make a quieter patch at a low wind angle.",
+        "props": {
+          "spacing": 28,
+          "relief": 0.25,
+          "wind": 12,
+          "speed": 0.8,
+          "intensity": 0.4,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "SandRipples",
+    "defaults": {
+      "spacing": 44,
+      "relief": 0.45,
+      "wind": 28,
+      "speed": 0.65,
+      "intensity": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "spacing": "Typical wind ripple spacing in CSS pixels, from 25 to 70.",
+      "relief": "Height of the asymmetric ripple relief, from 0.2 to 0.7.",
+      "wind": "Wind direction across the dune patch in degrees, from 10 to 60.",
+      "speed": "Grazing light sweep and slight crest drift rate, from 0 to 2.",
+      "intensity": "Foreground sand ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "spacing": "number",
+      "relief": "number",
+      "wind": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6306
+  },
+  {
+    "slug": "satin-ribbon",
+    "title": "Satin Ribbon",
+    "category": "shaders",
+    "description": "One finite broad satin ribbon makes a loose S fold and a partial twist, carrying directional fiber sheen between its visible cut edges.",
+    "tags": [
+      "satin",
+      "ribbon",
+      "cloth",
+      "fold",
+      "anisotropic",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "width": {
+        "type": "number",
+        "min": 0.18,
+        "max": 0.4,
+        "step": 0.02,
+        "label": "Flat ribbon width"
+      },
+      "twist": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.8,
+        "step": 0.05,
+        "label": "Partial half turn"
+      },
+      "roughness": {
+        "type": "number",
+        "min": 0.25,
+        "max": 0.7,
+        "step": 0.05,
+        "label": "Fiber sheen spread"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Breathing and light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Material ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause satin ribbon"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Fold and light orientation seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Loose satin fold",
+        "description": "A medium width sheet makes one loose fold and a half sized partial turn with restrained directional sheen.",
+        "props": {
+          "width": 0.3,
+          "twist": 0.5,
+          "roughness": 0.45,
+          "speed": 0.65,
+          "intensity": 0.55,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Broad soft sash",
+        "description": "A wide ribbon and a shallow twist spread a softer fiber reflection across broad cloth panels.",
+        "props": {
+          "width": 0.4,
+          "twist": 0.25,
+          "roughness": 0.7,
+          "speed": 0.45,
+          "intensity": 0.45,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Turned narrow satin",
+        "description": "A narrower ribbon turns farther at the ends and catches a more focused lengthwise sheen.",
+        "props": {
+          "width": 0.22,
+          "twist": 0.8,
+          "roughness": 0.25,
+          "speed": 0.75,
+          "intensity": 0.65,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "SatinRibbon",
+    "defaults": {
+      "width": 0.3,
+      "twist": 0.5,
+      "roughness": 0.45,
+      "speed": 0.65,
+      "intensity": 0.55,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "width": "Flat material width relative to the short host dimension, from 0.18 to 0.4.",
+      "twist": "Fraction of a half turn between the two cut ends, from 0.2 to 0.8.",
+      "roughness": "Spread of the directional fiber sheen, from 0.25 to 0.7.",
+      "speed": "Breathing and single light sweep rate, from 0 to 2.",
+      "intensity": "Foreground material ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "width": "number",
+      "twist": "number",
+      "roughness": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6014
   },
   {
     "slug": "scan-beam",
@@ -38595,6 +42148,162 @@
     },
     "events": {},
     "gzipBytes": 4773
+  },
+  {
+    "slug": "twill-weave",
+    "title": "Twill Weave",
+    "category": "shaders",
+    "description": "A finite fabric swatch interlaces wide flat bundles in a two over two under twill, with a structural diagonal, fine frayed ends and directional sheen.",
+    "tags": [
+      "twill",
+      "weave",
+      "fabric",
+      "bundles",
+      "anisotropic",
+      "dither"
+    ],
+    "facets": [
+      "animated",
+      "shader",
+      "webgl",
+      "dither"
+    ],
+    "wave": 18,
+    "release": "mechanisms-surfaces-2026-11-14",
+    "animated": true,
+    "decorative": true,
+    "palette": [
+      "fg",
+      "bg"
+    ],
+    "controls": {
+      "bundleSize": {
+        "type": "number",
+        "min": 14,
+        "max": 40,
+        "step": 1,
+        "label": "Fiber bundle size in pixels"
+      },
+      "loft": {
+        "type": "number",
+        "min": 0.2,
+        "max": 0.65,
+        "step": 0.05,
+        "label": "Bundle loft"
+      },
+      "angle": {
+        "type": "number",
+        "min": 15,
+        "max": 60,
+        "step": 1,
+        "label": "Fabric angle in degrees"
+      },
+      "speed": {
+        "type": "number",
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "label": "Anisotropic light speed"
+      },
+      "intensity": {
+        "type": "number",
+        "min": 0.3,
+        "max": 0.75,
+        "step": 0.05,
+        "label": "Textile ink intensity"
+      },
+      "paused": {
+        "type": "boolean",
+        "label": "Pause twill light"
+      },
+      "time": {
+        "type": "number",
+        "min": 0,
+        "max": 60000,
+        "step": 100,
+        "label": "Fixed time in milliseconds"
+      },
+      "seed": {
+        "type": "number",
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "label": "Fiber and light arrangement seed"
+      }
+    },
+    "presets": [
+      {
+        "name": "Studio twill",
+        "description": "Medium flat bundles form a clear diagonal repeat with modest loft and soft directional sheen.",
+        "props": {
+          "bundleSize": 24,
+          "loft": 0.4,
+          "angle": 32,
+          "speed": 0.65,
+          "intensity": 0.5,
+          "seed": 1
+        }
+      },
+      {
+        "name": "Coarse raised twill",
+        "description": "Wide high bundles expose the two over two under structure and deeper recessed crossings.",
+        "props": {
+          "bundleSize": 38,
+          "loft": 0.6,
+          "angle": 15,
+          "speed": 0.45,
+          "intensity": 0.6,
+          "seed": 4
+        }
+      },
+      {
+        "name": "Fine bias cloth",
+        "description": "Small low bundles make a closer diagonal weave on a more steeply turned fabric swatch.",
+        "props": {
+          "bundleSize": 16,
+          "loft": 0.25,
+          "angle": 58,
+          "speed": 0.8,
+          "intensity": 0.4,
+          "seed": 7
+        }
+      }
+    ],
+    "original": true,
+    "credits": [],
+    "exportName": "TwillWeave",
+    "defaults": {
+      "bundleSize": 24,
+      "loft": 0.4,
+      "angle": 32,
+      "speed": 0.65,
+      "intensity": 0.5,
+      "paused": false,
+      "time": null,
+      "seed": 1
+    },
+    "docs": {
+      "paused": "Stop animating and hold the current frame.",
+      "time": "Render exactly this animation time, in milliseconds, and do not animate. Null animates.",
+      "seed": "Seed for every random choice, so the same seed always draws the same frame.",
+      "bundleSize": "Width of each flat fiber bundle in CSS pixels, from 14 to 40.",
+      "loft": "Bundle crown and overpass height, from 0.2 to 0.65.",
+      "angle": "Fabric orientation in degrees, from 15 to 60.",
+      "speed": "Single anisotropic light sweep rate, from 0 to 2.",
+      "intensity": "Foreground textile ink coverage, from 0.3 to 0.75."
+    },
+    "types": {
+      "paused": "boolean",
+      "time": "number | null",
+      "seed": "number",
+      "bundleSize": "number",
+      "loft": "number",
+      "angle": "number",
+      "speed": "number",
+      "intensity": "number"
+    },
+    "events": {},
+    "gzipBytes": 6228
   },
   {
     "slug": "voronoi-drift",
