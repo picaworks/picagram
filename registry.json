@@ -64,6 +64,26 @@
       }
     },
     {
+      "name": "ascii-bellows",
+      "type": "registry:component",
+      "title": "ASCII Bellows",
+      "description": "A finite pleated bellows expands between two square end plates, with alternating measured face densities and straight corner ribs preserving its depth.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-bellows.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-binary-tide",
       "type": "registry:component",
       "title": "ASCII Binary Tide",
@@ -104,6 +124,26 @@
       }
     },
     {
+      "name": "ascii-cam-follower",
+      "type": "registry:component",
+      "title": "ASCII Cam Follower",
+      "description": "A finite braille cam lifts a tangent roller and vertical follower through a fixed guide, compressing a return spring above its moving collar.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-cam-follower.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-campus-directory",
       "type": "registry:component",
       "title": "Campus directory",
@@ -114,6 +154,26 @@
       "files": [
         {
           "path": "public/react/ascii-campus-directory.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-catenary-net",
+      "type": "registry:component",
+      "title": "ASCII Catenary Net",
+      "description": "Curved braille cables and transverse ties form a finite hanging net between two upright posts, with fixed attachment rings and a low travelling wave.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-catenary-net.tsx",
           "type": "registry:component"
         }
       ],
@@ -264,6 +324,26 @@
       }
     },
     {
+      "name": "ascii-expanding-truss",
+      "type": "registry:component",
+      "title": "ASCII Expanding Truss",
+      "description": "A finite circular truss opens through continuous crossed bars, with fine rear links, shared end pins and sliding crossing pins in short slots.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-expanding-truss.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-expedition-log",
       "type": "registry:component",
       "title": "Expedition log",
@@ -354,6 +434,26 @@
       "files": [
         {
           "path": "public/react/ascii-garden-plan.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-gear-train",
+      "type": "registry:component",
+      "title": "ASCII Gear Train",
+      "description": "Three finite spur gears share one tooth pitch and counterrotate at their tooth count ratios, with open spokes and fixed hub bearings.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-gear-train.tsx",
           "type": "registry:component"
         }
       ],
@@ -516,6 +616,26 @@
       "files": [
         {
           "path": "public/react/ascii-library-catalog.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-lift-bridge",
+      "type": "registry:component",
+      "title": "ASCII Lift Bridge",
+      "description": "Two rigid bascule leaves meet over a quiet channel, then open about fixed hinge bearings between braced towers and straight tension links.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-lift-bridge.tsx",
           "type": "registry:component"
         }
       ],
@@ -704,6 +824,26 @@
       "files": [
         {
           "path": "public/react/ascii-orbit-trails.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-orrery",
+      "type": "registry:component",
+      "title": "ASCII Orrery",
+      "description": "Planet beads travel at separate rates on radial arms around a shared sun, inside finite inclined orbital rails with a fine rear edge.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-orrery.tsx",
           "type": "registry:component"
         }
       ],
@@ -910,6 +1050,46 @@
       }
     },
     {
+      "name": "ascii-rolling-cube",
+      "type": "registry:component",
+      "title": "ASCII Rolling Cube",
+      "description": "One solid cube turns through shaded glyph faces with crisp braille edges above a short baseline and an offset contact marker.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-rolling-cube.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-scissor-lift",
+      "type": "registry:component",
+      "title": "ASCII Scissor Lift",
+      "description": "Equal-length crossed bars raise a solid load on a level platform, with visible pivots, a sliding foot and a fixed wheeled base.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-scissor-lift.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ascii-score-strip",
       "type": "registry:component",
       "title": "Score Strip",
@@ -920,6 +1100,46 @@
       "files": [
         {
           "path": "public/react/ascii-score-strip.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-screw-conveyor",
+      "type": "registry:component",
+      "title": "ASCII Screw Conveyor",
+      "description": "Broad continuous screw flights turn around a diagonal shaft between two bearing blocks, carrying three tiny solid loads inside a lower trough.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-screw-conveyor.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-shuttle-loom",
+      "type": "registry:component",
+      "title": "ASCII Shuttle Loom",
+      "description": "A finite upright loom lifts alternating warp banks as one shuttle passes through its working shed above a continuously fed woven strip.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-shuttle-loom.tsx",
           "type": "registry:component"
         }
       ],
@@ -1008,6 +1228,26 @@
       "files": [
         {
           "path": "public/react/ascii-string-modes.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "ascii-tension-sail",
+      "type": "registry:component",
+      "title": "ASCII Tension Sail",
+      "description": "A finite triangular textile saddle stretches between three visible anchors, with bowed edges, a denser near corner and a gentle interior breeze.",
+      "categories": [
+        "ascii"
+      ],
+      "files": [
+        {
+          "path": "public/react/ascii-tension-sail.tsx",
           "type": "registry:component"
         }
       ],
@@ -5487,6 +5727,26 @@
       }
     },
     {
+      "name": "braided-cable",
+      "type": "registry:component",
+      "title": "Braided Cable",
+      "description": "A finite S shaped cable carries cylindrical braid bundles through visible over and under crossings, with recessed seams and one restrained moving light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/braided-cable.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "brushed-alloy",
       "type": "registry:component",
       "title": "Brushed Alloy",
@@ -5562,6 +5822,26 @@
       }
     },
     {
+      "name": "chiseled-slate",
+      "type": "registry:component",
+      "title": "Chiseled Slate",
+      "description": "Unequal chisel pockets expose planar walls and flat floors on a finite slate slab, with a broken edge and quiet mineral grain under slow raking light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/chiseled-slate.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "contour-engraving",
       "type": "registry:component",
       "title": "Contour Engraving",
@@ -5614,6 +5894,26 @@
             "license": "Book"
           }
         ]
+      }
+    },
+    {
+      "name": "crazed-ceramic",
+      "type": "registry:component",
+      "title": "Crazed Ceramic",
+      "description": "Asymmetric fracture flanks, recessed crack cores and raised glaze lips interrupt a quiet continuous ceramic relief under one grazing reflection.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/crazed-ceramic.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -5697,6 +5997,26 @@
       }
     },
     {
+      "name": "faceted-crystal",
+      "type": "registry:component",
+      "title": "Faceted Crystal",
+      "description": "A finite crystal lozenge refracts a few reference rules through its continuous table, with connected crown and pavilion facets.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/faceted-crystal.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "fluted-shell",
       "type": "registry:component",
       "title": "Fluted Shell",
@@ -5727,6 +6047,26 @@
       "files": [
         {
           "path": "public/react/fluted-tunnel.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "folded-vellum",
+      "type": "registry:component",
+      "title": "Folded Vellum",
+      "description": "One finite accordion sheet carries quiet printed rules through translucent panel overlaps, with connected creases and diffuse paper lighting.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/folded-vellum.tsx",
           "type": "registry:component"
         }
       ],
@@ -5787,6 +6127,46 @@
       "files": [
         {
           "path": "public/react/hammered-foil.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "honeycomb-core",
+      "type": "registry:component",
+      "title": "Honeycomb Core",
+      "description": "A finite stepped slab exposes thick open hexagonal cells, front web rims and shaded interior walls beneath one slow directional light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/honeycomb-core.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "knurled-drum",
+      "type": "registry:component",
+      "title": "Knurled Drum",
+      "description": "A finite cylindrical drum turns raised diamond facets under one grazing light, bounded by plain machined rings and a visible end face.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/knurled-drum.tsx",
           "type": "registry:component"
         }
       ],
@@ -5969,6 +6349,26 @@
       }
     },
     {
+      "name": "porcelain-relief",
+      "type": "registry:component",
+      "title": "Porcelain Relief",
+      "description": "A solid raised medallion of stepped rings and fine radial flutes sits on a square porcelain plaque beneath slow directional light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/porcelain-relief.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "prismatic-tiles",
       "type": "registry:component",
       "title": "Prismatic Tiles",
@@ -6009,6 +6409,26 @@
       }
     },
     {
+      "name": "ribbed-glass",
+      "type": "registry:component",
+      "title": "Ribbed Glass",
+      "description": "Broad cylindrical ribs refract a fixed tilted line grid through a finite thick glass slab, with a rolled bevel and a restrained moving reflection.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/ribbed-glass.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
       "name": "ripple-field",
       "type": "registry:component",
       "title": "Ripple Field",
@@ -6034,6 +6454,46 @@
             "license": "Course notes"
           }
         ]
+      }
+    },
+    {
+      "name": "sand-ripples",
+      "type": "registry:component",
+      "title": "Sand Ripples",
+      "description": "A finite low dune patch carries asymmetric windward rises, short sheltered faces and fine sand grain under one slow grazing light.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/sand-ripples.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
+      }
+    },
+    {
+      "name": "satin-ribbon",
+      "type": "registry:component",
+      "title": "Satin Ribbon",
+      "description": "One finite broad satin ribbon makes a loose S fold and a partial twist, carrying directional fiber sheen between its visible cut edges.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/satin-ribbon.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
@@ -6205,6 +6665,26 @@
             "license": "Paper"
           }
         ]
+      }
+    },
+    {
+      "name": "twill-weave",
+      "type": "registry:component",
+      "title": "Twill Weave",
+      "description": "A finite fabric swatch interlaces wide flat bundles in a two over two under twill, with a structural diagonal, fine frayed ends and directional sheen.",
+      "categories": [
+        "shaders"
+      ],
+      "files": [
+        {
+          "path": "public/react/twill-weave.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "license": "MIT + Commons Clause",
+        "licenseUrl": "https://github.com/rishabbalak/picagram/blob/main/LICENSE.md",
+        "credits": []
       }
     },
     {
